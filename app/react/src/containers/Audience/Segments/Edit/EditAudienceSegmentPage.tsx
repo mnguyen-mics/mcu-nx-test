@@ -31,7 +31,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Link } from 'react-router-dom';
 
 const messagesMap = defineMessages({

@@ -1,4 +1,8 @@
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { AudienceTagFeed } from '../models/Plugins';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';

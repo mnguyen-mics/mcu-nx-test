@@ -7,7 +7,7 @@ import {
   GET_LOGO,
 } from '../action-types';
 import { Action } from 'redux-actions';
-import { Payload } from '../../utils/ReduxHelper';
+import { Payload } from '@mediarithmics-private/advanced-components/lib/utils/ReduxHelper';
 
 const defaultSessionState = {
   workspace: {

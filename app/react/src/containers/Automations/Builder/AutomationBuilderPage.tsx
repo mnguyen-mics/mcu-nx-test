@@ -25,7 +25,7 @@ import {
 
 import { IAutomationFormService } from '../Edit/AutomationFormService';
 import AutomationTemplateSelector from './AutomationTemplateSelector';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Loading } from '../../../components';
 import { Actionbar, MentionTag } from '@mediarithmics-private/mcs-components-library';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';

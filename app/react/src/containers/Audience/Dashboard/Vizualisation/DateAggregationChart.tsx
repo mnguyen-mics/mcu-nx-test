@@ -7,10 +7,11 @@ import {
   isCountResult,
   QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import injectThemeColors, {
+import {
+  injectThemeColors,
   InjectedThemeColorsProps,
   ThemeColorsShape,
-} from '../../../Helpers/injectThemeColors';
+} from '@mediarithmics-private/advanced-components';
 import moment from 'moment';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';

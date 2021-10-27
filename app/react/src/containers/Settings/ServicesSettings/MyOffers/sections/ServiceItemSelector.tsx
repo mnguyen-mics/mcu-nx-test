@@ -15,8 +15,8 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { connect } from 'react-redux';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const ServiceItemTableSelector: React.ComponentClass<TableSelectorProps<ServiceItemShape>> =
   TableSelector;

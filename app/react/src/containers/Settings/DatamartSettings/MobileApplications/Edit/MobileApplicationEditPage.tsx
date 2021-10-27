@@ -27,11 +27,11 @@ import { UserWorkspaceResource } from '../../../../../models/directory/UserProfi
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IChannelService } from '../../../../../services/ChannelService';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { Link } from 'react-router-dom';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface State {
   mobileApplicationData: MobileApplicationFormData;

@@ -2,7 +2,6 @@ import { IDisplayCampaignService } from './../../../../services/DisplayCampaignS
 import { INITIAL_GOAL_FORM_DATA, isExistingGoal } from './../../Goal/Edit/domain';
 import { DisplayCampaignResource } from './../../../../models/campaign/display/DisplayCampaignResource';
 import { omit } from 'lodash';
-import { extractDataList, extractData } from '../../../../services/ApiService';
 import { createFieldArrayModelWithMeta, createFieldArrayModel } from '../../../../utils/FormHelper';
 import { Task, executeTasksInSequence } from '../../../../utils/PromiseHelper';
 import {
@@ -22,6 +21,7 @@ import { TYPES } from '../../../../constants/types';
 import { IGoalFormService } from '../../Goal/Edit/GoalFormService';
 import { INITIAL_AD_GROUP_FORM_DATA } from './AdGroup/domain';
 import { IGoalService } from '../../../../services/GoalService';
+import { extractData, extractDataList } from '../../../../utils/ApiHelper';
 
 type DisplayCampaignId = string;
 

@@ -3,7 +3,6 @@ import { InjectedIntl } from 'react-intl';
 import { Modal } from 'antd';
 import { IOrganisationService } from './../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from './../../../../models/processing';
-import { DataListResponse } from './../../../../services/ApiService';
 import { IAudienceSegmentService } from './../../../../services/AudienceSegmentService';
 import { AudienceSegmentFormData } from './domain';
 import messages from './messages';
@@ -12,7 +11,10 @@ import {
   UserQuerySegment,
   AudienceSegmentShape,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { DataResponse } from '../../../../services/ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';

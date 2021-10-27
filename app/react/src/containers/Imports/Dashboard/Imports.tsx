@@ -22,7 +22,10 @@ import messages from './messages';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IImportService } from '../../../services/ImportService';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import injectNotifications, {
   InjectedNotificationProps,

@@ -11,7 +11,7 @@ import messages from '../../../messages';
 import AudienceSegmentSummary from './AudienceSegmentSummary';
 import LocationSummary from './LocationSummary';
 import GeneralSettingSummary from './GeneralSettingSummary';
-import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const Section: React.SFC = props => {
   if (!props.children) return null;

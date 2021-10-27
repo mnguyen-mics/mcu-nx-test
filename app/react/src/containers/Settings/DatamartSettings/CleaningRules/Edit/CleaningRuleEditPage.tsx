@@ -6,7 +6,7 @@ import injectNotifications, {
 import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import { InjectedDatamartProps, injectDatamart, DatamartSelector } from '../../../../Datamart';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -40,7 +40,10 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { IDatamartService } from '../../../../../services/DatamartService';
-import { DataListResponse, DataResponse } from '../../../../../services/ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { ChannelResourceShape } from '../../../../../models/settings/settings';
 import { message } from 'antd';
 import moment from 'moment';

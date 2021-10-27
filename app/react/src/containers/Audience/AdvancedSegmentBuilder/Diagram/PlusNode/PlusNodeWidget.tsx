@@ -21,7 +21,10 @@ import {
 } from '../../Edit/domain';
 import { DropTargetMonitor, ConnectDropTarget, DropTarget } from 'react-dnd';
 import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import messages from '../Common/messages';
 import { FormattedMessage } from 'react-intl';

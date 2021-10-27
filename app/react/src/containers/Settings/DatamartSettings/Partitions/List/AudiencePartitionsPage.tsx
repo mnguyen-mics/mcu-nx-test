@@ -32,11 +32,11 @@ import { PARTITIONS_SEARCH_SETTINGS } from './constants';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
-import { DataListResponse } from '../../../../../services/ApiService';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 

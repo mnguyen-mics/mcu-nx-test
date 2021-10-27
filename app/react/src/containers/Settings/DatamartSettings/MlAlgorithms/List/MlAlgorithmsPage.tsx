@@ -17,7 +17,6 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import moment from 'moment';
-import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { Link } from 'react-router-dom';
 import MlAlgorithmVariableResource from '../../../../../models/mlAlgorithmVariable/MlAlgorithmVariableResource';
@@ -67,10 +66,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type JoinedProps = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  InjectedThemeColorsProps &
-  InjectedNotificationProps;
+type JoinedProps = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
 
 class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState> {
   @lazyInject(TYPES.IMlAlgorithmService)

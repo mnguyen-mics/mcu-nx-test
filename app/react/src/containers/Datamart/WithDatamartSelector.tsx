@@ -8,7 +8,7 @@ import { Layout, Row } from 'antd';
 import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle } from '../../components/Form';
 import { defineMessages } from 'react-intl';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 export interface WithDatamartSelectorProps extends RouteComponentProps<{ organisationId: string }> {
   selectedDatamartId: string;

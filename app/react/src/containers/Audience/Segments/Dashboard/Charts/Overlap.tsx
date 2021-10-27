@@ -7,7 +7,10 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import messages from '../messages';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart/index';
 import { IOverlapInterval } from '../OverlapServices';
 import { OverlapData } from '../constants';

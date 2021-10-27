@@ -12,7 +12,7 @@ import * as MenuActions from '../../../redux/Menu/actions';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import { MenuMode } from 'rc-menu/lib/interface';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Sider } = Layout;
 

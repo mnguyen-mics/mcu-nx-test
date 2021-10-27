@@ -17,7 +17,7 @@ import UserResource from '../../../../models/directory/UserResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { ISettingsService } from '../../../../services/SettingsService';
 import { TYPES } from '../../../../constants/types';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 export interface ProfileSettingsEditPageProps {

@@ -1,4 +1,4 @@
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const isAppInitialized = (state: MicsReduxState) => {
   return state.app.initialized;

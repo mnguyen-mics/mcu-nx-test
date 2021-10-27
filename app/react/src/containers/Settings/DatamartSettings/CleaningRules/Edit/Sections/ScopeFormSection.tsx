@@ -10,7 +10,7 @@ import {
   FormInput,
 } from '../../../../../../components/Form';
 import { CleaningRuleType } from '../../../../../../models/cleaningRules/CleaningRules';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
 import { FORM_ID } from '../CleaningRuleEditForm';

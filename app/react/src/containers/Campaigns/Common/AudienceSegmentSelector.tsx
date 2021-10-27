@@ -23,7 +23,7 @@ import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-libr
 import { TableSelector } from '@mediarithmics-private/mcs-components-library';
 import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
 import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { getWorkspace } from '../../../redux/Session/selectors';
 
 const SegmentTableSelector: React.ComponentClass<TableSelectorProps<AudienceSegmentShape>> =

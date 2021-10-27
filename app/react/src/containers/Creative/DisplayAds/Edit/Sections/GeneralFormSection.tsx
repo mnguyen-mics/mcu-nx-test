@@ -23,7 +23,7 @@ import {
 } from '../domain';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
 import { RouteComponentProps } from 'react-router';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;

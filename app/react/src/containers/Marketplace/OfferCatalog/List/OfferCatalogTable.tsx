@@ -21,7 +21,7 @@ import { compose } from 'recompose';
 import OrgLogoContainer from '../../../Logo/OrgLogoContainer';
 import { uniq, map } from 'lodash';
 import { CancelablePromise, makeCancelable } from '../../../../utils/ApiHelper';
-import { DataListResponse } from '../../../../services/ApiService';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { ICatalogService } from '../../../../services/CatalogService';

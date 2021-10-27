@@ -1,8 +1,7 @@
 import { combineReducers } from 'redux';
-
 import { LABELS_FETCH, LABELS_RESET } from '../action-types';
 import { Action } from 'redux-actions';
-import { Payload } from '../../utils/ReduxHelper';
+import { Payload } from '@mediarithmics-private/advanced-components/lib/utils/ReduxHelper';
 
 const defaultLabelsApiState = {
   isFetching: false,

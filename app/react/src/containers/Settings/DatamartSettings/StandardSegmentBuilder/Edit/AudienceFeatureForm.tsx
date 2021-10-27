@@ -13,7 +13,7 @@ import AudienceFeaturePreview from './Sections/AudienceFeaturePreview';
 import QueryFormSection from './Sections/AudienceFeatureQueryFormSection';
 import { SchemaItem } from '../../../../Audience/AdvancedSegmentBuilder/domain';
 import { connect } from 'react-redux';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const Content = Layout.Content;
 

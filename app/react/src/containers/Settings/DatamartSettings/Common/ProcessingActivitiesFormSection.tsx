@@ -22,7 +22,7 @@ import { TYPES } from '../../../../constants/types';
 import { IOrganisationService } from '../../../../services/OrganisationService';
 import { connect } from 'react-redux';
 import { getWorkspace } from '../../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { LabeledValue } from 'antd/lib/tree-select';
 

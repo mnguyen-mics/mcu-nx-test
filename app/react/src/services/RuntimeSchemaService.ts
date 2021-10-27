@@ -1,4 +1,9 @@
-import ApiService, { DataListResponse, DataResponse, ApiResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+  ApiResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import {
   RuntimeSchemaResource,
   ObjectLikeTypeResource,

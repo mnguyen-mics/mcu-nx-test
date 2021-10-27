@@ -12,7 +12,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface AutomationActionBarProps {
   automationData?: Partial<AutomationFormData>;

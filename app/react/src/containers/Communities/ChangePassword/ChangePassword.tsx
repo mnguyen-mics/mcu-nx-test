@@ -14,7 +14,7 @@ import { takeLatest } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { ICommunityService } from '../../../services/CommunityServices';
-import { IAuthService } from '../../../services/AuthService';
+import { IAuthService } from '@mediarithmics-private/advanced-components';
 
 type Props = InjectedIntlProps &
   FormComponentProps &

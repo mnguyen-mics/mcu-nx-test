@@ -3,7 +3,6 @@ import { Layout, Button, Modal, Spin, Upload, message, Input } from 'antd';
 import MlAlgorithmModelResource from '../../../../../models/mlAlgorithmModel/MlAlgorithmModelResource';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
 import { TYPES } from '../../../../../constants/types';
@@ -61,7 +60,6 @@ interface RouterProps {
 type JoinedProps = RouteComponentProps<RouterProps> &
   ValidatorProps &
   InjectedIntlProps &
-  InjectedThemeColorsProps &
   InjectedNotificationProps;
 
 class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModelsListState> {

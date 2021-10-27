@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Modal, Spin } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 import { FormattedMessage } from 'react-intl';
-import { DataResponse } from '../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { QueryTranslationResource } from '../../../models/datamart/DatamartResource';
 import injectNotifications, {
   InjectedNotificationProps,

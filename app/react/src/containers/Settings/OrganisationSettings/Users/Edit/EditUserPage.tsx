@@ -10,7 +10,7 @@ import { notifyError } from '../../../../../redux/Notifications/actions';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IUsersService } from '../../../../../services/UsersService';
-import { ErrorResponse } from '../../../../../services/ApiService';
+import { ErrorResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { Link } from 'react-router-dom';
 
 const messages = defineMessages({

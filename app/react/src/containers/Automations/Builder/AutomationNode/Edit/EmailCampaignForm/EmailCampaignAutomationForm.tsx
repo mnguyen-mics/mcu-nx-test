@@ -17,7 +17,7 @@ import {
 } from '../../../../../Campaigns/Email/Edit/Blast/Sections';
 import { BlastTemplateSectionFieldArray } from '../../../../../Campaigns/Email/Edit/Blast/EmailBlastForm';
 import GeneralInformationFormSection from './GeneralInformationSectionForm';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { StorylineNodeModel } from '../../../domain';
 
 const { Content } = Layout;

@@ -12,7 +12,10 @@ import VisitAnalyzerSelector, { VisitAnalyzerSelectorProps } from '../Common/Vis
 import { VisitAnalyzer } from '../../../../models/Plugins';
 import { PropertyResourceShape, StringPropertyResource } from '../../../../models/plugin/index';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
-import { DataResponse, DataListResponse } from '../../../../services/ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { lazyInject } from '../../../../config/inversify.config';

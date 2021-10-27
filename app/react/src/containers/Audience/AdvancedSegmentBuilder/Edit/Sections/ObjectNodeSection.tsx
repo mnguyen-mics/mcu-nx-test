@@ -24,7 +24,7 @@ import {
 import { SelectValue } from 'antd/lib/select';
 import { frequencyModeMessageMap } from '../../messages';
 import { typesTrigger } from '../../domain';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 export interface ObjectNodeSectionProps {
   objectTypeFields: FieldInfoResource[];

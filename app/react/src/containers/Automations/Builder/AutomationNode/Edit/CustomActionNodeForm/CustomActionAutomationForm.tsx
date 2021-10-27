@@ -5,7 +5,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { ConfigProps, getFormValues, InjectedFormProps, reduxForm, change } from 'redux-form';
 import { FormSection } from '../../../../../../components/Form';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { FORM_ID, CustomActionAutomationFormData } from '../domain';
 import { StorylineNodeModel } from '../../../domain';
 import { Layout, Spin } from 'antd';

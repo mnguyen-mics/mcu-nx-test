@@ -10,8 +10,8 @@ import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { SET_PASSWORD_SEARCH_SETTINGS, parseSearch } from '../../../utils/LocationSearchHelper';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import { lazyInject } from '../../../config/inversify.config';
-import { IAuthService } from '../../../services/AuthService';
 import { TYPES } from '../../../constants/types';
+import { IAuthService } from '@mediarithmics-private/advanced-components';
 
 type Props = InjectedIntlProps & FormComponentProps & RouteComponentProps<{}>;
 

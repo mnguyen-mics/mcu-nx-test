@@ -4,7 +4,7 @@ import log from '../../utils/Logger';
 import { WORKSPACE, GET_LOGO, PUT_LOGO, CONNECTED_USER } from '../action-types';
 import { getWorkspace, getCookies, putLogo, getLogo } from './actions';
 import { fetchAllLabels } from '../Labels/actions';
-import { Payload } from '../../utils/ReduxHelper';
+import { Payload } from '@mediarithmics-private/advanced-components/lib/utils/ReduxHelper';
 
 function* fetchOrganisationWorkspace({ payload }: Payload) {
   const _organisationService = yield getContext('organisationService');

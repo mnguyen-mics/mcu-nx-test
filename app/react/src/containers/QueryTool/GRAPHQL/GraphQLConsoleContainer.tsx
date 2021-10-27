@@ -11,7 +11,7 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import GraphQLResultRenderer from './GraphQLResultRenderer';
 import GraphQLInputEditor from './GraphQLInputEditor';
-import { DataResponse } from '../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import SchemaVizualizer from '../../Audience/AdvancedSegmentBuilder/SchemaVisualizer/SchemaVizualizer';
 import { computeFinalSchemaItem } from '../../Audience/AdvancedSegmentBuilder/domain';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';

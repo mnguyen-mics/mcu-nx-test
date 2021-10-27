@@ -15,7 +15,6 @@ import { IReferenceTableService, ReferenceTableService } from './../services/Ref
 import DataFileService, { IDataFileService } from './../services/DataFileService';
 import { DatamartReplicationService } from './../services/DatamartReplicationService';
 import { Container, interfaces } from 'inversify';
-import { ITagService, TagService } from '../services/TagService';
 import {
   IServiceOfferPageService,
   ServiceOfferPageService,
@@ -111,7 +110,6 @@ import { ISettingsService, SettingsService } from '../services/SettingsService';
 import { IDashboardService, DashboardService } from '../services/DashboardServices';
 import { ILabelService, LabelService } from '../services/LabelsService';
 import OrganisationService, { IOrganisationService } from '../services/OrganisationService';
-import { IAuthService, AuthService } from '../services/AuthService';
 import { IDatamartService, DatamartService } from '../services/DatamartService';
 import { IFeedsStatsService, FeedsStatsService } from '../services/FeedsStatsService';
 import { IAssetFileService, AssetFileService } from '../services/Library/AssetFileService';
@@ -162,6 +160,12 @@ import {
   IStandardSegmentBuilderQueryService,
   StandardSegmentBuilderQueryService,
 } from '../containers/Audience/StandardSegmentBuilder/StandardSegmentBuilderQueryService';
+import {
+  IAuthService,
+  AuthService,
+  ITagService,
+  TagService,
+} from '@mediarithmics-private/advanced-components';
 
 export const container = new Container();
 
@@ -237,7 +241,6 @@ container
   .to(ServiceOfferPageService);
 container.bind<IFeedsStatsService>(TYPES.IFeedsStatsService).to(FeedsStatsService);
 container.bind<ITagService>(TYPES.ITagService).to(TagService);
-container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
 container.bind<ILabelService>(TYPES.ILabelService).to(LabelService);
 container
   .bind<IOrganisationService>(TYPES.IOrganisationService)
@@ -318,6 +321,7 @@ container
 container
   .bind<IStandardSegmentBuilderQueryService>(TYPES.IStandardSegmentBuilderQueryService)
   .to(StandardSegmentBuilderQueryService);
+container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
 
 export const { lazyInject } = getDecorators(container, false);
 

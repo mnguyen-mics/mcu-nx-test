@@ -4,7 +4,10 @@ import { Button } from 'antd';
 import SegmentByNameSelector from './SegmentByNameSelector';
 import chroma from 'chroma-js';
 import { LabeledValue } from 'antd/lib/select';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { AudienceSegmentType } from '../../../../models/audiencesegment';

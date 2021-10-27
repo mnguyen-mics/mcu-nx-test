@@ -14,12 +14,12 @@ import {
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { FORM_ID } from '../MlAlgorithmForm';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 
 import PropertyFields from '../../../../../../components/Form/FormProperties';
 
 import { FormLinkedTextInputProps } from '../../../../../../components/Form/FormLinkedTextInput';
 import { MlAlgorithmFormData } from '../../domain';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface MapStateToProps {
   formValues: MlAlgorithmFormData;

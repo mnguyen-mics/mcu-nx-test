@@ -5,6 +5,7 @@ import { sessionSagas } from './Session/sagas';
 import { labelsSagas } from './Labels/sagas';
 import { versionSagas } from './Version/sagas';
 import { featuresSagas } from './Features/sagas';
+import { keycloakPostLoginSagas } from '@mediarithmics-private/advanced-components';
 
 export default function* sagas() {
   yield all([
@@ -14,5 +15,6 @@ export default function* sagas() {
     ...versionSagas,
     ...labelsSagas,
     ...featuresSagas,
+    ...keycloakPostLoginSagas,
   ]);
 }

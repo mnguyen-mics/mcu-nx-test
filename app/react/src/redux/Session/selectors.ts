@@ -1,8 +1,7 @@
 import { UserWorkspaceResource } from './../../models/directory/UserProfileResource';
-import { MicsReduxState } from './../../utils/ReduxHelper';
 import { createSelector } from 'reselect';
-
 import { normalizeArrayOfObject } from '../../utils/Normalizer';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const getConnectedUserWorkspaces = (state: MicsReduxState) =>
   state.session.connectedUser.workspaces;

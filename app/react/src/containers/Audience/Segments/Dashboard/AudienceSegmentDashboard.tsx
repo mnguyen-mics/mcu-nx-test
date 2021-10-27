@@ -45,7 +45,7 @@ import {
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { Alert } from 'antd';
 import DashboardPageWrapper from '../../Dashboard/DashboardPageWrapper';
-import { DataListResponse } from '../../../../services/ApiService';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 
 interface State {
   loading: boolean;

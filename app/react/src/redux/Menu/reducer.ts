@@ -1,6 +1,6 @@
 import { MENU_OPEN_CLOSE } from '../action-types';
 import { Action } from 'redux-actions';
-import { Payload } from '../../utils/ReduxHelper';
+import { Payload } from '@mediarithmics-private/advanced-components/lib/utils/ReduxHelper';
 
 const openMenuDefaultState = {
   collapsed: false,

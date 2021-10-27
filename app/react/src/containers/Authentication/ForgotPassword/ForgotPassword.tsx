@@ -5,8 +5,8 @@ import { Input, Button, Alert, Col, Row, Form } from 'antd';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import messages from './messages';
 import { TYPES } from '../../../constants/types';
-import { IAuthService } from '../../../services/AuthService';
 import { useInjection } from '../../../config/inversify.react';
+import { IAuthService } from '@mediarithmics-private/advanced-components';
 
 const FormItem = Form.Item;
 

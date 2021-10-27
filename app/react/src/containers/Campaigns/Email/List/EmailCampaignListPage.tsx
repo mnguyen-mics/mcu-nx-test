@@ -30,7 +30,7 @@ import { messages } from './messages';
 import { CampaignsOptions } from '../../../../services/DisplayCampaignService';
 import { Modal } from 'antd';
 import { EmailCampaignResourceWithStats } from '../../../../models/campaign/email/EmailCampaignResource';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Label } from '../../../Labels/Labels';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';

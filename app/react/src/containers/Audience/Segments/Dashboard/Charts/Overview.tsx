@@ -7,7 +7,10 @@ import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import messages from '../messages';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
 import {
   EmptyChart,

@@ -1,4 +1,5 @@
-import ApiService, { DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { injectable } from 'inversify';
 import { DimensionsList } from '../models/datamartUsersAnalytics/datamartUsersAnalytics';
 

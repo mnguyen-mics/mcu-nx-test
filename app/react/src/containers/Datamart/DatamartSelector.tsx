@@ -7,7 +7,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { FormTitle } from '../../components/Form';
 import { MenuList, Actionbar } from '@mediarithmics-private/mcs-components-library';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { UserProfileResource } from '../../models/directory/UserProfileResource';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,

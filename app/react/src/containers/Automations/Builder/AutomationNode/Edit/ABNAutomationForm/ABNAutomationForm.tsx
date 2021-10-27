@@ -12,7 +12,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { FORM_ID, ABNFormData } from '../domain';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { StorylineNodeModel } from '../../../domain';
 
 const { Content } = Layout;

@@ -1,7 +1,11 @@
 import * as yup from 'yup';
 import log from '../utils/Logger';
 import { injectable, inject } from 'inversify';
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import {
   PAGINATION_SEARCH_SETTINGS,

@@ -20,7 +20,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { initialPageState, DisplayCampaignPageState, GoalsCampaignRessource } from './domain';
-import { CancelablePromise } from '../../../../../services/ApiService';
+import { CancelablePromise } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import {
   AdInfoResource,
   AdResource,

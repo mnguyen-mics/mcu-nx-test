@@ -12,7 +12,7 @@ import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-libr
 import { connect } from 'react-redux';
 import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
 import { getWorkspace } from '../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 

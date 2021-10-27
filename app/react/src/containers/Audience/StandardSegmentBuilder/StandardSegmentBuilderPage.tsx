@@ -30,8 +30,8 @@ import StandardSegmentBuilderActionbar from './StandardSegmentBuilderActionbar';
 import { AudienceSegmentFormData, calculateDefaultTtl } from '../Segments/Edit/domain';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
-import { ITagService } from '../../../services/TagService';
 import { IAudienceSegmentFormService } from '../Segments/Edit/AudienceSegmentFormService';
+import { ITagService } from '@mediarithmics-private/advanced-components';
 
 interface State {
   selectedStandardSegmentBuilder?: StandardSegmentBuilderResource;

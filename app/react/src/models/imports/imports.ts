@@ -15,6 +15,7 @@ export interface Import {
   encoding: string;
   mime_type: 'APPLICATION_X_NDJSON' | 'TEXT_CSV';
   document_type: DocumentType;
+
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
 }
 

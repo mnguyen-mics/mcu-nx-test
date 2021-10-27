@@ -4,7 +4,7 @@ import { connect, DispatchProp } from 'react-redux';
 import { compose } from 'recompose';
 import { change, formValueSelector, InjectedFormProps } from 'redux-form';
 import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import {
   FieldNode,
   isFieldNode,

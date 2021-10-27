@@ -34,7 +34,7 @@ import { GoalTableResource, GoalResource } from '../../../../models/goal/GoalRes
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import ReportService from '../../../../services/ReportService';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import {

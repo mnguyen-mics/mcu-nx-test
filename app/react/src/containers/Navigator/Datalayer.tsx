@@ -4,7 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
-import { ITagService } from '../../services/TagService';
+import { ITagService } from '@mediarithmics-private/advanced-components';
 
 export interface DatalayerProps {
   datalayer?: DataLayerDefinition;

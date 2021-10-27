@@ -1,6 +1,6 @@
+import { DrawableContentOptions } from '@mediarithmics-private/advanced-components/lib/components/drawer';
 import { connect } from 'react-redux';
 import { closeNextDrawer, openNextDrawer } from '../../components/Drawer/DrawerStore';
-import { DrawableContentOptions } from './index';
 
 export interface InjectedDrawerProps {
   openNextDrawer: <T>(

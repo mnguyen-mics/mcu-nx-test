@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { AdGroupResource } from '../../../../../../../models/campaign/display/index';
 import { BudgetPeriod } from '../../../../../../../models/campaign/constants/index';
 import { formatUnixTimestamp } from '../../../../../../../utils/DateHelper';
-import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface MapStateProps {
   adGroup: Partial<AdGroupResource>;

@@ -1,5 +1,6 @@
 import moment from 'moment';
-import ApiService, { DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { ReportViewResource } from '../models/ReportView';
 import McsMoment, { formatMcsDate } from '../utils/McsMoment';
 

@@ -5,7 +5,11 @@ import {
   Activity,
   UserIdentifierInfo,
 } from './../models/timeline/timeline';
-import ApiService, { DataResponse, DataListResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { Identifier } from '../containers/Audience/Timeline/Monitoring';
 import { injectable } from 'inversify';
 

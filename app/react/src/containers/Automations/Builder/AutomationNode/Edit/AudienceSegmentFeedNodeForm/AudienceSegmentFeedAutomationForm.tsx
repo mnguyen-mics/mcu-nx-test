@@ -12,7 +12,7 @@ import { FormLayoutActionbarProps } from '../../../../../../components/Layout/Fo
 import PluginInstanceFormSection from './PluginInstanceFormSection';
 import messages from './messages';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 

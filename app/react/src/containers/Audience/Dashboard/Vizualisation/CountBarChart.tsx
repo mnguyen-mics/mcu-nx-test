@@ -6,7 +6,10 @@ import {
   isCountResult,
   QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';

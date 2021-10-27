@@ -11,10 +11,10 @@ import { LabeledValue } from 'antd/lib/select';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { DashboardPage } from './DashboardPage';
-import { DataListResponse } from '../../../services/ApiService';
 import { defaultDashboardContent } from '../DatamartUsersAnalytics/config/DefaultDashboardContentJson';
 import { Loading, Error } from '@mediarithmics-private/mcs-components-library';
 import { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 
 export const messages = defineMessages({
   comingSoon: {

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import * as SessionHelper from '../../redux/Session/selectors';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 export interface WhenDatamartProps {
   hasDatamarts: (organisationId: string) => boolean;

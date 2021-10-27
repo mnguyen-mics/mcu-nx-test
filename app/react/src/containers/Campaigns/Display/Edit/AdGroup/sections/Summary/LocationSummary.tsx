@@ -9,7 +9,7 @@ import ObjectRenderer from '../../../../../../ObjectRenderer/ObjectRenderer';
 import { Geoname, IGeonameService } from '../../../../../../../services/GeonameService';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../../constants/types';
-import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface MapStateProps {
   locationFields: LocationFieldModel[];

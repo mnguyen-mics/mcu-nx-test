@@ -20,13 +20,12 @@ import { Logo } from '../../../containers/Logo';
 import * as MenuActions from '../../../redux/Menu/actions';
 import { compose } from 'recompose';
 import { MenuMode } from 'rc-menu/lib/interface';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { AppsMenuSections } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
 import { buildAccountsMenu, buildSettingsButton } from './LayoutHelper';
-import { TopBar } from '@mediarithmics-private/advanced-components';
+import { MicsReduxState, TopBar } from '@mediarithmics-private/advanced-components';
 
 const { Content, Sider } = Layout;
 

@@ -7,7 +7,11 @@ import {
 import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
 import { PaginatedApiParam, getPaginatedApiParam } from '../utils/ApiHelper';
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { PublicJobExecutionResource } from '../models/Job/JobResource';
 export interface ReferenceTableValue {
   values: string[];

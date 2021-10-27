@@ -20,7 +20,7 @@ import { IAutomationFormService } from './AutomationFormService';
 import { IDatamartService } from '../../../services/DatamartService';
 import { IScenarioService } from '../../../services/ScenarioService';
 import AutomationBuilderContainer from '../Builder/AutomationBuilderContainer';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface State {
   automationFormData: AutomationFormData;

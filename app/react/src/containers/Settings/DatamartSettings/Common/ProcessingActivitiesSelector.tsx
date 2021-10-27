@@ -8,7 +8,10 @@ import { TYPES } from '../../../../constants/types';
 import { IOrganisationService } from '../../../../services/OrganisationService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { OrganisationResource } from '../../../../models/organisation/organisation';
-import { DataResponse, DataListResponse } from '../../../../services/ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { ProcessingResource } from '../../../../models/processing';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -18,7 +21,7 @@ import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/
 import { TableSelector } from '@mediarithmics-private/mcs-components-library';
 import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
 import { getWorkspace } from '../../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { connect } from 'react-redux';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 

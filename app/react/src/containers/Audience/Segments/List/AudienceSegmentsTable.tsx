@@ -59,7 +59,7 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 import { Label } from '../../../Labels/Labels';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { audienceSegmentTypeMessages, userListFeedTypeMessages } from '../Dashboard/messages';
 import {
   ActionsColumnDefinition,

@@ -5,7 +5,11 @@ import {
   ScenarioEdgeResource,
   UserScenarioResource,
 } from './../models/automations/automations';
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { AutomationResource, AutomationCreateResource } from '../models/automations/automations';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import {

@@ -16,7 +16,7 @@ import { UserWorkspaceResource } from '../../../../models/directory/UserProfileR
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IGoalFormService } from './GoalFormService';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { Link } from 'react-router-dom';
 

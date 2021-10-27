@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { makeCancelable, CancelablePromise } from '../../utils/ApiHelper';
-import { DataResponse } from '../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 
 interface ObjectRendererProps<T> {
   id: string;

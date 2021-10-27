@@ -19,7 +19,7 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { CLEANING_RULES_SEARCH_SETTINGS, CleaningRulesFilter } from '../domain';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { connect } from 'react-redux';
 import injectNotifications, {
   InjectedNotificationProps,

@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import messages from '../messages';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { Index } from '../../../../../utils';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messagesMap } from '../BlastTable';

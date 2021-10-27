@@ -19,7 +19,10 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
 import McsMoment from '../../../../../utils/McsMoment';
 import log from '../../../../../utils/Logger';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import {
   EmptyChart,
   LegendChart,

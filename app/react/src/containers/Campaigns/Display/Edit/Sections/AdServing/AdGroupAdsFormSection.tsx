@@ -25,7 +25,7 @@ import { EmptyRecords } from '../../../../../../components';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { AuditStatusRenderer } from '../../../../../Creative/DisplayAds/Audit';
 import { DisplayAdResourceWithFieldIndex } from '../../AdGroup/sections/AdFormSection';
-import { CancelablePromise } from '../../../../../../services/ApiService';
+import { CancelablePromise } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { Index } from '../../../../../../utils';
 import { makeCancelable } from '../../../../../../utils/ApiHelper';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';

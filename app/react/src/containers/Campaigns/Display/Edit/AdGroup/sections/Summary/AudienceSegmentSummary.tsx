@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import WhenDatamart from '../../../../../../Datamart/WhenDatamart';
 import { printStringArray } from './utils';
 import { SegmentFieldModel } from '../../../../../Email/Edit/domain';
-import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface MapStateProps {
   segmentFields: SegmentFieldModel[];

@@ -24,7 +24,7 @@ import { Index } from '../../../utils';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { EXPORT_SEARCH_SETTINGS } from './constants';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Label } from '../../Labels/Labels';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Spin } from 'antd';
 import cuid from 'cuid';
 import { ICreativeService } from '../../../services/CreativeService';
-import { DataResponse } from '../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import {
   GenericCreativeResource,
   CreativeScreenshotResource,

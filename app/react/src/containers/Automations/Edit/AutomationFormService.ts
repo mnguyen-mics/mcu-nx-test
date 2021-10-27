@@ -1,4 +1,3 @@
-import { DataListResponse } from './../../../services/ApiService';
 import {
   PluginPropertyOrigin,
   PluginPropertyType,
@@ -37,7 +36,10 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../constants/types';
 import { AutomationFormData } from './domain';
 import { buildAutomationTreeData, StorylineNodeModel } from '../Builder/domain';
-import { DataResponse } from '../../../services/ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import {
   isQueryInputNode,
   isScenarioNodeShape,

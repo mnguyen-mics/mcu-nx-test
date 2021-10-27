@@ -6,7 +6,7 @@ import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 import { AudienceFeatureFolderResource } from '../../../../../models/audienceFeature/AudienceFeatureResource';
 import { messages } from '../messages';
-import { DataResponse } from '../../../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { FolderOutlined } from '@ant-design/icons';
 
 export interface AudienceFeatureFolderProps {

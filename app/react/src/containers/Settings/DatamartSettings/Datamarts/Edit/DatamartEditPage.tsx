@@ -21,11 +21,11 @@ import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
 import { EventRules } from '../../../../../models/settings/settings';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { Link } from 'react-router-dom';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface State {
   datamartFormData: DatamartFormData;

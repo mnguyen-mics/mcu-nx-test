@@ -29,7 +29,6 @@ import {
   isLinearServiceItemConditionsResource,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import ServiceItem from './ServiceItem';
 import { offerType } from '../domain';
 import { ButtonProps } from 'antd/lib/button';
@@ -37,6 +36,10 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { convertMessageDescriptorToString, infiniteListMessages } from '../../../../IntlMessages';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 

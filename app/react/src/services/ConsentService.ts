@@ -1,4 +1,5 @@
-import ApiService, { DataListResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { ConsentResource, ConsentPurpose } from '../models/consent';
 import { injectable } from 'inversify';
 

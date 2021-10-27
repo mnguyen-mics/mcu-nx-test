@@ -9,9 +9,12 @@ import {
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import AggregationRenderer from './AggregationRenderer';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 
 export interface OTQLResultRendererProps {
   result: OTQLResult | null;

@@ -2,7 +2,11 @@ import { InventorySourceResource } from './../models/campaign/display/InventoryS
 import { AdGroupResource } from './../models/campaign/display/AdGroupResource';
 import { DisplayCampaignResource } from './../models/campaign/display/DisplayCampaignResource';
 import { DisplayCampaignInfoResource } from './../models/campaign/display/DisplayCampaignInfoResource';
-import ApiService, { DataResponse, DataListResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { injectable } from 'inversify';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
 import { AdResource, AdCreateRequest } from '../models/campaign/display/AdResource';

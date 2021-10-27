@@ -31,7 +31,7 @@ import {
   predefinedEventNames,
   StorylineNodeModel,
 } from './../../../domain';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { connect, DispatchProp } from 'react-redux';
 import {
   QueryDocument,

@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { keycloakPostLoginReducer } from '@mediarithmics-private/advanced-components';
 import FormReducer from './FormReducer';
 import AppReducer from '../redux/App/reducer.ts';
 import ThemeReducer from '../redux/Theme/reducer.ts';
@@ -22,6 +23,7 @@ const allReducers = Object.assign(
   LabelsReducers,
   MenuReducers,
   drawerReducer,
+  keycloakPostLoginReducer,
 );
 
 export default combineReducers(allReducers);

@@ -7,16 +7,16 @@ import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { GetServiceOptions, ICatalogService } from '../../../services/CatalogService';
 import { AudienceSegmentServiceItemPublicResource } from '../../../models/servicemanagement/PublicServiceItemResource';
-import { DataResponse } from '../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { TableSelector } from '@mediarithmics-private/mcs-components-library';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { getWorkspace } from '../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
 import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentServiceItemPublicResource>

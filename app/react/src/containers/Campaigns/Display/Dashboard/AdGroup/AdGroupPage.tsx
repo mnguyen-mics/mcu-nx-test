@@ -25,7 +25,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { initialAdGroupPageState, AdGroupPageState } from '../ProgrammaticCampaign/domain';
 import { ReportView } from '../../../../../models/ReportView';
-import { CancelablePromise } from '../../../../../services/ApiService';
+import { CancelablePromise } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { AdGroupResource, AdResource } from '../../../../../models/campaign/display';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { lazyInject } from '../../../../../config/inversify.config';

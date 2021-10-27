@@ -10,7 +10,6 @@ import { Tooltip, Progress } from 'antd';
 import { messages } from './messages';
 import { DatamartReplicationJobExecutionResource } from '../../../../../models/settings/settings';
 import { getExecutionInfo } from '../../../../../utils/JobHelpers';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import {
   parseSearch,
   PAGINATION_SEARCH_SETTINGS,
@@ -23,6 +22,10 @@ import {
   McsIcon,
   TableViewFilters,
 } from '@mediarithmics-private/mcs-components-library';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 
 interface DatamartReplicationJobTableProps {
   dataSource: DatamartReplicationJobExecutionResource[];

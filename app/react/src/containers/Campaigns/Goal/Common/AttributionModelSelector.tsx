@@ -13,7 +13,7 @@ import { TableSelector } from '@mediarithmics-private/mcs-components-library';
 import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
 import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { getWorkspace } from '../../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
 const AttributionModelTableSelector: React.ComponentClass<TableSelectorProps<AttributionModel>> =

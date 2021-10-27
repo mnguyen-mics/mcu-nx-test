@@ -19,13 +19,13 @@ import { connect } from 'react-redux';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IApiTokenService } from '../../../../../services/ApiTokenService';
 import { TYPES } from '../../../../../constants/types';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 

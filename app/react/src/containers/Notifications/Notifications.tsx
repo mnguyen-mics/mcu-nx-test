@@ -6,7 +6,7 @@ import { injectIntl, defineMessages, InjectedIntlProps, FormattedMessage } from 
 import * as notificationsActions from '../../redux/Notifications/actions';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
 import { ArgsProps } from 'antd/lib/notification';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const messages = defineMessages({
   newVersionMessage: {

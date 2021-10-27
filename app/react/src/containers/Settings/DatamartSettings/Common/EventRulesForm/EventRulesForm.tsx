@@ -18,9 +18,9 @@ import PropertyToOriginCopy from './Sections/PropertyToOriginCopy';
 import * as SessionSelectors from '../../../../../redux/Session/selectors';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const messages = defineMessages({
   saveEventRules: {

@@ -17,7 +17,7 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { SearchProps } from 'antd/lib/input';
