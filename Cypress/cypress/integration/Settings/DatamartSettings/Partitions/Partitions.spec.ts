@@ -56,7 +56,7 @@ describe('partitions test', () => {
       cy.contains('Partitions').click();
 
       cy.contains('New Partition').click();
-      cy.contains('Random Split').click();
+      cy.contains('Random Split').click({ force: true });
 
       const partitionName = faker.random.words(6);
       const partCount = 10;
