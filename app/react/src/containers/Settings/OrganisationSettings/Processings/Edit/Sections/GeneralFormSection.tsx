@@ -82,6 +82,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
+            className: 'mcs-processingActivities_nameField',
             placeholder: formatMessage(messages.generalSectionNamePlaceholder),
           }}
           helpToolTipProps={{
@@ -97,6 +98,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
+            className: 'mcs-processingActivities_purposeField',
             placeholder: formatMessage(messages.generalSectionPurposePlaceholder),
           }}
           helpToolTipProps={{
@@ -122,6 +124,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 label: formatMessage(messages.generalSectionTechnicalNameLabel),
               }}
               inputProps={{
+                className: 'mcs-processingActivities_technicalNameField',
                 placeholder: formatMessage(messages.generalSectionTechnicalNamePlaceholder),
               }}
               helpToolTipProps={{

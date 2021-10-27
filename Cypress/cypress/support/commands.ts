@@ -58,7 +58,7 @@ Cypress.Commands.add('goToHome', organisationId => {
   );
 });
 
-Cypress.Commands.add('createSegmentFromUI', type => {
+Cypress.Commands.add('createSegmentFromUI', (type: string, processingName?: string) => {
   // Click on "new Segment"
   cy.get('.mcs-actionbar').find('.mcs-primary').click();
 
@@ -86,6 +86,16 @@ Cypress.Commands.add('createSegmentFromUI', type => {
   cy.get('.mcs-addonSelect').click();
 
   cy.get('.mcs-generalFormSection_defaultLifeTimeUnit_days').click();
+
+  //In case we want to add a processing activity
+  if (typeof processingName !== 'undefined') {
+    //Add a processing activity
+    cy.get('.mcs-pen').click();
+    cy.get('.mcs-dropdown-actions').click();
+    cy.contains(processingName).click();
+    //cy.get('.mcs-addButton').click();
+    cy.get('.add-button').click();
+  }
 
   // In the case that we are in user expert query, we have to write a mock query to validate
   if (type === 'User Expert Query') {

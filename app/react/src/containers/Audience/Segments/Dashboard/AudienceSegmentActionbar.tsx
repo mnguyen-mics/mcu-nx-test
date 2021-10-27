@@ -261,7 +261,11 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const datamartId = segment && segment.datamart_id;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>
+      <Link
+        className='mcs-segmentsActionbar_audienceSegmentsTableLink'
+        key='1'
+        to={`/v2/o/${organisationId}/audience/segments`}
+      >
         {formatMessage(segmentMessages.audienceSegment)}
       </Link>,
       segment ? (segment as AudienceSegmentResource).name : '',

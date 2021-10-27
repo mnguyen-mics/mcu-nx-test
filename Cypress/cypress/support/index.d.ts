@@ -54,6 +54,6 @@ declare namespace Cypress {
     /**
      * Create a segment using the UI
      */
-    createSegmentFromUI(type: string): void;
+    createSegmentFromUI(type: string, processingName?: string): void;
   }
 }
