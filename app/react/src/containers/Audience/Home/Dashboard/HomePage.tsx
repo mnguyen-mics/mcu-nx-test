@@ -180,52 +180,55 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     this.setState({ isLoading: true });
     const promises: Array<
       Promise<DataListResponse<DataFileDashboardResource | DashboardResource>>
-    > = [];
-    promises.push(
+    > = [
       this._dashboardService.getDataFileDashboards(organisationId, selectedDatamartId, 'HOME', {}),
-    );
-    promises.push(
       this._dashboardService.getDashboards(selectedDatamartId, organisationId, { archived: false }),
-    );
+    ];
     Promise.all(promises)
       .then(res => {
-        this.setState({
-          dataFileDashboards: res[0].data as DataFileDashboardResource[],
-          apiDashboards: [],
-        });
         const apiDashboards: DashboardResource[] = res[1].data as DashboardResource[];
         if (apiDashboards && apiDashboards.length === 0) this.setState({ isLoading: false });
         else {
-          apiDashboards
+          const dashboardContentsPromises = apiDashboards
             .filter(dashboard => dashboard.scopes.some(scope => scope === 'home'))
-            .map(dashboard => {
+            .map(dashboard =>
               this._dashboardService
                 .getDashboardContent(selectedDatamartId, organisationId, dashboard.id)
-                .then(resContent => {
-                  this.setState({
-                    apiDashboards: this.state.apiDashboards.concat({
-                      title: dashboard.title,
-                      dashboardContent: JSON.parse(resContent.data.content),
-                    }),
-                    isLoading: false,
-                  });
+                .catch(err => undefined),
+            );
+
+          Promise.all(dashboardContentsPromises)
+            .then(contents => {
+              const apiDashboardContents = contents
+                .map((content, i) => {
+                  if (!!content) {
+                    return {
+                      title: apiDashboards[i].title,
+                      dashboardContent: JSON.parse(content.data.content),
+                    };
+                  } else if (selectedDatamartId === '1500') {
+                    return {
+                      title: apiDashboards[i].title,
+                      dashboardContent: defaultDashboardContent,
+                    };
+                  } else {
+                    return undefined;
+                  }
                 })
-                .catch(err => {
-                  this.props.notifyError(err);
-                  if (selectedDatamartId === '1500') {
-                    this.setState({
-                      isLoading: false,
-                      apiDashboards: this.state.apiDashboards.concat({
-                        title: dashboard.title,
-                        dashboardContent: defaultDashboardContent,
-                      }),
-                    });
-                  } else
-                    this.setState({
-                      isLoading: false,
-                      apiDashboards: [],
-                    });
-                });
+                .filter(dashboard => !!dashboard) as DashboardPageContent[];
+              this.setState({
+                dataFileDashboards: res[0].data as DataFileDashboardResource[],
+                apiDashboards: apiDashboardContents,
+                isLoading: false,
+              });
+            })
+            .catch(err => {
+              this.props.notifyError(err);
+              this.setState({
+                isLoading: false,
+                dataFileDashboards: res[0].data as DataFileDashboardResource[],
+                apiDashboards: [],
+              });
             });
         }
       })
