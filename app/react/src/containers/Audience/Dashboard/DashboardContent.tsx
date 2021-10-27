@@ -16,7 +16,7 @@ import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';
 import MapRadarChart from './Vizualisation/MapRadarChart';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-import LazyLoad from 'react-lazyload';
+import { McsLazyLoad } from '@mediarithmics-private/advanced-components';
 
 const BASE_FRAMEWORK_HEIGHT = 96;
 const BASE_PADDING = 5;
@@ -234,16 +234,7 @@ export default class DashboardContent extends React.Component<Props, State> {
           className={layout.static ? 'static' : ''}
           style={{ backgroundColor: '#fff' }}
         >
-          <LazyLoad
-            overflow={true}
-            resize={true}
-            scroll={true}
-            offset={50}
-            height={350}
-            style={{ height: '100%' }} // component lib doesn't handle classname props so we should keep inline style
-          >
-            {this.generateComponent(comp, layout)}
-          </LazyLoad>
+          <McsLazyLoad child={this.generateComponent(comp, layout) || <div />} />
         </div>
       );
     });
