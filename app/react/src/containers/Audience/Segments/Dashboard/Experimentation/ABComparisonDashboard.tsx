@@ -33,6 +33,11 @@ import { DATAMART_USERS_ANALYTICS_SETTING } from '../constants';
 import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 import { SegmentNameDisplay } from '../../../Common/SegmentNameDisplay';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
@@ -231,7 +236,10 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         from: newValues.from,
         to: newValues.to,
       });
-
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
     return (
       <McsDateRangePicker
         values={values}
@@ -239,6 +247,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         disabled={disableFilters}
         excludeToday={true}
         startDate={controlGroupSegment && controlGroupSegment.creation_ts}
+        messages={mcsdatePickerMsg}
       />
     );
   }

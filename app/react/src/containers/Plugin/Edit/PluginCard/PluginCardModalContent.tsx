@@ -33,7 +33,12 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { FeedStatsUnit } from '../../../../utils/FeedsStatsReportHelper';
 import McsMoment from '../../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const FORM_NAME = 'pluginForm';
 const BRIGHTNESS_THRESHOLD = 160;
@@ -68,6 +73,7 @@ type Props<T extends LayoutablePlugin> = PluginCardModalContentProps<T> &
   InjectedNotificationProps &
   InjectedFormProps &
   InjectedFeaturesProps &
+  InjectedIntlProps &
   ValidatorProps;
 
 interface State {
@@ -283,8 +289,17 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
           to: newValues.to,
         },
       });
-
-    return <McsDateRangePicker values={this.state.dateRange} onChange={onChange} />;
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
+    return (
+      <McsDateRangePicker
+        values={this.state.dateRange}
+        onChange={onChange}
+        messages={mcsdatePickerMsg}
+      />
+    );
   };
 
   public render() {
@@ -381,6 +396,7 @@ export default compose<Props<LayoutablePlugin>, PluginCardModalContentProps<Layo
   }),
   injectNotifications,
   injectFeatures,
+  injectIntl,
 )(PluginCardModalContent);
 
 const messages: {

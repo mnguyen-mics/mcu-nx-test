@@ -23,6 +23,8 @@ import { IMonitoringService } from './MonitoringService';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Loading } from '../../../components';
 import { EmptyTableView, DeviceCard } from '@mediarithmics-private/mcs-components-library';
+import { deviceCardMessages, convertMessageDescriptorToString } from '../../../IntlMessages';
+import { DeviceCardMessages } from '@mediarithmics-private/mcs-components-library/lib/components/timeline/single-view/device-card/DeviceCard';
 
 const { Content } = Layout;
 
@@ -209,7 +211,10 @@ class Monitoring extends React.Component<Props, State> {
     const { selectedDatamart } = this.props;
 
     const { isModalVisible, monitoringData, isLoading } = this.state;
-
+    const deviceCardMsg = convertMessageDescriptorToString(
+      deviceCardMessages,
+      this.props.intl,
+    ) as DeviceCardMessages;
     return (
       <div className='ant-layout'>
         <MonitoringActionbar
@@ -255,7 +260,7 @@ class Monitoring extends React.Component<Props, State> {
                         isLoading={isLoading}
                       />
                       <DeviceCard
-                        messages={messages}
+                        messages={deviceCardMsg}
                         dataSource={monitoringData.userAgentList}
                         isLoading={isLoading}
                       />

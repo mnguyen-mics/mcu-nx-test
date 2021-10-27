@@ -26,6 +26,11 @@ import { formatMetric } from '../../../../../utils/MetricHelper';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { ReportViewResponse } from '../../../../../services/ReportService';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const abComparisonMessage: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -346,7 +351,10 @@ class ABDetailsTable extends React.Component<Props, State> {
         from: newValues.from,
         to: newValues.to,
       });
-
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
     return (
       <McsDateRangePicker
         values={values}
@@ -354,6 +362,7 @@ class ABDetailsTable extends React.Component<Props, State> {
         disabled={isLoading}
         excludeToday={true}
         startDate={controlGroupSegment && controlGroupSegment.creation_ts}
+        messages={mcsdatePickerMsg}
       />
     );
   }

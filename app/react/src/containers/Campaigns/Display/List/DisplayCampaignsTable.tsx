@@ -25,7 +25,13 @@ import {
   ExtendedTableRowSelection,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableViewFiltersWithSelectionNotifyerMessages } from '../../../../components/TableView';
-
+import {
+  convertMessageDescriptorToString,
+  labelSelectorMessages,
+  mcsDateRangePickerMessages,
+} from '../../../../IntlMessages';
+import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
@@ -160,6 +166,10 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         from: filter.from,
         to: filter.to,
       },
+      messages: convertMessageDescriptorToString(
+        mcsDateRangePickerMessages,
+        this.props.intl,
+      ) as McsDateRangePickerMessages,
     };
 
     const columnsVisibilityOptions = {
@@ -343,6 +353,10 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         this.updateLocationSearch({ label_id: formattedLabels });
       },
       buttonMessage: formatMessage(messages.filterByLabel),
+      messages: convertMessageDescriptorToString(
+        labelSelectorMessages,
+        this.props.intl,
+      ) as LabelsSelectorMessages,
     };
 
     return hasCampaigns ? (

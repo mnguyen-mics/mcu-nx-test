@@ -23,6 +23,11 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IGoalService } from '../../../../services/GoalService';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../IntlMessages';
 
 const { Content } = Layout;
 
@@ -165,10 +170,13 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
         from: newValues.from,
         to: newValues.to,
       });
-
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
     return (
       <div style={{ marginBottom: 5 }}>
-        <McsDateRangePicker values={values} onChange={onChange} />
+        <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />
       </div>
     );
   }

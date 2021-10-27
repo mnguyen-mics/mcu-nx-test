@@ -20,6 +20,12 @@ import { LabeledValue } from 'antd/lib/select';
 import { ContentHeader, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import McsMoment from '../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../IntlMessages';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 interface State {
   layout: Layout[];
@@ -44,7 +50,9 @@ export interface DatamartUsersAnalyticsWrapperProps {
 
 export type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;
 
-type JoinedProp = RouteComponentProps<{ segmentId?: string }> & DatamartUsersAnalyticsWrapperProps;
+type JoinedProp = RouteComponentProps<{ segmentId?: string }> &
+  DatamartUsersAnalyticsWrapperProps &
+  InjectedIntlProps;
 
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
@@ -138,7 +146,10 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
         from: newValues.from,
         to: newValues.to,
       });
-
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
     return (
       <McsDateRangePicker
         values={values}
@@ -146,6 +157,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
         disabled={isLoading}
         excludeToday={true}
         startDate={comparisonStartDate}
+        messages={mcsdatePickerMsg}
       />
     );
   }
@@ -238,4 +250,5 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
 
 export default compose<DatamartUsersAnalyticsWrapperProps, DatamartUsersAnalyticsWrapperProps>(
   withRouter,
+  injectIntl,
 )(DatamartUsersAnalyticsWrapper);

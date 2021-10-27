@@ -22,6 +22,8 @@ import {
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { SubMenu } from '@mediarithmics-private/mcs-components-library/lib/components/form-menu/menu-sub-list/MenuSubList';
+import { convertMessageDescriptorToString, menuSubListMessages } from '../../../../IntlMessages';
+import { MenuSubListMessages } from '@mediarithmics-private/mcs-components-library/lib/components/form-menu/menu-sub-list';
 
 const { Content } = Layout;
 
@@ -101,7 +103,10 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
       onClose: this.props.close,
       pathItems: [formatMessage(messages.creativeCreationBreadCrumb)],
     };
-
+    const menuSubListMsg = convertMessageDescriptorToString(
+      menuSubListMessages,
+      this.props.intl,
+    ) as MenuSubListMessages;
     return (
       <Layout>
         <div className='edit-layout ant-layout'>
@@ -147,6 +152,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
                     title={formatMessage(messages.allRendererList)}
                     subtitles={[formatMessage(messages.allRendererListSubtitle)]}
                     submenu={this.renderAdRendererSubmenu}
+                    messages={menuSubListMsg}
                   />
                 </Row>
               </Row>

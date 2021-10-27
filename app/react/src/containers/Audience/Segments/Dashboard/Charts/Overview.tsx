@@ -18,6 +18,11 @@ import {
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import chroma from 'chroma-js';
 import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 interface OverviewProps {
   isFetching: boolean;
@@ -65,8 +70,18 @@ class Overview extends React.Component<Props> {
         from: newValues.from,
         to: newValues.to,
       });
-
-    return <McsDateRangePicker values={values} onChange={onChange} excludeToday={true} />;
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
+    return (
+      <McsDateRangePicker
+        values={values}
+        onChange={onChange}
+        excludeToday={true}
+        messages={mcsdatePickerMsg}
+      />
+    );
   }
 
   renderStackedAreaCharts() {

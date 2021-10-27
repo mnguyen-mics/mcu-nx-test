@@ -18,7 +18,10 @@ import {
   McsIcon,
   BarChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { InfiniteListFilters } from '@mediarithmics-private/mcs-components-library/lib/components/infinite-list';
+import {
+  InfiniteListFilters,
+  InfiniteListMessages,
+} from '@mediarithmics-private/mcs-components-library/lib/components/infinite-list';
 import {
   ServiceItemShape,
   ServiceItemOfferResource,
@@ -33,6 +36,7 @@ import { ButtonProps } from 'antd/lib/button';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import { convertMessageDescriptorToString, infiniteListMessages } from '../../../../IntlMessages';
 
 const { Content } = Layout;
 
@@ -227,7 +231,10 @@ class ServiceItemListPage extends React.Component<Props, State> {
       },
       type: 'primary',
     };
-
+    const infiniteListMsg = convertMessageDescriptorToString(
+      infiniteListMessages,
+      this.props.intl,
+    ) as InfiniteListMessages;
     const addedButton =
       offerOwnership === 'my_offer' ? (
         <Link to={`/v2/o/${organisationId}/settings/services/my_offers/${offerId}/edit`}>
@@ -272,6 +279,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
                 fetchData={this.fetchData}
                 renderItem={this.renderItem}
                 storeItemData={this.storeItemData}
+                messages={infiniteListMsg}
               />
             </Col>
             <Col span={18} className='mcs-settings-card-separator'>

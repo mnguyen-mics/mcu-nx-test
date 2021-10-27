@@ -15,6 +15,11 @@ import FeedChart from '../../../../../Audience/Segments/Dashboard/Feeds/Charts/F
 import McsMoment from '../../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { DATE_SEARCH_SETTINGS, parseSearch } from '../../../../../../utils/LocationSearchHelper';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 export interface FeedNodeAutomationDashboardStatsProps {
   feedId: string;
@@ -67,7 +72,10 @@ class FeedNodeAutomationDashboardStats extends React.Component<Props, State> {
     } = this.props;
 
     const { dateRange } = this.state;
-
+    const McsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
     return (
       <div className='mcs-feedNodeAutomationDashboardStats ant-layout'>
         <Actionbar pathItems={[formatMessage(messages.actionbarName)]} edition={true}>
@@ -80,7 +88,11 @@ class FeedNodeAutomationDashboardStats extends React.Component<Props, State> {
         </Actionbar>
         <div className='mcs-feedNodeAutomationDashboardStats_content ant-layout ant-layout-content mcs-content-container'>
           <div className='mcs-feedNodeAutomationDashboardStats_content_dateRangePicker'>
-            <McsDateRangePicker values={this.state.dateRange} onChange={this.onDatePickerChange} />
+            <McsDateRangePicker
+              values={this.state.dateRange}
+              onChange={this.onDatePickerChange}
+              messages={McsdatePickerMsg}
+            />
           </div>
           <Card>
             <FeedChart

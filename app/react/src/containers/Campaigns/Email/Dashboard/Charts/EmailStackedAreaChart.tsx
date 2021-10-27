@@ -15,6 +15,11 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 export interface EmailStackedAreaChartProps {
   dateRangeValue: McsDateRangeValue;
@@ -82,7 +87,10 @@ class EmailStackedAreaChart extends React.Component<Props> {
         color: colors['mcs-chart-5'],
       },
     ];
-
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
     const chartArea = (
       <div>
         <Row className='mcs-chart-header'>
@@ -95,7 +103,11 @@ class EmailStackedAreaChart extends React.Component<Props> {
           </Col>
           <Col span={12}>
             <span className='mcs-card-button'>
-              <McsDateRangePicker values={dateRangeValue} onChange={onDateRangeChange} />
+              <McsDateRangePicker
+                values={dateRangeValue}
+                onChange={onDateRangeChange}
+                messages={mcsdatePickerMsg}
+              />
             </span>
           </Col>
         </Row>

@@ -26,6 +26,11 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 interface EmailCampaignsTableProps {
   dataSource: EmailCampaignResourceWithStats[];
@@ -90,6 +95,10 @@ class EmailCampaignsTable extends React.Component<Props> {
         from: filter.from,
         to: filter.to,
       },
+      messages: convertMessageDescriptorToString(
+        mcsDateRangePickerMessages,
+        this.props.intl,
+      ) as McsDateRangePickerMessages,
     };
 
     const columnsVisibilityOptions = {
