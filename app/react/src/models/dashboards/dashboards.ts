@@ -63,7 +63,7 @@ export interface DashboardsOptions {
   archived?: boolean;
 }
 
-export type DashboardType = 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER' | 'STANDARD_SEGMENT_BUILDER';
+export type DashboardType = 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER';
 
 export interface ComponentLayout {
   layout: Layout;
