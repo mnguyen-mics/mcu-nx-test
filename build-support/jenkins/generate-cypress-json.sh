@@ -59,7 +59,7 @@ cat << EOF
     "userName":"${USER_NAME}"
   },
   "retries": {
-    "runMode": 2,
+    "runMode": 4,
     "openMode": 1
   },
   "watchForFileChanges": false,
