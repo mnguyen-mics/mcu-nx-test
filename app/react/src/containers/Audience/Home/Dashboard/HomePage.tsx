@@ -182,7 +182,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       Promise<DataListResponse<DataFileDashboardResource | DashboardResource>>
     > = [
       this._dashboardService.getDataFileDashboards(organisationId, selectedDatamartId, 'HOME', {}),
-      this._dashboardService.getDashboards(selectedDatamartId, organisationId, { archived: false }),
+      this._dashboardService.getDashboards(organisationId, { archived: false }),
     ];
     Promise.all(promises)
       .then(res => {
@@ -193,7 +193,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
             .filter(dashboard => dashboard.scopes.some(scope => scope === 'home'))
             .map(dashboard =>
               this._dashboardService
-                .getDashboardContent(selectedDatamartId, organisationId, dashboard.id)
+                .getDashboardContent(dashboard.id, organisationId)
                 .catch(err => undefined),
             );
 

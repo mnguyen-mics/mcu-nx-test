@@ -37,15 +37,13 @@ export interface IDashboardService {
   /*****   DASHBOARD RESOURCE   *****/
 
   getDashboards: (
-    datamartId: string,
     organisationId: string,
     options?: DashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
 
   getDashboardContent: (
-    datamartId: string,
-    organisationId: string,
     dashboardId: string,
+    organisationId: string,
   ) => Promise<DashboardContentResource>;
 
   getDataFileDashboards: (
@@ -135,66 +133,29 @@ export class DashboardService implements IDashboardService {
   @inject(TYPES.IDataFileService)
   private _datafileService!: IDataFileService;
 
-  getDashboards(
-    datamartId: string,
-    organisationId: string,
-    options?: DashboardsOptions,
-  ): Promise<any> {
-    const endpointLegacy = `datamarts/${datamartId}/dashboards`;
+  getDashboards(organisationId: string, options?: DashboardsOptions): Promise<any> {
     const endpoint = `dashboards`;
-    const paramsLegacy = {
-      archived: options?.archived,
-    };
     const params = {
       archived: options?.archived,
       searching_organisation_id: organisationId,
     };
-    return (
-      ApiService.getRequest(endpoint, params)
-        // TODO: remove this logic after the complete delivery of MICS-10725
-        .then(result => {
-          return result;
-        })
-        .catch(err => {
-          if (err.error && err.error.includes('Route') && err.error.includes('Not Found')) {
-            return ApiService.getRequest(endpointLegacy, paramsLegacy).then(result => {
-              return result;
-            });
-          } else throw err;
-        })
-    );
+    return ApiService.getRequest(endpoint, params).catch(err => {
+      log.warn(`Cannot retrieve dashboards for the organisation ${organisationId}`, err);
+      throw err;
+    });
   }
 
-  getDashboardContent(
-    datamartId: string,
-    organisationId: string,
-    dashboardId: string,
-  ): Promise<any> {
-    const endpointLegacy = `datamarts/${datamartId}/dashboards/${dashboardId}/content`;
+  getDashboardContent(dashboardId: string, organisationId: string): Promise<any> {
     const endpoint = `dashboards/${dashboardId}/content`;
 
     const params = {
       organisation_id: organisationId,
     };
 
-    return (
-      ApiService.getRequest(endpoint, params)
-        // TODO: remove this logic after the complete delivery of MICS-10725
-        .then(result => {
-          return result;
-        })
-        .catch(err => {
-          if (err.error && err.error.includes('Route') && err.error.includes('Not Found')) {
-            return ApiService.getRequest(endpointLegacy)
-              .then(result => {
-                return result;
-              })
-              .catch(err2 => {
-                throw err2;
-              });
-          } else throw err;
-        })
-    );
+    return ApiService.getRequest(endpoint, params).catch(err => {
+      log.warn(`Cannot retrieve the dashboard ${dashboardId}`, err);
+      throw err;
+    });
   }
 
   getDataFileDashboards(
