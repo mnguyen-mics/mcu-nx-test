@@ -161,7 +161,7 @@ export class DashboardService implements IDashboardService {
   getDataFileDashboards(
     organisationId: string,
     datamartId: string,
-    type: 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER' | 'STANDARD_SEGMENT_BUILDER',
+    type: 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER',
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DataFileDashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
@@ -268,29 +268,13 @@ export class DashboardService implements IDashboardService {
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DataFileDashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
-      d =>
-        d.datamart_id === datamartId &&
-        (d.type === 'AUDIENCE_BUILDER' || d.type === 'STANDARD_SEGMENT_BUILDER'),
+      d => d.datamart_id === datamartId && d.type === 'AUDIENCE_BUILDER',
     );
 
     return new Promise((resolve, reject) => {
       return this._datafileService
         .getDatafileData(
-          `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/STANDARD_SEGMENT_BUILDER-${standardSegmentBuilderId}.json`,
-        )
-        .then(
-          d => d,
-          () =>
-            this._datafileService.getDatafileData(
-              `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/STANDARD_SEGMENT_BUILDER.json`,
-            ),
-        )
-        .then(
-          d => d,
-          () =>
-            this._datafileService.getDatafileData(
-              `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER-${standardSegmentBuilderId}.json`,
-            ),
+          `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER-${standardSegmentBuilderId}.json`,
         )
         .then(
           d => d,
