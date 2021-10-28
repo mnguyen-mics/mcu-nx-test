@@ -330,6 +330,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
       <div className='ant-layout'>
         <Content className='mcs-content-container'>
           <ItemList
+            className='mcs-processingsList_processingTable'
             fetchList={this.fetchProcessings}
             dataSource={this.state.data}
             loading={this.state.loading}

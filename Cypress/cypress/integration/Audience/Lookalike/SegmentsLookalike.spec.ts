@@ -1,15 +1,25 @@
 import faker from 'faker';
 describe('Segments lookalike tests', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login();
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.switchOrg(data.organisationName);
+    });
   });
 
-  beforeEach(() => {
-    cy.restoreLocalStorageCache();
-  });
+  const deleteSegment = (segmentName: string) => {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
+    cy.get('.mcs-audienceSegmentTable_dropDownMenu').first().click();
+    cy.get('.mcs-audienceSegmentTable_dropDownMenu--delete').click();
+    cy
+      .get('.mcs-audienceSegmentDeletePopup')
+      .should('contain', 'You are about to definitively delete this segment : ' + segmentName),
+      cy.get('.mcs-audienceSegmentDeletePopup_ok_button').click();
+    cy.get('.mcs-audienceSegmentTable').should('not.contain', segmentName);
+  };
 
   afterEach(() => {
-    cy.saveLocalStorageCache();
+    cy.clearLocalStorage();
   });
 
   it('should create a user lookalike segment from user list segment and edit it', () => {
@@ -22,7 +32,8 @@ describe('Segments lookalike tests', () => {
       cy.get('.mcs-dots').click({ force: true });
       cy.get('.mcs-menu-antd-customized_item--lookalike').click();
       cy.get('.mcs-menu-list').first().click();
-      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(faker.random.words(2));
+      const segmentLookalikeName = faker.random.words(2);
+      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(segmentLookalikeName);
       cy.get('.mcs-formSlider').click();
       cy.get('.mcs-form_saveButton_lookalikeForm').click();
       cy.url().should('match', /.*segments\/[0-9]+/);
@@ -58,6 +69,7 @@ describe('Segments lookalike tests', () => {
           });
         });
       });
+      deleteSegment(segmentLookalikeName);
     });
   });
 
@@ -70,7 +82,8 @@ describe('Segments lookalike tests', () => {
       cy.get('.mcs-dots').click({ force: true });
       cy.get('.mcs-menu-antd-customized_item--lookalike').click();
       cy.get('.mcs-menu-list').first().click();
-      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(faker.random.words(2));
+      const segmentLookalikeName = faker.random.words(2);
+      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(segmentLookalikeName);
       cy.get('.mcs-formSlider').click();
       cy.get('.mcs-form_saveButton_lookalikeForm').click();
       cy.url().should('match', /.*segments\/[0-9]+/);
@@ -89,6 +102,7 @@ describe('Segments lookalike tests', () => {
           expect(responseSegment.body.data.type).to.eq('USER_LOOKALIKE');
         });
       });
+      deleteSegment(segmentLookalikeName);
     });
   });
 
@@ -100,7 +114,8 @@ describe('Segments lookalike tests', () => {
       cy.get('.mcs-dots').click({ force: true });
       cy.get('.mcs-menu-antd-customized_item--lookalike').click();
       cy.get('.mcs-menu-list').first().click();
-      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(faker.random.words(2));
+      const segmentLookalikeName = faker.random.words(2);
+      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(segmentLookalikeName);
       cy.get('.mcs-formSlider').click();
       cy.get('.mcs-form_saveButton_lookalikeForm').click();
       cy.url().should('match', /.*segments\/[0-9]+/);
@@ -119,6 +134,7 @@ describe('Segments lookalike tests', () => {
           expect(responseSegment.body.data.type).to.eq('USER_LOOKALIKE');
         });
       });
+      deleteSegment(segmentLookalikeName);
     });
   });
 
@@ -130,7 +146,8 @@ describe('Segments lookalike tests', () => {
       cy.get('.mcs-dots').click({ force: true });
       cy.get('.mcs-menu-antd-customized_item--lookalike').click();
       cy.get('.mcs-menu-list').first().click();
-      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(faker.random.words(2));
+      const segmentLookalikeName = faker.random.words(2);
+      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(segmentLookalikeName);
       cy.get('.mcs-formSlider').click();
       cy.get('.mcs-form_saveButton_lookalikeForm').click();
       cy.url().should('match', /.*segments\/[0-9]+/);
@@ -149,6 +166,7 @@ describe('Segments lookalike tests', () => {
           expect(responseSegment.body.data.type).to.eq('USER_LOOKALIKE');
         });
       });
+      deleteSegment(segmentLookalikeName);
     });
   });
   // TODO Add a test where we calibrate the segment(We probably need to have user points on our datamart)
