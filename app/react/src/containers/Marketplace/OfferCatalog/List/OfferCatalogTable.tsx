@@ -27,6 +27,8 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { ICatalogService } from '../../../../services/CatalogService';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
+import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
+import { convertMessageDescriptorToString, labelSelectorMessages } from '../../../../IntlMessages';
 
 interface ServiceTypeLabel {
   id: string;
@@ -296,6 +298,10 @@ class OfferCatalogTable extends React.Component<Props, State> {
         this.updateLabels(newLabels);
       },
       buttonMessage: messages.filterLabel,
+      messages: convertMessageDescriptorToString(
+        labelSelectorMessages,
+        this.props.intl,
+      ) as LabelsSelectorMessages,
     };
 
     return (

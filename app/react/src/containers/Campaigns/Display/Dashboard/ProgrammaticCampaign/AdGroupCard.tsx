@@ -33,6 +33,11 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IAdGroupFormService } from '../../Edit/AdGroup/AdGroupFormService';
 import { TYPES } from '../../../../../constants/types';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const { Dropdown } = PopupContainer;
 
@@ -131,8 +136,11 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
         from: newValues.from,
         to: newValues.to,
       });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
+    return <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />;
   }
 
   archiveAdGroups = () => {

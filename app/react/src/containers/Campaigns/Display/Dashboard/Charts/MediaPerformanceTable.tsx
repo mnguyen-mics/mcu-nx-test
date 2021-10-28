@@ -12,6 +12,11 @@ import { McsDateRangePicker } from '@mediarithmics-private/mcs-components-librar
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 export interface MediaPerformance {
   display_network_name: string;
@@ -76,8 +81,11 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         from: newValues.from,
         to: newValues.to,
       });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
+    return <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />;
   }
 
   render() {

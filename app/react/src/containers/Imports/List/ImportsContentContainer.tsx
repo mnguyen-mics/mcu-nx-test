@@ -37,6 +37,8 @@ import {
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
+import { convertMessageDescriptorToString, labelSelectorMessages } from '../../../IntlMessages';
+import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
 
 interface MapStateToProps {
   labels: Label[];
@@ -414,6 +416,10 @@ class ImportsContentContainer extends React.Component<Props, State> {
         });
       },
       buttonMessage: formatMessage(messages.filterByLabel),
+      messages: convertMessageDescriptorToString(
+        labelSelectorMessages,
+        this.props.intl,
+      ) as LabelsSelectorMessages,
     };
 
     return (

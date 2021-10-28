@@ -23,6 +23,11 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { formatSecondsIntoDhmsFormat } from '../../../../utils/DurationHelper';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const Option = Select.Option;
 
@@ -349,10 +354,14 @@ class GoalAttribution extends React.Component<JoinedProps, GoalAttributionState>
         from: newValues.from,
         to: newValues.to,
       });
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
 
     return (
       <div style={{ marginBottom: 5 }}>
-        <McsDateRangePicker values={values} onChange={onChange} />
+        <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />
       </div>
     );
   };

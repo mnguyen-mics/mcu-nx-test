@@ -13,6 +13,12 @@ import {
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import McsMoment from '../../../../../../utils/McsMoment';
 import { DATE_SEARCH_SETTINGS, parseSearch } from '../../../../../../utils/LocationSearchHelper';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 
 export type AnalyticsEntityType = 'NODE' | 'EXIT_CONDITION';
 
@@ -34,7 +40,8 @@ export interface ScenarioAnalyticsGenericDashboardProps {
 
 type Props = ScenarioAnalyticsGenericDashboardProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string }> &
+  InjectedIntlProps;
 
 type State = {
   dateRange: McsDateRangeValue;
@@ -73,7 +80,10 @@ class ScenarioAnalyticsGenericDashboard extends React.Component<Props, State> {
   render() {
     const { close, dashboardTitle, children } = this.props;
     const { dateRange } = this.state;
-
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
     const childrenWithDateRangeProps = React.Children.map(children, child => {
       if (React.isValidElement(child)) {
         return React.cloneElement(child, { dateRange: dateRange });
@@ -95,7 +105,11 @@ class ScenarioAnalyticsGenericDashboard extends React.Component<Props, State> {
           <Row className='mcs-scenarioAnalyticsGenericDashboard_datePicker'>
             <Col span={24}>
               <span className='mcs-card-button'>
-                <McsDateRangePicker values={dateRange} onChange={this.onDatePickerChange} />
+                <McsDateRangePicker
+                  values={dateRange}
+                  onChange={this.onDatePickerChange}
+                  messages={mcsdatePickerMsg}
+                />
               </span>
             </Col>
           </Row>
@@ -110,4 +124,5 @@ class ScenarioAnalyticsGenericDashboard extends React.Component<Props, State> {
 export default compose<Props, ScenarioAnalyticsGenericDashboardProps>(
   withRouter,
   injectNotifications,
+  injectIntl,
 )(ScenarioAnalyticsGenericDashboard);

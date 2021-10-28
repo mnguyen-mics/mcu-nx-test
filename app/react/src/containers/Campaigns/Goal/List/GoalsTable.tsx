@@ -47,6 +47,13 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import {
+  convertMessageDescriptorToString,
+  labelSelectorMessages,
+  mcsDateRangePickerMessages,
+} from '../../../../IntlMessages';
+import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
 
 export interface ParamFilters
   extends PaginationSearchSettings,
@@ -312,6 +319,10 @@ class GoalsTable extends React.Component<Props, State> {
         from: filter.from,
         to: filter.to,
       },
+      messages: convertMessageDescriptorToString(
+        mcsDateRangePickerMessages,
+        this.props.intl,
+      ) as McsDateRangePickerMessages,
     };
 
     const columnsVisibilityOptions = {
@@ -472,6 +483,10 @@ class GoalsTable extends React.Component<Props, State> {
         this.updateLocationSearch({ label_id: formattedLabels });
       },
       buttonMessage: formatMessage(messages.labelFilterBy),
+      messages: convertMessageDescriptorToString(
+        labelSelectorMessages,
+        this.props.intl,
+      ) as LabelsSelectorMessages,
     };
 
     return hasGoals ? (

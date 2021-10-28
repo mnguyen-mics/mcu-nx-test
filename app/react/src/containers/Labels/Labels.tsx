@@ -8,6 +8,8 @@ import { MicsReduxState } from '../../utils/ReduxHelper';
 import { LabelsSelector } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { convertMessageDescriptorToString, labelSelectorMessages } from '../../IntlMessages';
+import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
 
 export interface Label {
   id: string;
@@ -123,13 +125,17 @@ class Labels extends React.Component<Props, LabelsState> {
   render() {
     const { labels } = this.state;
     const { orgLabels } = this.props;
-
+    const labelSelectorMsg = convertMessageDescriptorToString(
+      labelSelectorMessages,
+      this.props.intl,
+    ) as LabelsSelectorMessages;
     return (
       <LabelsSelector
         labels={orgLabels}
         selectedLabels={labels}
         onChange={this.onChange}
         buttonMessage={this.props.intl.formatMessage(messages.labelButton)}
+        messages={labelSelectorMsg}
       />
     );
   }

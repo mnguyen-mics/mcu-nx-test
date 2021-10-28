@@ -36,6 +36,8 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { convertMessageDescriptorToString, labelSelectorMessages } from '../../../../IntlMessages';
+import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
 
 const getLatestDeliveryReport = takeLatest(ReportService.getEmailDeliveryReport);
 
@@ -296,6 +298,10 @@ class EmailCampaignListPage extends React.Component<Props, State> {
         this.handleFilterChange({ label_id: formattedLabels });
       },
       buttonMessage: this.props.intl.formatMessage(messages.filterByLabel),
+      messages: convertMessageDescriptorToString(
+        labelSelectorMessages,
+        this.props.intl,
+      ) as LabelsSelectorMessages,
     };
 
     return (

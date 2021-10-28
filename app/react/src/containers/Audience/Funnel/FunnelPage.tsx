@@ -38,6 +38,11 @@ import { FILTERS } from '../../../containers/Audience/DatamartUsersAnalytics/Dat
 import FunnelTemplateSelector from '../../../components/Funnel/FunnelTemplateSelector';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { CopyOutlined } from '@ant-design/icons';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const { Content } = Layout;
 
@@ -284,7 +289,10 @@ class FunnelPage extends React.Component<JoinedProps, State> {
         Funnel Analytics
       </span>,
     ];
-
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
     return (
       <div className='ant-layout'>
         <Actionbar pathItems={breadcrumbPaths}>
@@ -292,6 +300,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
           <McsDateRangePicker
             values={dateRange}
             onChange={this.handleDateRangePickerChangeFunction}
+            messages={mcsdatePickerMsg}
           />
           {routeParams.filter.length > 0 && (
             <Button

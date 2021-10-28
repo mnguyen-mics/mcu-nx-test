@@ -30,6 +30,11 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const { Dropdown } = PopupContainer;
 const LegendChartTS = LegendChart as any;
@@ -247,8 +252,11 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
         from: newValues.from,
         to: newValues.to,
       });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
+    return <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />;
   }
 
   renderStackedAreaCharts() {

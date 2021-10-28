@@ -34,6 +34,11 @@ import McsMoment from '../../../utils/McsMoment';
 import { Link } from 'react-router-dom';
 import { IScenarioAnalyticsService } from '../../../services/ScenarioAnalyticsService';
 import { ScenarioCountersData } from '../../../utils/ScenarioAnalyticsReportHelper';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../IntlMessages';
+import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 export interface AutomationDashboardrams {
   organisationId: string;
@@ -312,8 +317,11 @@ class AutomationDashboardPage extends React.Component<Props, State> {
         from: newValues.from,
         to: newValues.to,
       });
-
-    return <McsDateRangePicker values={values} onChange={onChange} />;
+    const mcsdatePickerMsg = convertMessageDescriptorToString(
+      mcsDateRangePickerMessages,
+      this.props.intl,
+    ) as McsDateRangePickerMessages;
+    return <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />;
   };
 
   updateLocationSearch = (params: DateSearchSettings) => {

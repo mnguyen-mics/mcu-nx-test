@@ -69,6 +69,8 @@ import { PermanentFilters, SegmentsColumnKey, SegmentsColumnsList } from './Perm
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { convertMessageDescriptorToString, labelSelectorMessages } from '../../../../IntlMessages';
+import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -974,6 +976,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         });
       },
       buttonMessage: intl.formatMessage(messages.filterByLabel),
+      messages: convertMessageDescriptorToString(
+        labelSelectorMessages,
+        this.props.intl,
+      ) as LabelsSelectorMessages,
     };
 
     return hasItems ? (

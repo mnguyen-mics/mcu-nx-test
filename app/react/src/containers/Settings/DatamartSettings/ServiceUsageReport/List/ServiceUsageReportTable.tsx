@@ -11,7 +11,14 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { DISPLAY_SEARCH_SETTINGS } from './ServiceUsageReportListPage';
 import ItemList from '../../../../../components/ItemList';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
-import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import {
+  McsDateRangeValue,
+  McsDateRangePickerMessages,
+} from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import {
+  convertMessageDescriptorToString,
+  mcsDateRangePickerMessages,
+} from '../../../../../IntlMessages';
 
 const { Content } = Layout;
 
@@ -142,6 +149,10 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
         from: filter.from,
         to: filter.to,
       },
+      messages: convertMessageDescriptorToString(
+        mcsDateRangePickerMessages,
+        this.props.intl,
+      ) as McsDateRangePickerMessages,
     };
 
     return (
