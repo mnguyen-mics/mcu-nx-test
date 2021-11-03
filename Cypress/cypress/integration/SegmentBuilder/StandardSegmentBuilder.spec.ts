@@ -403,7 +403,7 @@ describe('This test should check that the audience feature forms are working pro
         cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
         cy.get('.mcs-audienceFeatureTable_dropDownMenu--edit').click();
         cy.get('.mcs-audienceFeature_edit_query_button').click();
-        cy.get('.mcs-audienceFeature_edit_form_query_builder').type(
+        cy.get('.mcs-otqlInputEditor_otqlConsole').type(
           '{selectall}{backspace}SELECT @count{} FROM UserPoint where id > $id',
         );
         cy.get('.mcs-audienceFeature_update_query').click();
