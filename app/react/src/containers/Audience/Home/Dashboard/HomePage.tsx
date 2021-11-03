@@ -187,7 +187,11 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     Promise.all(promises)
       .then(res => {
         const apiDashboards: DashboardResource[] = res[1].data as DashboardResource[];
-        if (apiDashboards && apiDashboards.length === 0) this.setState({ isLoading: false });
+        if (apiDashboards && apiDashboards.length === 0)
+          this.setState({
+            isLoading: false,
+            dataFileDashboards: res[0].data as DataFileDashboardResource[],
+          });
         else {
           const dashboardContentsPromises = apiDashboards
             .filter(dashboard => dashboard.scopes.some(scope => scope === 'home'))
