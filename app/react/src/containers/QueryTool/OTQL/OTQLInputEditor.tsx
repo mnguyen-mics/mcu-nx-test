@@ -150,7 +150,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       evaluateGraphQl,
       precision,
       handleChange,
-      queryEditorClassName,
+      queryEditorClassName = 'mcs-otqlInputEditor_otqlConsole',
       hasFeature,
     } = this.props;
 
