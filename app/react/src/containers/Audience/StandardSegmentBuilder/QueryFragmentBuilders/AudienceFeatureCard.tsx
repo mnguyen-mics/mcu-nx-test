@@ -23,6 +23,7 @@ type Props = AudienceFeatureCardProps & InjectedIntlProps;
 
 interface State {
   cardToggled: boolean;
+  dropdownVisible: boolean;
 }
 
 class AudienceFeatureCard extends React.Component<Props, State> {
@@ -30,6 +31,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
     super(props);
     this.state = {
       cardToggled: false,
+      dropdownVisible: false,
     };
   }
 
@@ -48,7 +50,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
       finalValues,
       isSettingsMode,
     } = this.props;
-    const { cardToggled } = this.state;
+    const { cardToggled, dropdownVisible } = this.state;
     const onCardClick = (e: any) => {
       if (e.target.className === 'mcs-standardSegmentBuilder_featureCardFinalValue') {
         e.stopPropagation();
@@ -99,6 +101,10 @@ class AudienceFeatureCard extends React.Component<Props, State> {
 
     const onMoreClick = (e: React.MouseEvent) => {
       e.stopPropagation();
+    };
+
+    const handleVisibleChange = (visible: boolean) => {
+      return this.setState({ dropdownVisible: visible });
     };
 
     return (
@@ -172,7 +178,12 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                   );
                 })}
                 {finalValues.length > 5 && (
-                  <Dropdown overlay={menu} trigger={['click']}>
+                  <Dropdown
+                    overlay={menu}
+                    trigger={['click']}
+                    onVisibleChange={handleVisibleChange}
+                    visible={dropdownVisible}
+                  >
                     <div
                       className='ant-dropdown-link mcs-standardSegmentBuilder_featureCardMore'
                       onClick={onMoreClick}
