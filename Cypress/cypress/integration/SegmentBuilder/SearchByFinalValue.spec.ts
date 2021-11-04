@@ -87,13 +87,13 @@ describe('This test should check that the search by final value feature is worki
     cy.get('.mcs-audienceFeatureName').type(audienceFeatureName);
     cy.get('.mcs-audienceFeatureDescription').type(audienceFeatureDescription);
     cy.get('.mcs-audienceFeature_edit_query_button').click();
-    cy.get('.mcs-audienceFeature_edit_form_query_builder > textarea').type(
+    cy.get('.mcs-otqlInputEditor_otqlConsole > textarea').type(
       '{selectall}{backspace}{backspace}',
       {
         force: true,
       },
     );
-    cy.get('.mcs-audienceFeature_edit_form_query_builder > textarea').type(
+    cy.get('.mcs-otqlInputEditor_otqlConsole > textarea').type(
       'select {id} from UserPoint where ' + object_tree_expression,
       {
         force: true,
@@ -183,7 +183,6 @@ describe('This test should check that the search by final value feature is worki
         .first()
         .find('.mcs-standardSegmentBuilder_featureCardFinalValue')
         .should('have.length', 5);
-      cy.get('.mcs-standardSegmentBuilder_featureCardMore').should('be.visible');
     });
     cy.get('.mcs-close').click();
   });
