@@ -15,7 +15,7 @@ import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import ScopedDashboardLayout from './ScopedDashboardLayout';
 
-interface DashboardPageProps {
+export interface DashboardPageProps {
   dataFileDashboards?: DataFileDashboardResource[];
   datamartAnalyticsConfig?: DatamartUsersAnalyticsWrapperProps[];
   apiDashboards?: DashboardPageContent[];
@@ -24,11 +24,12 @@ interface DashboardPageProps {
   defaultSegment?: LabeledValue;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   tabsClassname?: string;
+  className?: string;
 }
 
 type Props = DashboardPageProps & InjectedFeaturesProps;
 
-class DashboardPage extends React.Component<Props> {
+export class DashboardPage extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
@@ -81,15 +82,18 @@ class DashboardPage extends React.Component<Props> {
     if (apiDashboards && apiDashboards.length > 0) {
       const dashboardTabs = apiDashboards
         .sort((a, b) => a.title.localeCompare(b.title))
+        .filter(dashboard => !!dashboard.dashboardContent)
         .map(dashboard => {
           return {
             title: dashboard.title,
-            display: (
+            display: dashboard.dashboardContent ? (
               <ScopedDashboardLayout
                 datamartId={datamartId}
                 schema={dashboard.dashboardContent}
                 source={source}
               />
+            ) : (
+              <div />
             ),
           };
         });
@@ -112,10 +116,11 @@ class DashboardPage extends React.Component<Props> {
       defaultSegment,
       tabsClassname,
       source,
+      className,
     } = this.props;
 
     return (
-      <div>
+      <div className={className}>
         {this.getDashboardPageContent(
           datamartId,
           dataFileDashboards,

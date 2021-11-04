@@ -157,6 +157,11 @@ export const messages: {
     defaultMessage:
       '500 and more final values match your keyword. All results are not displayed, you might want to specify your request.',
   },
+  mentionTagTooltip: {
+    id: 'audience.home.mentionTagTooltip',
+    defaultMessage:
+      'You can see new engine dashboards and old dashboards in tabs. All users don’t have access to this feature yet.',
+  },
 });
 
 export const fieldGridConfig = {
