@@ -266,14 +266,20 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         if (!val) return undefined;
         return values?.includes(val) ? values.filter(v => v !== finalValue) : values?.concat(val);
       };
-      newAudienceFeatureSelection[featureId] = {
-        finalValues: !!audienceFeatureSelection[featureId].finalValues
-          ? addOrDeleteValue(finalValue)
-          : !!finalValue
-          ? [finalValue]
-          : undefined,
-        audienceFeature: audienceFeature,
-      };
+      if (!!finalValue) {
+        const newValues = addOrDeleteValue(finalValue);
+        if (newValues?.length === 0) delete newAudienceFeatureSelection[featureId];
+        else
+          newAudienceFeatureSelection[featureId] = {
+            finalValues: !!audienceFeatureSelection[featureId].finalValues
+              ? newValues
+              : [finalValue],
+            audienceFeature: audienceFeature,
+          };
+      } else {
+        if (!audienceFeatureSelection[featureId].finalValues)
+          delete audienceFeatureSelection[featureId];
+      }
     } else {
       newAudienceFeatureSelection[`${featureId}`] = {
         finalValues: finalValue ? [finalValue] : undefined,
