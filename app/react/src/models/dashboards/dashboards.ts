@@ -14,8 +14,8 @@ export interface DashboardResource {
   id: string;
   title: string;
   scopes: DashoboardScope[];
-  segments_id: number[];
-  builders_id: number[];
+  segment_ids: string[];
+  builder_ids: string[];
   archived: boolean;
 }
 

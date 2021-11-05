@@ -11,12 +11,19 @@ import DashboardWrapper from './DashboardWrapper';
 import { compose } from 'recompose';
 import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { DashboardLayout } from '@mediarithmics-private/advanced-components';
+import { LabeledValue } from 'antd/lib/select';
+import { AudienceSegmentShape } from '../../../models/audiencesegment';
+import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 interface DashboardPageProps {
   dataFileDashboards?: DataFileDashboardResource[];
   datamartAnalyticsConfig?: DatamartUsersAnalyticsWrapperProps[];
   apiDashboards?: DashboardPageContent[];
   datamartId: string;
+  disableAllUserFilter?: boolean;
+  defaultSegment?: LabeledValue;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  tabsClassname?: string;
 }
 
 type Props = DashboardPageProps & InjectedFeaturesProps;
@@ -31,6 +38,9 @@ class DashboardPage extends React.Component<Props> {
     dataFileDashboards?: DataFileDashboardResource[],
     datamartAnalyticsConfig?: DatamartUsersAnalyticsWrapperProps[],
     apiDashboards?: DashboardPageContent[],
+    disableAllUserFilter?: boolean,
+    defaultSegment?: LabeledValue,
+    tabsClassname?: string,
   ) => {
     const defaultContent = (
       <div>
@@ -58,6 +68,8 @@ class DashboardPage extends React.Component<Props> {
                 config={conf.config}
                 showFilter={conf.showFilter}
                 showDateRangePicker={conf.showDateRangePicker}
+                disableAllUserFilter={disableAllUserFilter}
+                defaultSegment={defaultSegment}
               />
             );
           })}
@@ -80,12 +92,20 @@ class DashboardPage extends React.Component<Props> {
         display: defaultContent,
       });
 
-      return <McsTabs items={dashboardTabs} />;
+      return <McsTabs items={dashboardTabs} className={tabsClassname} />;
     } else return defaultContent;
   };
 
   render() {
-    const { dataFileDashboards, datamartAnalyticsConfig, apiDashboards, datamartId } = this.props;
+    const {
+      dataFileDashboards,
+      datamartAnalyticsConfig,
+      apiDashboards,
+      datamartId,
+      disableAllUserFilter,
+      defaultSegment,
+      tabsClassname,
+    } = this.props;
 
     return (
       <div>
@@ -94,6 +114,9 @@ class DashboardPage extends React.Component<Props> {
           dataFileDashboards,
           datamartAnalyticsConfig,
           apiDashboards,
+          disableAllUserFilter,
+          defaultSegment,
+          tabsClassname,
         )}
       </div>
     );
