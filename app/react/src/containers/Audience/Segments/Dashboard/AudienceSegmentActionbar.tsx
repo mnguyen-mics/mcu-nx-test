@@ -41,7 +41,8 @@ import AudienceExperimentationEditPage, {
 import { isUserQuerySegment } from '../Edit/domain';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, MentionTag } from '@mediarithmics-private/mcs-components-library';
+import { messages } from '../../Home/Dashboard/HomePage';
 
 export interface AudienceSegmentActionbarProps {
   segment?: AudienceSegmentShape;
@@ -254,6 +255,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       hasFeature,
       controlGroupSegment,
       history,
+      intl,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
@@ -268,7 +270,21 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       >
         {formatMessage(segmentMessages.audienceSegment)}
       </Link>,
-      segment ? (segment as AudienceSegmentResource).name : '',
+      segment ? (
+        <span>
+          {(segment as AudienceSegmentResource).name}
+          {hasFeature('dashboards-new-engine') && (
+            <MentionTag
+              mention={'BETA'}
+              customContent={'dashboards-new-engine'}
+              tooltip={intl.formatMessage(messages.mentionTagTooltip)}
+              className='mcs-homePage_mentionTag'
+            />
+          )}
+        </span>
+      ) : (
+        ''
+      ),
     ];
 
     const onClick = () => {

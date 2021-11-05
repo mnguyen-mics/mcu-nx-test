@@ -35,7 +35,7 @@ import { defaultDashboardContent } from '../../DatamartUsersAnalytics/config/Def
 
 const { Content } = Layout;
 
-const messages = defineMessages({
+export const messages = defineMessages({
   homeTitle: {
     id: 'audience.home.homeTitle',
     defaultMessage: 'Home',
@@ -187,19 +187,20 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     Promise.all(promises)
       .then(res => {
         const apiDashboards: DashboardResource[] = res[1].data as DashboardResource[];
-        if (apiDashboards && apiDashboards.length === 0)
+        const homeApiDashboards: DashboardResource[] = apiDashboards.filter(dashboard =>
+          dashboard.scopes.some(scope => scope === 'home'),
+        );
+        if (homeApiDashboards && homeApiDashboards.length === 0)
           this.setState({
             isLoading: false,
             dataFileDashboards: res[0].data as DataFileDashboardResource[],
           });
         else {
-          const dashboardContentsPromises = apiDashboards
-            .filter(dashboard => dashboard.scopes.some(scope => scope === 'home'))
-            .map(dashboard =>
-              this._dashboardService
-                .getDashboardContent(dashboard.id, organisationId)
-                .catch(err => undefined),
-            );
+          const dashboardContentsPromises = homeApiDashboards.map(dashboard =>
+            this._dashboardService
+              .getDashboardContent(dashboard.id, organisationId)
+              .catch(err => undefined),
+          );
 
           Promise.all(dashboardContentsPromises)
             .then(contents => {
@@ -207,12 +208,12 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                 .map((content, i) => {
                   if (!!content) {
                     return {
-                      title: apiDashboards[i].title,
+                      title: homeApiDashboards[i].title,
                       dashboardContent: JSON.parse(content.data.content),
                     };
                   } else if (selectedDatamartId === '1500') {
                     return {
-                      title: apiDashboards[i].title,
+                      title: homeApiDashboards[i].title,
                       dashboardContent: defaultDashboardContent,
                     };
                   } else {

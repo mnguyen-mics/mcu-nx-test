@@ -28,17 +28,18 @@ import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IDashboardService } from '../../../../services/DashboardServices';
-import { DataFileDashboardResource } from '../../../../models/dashboards/dashboards';
-import DashboardWrapper from '../../Dashboard/DashboardWrapper';
+import {
+  DashboardPageContent,
+  DataFileDashboardResource,
+} from '../../../../models/dashboards/dashboards';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
-import DatamartUsersAnalyticsWrapper, {
-  DatamartUsersAnalyticsWrapperProps,
-} from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import {
   ecommerceEngagementConfig,
   averageSessionDurationConfig,
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { Alert } from 'antd';
+import DashboardPage from '../../Dashboard/DashboardPage';
 
 interface State {
   loading: boolean;
@@ -48,6 +49,7 @@ interface State {
   };
   charts: DataFileDashboardResource[];
   datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
+  apiDashboards: DashboardPageContent[];
 }
 export interface AudienceSegmentDashboardProps {
   segment?: AudienceSegmentShape;
@@ -74,6 +76,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         reports: [],
       },
       charts: [],
+      apiDashboards: [],
       datamartAnalyticsDashboardConfig: [],
     };
   }
@@ -149,6 +152,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     datamarts: DatamartWithMetricResource[],
     segment?: AudienceSegmentShape,
   ) => {
+    const { hasFeature } = this.props;
     const nextFilters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     const metrics: string[] = ['user_points', 'user_point_additions', 'user_point_deletions'];
     let additionalMetrics;
@@ -162,6 +166,41 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           ? datamart.audience_segment_metrics.map(el => el.technical_name)
           : undefined;
     }
+    if (hasFeature('dashboards-new-engine') && datamarts && segment) {
+      this.setState({ apiDashboards: [] });
+      this._dashboardService.getDashboards(organisationId, { archived: false }).then(dashboards => {
+        if (dashboards.data.length > 0) {
+          const apiDashboards = dashboards.data;
+          const segmentApiDashboards = apiDashboards.filter(
+            dashboard =>
+              dashboard.scopes.some(scope => scope.toLocaleLowerCase() === 'segments') &&
+              (dashboard.segment_ids.length > 0
+                ? dashboard.segment_ids.some(id => id === segmentId)
+                : true),
+          );
+          const dashboardsContentsPromises = segmentApiDashboards.map(dashboard =>
+            this._dashboardService
+              .getDashboardContent(dashboard.id, organisationId)
+              .catch(err => undefined),
+          );
+          Promise.all(dashboardsContentsPromises).then(contents => {
+            const segmentDashboardContents = contents
+              .map((content, i) => {
+                if (!!content)
+                  return {
+                    title: segmentApiDashboards[i].title,
+                    dashboardContent: JSON.parse(content.data.content),
+                  };
+                return undefined;
+              })
+              .filter(dashboard => !!dashboard) as DashboardPageContent[];
+
+            this.setState({ apiDashboards: segmentDashboardContents });
+          });
+        }
+      });
+    }
+
     this.fetchAudienceSegmentReport(
       organisationId,
       nextFilters.from,
@@ -305,7 +344,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
   render() {
     const { intl, segment, datamarts, hasFeature } = this.props;
-    const { charts, datamartAnalyticsDashboardConfig } = this.state;
+    const { charts, datamartAnalyticsDashboardConfig, apiDashboards } = this.state;
     const currentSegment = segment
       ? {
           key: segment.id.toString(),
@@ -334,36 +373,29 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           />
         )}
         {segment && <AudienceCounters datamarts={datamarts} segment={segment} />}
-        {charts.map(c => (
-          <DashboardWrapper
-            key={c.id}
-            layout={c.components}
-            title={c.name}
-            datamartId={c.datamart_id}
+        {segment && (
+          <DashboardPage
+            apiDashboards={apiDashboards}
+            dataFileDashboards={charts}
+            datamartId={segment?.datamart_id}
             source={segment}
+            tabsClassname='m-t-30'
           />
-        ))}
+        )}
         {charts.length ? <ContentHeader size='medium' title='Technical Information' /> : null}
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>
-        {shouldDisplayAnalyticsFeature &&
-          datamartAnalyticsDashboardConfig.map((conf, i) => {
-            return (
-              <DatamartUsersAnalyticsWrapper
-                key={i.toString()}
-                title={conf.title}
-                subTitle={conf.subTitle}
-                datamartId={conf.datamartId}
-                organisationId={conf.organisationId}
-                config={conf.config}
-                showFilter={conf.showFilter}
-                showDateRangePicker={conf.showDateRangePicker}
-                disableAllUserFilter={true}
-                defaultSegment={currentSegment}
-              />
-            );
-          })}
+        {shouldDisplayAnalyticsFeature && datamart && (
+          <DashboardPage
+            apiDashboards={apiDashboards}
+            datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
+            datamartId={datamart.id}
+            disableAllUserFilter={true}
+            defaultSegment={currentSegment}
+            tabsClassname='m-t-30'
+          />
+        )}
         <FeedCardList />
       </div>
     );
