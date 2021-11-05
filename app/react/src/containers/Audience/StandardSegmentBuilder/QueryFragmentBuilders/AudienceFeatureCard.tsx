@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+
 import * as React from 'react';
 import _ from 'lodash';
 import { Dropdown, Menu, Tooltip } from 'antd';
@@ -8,14 +10,17 @@ import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { CalendarOutlined, DownOutlined } from '@ant-design/icons';
 import { truncate } from './AudienceFeatureSelectionTag';
-import { AudienceFeatureSelection } from './AudienceFeatureSelector';
+import { AudienceFeatureSelection, FinaleValueResource } from './AudienceFeatureSelector';
 
 export interface AudienceFeatureCardProps {
   audienceFeature: AudienceFeatureResource;
-  onSelectFeature: (audienceFeature: AudienceFeatureResource, finalValue?: string) => () => void;
+  onSelectFeature: (
+    audienceFeature: AudienceFeatureResource,
+    finalValue?: FinaleValueResource,
+  ) => () => void;
   searchValue?: string;
   audienceFeatureSelection: AudienceFeatureSelection;
-  finalValues: string[];
+  finalValues: FinaleValueResource[];
   isSettingsMode?: boolean;
 }
 
@@ -62,11 +67,13 @@ class AudienceFeatureCard extends React.Component<Props, State> {
       return <div>{intl.formatMessage(messages.noAvailableFilters)}</div>;
     };
 
-    const isFinaValueSelected = (audienceFeatureId: string, finalValue: string) => {
+    const isFinaValueSelected = (audienceFeatureId: string, finalValue: FinaleValueResource) => {
       const { audienceFeatureSelection } = this.props;
       const featureKey = Object.keys(audienceFeatureSelection).find(k => k === audienceFeatureId);
       if (featureKey) {
-        return audienceFeatureSelection[featureKey].finalValues?.includes(finalValue);
+        return audienceFeatureSelection[featureKey].finalValues
+          ?.map(finalValueResource => finalValueResource.value)
+          .includes(finalValue.value);
       }
       return false;
     };
@@ -91,7 +98,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                   isSelected ? 'mcs-standardSegmentBuilder_featureCardSelectedFinalValue' : ''
                 }`}
               >
-                {value}
+                {value.value}
               </span>
             </Menu.Item>
           );
@@ -160,7 +167,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                 {finalValues.slice(0, 5).map((value, index, values) => {
                   const isSelected = isFinaValueSelected(audienceFeature.id, value);
                   return (
-                    <Tooltip title={value} key={value}>
+                    <Tooltip title={value.value} key={value.value}>
                       <span
                         onClick={
                           isSettingsMode ? undefined : onSelectFeature(audienceFeature, value)
@@ -171,7 +178,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                             : ''
                         } ${isSettingsMode ? 'notAllowed' : ''}`}
                       >
-                        {truncate(18, value)}
+                        {truncate(18, value.value)}
                       </span>
                       {index === values.length - 1 ? '' : ', '}
                     </Tooltip>

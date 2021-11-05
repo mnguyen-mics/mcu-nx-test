@@ -239,33 +239,36 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
         };
         const finalValues = audienceFeatureSelection[audienceFeature.id].finalValues;
         if (audienceFeature.variables) {
-          audienceFeature.variables.forEach(v => {
+          audienceFeature.variables.forEach(variable => {
             if (finalValues) {
               finalValues.forEach(val => {
-                if (v.values?.includes(val)) {
+                if (variable.path.every((v, i) => v === val.path[i])) {
                   const insertFinalValue = (typeList: boolean) => {
-                    switch (v.type) {
+                    switch (variable.type) {
                       case 'Int':
                       case 'Float':
                       case 'ID':
-                        parameters[v.parameter_name] = typeList
-                          ? concatenateOrNot(parseInt(val, 10), parameters[v.parameter_name])
-                          : parseInt(val, 10);
+                        parameters[variable.parameter_name] = typeList
+                          ? concatenateOrNot(
+                              parseInt(val.value, 10),
+                              parameters[variable.parameter_name],
+                            )
+                          : parseInt(val.value, 10);
                         break;
                       default:
-                        parameters[v.parameter_name] = typeList
-                          ? concatenateOrNot(val, parameters[v.parameter_name])
-                          : val;
+                        parameters[variable.parameter_name] = typeList
+                          ? concatenateOrNot(val.value, parameters[variable.parameter_name])
+                          : val.value;
                         break;
                     }
                   };
-                  if (v.container_type === 'List') {
+                  if (variable.container_type === 'List') {
                     insertFinalValue(true);
                   } else {
                     insertFinalValue(false);
                   }
                 } else {
-                  parameters[v.parameter_name] = undefined;
+                  parameters[variable.parameter_name] = undefined;
                 }
               });
             }
