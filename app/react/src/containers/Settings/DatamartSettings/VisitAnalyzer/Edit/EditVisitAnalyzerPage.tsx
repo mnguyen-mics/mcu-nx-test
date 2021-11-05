@@ -69,6 +69,7 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
       group_id: plugin.group_id,
       organisation_id: organisationId,
       name: pluginInstance.name,
+      error_recovery_strategy: pluginInstance.error_recovery_strategy,
     };
     return result;
   };

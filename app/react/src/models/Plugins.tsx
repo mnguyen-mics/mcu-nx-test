@@ -74,6 +74,10 @@ export type PluginType =
   | 'ML_FUNCTION'
   | 'SCENARIO_CUSTOM_ACTION';
 
+export type ErrorRecoveryStrategy =
+  | 'STORE_WITH_ERROR_ID'
+  | 'DROP'
+  | 'STORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS';
 export interface PluginVersionResource {
   id: string;
   plugin_id: string;
@@ -133,6 +137,7 @@ export interface VisitAnalyzer extends PluginInstance {
   version_value: string;
   visit_analyzer_plugin_id: string;
   organisation_id: string;
+  error_recovery_strategy: string;
 }
 
 export interface Recommender extends PluginInstance {
