@@ -4,6 +4,7 @@ import { isUserQuerySegment, isAudienceSegmentShape } from '../Segments/Edit/dom
 import { QueryResource, QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { isStandardSegmentBuilderQueryDocument } from '../StandardSegmentBuilder/domain';
 
 export const getFormattedExperimentationQuery = (
   datamartId: string,
@@ -149,12 +150,3 @@ export const extractOtqlWhereClause = (text: string) => {
 export const hasWhereClause = (text: string) => {
   return text.toLowerCase().indexOf('where') > -1;
 };
-
-function isStandardSegmentBuilderQueryDocument(
-  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
-): source is StandardSegmentBuilderQueryDocument {
-  return (
-    source !== undefined &&
-    (source as StandardSegmentBuilderQueryDocument).language_version !== undefined
-  );
-}
