@@ -22,12 +22,6 @@ export const defaultDashboardContent: DashboardContentSections = {
               options: {
                 xKey: 'key',
                 format: 'count',
-                yKeys: [
-                  {
-                    key: 'value',
-                    message: 'count',
-                  },
-                ],
               },
             },
           ],
@@ -57,12 +51,6 @@ export const defaultDashboardContent: DashboardContentSections = {
                 },
                 xKey: 'key',
                 format: 'count',
-                yKeys: [
-                  {
-                    key: 'value',
-                    message: 'count',
-                  },
-                ],
               },
             },
           ],
@@ -100,12 +88,6 @@ export const defaultDashboardContent: DashboardContentSections = {
                 type: 'bar',
                 xKey: 'key',
                 format: 'count',
-                yKeys: [
-                  {
-                    key: 'value',
-                    message: 'count',
-                  },
-                ],
               },
             },
           ],
@@ -131,12 +113,6 @@ export const defaultDashboardContent: DashboardContentSections = {
               options: {
                 xKey: 'key',
                 format: 'count',
-                yKeys: [
-                  {
-                    key: 'value',
-                    message: 'count',
-                  },
-                ],
               },
             },
           ],
@@ -157,12 +133,6 @@ export const defaultDashboardContent: DashboardContentSections = {
               options: {
                 xKey: 'key',
                 format: 'count',
-                yKeys: [
-                  {
-                    key: 'value',
-                    message: 'count',
-                  },
-                ],
               },
             },
           ],
