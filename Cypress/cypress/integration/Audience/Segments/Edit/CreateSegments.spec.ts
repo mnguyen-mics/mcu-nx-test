@@ -21,14 +21,29 @@ describe('This test should check that the audience segments forms are working pr
     });
     cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
     cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
-    cy.get('.mcs-audienceSegmentTable_dropDownMenu').first().click();
-    cy.get('.mcs-audienceSegmentTable_dropDownMenu--delete').click();
-    cy.get('.mcs-audienceSegmentDeletePopup').should(
-      'contain',
-      'You are about to definitively delete this segment : Test Audience Segment Form',
-    );
-    cy.get('.mcs-audienceSegmentDeletePopup_ok_button').click();
-    cy.get('.mcs-audienceSegmentTable').should('not.contain', 'Test Audience Segment Form');
+    cy.get('.mcs-audienceSegmentsTable_search_bar')
+      .type('Test Audience Segment Form{enter}')
+      .then(() => {
+        //Wait 5 seconds after typing enter to prevent dead DOM elements
+        cy.wait(5000);
+        cy.get('.mcs-audienceSegmentTable_dropDownMenu')
+          .should('be.visible')
+          .each(dropdownArrow => {
+            cy.wrap(dropdownArrow)
+              .click()
+              .then(() => {
+                //Wait between deletions
+                cy.wait(1000);
+                cy.get('.mcs-audienceSegmentTable_dropDownMenu--delete').click();
+                cy.get('.mcs-audienceSegmentDeletePopup').should(
+                  'contain',
+                  'You are about to definitively delete this segment : Test Audience Segment Form',
+                );
+                cy.get('.mcs-audienceSegmentDeletePopup_ok_button').click();
+              });
+          });
+        cy.get('.mcs-audienceSegmentTable').should('not.contain', 'Test Audience Segment Form');
+      });
   };
 
   const createProcessingActivities = (
