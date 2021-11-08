@@ -10,10 +10,10 @@ import DatamartUsersAnalyticsWrapper, {
 import DashboardWrapper from './DashboardWrapper';
 import { compose } from 'recompose';
 import { McsTabs } from '@mediarithmics-private/mcs-components-library';
-import { DashboardLayout } from '@mediarithmics-private/advanced-components';
 import { LabeledValue } from 'antd/lib/select';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import ScopedDashboardLayout from './ScopedDashboardLayout';
 
 interface DashboardPageProps {
   dataFileDashboards?: DataFileDashboardResource[];
@@ -42,6 +42,7 @@ class DashboardPage extends React.Component<Props> {
     defaultSegment?: LabeledValue,
     tabsClassname?: string,
   ) => {
+    const { source } = this.props;
     const defaultContent = (
       <div>
         {dataFileDashboards &&
@@ -83,7 +84,11 @@ class DashboardPage extends React.Component<Props> {
           return {
             title: dashboard.title,
             display: (
-              <DashboardLayout datamart_id={datamartId} schema={dashboard.dashboardContent} />
+              <ScopedDashboardLayout
+                datamartId={datamartId}
+                schema={dashboard.dashboardContent}
+                source={source}
+              />
             ),
           };
         });
