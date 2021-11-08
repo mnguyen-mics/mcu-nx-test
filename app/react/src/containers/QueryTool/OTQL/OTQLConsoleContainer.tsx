@@ -129,6 +129,14 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     const { datamartId } = this.props;
     const { datamartId: prevDatamartId } = prevProps;
     if (prevDatamartId !== datamartId) {
+      this.setState(
+        {
+          panes: [],
+        },
+        () => {
+          this.add();
+        },
+      );
       this.fetchObjectTypes(datamartId);
     }
   }
