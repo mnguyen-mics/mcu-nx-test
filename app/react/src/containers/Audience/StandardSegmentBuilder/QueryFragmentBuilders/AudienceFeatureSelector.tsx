@@ -38,7 +38,7 @@ interface MapStateToProps {
   formValues: StandardSegmentBuilderFormData;
 }
 
-export interface FinaleValueResource {
+export interface FinalValueResource {
   value: string;
   path: string[];
 }
@@ -46,7 +46,7 @@ export interface FinaleValueResource {
 export interface AudienceFeatureSelection {
   [key: string]: {
     audienceFeature: AudienceFeatureResource;
-    finalValues: FinaleValueResource[] | undefined;
+    finalValues: FinalValueResource[] | undefined;
   };
 }
 
@@ -124,7 +124,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
           this.setState({
             isLoading: false,
             currentAudienceFeatures: response.data.data.elements,
-            total: response.data.data.totalResults,
+            total: response.data.data.total_results,
           });
           if (
             response.data.infos.find(
@@ -262,14 +262,14 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
   onSelectFeature = (
     audienceFeature: AudienceFeatureResource,
-    finalValue?: FinaleValueResource,
+    finalValue?: FinalValueResource,
   ) => () => {
     const { audienceFeatureSelection } = this.state;
 
     const newAudienceFeatureSelection = audienceFeatureSelection;
     const featureId = audienceFeature.id;
     if (Object.keys(audienceFeatureSelection).includes(featureId)) {
-      const addOrDeleteValue = (val?: FinaleValueResource) => {
+      const addOrDeleteValue = (val?: FinalValueResource) => {
         const values = audienceFeatureSelection[featureId].finalValues;
         if (!val) return undefined;
         return values?.map(valueResource => valueResource.value).includes(val.value)

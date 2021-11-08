@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-
 import * as React from 'react';
 import _ from 'lodash';
 import { Dropdown, Menu, Tooltip } from 'antd';
@@ -10,17 +8,17 @@ import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { CalendarOutlined, DownOutlined } from '@ant-design/icons';
 import { truncate } from './AudienceFeatureSelectionTag';
-import { AudienceFeatureSelection, FinaleValueResource } from './AudienceFeatureSelector';
+import { AudienceFeatureSelection, FinalValueResource } from './AudienceFeatureSelector';
 
 export interface AudienceFeatureCardProps {
   audienceFeature: AudienceFeatureResource;
   onSelectFeature: (
     audienceFeature: AudienceFeatureResource,
-    finalValue?: FinaleValueResource,
+    finalValue?: FinalValueResource,
   ) => () => void;
   searchValue?: string;
   audienceFeatureSelection: AudienceFeatureSelection;
-  finalValues: FinaleValueResource[];
+  finalValues: FinalValueResource[];
   isSettingsMode?: boolean;
 }
 
@@ -67,7 +65,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
       return <div>{intl.formatMessage(messages.noAvailableFilters)}</div>;
     };
 
-    const isFinaValueSelected = (audienceFeatureId: string, finalValue: FinaleValueResource) => {
+    const isFinaValueSelected = (audienceFeatureId: string, finalValue: FinalValueResource) => {
       const { audienceFeatureSelection } = this.props;
       const featureKey = Object.keys(audienceFeatureSelection).find(k => k === audienceFeatureId);
       if (featureKey) {

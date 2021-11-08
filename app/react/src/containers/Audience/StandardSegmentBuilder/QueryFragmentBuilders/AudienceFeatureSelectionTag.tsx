@@ -8,12 +8,12 @@ import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { FinaleValueResource } from './AudienceFeatureSelector';
+import { FinalValueResource } from './AudienceFeatureSelector';
 
 export interface AudienceFeatureSelectionTagProps {
   audienceFeatureId: string;
   datamartId: string;
-  finalValues?: FinaleValueResource[];
+  finalValues?: FinalValueResource[];
   onClose: (featureId: string) => () => void;
 }
 

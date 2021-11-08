@@ -66,7 +66,7 @@ export interface AudienceFeaturePagedResultResource {
   elements: AudienceFeatureResource[];
   limit?: number;
   offset?: number;
-  totalResults?: number;
+  total_results?: number;
 }
 
 export interface AudienceFeatureSearchContextInfoResource {
