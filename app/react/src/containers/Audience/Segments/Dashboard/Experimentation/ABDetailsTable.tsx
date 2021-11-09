@@ -35,9 +35,9 @@ import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-component
 const abComparisonMessage: {
   [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
-  avg_number_of_transactions: {
-    id: 'audience.segment.dashboard.ABDetailsTable.avgNumberOfTransactions',
-    defaultMessage: 'Average number of transactions',
+  avg_number_of_transactions_per_user_point: {
+    id: 'audience.segment.dashboard.ABDetailsTable.avgNumberOfTransactionsPerUserPoint',
+    defaultMessage: 'Average number of transactions per user point',
   },
   number_of_transactions: {
     id: 'audience.segment.dashboard.ABDetailsTable.numberOfTransactions',
@@ -181,7 +181,7 @@ class ABDetailsTable extends React.Component<Props, State> {
         );
       };
       const metricList: DatamartUsersAnalyticsMetric[] = [
-        'avg_number_of_transactions',
+        'avg_number_of_transactions_per_user_point',
         'number_of_transactions',
         'avg_transaction_amount',
         'avg_revenue_per_user_point',

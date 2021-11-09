@@ -366,7 +366,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         },
         dimensions: ['date_yyyy_mm_dd'],
         sampling: 1,
-        metricNames: ['avg_number_of_transactions'],
+        metricNames: ['avg_number_of_transactions_per_user_point'],
         dimensionFilterClauses: {
           operator: 'OR',
           filters: [
@@ -605,7 +605,7 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
           title: { text: 'Average Number Of Transactions' },
         },
         unit: 'number',
-        metricNames: ['avg_number_of_transactions'],
+        metricNames: ['avg_number_of_transactions_per_user_point'],
         dimensionFilterClauses: {
           operator: 'OR',
           filters: [
