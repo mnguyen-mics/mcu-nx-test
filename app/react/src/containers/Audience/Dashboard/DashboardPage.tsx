@@ -97,7 +97,7 @@ class DashboardPage extends React.Component<Props> {
         display: defaultContent,
       });
 
-      return <McsTabs items={dashboardTabs} className={tabsClassname} />;
+      return <McsTabs items={dashboardTabs} className={tabsClassname} animated={false} />;
     } else return defaultContent;
   };
 
