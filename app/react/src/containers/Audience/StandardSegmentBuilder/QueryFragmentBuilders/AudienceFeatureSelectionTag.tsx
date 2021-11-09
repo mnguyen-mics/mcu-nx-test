@@ -8,11 +8,12 @@ import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { FinalValueResource } from './AudienceFeatureSelector';
 
 export interface AudienceFeatureSelectionTagProps {
   audienceFeatureId: string;
   datamartId: string;
-  finalValues?: string[];
+  finalValues?: FinalValueResource[];
   onClose: (featureId: string) => () => void;
 }
 
@@ -80,7 +81,7 @@ class AudienceFeatureSelectionTag extends React.Component<Props, State> {
           {truncate(18, audienceFeature?.name)}
           {finalValues && finalValues.length > 0 && ': '}
           {finalValues?.slice(0, 3).map((v, i) => {
-            return finalValues.length === 1 ? truncate(18, v) : truncate(18, v) + ', ';
+            return finalValues.length === 1 ? truncate(18, v.value) : truncate(18, v.value) + ', ';
           })}
           {finalValues && finalValues.length > 3 ? ` +${finalValues.length - 3}` : ''}
         </Tag>

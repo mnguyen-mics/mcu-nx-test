@@ -8,14 +8,17 @@ import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { CalendarOutlined, DownOutlined } from '@ant-design/icons';
 import { truncate } from './AudienceFeatureSelectionTag';
-import { AudienceFeatureSelection } from './AudienceFeatureSelector';
+import { AudienceFeatureSelection, FinalValueResource } from './AudienceFeatureSelector';
 
 export interface AudienceFeatureCardProps {
   audienceFeature: AudienceFeatureResource;
-  onSelectFeature: (audienceFeature: AudienceFeatureResource, finalValue?: string) => () => void;
+  onSelectFeature: (
+    audienceFeature: AudienceFeatureResource,
+    finalValue?: FinalValueResource,
+  ) => () => void;
   searchValue?: string;
   audienceFeatureSelection: AudienceFeatureSelection;
-  finalValues: string[];
+  finalValues: FinalValueResource[];
   isSettingsMode?: boolean;
 }
 
@@ -23,6 +26,7 @@ type Props = AudienceFeatureCardProps & InjectedIntlProps;
 
 interface State {
   cardToggled: boolean;
+  dropdownVisible: boolean;
 }
 
 class AudienceFeatureCard extends React.Component<Props, State> {
@@ -30,6 +34,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
     super(props);
     this.state = {
       cardToggled: false,
+      dropdownVisible: false,
     };
   }
 
@@ -48,7 +53,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
       finalValues,
       isSettingsMode,
     } = this.props;
-    const { cardToggled } = this.state;
+    const { cardToggled, dropdownVisible } = this.state;
     const onCardClick = (e: any) => {
       if (e.target.className === 'mcs-standardSegmentBuilder_featureCardFinalValue') {
         e.stopPropagation();
@@ -60,11 +65,13 @@ class AudienceFeatureCard extends React.Component<Props, State> {
       return <div>{intl.formatMessage(messages.noAvailableFilters)}</div>;
     };
 
-    const isFinaValueSelected = (audienceFeatureId: string, finalValue: string) => {
+    const isFinaValueSelected = (audienceFeatureId: string, finalValue: FinalValueResource) => {
       const { audienceFeatureSelection } = this.props;
       const featureKey = Object.keys(audienceFeatureSelection).find(k => k === audienceFeatureId);
       if (featureKey) {
-        return audienceFeatureSelection[featureKey].finalValues?.includes(finalValue);
+        return audienceFeatureSelection[featureKey].finalValues
+          ?.map(finalValueResource => finalValueResource.value)
+          .includes(finalValue.value);
       }
       return false;
     };
@@ -89,7 +96,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                   isSelected ? 'mcs-standardSegmentBuilder_featureCardSelectedFinalValue' : ''
                 }`}
               >
-                {value}
+                {value.value}
               </span>
             </Menu.Item>
           );
@@ -99,6 +106,10 @@ class AudienceFeatureCard extends React.Component<Props, State> {
 
     const onMoreClick = (e: React.MouseEvent) => {
       e.stopPropagation();
+    };
+
+    const handleVisibleChange = (visible: boolean) => {
+      return this.setState({ dropdownVisible: visible });
     };
 
     return (
@@ -154,7 +165,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                 {finalValues.slice(0, 5).map((value, index, values) => {
                   const isSelected = isFinaValueSelected(audienceFeature.id, value);
                   return (
-                    <Tooltip title={value} key={value}>
+                    <Tooltip title={value.value} key={value.value}>
                       <span
                         onClick={
                           isSettingsMode ? undefined : onSelectFeature(audienceFeature, value)
@@ -165,14 +176,19 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                             : ''
                         } ${isSettingsMode ? 'notAllowed' : ''}`}
                       >
-                        {truncate(18, value)}
+                        {truncate(18, value.value)}
                       </span>
                       {index === values.length - 1 ? '' : ', '}
                     </Tooltip>
                   );
                 })}
                 {finalValues.length > 5 && (
-                  <Dropdown overlay={menu} trigger={['click']}>
+                  <Dropdown
+                    overlay={menu}
+                    trigger={['click']}
+                    onVisibleChange={handleVisibleChange}
+                    visible={dropdownVisible}
+                  >
                     <div
                       className='ant-dropdown-link mcs-standardSegmentBuilder_featureCardMore'
                       onClick={onMoreClick}

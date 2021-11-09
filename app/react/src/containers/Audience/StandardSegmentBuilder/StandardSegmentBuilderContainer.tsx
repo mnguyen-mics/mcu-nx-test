@@ -203,21 +203,25 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     );
   };
 
-  private saveGroup = (
+  private saveGroups = (
     groups: StandardSegmentBuilderParametricPredicateGroupNode[],
     groupsLocation: 'include' | 'exclude',
-  ) => (newGroup: StandardSegmentBuilderParametricPredicateGroupNode) => {
+  ) => (newGroups: StandardSegmentBuilderParametricPredicateGroupNode[]) => {
     const { change } = this.props;
-    change(groupsLocation, groups.concat(newGroup));
+    change(groupsLocation, groups.concat(newGroups));
   };
 
   private addToNewGroup = (
-    save: (_: StandardSegmentBuilderParametricPredicateGroupNode) => void,
+    save: (_: StandardSegmentBuilderParametricPredicateGroupNode[]) => void,
   ) => (predicates: StandardSegmentBuilderParametricPredicateNode[]) => {
-    const newGroup: StandardSegmentBuilderParametricPredicateGroupNode = {
-      expressions: predicates,
-    };
-    save(newGroup);
+    let newGroups: StandardSegmentBuilderParametricPredicateGroupNode[] = [];
+    predicates.forEach(predicate => {
+      const newGroup: StandardSegmentBuilderParametricPredicateGroupNode = {
+        expressions: [predicate],
+      };
+      newGroups = newGroups.concat(newGroup);
+    });
+    save(newGroups);
   };
 
   private addAudienceFeature = (
@@ -235,33 +239,36 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
         };
         const finalValues = audienceFeatureSelection[audienceFeature.id].finalValues;
         if (audienceFeature.variables) {
-          audienceFeature.variables.forEach(v => {
+          audienceFeature.variables.forEach(variable => {
             if (finalValues) {
               finalValues.forEach(val => {
-                if (v.values?.includes(val)) {
+                if (variable.path.every((v, i) => v === val.path[i])) {
                   const insertFinalValue = (typeList: boolean) => {
-                    switch (v.type) {
+                    switch (variable.type) {
                       case 'Int':
                       case 'Float':
                       case 'ID':
-                        parameters[v.parameter_name] = typeList
-                          ? concatenateOrNot(parseInt(val, 10), parameters[v.parameter_name])
-                          : parseInt(val, 10);
+                        parameters[variable.parameter_name] = typeList
+                          ? concatenateOrNot(
+                              parseInt(val.value, 10),
+                              parameters[variable.parameter_name],
+                            )
+                          : parseInt(val.value, 10);
                         break;
                       default:
-                        parameters[v.parameter_name] = typeList
-                          ? concatenateOrNot(val, parameters[v.parameter_name])
-                          : val;
+                        parameters[variable.parameter_name] = typeList
+                          ? concatenateOrNot(val.value, parameters[variable.parameter_name])
+                          : val.value;
                         break;
                     }
                   };
-                  if (v.container_type === 'List') {
+                  if (variable.container_type === 'List') {
                     insertFinalValue(true);
                   } else {
                     insertFinalValue(false);
                   }
                 } else {
-                  parameters[v.parameter_name] = undefined;
+                  parameters[variable.parameter_name] = undefined;
                 }
               });
             }
@@ -335,7 +342,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
         <Button
           className='mcs-timelineButton_left'
           onClick={this.selectAndAddFeature(
-            this.addToNewGroup(this.saveGroup(formValues.include, 'include')),
+            this.addToNewGroup(this.saveGroups(formValues.include, 'include')),
           )}
         >
           {intl.formatMessage(messages.standardSegmentBuilderInclude)}
@@ -347,7 +354,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
             <Button
               className='mcs-timelineButton_right'
               onClick={this.selectAndAddFeature(
-                this.addToNewGroup(this.saveGroup(formValues.exclude, 'exclude')),
+                this.addToNewGroup(this.saveGroups(formValues.exclude, 'exclude')),
               )}
             >
               {intl.formatMessage(messages.standardSegmentBuilderExclude)}

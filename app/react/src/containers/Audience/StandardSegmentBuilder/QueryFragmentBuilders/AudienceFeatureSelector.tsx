@@ -38,10 +38,15 @@ interface MapStateToProps {
   formValues: StandardSegmentBuilderFormData;
 }
 
+export interface FinalValueResource {
+  value: string;
+  path: string[];
+}
+
 export interface AudienceFeatureSelection {
   [key: string]: {
     audienceFeature: AudienceFeatureResource;
-    finalValues: string[] | undefined;
+    finalValues: FinalValueResource[] | undefined;
   };
 }
 
@@ -119,7 +124,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
           this.setState({
             isLoading: false,
             currentAudienceFeatures: response.data.data.elements,
-            total: response.data.data.totalResults,
+            total: response.data.data.total_results,
           });
           if (
             response.data.infos.find(
@@ -255,25 +260,36 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     });
   };
 
-  onSelectFeature = (audienceFeature: AudienceFeatureResource, finalValue?: string) => () => {
+  onSelectFeature = (
+    audienceFeature: AudienceFeatureResource,
+    finalValue?: FinalValueResource,
+  ) => () => {
     const { audienceFeatureSelection } = this.state;
 
     const newAudienceFeatureSelection = audienceFeatureSelection;
     const featureId = audienceFeature.id;
     if (Object.keys(audienceFeatureSelection).includes(featureId)) {
-      const addOrDeleteValue = (val?: string) => {
+      const addOrDeleteValue = (val?: FinalValueResource) => {
         const values = audienceFeatureSelection[featureId].finalValues;
         if (!val) return undefined;
-        return values?.includes(val) ? values.filter(v => v !== finalValue) : values?.concat(val);
+        return values?.map(valueResource => valueResource.value).includes(val.value)
+          ? values.filter(v => v.value !== val.value)
+          : values?.concat(val);
       };
-      newAudienceFeatureSelection[featureId] = {
-        finalValues: !!audienceFeatureSelection[featureId].finalValues
-          ? addOrDeleteValue(finalValue)
-          : !!finalValue
-          ? [finalValue]
-          : undefined,
-        audienceFeature: audienceFeature,
-      };
+      if (!!finalValue) {
+        const newValues = addOrDeleteValue(finalValue);
+        if (newValues?.length === 0) delete newAudienceFeatureSelection[featureId];
+        else
+          newAudienceFeatureSelection[featureId] = {
+            finalValues: !!audienceFeatureSelection[featureId].finalValues
+              ? newValues
+              : [finalValue],
+            audienceFeature: audienceFeature,
+          };
+      } else {
+        if (!audienceFeatureSelection[featureId].finalValues)
+          delete audienceFeatureSelection[featureId];
+      }
     } else {
       newAudienceFeatureSelection[`${featureId}`] = {
         finalValues: finalValue ? [finalValue] : undefined,
@@ -348,7 +364,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
             variables.map(v => {
               const values = v.values || [];
               return values.map(value => {
-                return value;
+                return { value: value, path: v.path };
               });
             }),
           );
