@@ -70,7 +70,10 @@ export function isAudienceSegmentShape(
 }
 
 export function isUserQuerySegment(segment: AudienceSegmentShape): segment is UserQuerySegment {
-  return (segment as UserQuerySegment).query_id !== undefined;
+  return (
+    (segment as UserQuerySegment).query_id !== undefined &&
+    (segment as UserQuerySegment).query_id !== null
+  );
 }
 
 export function isUserListSegment(segment: AudienceSegmentShape): segment is UserListSegment {
