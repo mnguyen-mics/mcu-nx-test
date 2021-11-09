@@ -45,7 +45,7 @@ class OTQLResultRenderer extends React.Component<Props> {
     } else if (result && isCountResult(result.rows)) {
       const count = result.rows[0].count;
       content = (
-        <div className='text-center' style={{ fontSize: '5em' }}>
+        <div className='text-center mcs-OTQLResultRenderer_count_up' style={{ fontSize: '5em' }}>
           <CountUp start={0} end={count} separator=',' decimal='.' duration={0.5} />
         </div>
       );
