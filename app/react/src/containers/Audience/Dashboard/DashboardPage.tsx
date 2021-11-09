@@ -41,8 +41,8 @@ class DashboardPage extends React.Component<Props> {
     disableAllUserFilter?: boolean,
     defaultSegment?: LabeledValue,
     tabsClassname?: string,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ) => {
-    const { source } = this.props;
     const defaultContent = (
       <div>
         {dataFileDashboards &&
@@ -53,6 +53,7 @@ class DashboardPage extends React.Component<Props> {
               layout={d.components}
               title={d.name}
               datamartId={d.datamart_id}
+              source={source}
             />
           ))}
         {datamartAnalyticsConfig &&
@@ -110,6 +111,7 @@ class DashboardPage extends React.Component<Props> {
       disableAllUserFilter,
       defaultSegment,
       tabsClassname,
+      source,
     } = this.props;
 
     return (
@@ -122,6 +124,7 @@ class DashboardPage extends React.Component<Props> {
           disableAllUserFilter,
           defaultSegment,
           tabsClassname,
+          source,
         )}
       </div>
     );
