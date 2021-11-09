@@ -18,6 +18,9 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 import { TYPES } from '../../../../../constants/types';
 import { Link } from 'react-router-dom';
+import { FormInputProps } from '../../../../../components/Form/FormInput';
+import { DefaultSelect, FormSelectField, withValidators } from '../../../../../components/Form';
+import { ValidatorProps } from '../../../../../components/Form/withValidators';
 
 const VisitAnalyzerPluginContent = GenericPluginContent as React.ComponentClass<
   PluginContentOuterProps<VisitAnalyzer>
@@ -28,7 +31,9 @@ interface VisitAnalyzerRouteParam {
   visitAnalyzerId?: string;
 }
 
-type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> & InjectedIntlProps;
+type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> &
+  InjectedIntlProps &
+  ValidatorProps;
 
 class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
   @lazyInject(TYPES.IVisitAnalyzerService)
@@ -77,6 +82,7 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
   render() {
     const {
       intl: { formatMessage },
+      fieldValidators: { isRequired },
       match: {
         params: { visitAnalyzerId, organisationId },
       },
@@ -93,6 +99,41 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
         : formatMessage(messages.visitAnalyzerBreadcrumb),
     ];
 
+    const fieldPropsErrorStrategy: FormInputProps = {
+      formItemProps: {
+        label: formatMessage(messages.sectionGeneralErrorRecoveryStrategy),
+        required: true,
+      },
+      inputProps: {
+        placeholder: formatMessage(messages.sectionGeneralErrorRecoveryStrategy),
+      },
+      helpToolTipProps: {
+        title: formatMessage(messages.sectionGeneralErrorRecoveryStrategyHelper),
+      },
+    };
+
+    const errorOptions = [
+      { title: 'Store With Error Id', value: 'STORE_WITH_ERROR_ID' },
+      {
+        title: 'Store With Error Id And Skip Upcoming Analyzers',
+        value: 'STORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS',
+      },
+      { title: 'Drop', value: 'DROP' },
+    ];
+
+    const renderSpecificFields = (disabled: boolean, prefix: string) => {
+      return (
+        <FormSelectField
+          name='plugin.error_recovery_strategy'
+          component={DefaultSelect}
+          validate={[isRequired]}
+          options={errorOptions}
+          disabled={disabled}
+          {...fieldPropsErrorStrategy}
+        />
+      );
+    };
+
     return (
       <VisitAnalyzerPluginContent
         pluginType={'ACTIVITY_ANALYZER'}
@@ -104,9 +145,10 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}
+        renderSpecificFields={renderSpecificFields}
       />
     );
   }
 }
 
-export default compose(withRouter, injectIntl)(EditVisitAnalyzerPage);
+export default compose(withRouter, injectIntl, withValidators)(EditVisitAnalyzerPage);
