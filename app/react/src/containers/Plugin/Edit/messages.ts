@@ -25,10 +25,6 @@ export default defineMessages({
     id: 'plugin.edit.section.general.button.name',
     defaultMessage: 'Name',
   },
-  sectionGeneralErrorRecoveryStrategy: {
-    id: 'plugin.edit.section.general.button.error-recovery-strategy',
-    defaultMessage: 'Error Recovery Strategy',
-  },
   sectionGeneralPlaceholder: {
     id: 'plugin.edit.section.general.button.placeholder',
     defaultMessage: 'Name',
@@ -37,11 +33,6 @@ export default defineMessages({
     id: 'plugin.edit.section.general.button.helper',
     defaultMessage:
       'Select a name and make it memorable so you can find it back across different screens.',
-  },
-  sectionGeneralErrorRecoveryStrategyHelper: {
-    id: 'plugin.edit.section.general.button.error-recovery-strategy-helper',
-    defaultMessage:
-      'Store With Error Id: If the Visit Analyzer failed, the activity will be sent to the next Visit Analyzer without any modification of this one. Store With Error Id And Skip Upcoming Analyzers: If the Visit Analyzer failed, the activity will be saved without any modification of this one. Drop: If the Visit Analyzer failed, the activity won’t be saved.',
   },
   sectionPropertiesTitle: {
     id: 'plugin.edit.section.properties.title',

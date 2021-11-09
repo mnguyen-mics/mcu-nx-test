@@ -3,14 +3,7 @@ import { Form, reduxForm, InjectedFormProps, Field, GenericField, ConfigProps } 
 import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import {
-  FormTitle,
-  withValidators,
-  FieldCtor,
-  FormFieldWrapper,
-  DefaultSelectField,
-  DefaultSelect,
-} from '../../../components/Form';
+import { FormTitle, withValidators, FieldCtor, FormFieldWrapper } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
@@ -220,29 +213,6 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       },
     };
 
-    const fieldPropsErrorStrategy: FormInputProps = {
-      formItemProps: {
-        label: formatMessage(messages.sectionGeneralErrorRecoveryStrategy),
-        required: true,
-      },
-      inputProps: {
-        placeholder: formatMessage(messages.sectionGeneralErrorRecoveryStrategy),
-        disabled: disableFields,
-      },
-      helpToolTipProps: {
-        title: formatMessage(messages.sectionGeneralErrorRecoveryStrategyHelper),
-      },
-    };
-
-    const errorOptions = [
-      { title: 'Store With Error Id', value: 'STORE_WITH_ERROR_ID' },
-      {
-        title: 'Store With Error Id And Skip Upcoming Analyzers',
-        value: 'STORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS',
-      },
-      { title: 'Drop', value: 'DROP' },
-    ];
-
     return (
       <Layout>
         <Form
@@ -267,12 +237,6 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
                       component={FormInput}
                       validate={[isRequired]}
                       {...fieldProps}
-                    />
-                    <DefaultSelectField
-                      name='plugin.error_recovery_strategy'
-                      component={DefaultSelect}
-                      options={errorOptions}
-                      {...fieldPropsErrorStrategy}
                     />
                     {renderSpecificFields ? renderSpecificFields(disableFields, 'plugin') : null}
                     {showTechnicalName ? this.renderTechnicalName() : null}
