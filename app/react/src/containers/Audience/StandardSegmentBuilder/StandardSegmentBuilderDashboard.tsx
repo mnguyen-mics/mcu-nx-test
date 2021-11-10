@@ -2,7 +2,6 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from './constants';
 import { compose } from 'recompose';
-import { DataFileDashboardResource } from '../../../models/dashboards/dashboards';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IDashboardService } from '../../../services/DashboardServices';
@@ -10,13 +9,15 @@ import { IQueryService } from '../../../services/QueryService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { Loading, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import DashboardWrapper from '../Dashboard/DashboardWrapper';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import CardFlex from '../Dashboard/Components/CardFlex';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import TimelineSelector from '../AdvancedSegmentBuilder/TimelineSelector';
 import { formatMetric } from '../../../utils/MetricHelper';
 import { QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
+import DashboardPageWrapper from '../Dashboard/DashboardPageWrapper';
+import { DatamartUsersAnalyticsWrapperProps } from '../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 
 interface StandardSegmentBuilderDashboardProps {
   organisationId: string;
@@ -27,11 +28,13 @@ interface StandardSegmentBuilderDashboardProps {
   isQueryRunning: boolean;
 }
 
-type Props = InjectedIntlProps & InjectedNotificationProps & StandardSegmentBuilderDashboardProps;
+type Props = InjectedIntlProps &
+  InjectedNotificationProps &
+  StandardSegmentBuilderDashboardProps &
+  InjectedFeaturesProps;
 
 interface State {
-  isDashboardLoading: boolean;
-  dashboards: DataFileDashboardResource[];
+  datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
 }
 
 class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
@@ -44,40 +47,9 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      dashboards: [],
-      isDashboardLoading: true,
+      datamartAnalyticsDashboardConfig: [],
     };
   }
-  componentDidMount() {
-    const { organisationId, datamartId, standardSegmentBuilderId } = this.props;
-    this.loadData(organisationId, datamartId, standardSegmentBuilderId);
-  }
-
-  loadData = (
-    organisationId: string,
-    selectedDatamartId: string,
-    standardSegmentBuilderId: string,
-  ) => {
-    this.setState({ isDashboardLoading: true });
-    this._dashboardService
-      .getDataFileStandardSegmentBuilderDashboards(
-        organisationId,
-        selectedDatamartId,
-        standardSegmentBuilderId,
-        {},
-      )
-      .then(d => {
-        this.setState({ dashboards: d.status === 'ok' ? d.data : [] });
-      })
-      .catch(err => {
-        this.props.notifyError(err);
-      })
-      .finally(() => {
-        this.setState({
-          isDashboardLoading: false,
-        });
-      });
-  };
 
   render() {
     const {
@@ -87,8 +59,10 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
       queryDocument,
       datamartId,
       organisationId,
+      standardSegmentBuilderId,
     } = this.props;
-    const { isDashboardLoading, dashboards } = this.state;
+
+    const { datamartAnalyticsDashboardConfig } = this.state;
 
     const getTimelineSelectorOTQLQuery = (): Promise<string> => {
       const selectionQueryDocument = {
@@ -107,6 +81,23 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
       return this._queryService.translateQuery(datamartId, queryTranslationRequest).then(res => {
         return res.data.output_query_text;
       });
+    };
+
+    const fetchApiDashboards = () => {
+      return this._dashboardService.getDashboardsPageContents(
+        organisationId,
+        { archived: false },
+        'builders',
+        standardSegmentBuilderId,
+      );
+    };
+
+    const fetchDataFileDashboards = () => {
+      return this._dashboardService.getDataFileStandardSegmentBuilderDashboards(
+        organisationId,
+        datamartId,
+        standardSegmentBuilderId,
+      );
     };
 
     return (
@@ -129,18 +120,16 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
               '-'
             )}
           </CardFlex>
-          {isDashboardLoading || !queryDocument ? (
-            <Loading className='m-t-20' isFullScreen={true} />
-          ) : (
-            dashboards.map(d => (
-              <DashboardWrapper
-                key={d.id}
-                layout={d.components}
-                datamartId={d.datamart_id}
-                source={queryDocument}
-              />
-            ))
-          )}
+          <DashboardPageWrapper
+            className='mcs-dashboardPage_content'
+            datamartId={datamartId}
+            datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
+            source={queryDocument}
+            tabsClassname='m-t-30'
+            fetchApiDashboards={fetchApiDashboards}
+            fetchDataFileDashboards={fetchDataFileDashboards}
+            isFullScreenLoading={true}
+          />
           <div className='mcs-standardSegmentBuilder_timelineSelector'>
             <TimelineSelector
               stale={false}
@@ -158,5 +147,6 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
 
 export default compose<Props, StandardSegmentBuilderDashboardProps>(
   injectIntl,
+  injectFeatures,
   injectNotifications,
 )(StandardSegmentBuilderDashboard);

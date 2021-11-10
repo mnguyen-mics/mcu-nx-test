@@ -2,13 +2,24 @@ import { ChartConfig } from '@mediarithmics-private/advanced-components/lib/serv
 import { Layout } from 'react-grid-layout';
 import { OTQLResult, QueryPrecisionMode } from '../datamart/graphdb/OTQLResult';
 
-export interface DataFileDashboardResource {
-  id: string;
-  type: DashboardType;
-  datamart_id: string;
-  name: string;
-  components: ComponentLayout[];
-}
+export type DashoboardScope = 'home' | 'segments' | 'builders';
+export type DashboardType = 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER';
+export type ChartDatasetType = 'otql';
+export type DashboardContentChartType = 'PIE' | 'BARS' | 'RADAR' | 'METRIC';
+export type ComponentType =
+  | 'MAP_BAR_CHART'
+  | 'MAP_PIE_CHART'
+  | 'DATE_AGGREGATION_CHART'
+  | 'COUNT'
+  | 'PERCENTAGE'
+  | 'GAUGE_PIE_CHART'
+  | 'MAP_STACKED_BAR_CHART'
+  | 'WORLD_MAP_CHART'
+  | 'COUNT_BAR_CHART'
+  | 'COUNT_PIE_CHART'
+  | 'TOP_INFO_COMPONENT'
+  | 'MAP_RADAR_CHART'
+  | 'MAP_INDEX_CHART';
 
 export interface DashboardResource {
   id: string;
@@ -19,27 +30,6 @@ export interface DashboardResource {
   archived: boolean;
 }
 
-export interface DashboardContentSectionsContent {
-  title: string;
-  cards: DashboardContentCard[];
-}
-
-export interface DashboardContentResource {
-  data: DashboardContent;
-}
-
-export interface DashboardContent {
-  content: string;
-}
-
-export interface DashboardContentSections {
-  sections: DashboardContentSectionsContent[];
-}
-
-export interface DashboardPageContent {
-  title: string;
-  dashboardContent: DashboardContentSections;
-}
 export interface DashboardContentCard {
   x: number;
   y: number;
@@ -48,26 +38,36 @@ export interface DashboardContentCard {
   layout?: string;
   charts: ChartConfig[];
 }
+
+export interface DashboardContentSectionsContent {
+  title: string;
+  cards: DashboardContentCard[];
+}
+
+export interface DashboardContent {
+  content: string;
+}
+
+export interface DashboardContentResource {
+  data: DashboardContent;
+}
+
+export interface DashboardContentSections {
+  sections: DashboardContentSectionsContent[];
+}
+
+export interface DashboardPageContent {
+  title: string;
+  dashboardContent?: DashboardContentSections;
+}
+
 export interface DashboardContentDataset {
   type: ChartDatasetType;
   query_id: string;
 }
 
-export type ChartDatasetType = 'otql';
-
-export type DashboardContentChartType = 'PIE' | 'BARS' | 'RADAR' | 'METRIC';
-
-export type DashoboardScope = 'home' | 'segments' | 'builders';
-
 export interface DashboardsOptions {
   archived?: boolean;
-}
-
-export type DashboardType = 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER';
-
-export interface ComponentLayout {
-  layout: Layout;
-  component: Component;
 }
 
 export interface BaseComponent {
@@ -213,17 +213,15 @@ export type Component =
   | MapRadarChart
   | MapIndexChart;
 
-export type ComponentType =
-  | 'MAP_BAR_CHART'
-  | 'MAP_PIE_CHART'
-  | 'DATE_AGGREGATION_CHART'
-  | 'COUNT'
-  | 'PERCENTAGE'
-  | 'GAUGE_PIE_CHART'
-  | 'MAP_STACKED_BAR_CHART'
-  | 'WORLD_MAP_CHART'
-  | 'COUNT_BAR_CHART'
-  | 'COUNT_PIE_CHART'
-  | 'TOP_INFO_COMPONENT'
-  | 'MAP_RADAR_CHART'
-  | 'MAP_INDEX_CHART';
+export interface ComponentLayout {
+  layout: Layout;
+  component: Component;
+}
+
+export interface DataFileDashboardResource {
+  id: string;
+  type: DashboardType;
+  datamart_id: string;
+  name: string;
+  components: ComponentLayout[];
+}

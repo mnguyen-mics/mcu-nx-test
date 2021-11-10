@@ -14,6 +14,8 @@ import {
   DashboardsOptions,
   DashboardType,
   DataFileDashboardResource,
+  DashboardPageContent,
+  DashoboardScope,
 } from '../models/dashboards/dashboards';
 import { TYPES } from '../constants/types';
 import { IDataFileService } from './DataFileService';
@@ -45,6 +47,13 @@ export interface IDashboardService {
     dashboardId: string,
     organisationId: string,
   ) => Promise<DashboardContentResource>;
+
+  getDashboardsPageContents: (
+    organisationId: string,
+    options?: DashboardsOptions,
+    scope?: DashoboardScope,
+    filterScopedId?: string,
+  ) => Promise<DashboardPageContent[]>;
 
   getDataFileDashboards: (
     organisationId: string,
@@ -151,10 +160,73 @@ export class DashboardService implements IDashboardService {
     const params = {
       organisation_id: organisationId,
     };
-
     return ApiService.getRequest(endpoint, params).catch(err => {
       log.warn(`Cannot retrieve the dashboard ${dashboardId}`, err);
       throw err;
+    });
+  }
+
+  private isDashboardMatchScope(
+    dashboard: DashboardResource,
+    filterScope?: DashoboardScope,
+    filterScopedId?: string,
+  ): boolean {
+    const result = dashboard.scopes.some(
+      scope =>
+        !filterScope ||
+        (scope === filterScope && !filterScopedId) ||
+        (scope === filterScope &&
+          filterScope === 'segments' &&
+          (dashboard.segment_ids.length > 0
+            ? dashboard.segment_ids.some(id => id === filterScopedId)
+            : true)) ||
+        (scope === filterScope &&
+          filterScope === 'builders' &&
+          (dashboard.builder_ids.length > 0
+            ? dashboard.builder_ids.some(id => id === filterScopedId)
+            : true)),
+    );
+
+    return result;
+  }
+
+  getDashboardsPageContents(
+    organisationId: string,
+    options?: DashboardsOptions,
+    filterScope?: DashoboardScope,
+    filterScopedId?: string,
+  ): Promise<DashboardPageContent[]> {
+    return this.getDashboards(organisationId, options).then(res => {
+      const apiDashboards: DashboardResource[] = (res.data as DashboardResource[]).filter(
+        dashboard => this.isDashboardMatchScope(dashboard, filterScope, filterScopedId),
+      );
+      if (apiDashboards && apiDashboards.length === 0) return new Array() as DashboardPageContent[];
+      else {
+        const dashboardContentsPromises = apiDashboards.map(dashboard =>
+          this.getDashboardContent(dashboard.id, organisationId).catch(_ => undefined),
+        );
+
+        return Promise.all(dashboardContentsPromises).then(contents => {
+          const apiDashboardContents = contents
+            .map((content, i) => {
+              if (!!content) {
+                return {
+                  title: apiDashboards[i].title,
+                  dashboardContent: JSON.parse(content.data.content),
+                };
+              } else {
+                const undefinedContent: DashboardPageContent = {
+                  title: apiDashboards[i].title,
+                  dashboardContent: undefined,
+                };
+                return undefinedContent;
+              }
+            })
+            .filter(dashboard => !!dashboard) as DashboardPageContent[];
+
+          return apiDashboardContents;
+        });
+      }
     });
   }
 

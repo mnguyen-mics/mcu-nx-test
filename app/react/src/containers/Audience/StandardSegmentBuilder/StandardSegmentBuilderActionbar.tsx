@@ -6,10 +6,11 @@ import menuMessages from '../../Menu/messages';
 import { Button, Menu, Dropdown } from 'antd';
 import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, MentionTag } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderResource } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 
 interface StandardSegmentBuilderActionbarProps {
   save: (formData: NewUserQuerySimpleFormData) => void;
@@ -23,7 +24,8 @@ interface State {
 
 type Props = InjectedIntlProps &
   StandardSegmentBuilderActionbarProps &
-  RouteComponentProps<{ organisationId: string; segmentId: string }>;
+  RouteComponentProps<{ organisationId: string; segmentId: string }> &
+  InjectedFeaturesProps;
 
 class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -45,6 +47,22 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
     this.props.save(formData);
   };
 
+  renderNameWithTag(name: string) {
+    const { intl } = this.props;
+
+    return (
+      <div className='mcs-breadcrumb_div'>
+        {name}
+        <MentionTag
+          mention={'BETA'}
+          customContent={'dashboards-new-engine'}
+          tooltip={intl.formatMessage(messages.mentionTagTooltip)}
+          className='mcs-homePage_mentionTag'
+        />
+      </div>
+    );
+  }
+
   render() {
     const {
       intl,
@@ -52,6 +70,7 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
       match: {
         params: { organisationId, segmentId },
       },
+      hasFeature,
     } = this.props;
     const handleMenuClick = (e: any) => {
       if (e.key === 'USER_QUERY') {
@@ -75,9 +94,16 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
       intl.formatMessage(messages.title),
     ];
     if (standardSegmentBuilder) {
-      paths = paths.concat(standardSegmentBuilder.name);
+      if (hasFeature('dashboards-new-engine') && segmentId)
+        paths = paths.concat(this.renderNameWithTag(standardSegmentBuilder.name));
+      else paths = paths.concat(standardSegmentBuilder.name);
+
       if (!segmentId) {
-        paths = paths.concat(intl.formatMessage(messages.newAudienceSegment));
+        if (hasFeature('dashboards-new-engine'))
+          paths = paths.concat(
+            this.renderNameWithTag(intl.formatMessage(messages.newAudienceSegment)),
+          );
+        else paths = paths.concat(intl.formatMessage(messages.newAudienceSegment));
       }
     }
 
@@ -109,4 +135,5 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
 export default compose<Props, StandardSegmentBuilderActionbarProps>(
   injectIntl,
   withRouter,
+  injectFeatures,
 )(StandardSegmentBuilderActionbar);
