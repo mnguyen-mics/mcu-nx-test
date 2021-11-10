@@ -107,9 +107,6 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
       inputProps: {
         placeholder: formatMessage(messages.sectionGeneralErrorRecoveryStrategy),
       },
-      helpToolTipProps: {
-        title: formatMessage(messages.sectionGeneralErrorRecoveryStrategyHelper),
-      },
     };
 
     const errorOptions = [
