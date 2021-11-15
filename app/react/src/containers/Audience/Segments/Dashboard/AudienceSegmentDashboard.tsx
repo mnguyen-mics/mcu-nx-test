@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Card, McsTabs, ContentHeader } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  McsTabs,
+  ContentHeader,
+  Loading,
+} from '@mediarithmics-private/mcs-components-library';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { EditAudienceSegmentParam, isUserQuerySegment } from '../Edit/domain';
 import injectNotifications, {
@@ -39,7 +44,8 @@ import {
   averageSessionDurationConfig,
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { Alert } from 'antd';
-import DashboardPage from '../../Dashboard/DashboardPage';
+import DashboardPageWrapper from '../../Dashboard/DashboardPageWrapper';
+import { DataListResponse } from '../../../../services/ApiService';
 
 interface State {
   loading: boolean;
@@ -47,7 +53,7 @@ interface State {
     reports: AudienceReport;
     isLoading: boolean;
   };
-  charts: DataFileDashboardResource[];
+  charts?: DataFileDashboardResource[];
   datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
   apiDashboards: DashboardPageContent[];
 }
@@ -75,7 +81,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         isLoading: true,
         reports: [],
       },
-      charts: [],
       apiDashboards: [],
       datamartAnalyticsDashboardConfig: [],
     };
@@ -152,7 +157,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     datamarts: DatamartWithMetricResource[],
     segment?: AudienceSegmentShape,
   ) => {
-    const { hasFeature } = this.props;
     const nextFilters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     const metrics: string[] = ['user_points', 'user_point_additions', 'user_point_deletions'];
     let additionalMetrics;
@@ -165,40 +169,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         datamart && datamart.audience_segment_metrics
           ? datamart.audience_segment_metrics.map(el => el.technical_name)
           : undefined;
-    }
-    if (hasFeature('dashboards-new-engine') && datamarts && segment) {
-      this.setState({ apiDashboards: [] });
-      this._dashboardService.getDashboards(organisationId, { archived: false }).then(dashboards => {
-        if (dashboards.data.length > 0) {
-          const apiDashboards = dashboards.data;
-          const segmentApiDashboards = apiDashboards.filter(
-            dashboard =>
-              dashboard.scopes.some(scope => scope.toLocaleLowerCase() === 'segments') &&
-              (dashboard.segment_ids.length > 0
-                ? dashboard.segment_ids.some(id => id === segmentId)
-                : true),
-          );
-          const dashboardsContentsPromises = segmentApiDashboards.map(dashboard =>
-            this._dashboardService
-              .getDashboardContent(dashboard.id, organisationId)
-              .catch(err => undefined),
-          );
-          Promise.all(dashboardsContentsPromises).then(contents => {
-            const segmentDashboardContents = contents
-              .map((content, i) => {
-                if (!!content)
-                  return {
-                    title: segmentApiDashboards[i].title,
-                    dashboardContent: JSON.parse(content.data.content),
-                  };
-                return undefined;
-              })
-              .filter(dashboard => !!dashboard) as DashboardPageContent[];
-
-            this.setState({ apiDashboards: segmentDashboardContents });
-          });
-        }
-      });
     }
 
     this.fetchAudienceSegmentReport(
@@ -343,8 +313,19 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, segment, datamarts, hasFeature } = this.props;
-    const { charts, datamartAnalyticsDashboardConfig, apiDashboards } = this.state;
+    const {
+      match: {
+        params: { segmentId, organisationId },
+      },
+      intl,
+      segment,
+      datamarts,
+      hasFeature,
+    } = this.props;
+    const { charts, datamartAnalyticsDashboardConfig } = this.state;
+
+    if (!charts) return <Loading className='m-t-20' isFullScreen={true} />;
+
     const currentSegment = segment
       ? {
           key: segment.id.toString(),
@@ -354,6 +335,31 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       : undefined;
 
     const datamart = segment && datamarts.find(d => d.id === segment.datamart_id);
+
+    const fetchDataFileDashboards = () => {
+      return new Promise<DataListResponse<DataFileDashboardResource>>((resolve, _) => {
+        return resolve({
+          status: 'ok',
+          data: charts,
+          count: charts.length,
+        });
+      });
+    };
+
+    const fetchApiDashboards = () => {
+      return this._dashboardService.getDashboardsPageContents(
+        organisationId,
+        { archived: false },
+        'segments',
+        segmentId,
+      );
+    };
+
+    const fetchEmptyApiDashboards = () => {
+      return new Promise<DashboardPageContent[]>((resolve, _) => {
+        return [];
+      });
+    };
 
     const shouldDisplayAnalyticsFeature =
       charts.length === 0 &&
@@ -374,12 +380,13 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         )}
         {segment && <AudienceCounters datamarts={datamarts} segment={segment} />}
         {segment && (
-          <DashboardPage
-            apiDashboards={apiDashboards}
-            dataFileDashboards={charts}
+          <DashboardPageWrapper
+            fetchApiDashboards={fetchApiDashboards}
+            fetchDataFileDashboards={fetchDataFileDashboards}
             datamartId={segment?.datamart_id}
             source={segment}
             tabsClassname='m-t-30'
+            isFullScreenLoading={false}
           />
         )}
         {charts.length ? <ContentHeader size='medium' title='Technical Information' /> : null}
@@ -387,13 +394,15 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           <McsTabs items={this.buildItems()} />
         </Card>
         {shouldDisplayAnalyticsFeature && datamart && (
-          <DashboardPage
-            apiDashboards={apiDashboards}
+          <DashboardPageWrapper
+            fetchApiDashboards={fetchEmptyApiDashboards}
+            fetchDataFileDashboards={fetchDataFileDashboards}
             datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
             datamartId={datamart.id}
             disableAllUserFilter={true}
             defaultSegment={currentSegment}
             tabsClassname='m-t-30'
+            isFullScreenLoading={false}
           />
         )}
         <FeedCardList />
