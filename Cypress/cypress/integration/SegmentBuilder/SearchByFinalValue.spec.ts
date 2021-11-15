@@ -50,11 +50,14 @@ describe('This test should check that the search by final value feature is worki
     cy.get('.mcs-tabs_tab--segmentBuilder').click();
     cy.get('.mcs-standardSegmentBuilderTable_dropDownMenu')
       .should('be.visible')
-      .click()
-      .then(() => {
-        cy.get('.mcs-standardSegmentBuilderTable_dropDownMenu--delete').click();
-        cy.get('.mcs-standardSegmentBuilderDeletePopUp').should('be.visible');
-        cy.get('.mcs-standardSegmentBuilderDeletePopUp_delete_button').click();
+      .each(dropdownArrow => {
+        cy.wrap(dropdownArrow)
+          .click()
+          .then(() => {
+            cy.get('.mcs-standardSegmentBuilderTable_dropDownMenu--delete').click();
+            cy.get('.mcs-standardSegmentBuilderDeletePopUp').should('be.visible');
+            cy.get('.mcs-standardSegmentBuilderDeletePopUp_delete_button').click();
+          });
       });
   };
 
@@ -133,36 +136,36 @@ describe('This test should check that the search by final value feature is worki
       cy.get('.mcs-breadcrumb').should('be.visible');
 
       //Create audience feature 1
-      let audienceFeatureName = 'Get audience by emails';
-      let audienceFeatureDescription = 'Filter an audience with emails';
-      let objectTreeExpression = 'emails {email == $email}';
+      const audienceFeatureName1 = 'Get audience by emails';
+      const audienceFeatureDescription1 = 'Filter an audience with emails';
+      const objectTreeExpression1 = 'emails {email == $email}';
       createAudienceFeature(
         data.datamartName,
-        audienceFeatureName,
-        audienceFeatureDescription,
-        objectTreeExpression,
+        audienceFeatureName1,
+        audienceFeatureDescription1,
+        objectTreeExpression1,
       );
 
       //Create audience feature 2
-      audienceFeatureName = 'Get audience by page names';
-      audienceFeatureDescription = 'Filter an audience with page names';
-      objectTreeExpression = 'activity_events {page {page_name == $page_name} }';
+      const audienceFeatureName2 = 'Get audience by page names';
+      const audienceFeatureDescription2 = 'Filter an audience with page names';
+      const objectTreeExpression2 = 'activity_events {page {page_name == $page_name} }';
       createAudienceFeature(
         data.datamartName,
-        audienceFeatureName,
-        audienceFeatureDescription,
-        objectTreeExpression,
+        audienceFeatureName2,
+        audienceFeatureDescription2,
+        objectTreeExpression2,
       );
 
       //Create audience feature 3
-      audienceFeatureName = 'Get audience by countries';
-      audienceFeatureDescription = 'Filter an audience with countries';
-      objectTreeExpression = 'profiles {country == $country}';
+      const audienceFeatureName3 = 'Get audience by countries';
+      const audienceFeatureDescription3 = 'Filter an audience with countries';
+      const objectTreeExpression3 = 'profiles {country == $country}';
       createAudienceFeature(
         data.datamartName,
-        audienceFeatureName,
-        audienceFeatureDescription,
-        objectTreeExpression,
+        audienceFeatureName3,
+        audienceFeatureDescription3,
+        objectTreeExpression3,
       );
 
       cy.goToHome(data.organisationId);
@@ -195,36 +198,36 @@ describe('This test should check that the search by final value feature is worki
       cy.get('.mcs-breadcrumb').should('be.visible');
 
       //Create audience feature 1
-      let audienceFeatureName = 'Get audience by emails';
-      let audienceFeatureDescription = 'Filter an audience with emails';
-      let objectTreeExpression = 'emails {email == $email}';
+      const audienceFeatureName1 = 'Get audience by emails';
+      const audienceFeatureDescription1 = 'Filter an audience with emails';
+      const objectTreeExpression1 = 'emails {email == $email}';
       createAudienceFeature(
         data.datamartName,
-        audienceFeatureName,
-        audienceFeatureDescription,
-        objectTreeExpression,
+        audienceFeatureName1,
+        audienceFeatureDescription1,
+        objectTreeExpression1,
       );
 
       //Create audience feature 2
-      audienceFeatureName = 'Get audience by page names';
-      audienceFeatureDescription = 'Filter an audience with page names';
-      objectTreeExpression = 'activity_events {page {page_name == $page_name} }';
+      const audienceFeatureName2 = 'Get audience by page names';
+      const audienceFeatureDescription2 = 'Filter an audience with page names';
+      const objectTreeExpression2 = 'activity_events {page {page_name == $page_name} }';
       createAudienceFeature(
         data.datamartName,
-        audienceFeatureName,
-        audienceFeatureDescription,
-        objectTreeExpression,
+        audienceFeatureName2,
+        audienceFeatureDescription2,
+        objectTreeExpression2,
       );
 
       //Create audience feature 3
-      audienceFeatureName = 'Get audience by countries';
-      audienceFeatureDescription = 'Filter an audience with countries';
-      objectTreeExpression = 'profiles {country == $country}';
+      const audienceFeatureName3 = 'Get audience by countries';
+      const audienceFeatureDescription3 = 'Filter an audience with countries';
+      const objectTreeExpression3 = 'profiles {country == $country}';
       createAudienceFeature(
         data.datamartName,
-        audienceFeatureName,
-        audienceFeatureDescription,
-        objectTreeExpression,
+        audienceFeatureName3,
+        audienceFeatureDescription3,
+        objectTreeExpression3,
       );
 
       cy.goToHome(data.organisationId);
@@ -261,20 +264,38 @@ describe('This test should check that the search by final value feature is worki
         cy.contains('me@media').click();
       });
       cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
-      cy.get('.mcs-timeline_title').should('contain', 'People should match');
-      cy.get('.mcs-timeline')
-        .first()
+      cy.get('.mcs-timeline_title').should('have.length', 3);
+
+      cy.get('.mcs-timeline_title').eq(0).should('contain', 'People should match');
+      cy.get('.mcs-timeline_group')
+        .eq(0)
         .within(() => {
           cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
-            .eq(0)
+            .should('contain', 'Get audience by emails')
             .find('.mcs-standardSegmentBuilder_audienceFeatureInput')
             .should('contain', 'me@mediarithmics.com');
+        });
+      cy.get('.mcs-timeline_title')
+        .eq(1)
+        .should('contain', 'AND')
+        .and('contain', 'People should match');
+      cy.get('.mcs-timeline_group')
+        .eq(1)
+        .within(() => {
           cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
-            .eq(1)
+            .should('contain', 'Get audience by page names')
             .find('.mcs-standardSegmentBuilder_audienceFeatureInput')
             .should('contain', 'france-info is a radio that i have never listened to');
+        });
+      cy.get('.mcs-timeline_title')
+        .eq(2)
+        .should('contain', 'AND')
+        .and('contain', 'People should match');
+      cy.get('.mcs-timeline_group')
+        .eq(2)
+        .within(() => {
           cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
-            .eq(2)
+            .should('contain', 'Get audience by countries')
             .find('.mcs-standardSegmentBuilder_audienceFeatureInput')
             .should('contain', 'france');
         });
@@ -289,7 +310,7 @@ describe('This test should check that the search by final value feature is worki
           cy.contains('maDagascar').click();
         });
       cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
-      cy.get('.mcs-timeline_title').should('contain', 'Exclude people matching');
+      cy.get('.mcs-timeline_title').last().should('contain', 'Exclude people matching');
       cy.get('.mcs-timeline')
         .last()
         .within(() => {
@@ -297,6 +318,26 @@ describe('This test should check that the search by final value feature is worki
             .first()
             .find('.mcs-standardSegmentBuilder_audienceFeatureInput')
             .should('contain', 'maDagascar');
+        });
+      //Add one more exclusion
+      cy.get('.mcs-timeline_actionDot').last().click();
+      cy.get('.mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature').type(
+        'salut MarkyMarc{enter}',
+      );
+      cy.get('.mcs-standardSegmentBuilder_featureCard')
+        .first()
+        .within(() => {
+          cy.contains('salut MarkyMarc').click();
+        });
+      cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
+      cy.get('.mcs-timeline_title').last().should('contain', 'Exclude people matching');
+      cy.get('.mcs-timeline')
+        .last()
+        .within(() => {
+          cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
+            .last()
+            .find('.mcs-standardSegmentBuilder_audienceFeatureInput')
+            .should('contain', 'salut MarkyMarc');
         });
     });
   });
@@ -309,24 +350,24 @@ describe('This test should check that the search by final value feature is worki
       cy.get('.mcs-breadcrumb').should('be.visible');
 
       //Create audience features 1
-      let audienceFeatureName = 'Get audience by page names';
-      let audienceFeatureDescription = 'Filter an audience with page names';
-      let objectTreeExpression = 'activity_events {page {page_name in $page_name} }';
+      const audienceFeatureName1 = 'Get audience by page names';
+      const audienceFeatureDescription1 = 'Filter an audience with page names';
+      const objectTreeExpression1 = 'activity_events {page {page_name in $page_name} }';
       createAudienceFeature(
         data.datamartName,
-        audienceFeatureName,
-        audienceFeatureDescription,
-        objectTreeExpression,
+        audienceFeatureName1,
+        audienceFeatureDescription1,
+        objectTreeExpression1,
       );
       // Create audience feature 2
-      audienceFeatureName = 'Get audience by countries';
-      audienceFeatureDescription = 'Filter an audience with countries';
-      objectTreeExpression = 'profiles {country == $country}';
+      const audienceFeatureName2 = 'Get audience by countries';
+      const audienceFeatureDescription2 = 'Filter an audience with countries';
+      const objectTreeExpression2 = 'profiles {country == $country}';
       createAudienceFeature(
         data.datamartName,
-        audienceFeatureName,
-        audienceFeatureDescription,
-        objectTreeExpression,
+        audienceFeatureName2,
+        audienceFeatureDescription2,
+        objectTreeExpression2,
       );
       cy.goToHome(data.organisationId);
       cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
@@ -349,7 +390,7 @@ describe('This test should check that the search by final value feature is worki
           cy.contains('france-info is').click();
         });
       cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
-      cy.get('.mcs-timeline_title').first().should('contain', 'People should match');
+      cy.get('.mcs-timeline_group').first().should('contain', 'People should match');
       cy.get('.mcs-standardSegmentBuilder_audienceFeatureInput')
         .first()
         .should('contain', 'france')
@@ -382,13 +423,125 @@ describe('This test should check that the search by final value feature is worki
         .should('be.visible')
         .click();
       cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
-      cy.get('.mcs-timeline_title').last().should('contain', 'People should match');
+      cy.get('.mcs-timeline_title')
+        .last()
+        .should('contain', 'AND')
+        .and('contain', 'People should match');
       cy.get('.mcs-standardSegmentBuilder_audienceFeature')
         .last()
         .should('not.contain', 'Get audience countries')
         .and('contain', 'Get audience by page names')
         .find('.mcs-standardSegmentBuilder_audienceFeatureInput')
         .should('contain', 'Madona');
+    });
+  });
+  it('Should remove the tag after deselecting a final value or the audience feature name in the audience feature drawer', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      //Import CSV file
+      importCSVFinalValues(data.datamartId, data.accessToken, 'finalValues.csv');
+      const standardSegmentBuilderName = faker.random.words(2);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
+      cy.get('.mcs-breadcrumb').should('be.visible');
+
+      //Create audience feature
+      const audienceFeatureName = 'Get audience by page names';
+      const audienceFeatureDescription = 'Filter an audience with page names';
+      const objectTreeExpression = 'activity_events {page {page_name in $page_name} }';
+      createAudienceFeature(
+        data.datamartName,
+        audienceFeatureName,
+        audienceFeatureDescription,
+        objectTreeExpression,
+      );
+      cy.goToHome(data.organisationId);
+      cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+      cy.wait(3000);
+      cy.url().then(url => {
+        if (url.match(/.*segment-builder-selector$/g))
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').should('be.visible').click();
+      });
+      cy.get('.mcs-timelineButton_left').click();
+      cy.get('.mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature').type(
+        'Madona{enter}',
+      );
+      // Select the final value
+      cy.get('.mcs-standardSegmentBuilder_featureCard')
+        .first()
+        .within(() => {
+          cy.contains('Madona').click();
+        });
+      // The tag container should appear
+      cy.get('.mcs-standardSegmentBuilder_tagsContainer').should('be.visible');
+      //Deselect the final value
+      cy.get('.mcs-standardSegmentBuilder_featureCard')
+        .first()
+        .within(() => {
+          cy.contains('Madona').click();
+        });
+      // The tag container should disappear
+      cy.get('.mcs-standardSegmentBuilder_tagsContainer').should('not.be.visible');
+      // Select the audience feature
+      cy.get('.mcs-standardSegmentBuilder_featureCard')
+        .first()
+        .within(() => {
+          cy.contains(audienceFeatureName).click();
+        });
+      // The tag container should appear
+      cy.get('.mcs-standardSegmentBuilder_tagsContainer').should('be.visible');
+      //Deselect the audience feature
+      cy.get('.mcs-standardSegmentBuilder_featureCard')
+        .first()
+        .within(() => {
+          cy.contains(audienceFeatureName).click();
+        });
+      // The tag container should disappear
+      cy.get('.mcs-standardSegmentBuilder_tagsContainer').should('not.be.visible');
+      cy.get('.mcs-close').click();
+    });
+  });
+  it('Should have the more button appearing in an audience feature card when we have more than 5 final values for an audience feature', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      //Import CSV file
+      importCSVFinalValues(data.datamartId, data.accessToken, 'finalValues.csv');
+      const standardSegmentBuilderName = faker.random.words(2);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
+      cy.get('.mcs-breadcrumb').should('be.visible');
+
+      //Create audience feature
+      const audienceFeatureName = 'Get audience by page names';
+      const audienceFeatureDescription = 'Filter an audience with page names';
+      const objectTreeExpression = 'activity_events {page {page_name in $page_name} }';
+      createAudienceFeature(
+        data.datamartName,
+        audienceFeatureName,
+        audienceFeatureDescription,
+        objectTreeExpression,
+      );
+      cy.goToHome(data.organisationId);
+      cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+      cy.wait(3000);
+      cy.url().then(url => {
+        if (url.match(/.*segment-builder-selector$/g))
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').should('be.visible').click();
+      });
+      cy.get('.mcs-timelineButton_left').click();
+      cy.get('.mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature').type(
+        'fra{enter}',
+      );
+      cy.get('.mcs-standardSegmentBuilder_featureCardMore').click();
+      cy.get('.mcs-standardSegmentBuilder_finalValuesMenu').within(() => {
+        cy.get('.mcs-standardSegmentBuilder_featureCardFinalValue').first().click();
+        cy.get('.mcs-standardSegmentBuilder_featureCardFinalValue').last().click();
+      });
+      cy.get('.mcs-standardSegmentBuilder_tagsContainer').should('be.visible');
+      cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
+      cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
+        .should('contain', audienceFeatureName)
+        .find('.mcs-standardSegmentBuilder_audienceFeatureInput')
+        .should('contain', 'franchement ce test est beaucoup trop long')
+        .and('contain', 'franchise peut avoir deux définitions différentes selon le contexte');
     });
   });
 });
