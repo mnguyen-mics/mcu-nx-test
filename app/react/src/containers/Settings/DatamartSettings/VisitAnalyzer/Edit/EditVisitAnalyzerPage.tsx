@@ -123,6 +123,7 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
         <FormSelectField
           name='plugin.error_recovery_strategy'
           component={DefaultSelect}
+          selectProps={{ className: 'mcs-VisitAnalyzerPage_error_recovery_strategy' }}
           validate={[isRequired]}
           options={errorOptions}
           disabled={disabled}
