@@ -207,6 +207,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       inputProps: {
         placeholder: formatMessage(messages.sectionGeneralPlaceholder),
         disabled: disableFields,
+        className: 'mcs-PluginEditForm_name_field',
       },
       helpToolTipProps: {
         title: formatMessage(messages.sectionGeneralHelper),
