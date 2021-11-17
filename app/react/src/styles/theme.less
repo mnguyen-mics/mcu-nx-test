@@ -4,79 +4,39 @@
 // ------------------------------------------------
 // ------------------------------------------------
 
-// Prefix
-@ant-prefix: ant;
-
 // Color
 @primary-color: #003056;
 @info-color: #00a1df;
 @success-color: #00ab67;
+@warning-color: #fd7c12;
 @error-color: #fc3f48;
 @highlight-color: #862f2f;
-@warning-color: #fd7c12;
 @normal-color: #d9d9d9;
-@secondary-color: #373737;
-
-// Charts colors
-@chart-1: #00a1df;
-@chart-2: #fd7c12;
-@chart-3: #00ab67;
-@chart-4: #513fab;
-@chart-5: #eb5c5d;
-@chart-6: #003056;
-@chart-7: #d9d9d9;
 
 // Border color
 @border-color-base: #e0e1e1; // base border outline a component
 @border-color-split: #d3dbe1; // split border inside a component
-@border-width-base: 1px; // width of the border for a component
-@border-style-base: solid; // style of a components border
 
 // Layout
 @layout-body-background: #ffffff;
 @layout-header-background: #ffffff;
-@layout-content-background: #f1f1f1;
 @layout-header-height: 60px;
-@layout-header-padding: 0 50px;
-@layout-footer-padding: 24px 50px;
-@layout-sider-background: @layout-header-background;
-@layout-trigger-height: 48px;
-@layout-zero-trigger-width: 36px;
-@layout-zero-trigger-height: 42px;
 
 // Input
 // ---
 @input-height-base: 40px;
-@input-height-lg: 40px;
 @input-height-sm: 40px;
-
-// Buttons
-@btn-padding-base: 10px 15px;
 
 // Tooltip
 // ---
-//* Tooltip max width
-@tooltip-max-width: 250px;
-//** Tooltip text color
-@tooltip-color: #fff;
 //** Tooltip background color
 @tooltip-bg: #002c4f;
-//** Tooltip arrow width
-@tooltip-arrow-width: 5px;
-//** Tooltip distance with trigger
-@tooltip-distance: @tooltip-arrow-width - 1 + 4;
 //** Tooltip arrow color
 @tooltip-arrow-color: @tooltip-bg;
 
 // reset font-variant because default is tabular-nums
 // and our LLCircularWeb-Book doesn't look good with this variant
 @font-variant-base: normal;
-
-// ------------------------------------------------
-// ------------------------------------------------
-// -------------- Un touched variables ------------
-// ------------------------------------------------
-// ------------------------------------------------
 
 @primary-1: color(~`colorPalette('@{primary-color}', 1) `); // replace tint(@primary-color, 90%)
 @primary-2: color(~`colorPalette('@{primary-color}', 2) `); // replace tint(@primary-color, 80%)
@@ -92,56 +52,26 @@
 @font-family: LLCircularWeb-Book, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
   'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
   sans-serif;
-@font-family-medium: LLCircularWeb-Medium, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-  'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
-  sans-serif;
 @code-family: Consolas, Menlo, Courier, monospace;
 
 // ------ Base & Require ------
-@body-background: #fff;
-@component-background: #fff;
 
-@heading-color: fade(#000, 85%);
 @text-color: fade(#000, 65%);
 @text-color-secondary: fade(#000, 43%);
-@disabled-color: fade(#000, 25%);
-@heading-color-dark: fade(#fff, 97%);
 @text-color-dark: fade(#fff, 91%);
 @text-color-secondary-dark: fade(#fff, 67%);
-@disabled-color-dark: fade(#fff, 35%);
 @font-size-base: 12px;
 @font-size-lg: @font-size-base + 2px;
 @line-height-base: 1.5;
 @border-radius-base: 3px;
 @border-radius-sm: 2px;
 
-// ICONFONT
-@iconfont-css-prefix: anticon;
-@icon-url: 'https://at.alicdn.com/t/font_0qcp222wvwijm7vi';
-
 // LINK
 @link-color: @primary-color;
 @link-hover-color: @primary-5;
 @link-active-color: @primary-7;
-@link-hover-decoration: none;
-
-// Animation
-@ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
-@ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-@ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
-@ease-out-back: cubic-bezier(0.12, 0.4, 0.29, 1.46);
-@ease-in-back: cubic-bezier(0.71, -0.46, 0.88, 0.6);
-@ease-in-out-back: cubic-bezier(0.71, -0.46, 0.29, 1.46);
-@ease-out-circ: cubic-bezier(0.08, 0.82, 0.17, 1);
-@ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.34);
-@ease-in-out-circ: cubic-bezier(0.78, 0.14, 0.15, 0.86);
-@ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
-@ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
-@ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
 
 // Outline
-@outline-blur-size: 0;
-@outline-width: 2px;
 @outline-color: @primary-color;
 
 // Background color
@@ -161,23 +91,18 @@
 @btn-border-radius-base: @border-radius-base;
 @btn-border-radius-sm: @border-radius-base;
 
-@btn-primary-color: #fff;
 @btn-primary-bg: @primary-color;
 
 @btn-default-color: @text-color;
 @btn-default-bg: #fff;
 @btn-default-border: @border-color-base;
 
-@btn-danger-color: #fff;
 @btn-danger-bg: @red-6;
 
-@btn-disable-color: @disabled-color;
 @btn-disable-bg: @background-color-base;
 @btn-disable-border: @border-color-base;
 
 @btn-font-size-lg: @font-size-lg;
-@btn-padding-lg: 4px 15px 5px 15px;
-@btn-padding-sm: 1px 7px;
 
 @btn-circle-size: 28px;
 @btn-circle-size-lg: 32px;
@@ -186,9 +111,6 @@
 @btn-group-border: @primary-7;
 
 // Media queries breakpoints
-// Extra small screen / phone
-@screen-xs: 480px;
-@screen-xs-min: @screen-xs;
 
 // Small screen / tablet
 @screen-sm: 768px;
@@ -212,32 +134,13 @@
 @screen-md-max: (@screen-lg-min - 1);
 @screen-lg-max: (@screen-xl-min - 1);
 
-// Grid system
-@grid-columns: 24;
-@grid-gutter-width: 0;
-
 // z-index list
-@zindex-affix: 10;
-@zindex-back-top: 10;
-@zindex-modal-mask: 1000;
-@zindex-modal: 1000;
-@zindex-notification: 1010;
-@zindex-message: 1010;
-@zindex-popover: 1030;
-@zindex-picker: 1050;
-@zindex-dropdown: 1050;
 @zindex-tooltip: 1060;
-
-// Animation
-@animation-duration-slow: 0.3s; // Modal
-@animation-duration-base: 0.2s;
-@animation-duration-fast: 0.1s; // Tooltip
 
 // Form
 // ---
 @label-required-color: @highlight-color;
 @label-color: @text-color;
-@form-item-margin-bottom: 24px;
 
 // Input
 // ---
@@ -258,46 +161,19 @@
 // ---
 //** Popover body background color
 @popover-bg: #fff;
-//** Popover maximum width
-@popover-min-width: 177px;
 //** Popover arrow width
 @popover-arrow-width: 4px;
 //** Popover arrow color
 @popover-arrow-color: @popover-bg;
-//** Popover outer arrow width
-@popover-arrow-outer-width: (@popover-arrow-width + 1);
 //** Popover outer arrow color
 @popover-arrow-outer-color: fadeout(@border-color-base, 30%);
-
-// Progress
-// --
-@process-default-color: @primary-color;
 
 // Menu
 // ---
 @menu-dark-bg: @layout-header-background;
-@menu-dark-submenu-bg: #ffffff;
-
-// Spin
-// ---
-@spin-dot-size-sm: 14px;
-@spin-dot-size: 20px;
-@spin-dot-size-lg: 32px;
-
-// TimePicker
-// ---
-@time-picker-panel-column-width: 56px;
-@time-picker-panel-width: @time-picker-panel-column-width * 3;
-
-// Carousel
-// ---
-@carousel-dot-width: 16px;
-@carousel-dot-height: 3px;
-@carousel-dot-active-width: 24px;
 
 // Badge
 // ---
-@badge-height: 20px;
 @badge-dot-size: 8px;
 
 // Rate
@@ -309,3 +185,20 @@
 @item-active-bg: @hover-color;
 @item-hover-bg: @hover-color;
 @table-row-hover-bg: @hover-color;
+
+// MICS theme (not antd)
+
+// Charts colors
+@chart-1: #00a1df;
+@chart-2: #fd7c12;
+@chart-3: #00ab67;
+@chart-4: #513fab;
+@chart-5: #eb5c5d;
+@chart-6: #003056;
+@chart-7: #d9d9d9;
+
+@font-family-medium: LLCircularWeb-Medium, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+  sans-serif;
+
+@secondary-color: #373737;
