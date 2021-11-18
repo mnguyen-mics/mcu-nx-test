@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 import { OTQLResult, QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
@@ -19,6 +19,13 @@ import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import OTQLRequest from './OTQLRequest';
+
+const messages = defineMessages({
+  queryToSave: {
+    id: 'queryTool.OtqlConsole.tab.queryToSave',
+    defaultMessage: 'Query to save',
+  },
+});
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -42,6 +49,7 @@ export interface OTQLConsoleContainerProps {
   renderActionBar: (query: string, datamartId: string) => React.ReactNode;
   query?: string;
   queryEditorClassName?: string;
+  editionMode?: boolean;
 }
 
 interface State {
@@ -99,7 +107,6 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   getCurrentTabQuery = (tabIndex: string, query: string) => {
     const { tabQueries } = this.state;
-
     const existingQuery = tabQueries.find((tabQ: TabQuery) => tabQ.id === tabIndex);
     if (existingQuery) {
       tabQueries.forEach((tabQ: TabQuery, i: number) => {
@@ -213,6 +220,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   add = () => {
     const { panes } = this.state;
+    const { query, editionMode } = this.props;
 
     if (panes.length === 1) {
       panes[0].closable = true;
@@ -227,6 +235,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         <OTQLRequest
           datamartId={this.props.datamartId}
           setQuery={this.getCurrentTabQuery.bind(this, activeKey)}
+          query={editionMode && query?.includes('where') ? query : undefined}
         />
       ),
       key: activeKey,
@@ -273,7 +282,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { datamartId } = this.props;
+    const { datamartId, intl, editionMode } = this.props;
     const { schemaLoading, rawSchema, activeKey, panes, tabQueries } = this.state;
 
     if (schemaLoading) {
@@ -309,10 +318,12 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
               activeKey={activeKey}
               onEdit={this.onEdit}
             >
-              {panes.map(pane => (
+              {panes.map((pane, i) => (
                 <TabPane
                   className={'mcs-OTQLConsoleContainer_tabs_tab'}
-                  tab={pane.title}
+                  tab={
+                    i === 0 && editionMode ? intl.formatMessage(messages.queryToSave) : pane.title
+                  }
                   key={pane.key}
                   closable={pane.closable}
                 >
