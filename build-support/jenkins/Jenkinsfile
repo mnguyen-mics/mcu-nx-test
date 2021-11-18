@@ -1,3 +1,16 @@
+def branch = env.BRANCH_NAME
+
+def checkoutCommit(commit) {
+    checkout([
+            $class           : 'GitSCM',
+            branches         : [[name: commit]],
+            userRemoteConfigs: [[
+                                        credentialsId: '6fdbf0f9-8646-414e-8079-d03d2fcdff1a',
+                                        url          : 'git@github.com:MEDIARITHMICS/mediarithmics-platform.git'
+                                ]]
+    ])
+}
+
 pipeline {
     agent any
     triggers { cron('H 23 * * 6-7') }
@@ -19,7 +32,10 @@ pipeline {
                 label "master"
             }
             steps {
-                checkout scm
+                script {
+                    checkoutCommit(branch)
+                    GIT_COMMIT_REV = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%H'").trim()
+                }
             }
         }
         stage('Building and Publishing Navigator Staging Artifacts'){
@@ -59,7 +75,7 @@ pipeline {
             when {
                 expression { params.GIVEN_VIRTUAL_PLATFORM_NAME != '' }
             }
-            steps{
+            steps {
                 echo 'Running Cypress end-to-end front-end scenarios'
                 build job: 'cypress-navigator-pipeline-tests/cypress tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${params.GIVEN_VIRTUAL_PLATFORM_NAME}"]]
             }
@@ -69,9 +85,9 @@ pipeline {
                 // Only run end to end scenarios is END_TO_END_CHECK == true
                 expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
             }
-            steps{
-            echo 'Running Cypress end-to-end front-end scenarios'
-            build job: 'cypress-navigator-pipeline-tests/cypress tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${VIRTUAL_PLATFORM_NAME}"]]
+            steps {
+                echo 'Running Cypress end-to-end front-end scenarios'
+                build job: 'cypress-navigator-pipeline-tests/cypress tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${VIRTUAL_PLATFORM_NAME}"]]
             }
         }
         stage('Push to master') {
@@ -79,8 +95,9 @@ pipeline {
                 label "master"
             }
             steps {
+                checkoutCommit(GIT_COMMIT_REV)
                 echo 'Pushing to master'
-                build job: 'mediarithmics-navigator-push-to-master'
+                build job: 'mediarithmics-navigator-push-to-master', parameters: [[$class: 'StringParameterValue', name: 'revision', value: "${GIT_COMMIT_REV}"]]
             }
         }
         stage('Kill Given Virtual Platform') {
