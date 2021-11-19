@@ -107,6 +107,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
         renderActionBar: actionbar,
         query: 'SELECT @count{} FROM UserPoint where ' + associatedQuery,
         queryEditorClassName: 'mcs-audienceFeature_edit_form_query_builder',
+        editionMode: true,
       },
     });
   };
