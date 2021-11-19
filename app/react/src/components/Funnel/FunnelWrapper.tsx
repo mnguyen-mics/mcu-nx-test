@@ -6,7 +6,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
 import { FunnelFilter, GroupedByFunnel, Steps } from '../../models/datamart/UserActivitiesFunnel';
-import { getDefaultStep } from './Utils';
+import { extractFilters, getDefaultStep } from './Utils';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import FunnelDataFetcher from './FunnelDataFetcher';
 
@@ -153,6 +153,20 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
     } else return b;
   }
 
+  extractStepsFromFilters(funnelFilters: FunnelFilter[]) {
+    const filters: FunnelFilter[] = deepCopy(funnelFilters);
+    return filters.map(funnelFilter => {
+      return {
+        id: funnelFilter.id,
+        name: funnelFilter.name,
+        properties: {
+          filter_clause: funnelFilter.filter_clause,
+          max_days_after_previous_step: funnelFilter.max_days_after_previous_step
+        }
+      }
+    })
+  }
+
   render() {
     const { datamartId, dateRange, intl } = this.props;
     const {
@@ -162,13 +176,14 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const funnelFilter: FunnelFilter[] =
-      routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [getDefaultStep()];
+      routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : extractFilters([getDefaultStep()]);
     const filterWithoutGroupBy: FunnelFilter[] = deepCopy(funnelFilter);
     filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
 
     // Make copies for display in Funnel
     const funnelFilterCopy = deepCopy(funnelFilter);
     const filterWithoutGroupByCopy = deepCopy(filterWithoutGroupBy);
+    const steps = this.extractStepsFromFilters(filterWithoutGroupBy);
 
     const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state;
 
@@ -194,7 +209,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
       <div>
         <FunnelQueryBuilder
           datamartId={datamartId}
-          filter={filterWithoutGroupBy}
+          steps={steps}
           liftFunctionsCallback={this.storeAndLiftFunctions}
           dateRange={dateRange}
         />

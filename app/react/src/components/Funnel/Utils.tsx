@@ -4,8 +4,9 @@ import { FunnelDateRange, FunnelFilter } from '../../models/datamart/UserActivit
 import lodash from 'lodash';
 import { BooleanOperator, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import cuid from 'cuid';
-import { Step } from './FunnelQueryBuilder';
 import { ThemeColorsShape } from '../../containers/Helpers/injectThemeColors';
+import { Step } from './TimelineStepBuilder';
+import { StepProperties } from './FunnelQueryBuilder';
 
 interface FormattedDates {
   from: string;
@@ -71,19 +72,21 @@ export const getDefaultStep = () => {
   return {
     id: cuid(),
     name: 'Step 1',
-    max_days_after_previous_step: 0,
-    filter_clause: {
-      operator: 'AND' as BooleanOperator,
-      filters: [
-        {
-          dimension_name: 'TYPE',
-          not: false,
-          operator: 'EXACT' as DimensionFilterOperator,
-          expressions: [],
-          case_sensitive: false,
-        },
-      ],
-    },
+    properties: {
+      max_days_after_previous_step: 0,
+      filter_clause: {
+        operator: 'AND' as BooleanOperator,
+        filters: [
+          {
+            dimension_name: 'TYPE',
+            not: false,
+            operator: 'EXACT' as DimensionFilterOperator,
+            expressions: [],
+            case_sensitive: false,
+          },
+        ],
+      },
+    }
   };
 };
 
@@ -97,10 +100,10 @@ export const chartColors: Array<keyof ThemeColorsShape> = [
   'mcs-chart-7',
 ];
 
-export const checkExpressionsNotEmpty = (steps: Step[]) => {
+export const checkExpressionsNotEmpty = (funnelFilters: FunnelFilter[]) => {
   let result = true;
-  steps.forEach(step => {
-    step.filter_clause.filters.forEach(filter => {
+  funnelFilters.forEach(funelFilter => {
+    funelFilter.filter_clause.filters.forEach(filter => {
       if (filter.expressions.length === 0) result = false;
       else
         filter.expressions.forEach(exp => {
@@ -111,3 +114,14 @@ export const checkExpressionsNotEmpty = (steps: Step[]) => {
 
   return result;
 };
+
+export const extractFilters = (steps: Array<Step<StepProperties>>) => {
+  return steps.map(step => {
+    return {
+      id: step.id,
+      name: step.name,
+      filter_clause: step.properties.filter_clause,
+      max_days_after_previous_step: step.properties.max_days_after_previous_step,
+
+    }})
+}

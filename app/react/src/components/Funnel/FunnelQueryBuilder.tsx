@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Card, Select, Button, Switch, Input } from 'antd';
+import { Select, Button, Switch, Input } from 'antd';
 import messages from '../../containers/Campaigns/Display/Edit/messages';
 import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-  CloseOutlined,
   CalendarOutlined,
-  FlagOutlined,
+  CloseOutlined,
+  FlagOutlined
 } from '@ant-design/icons';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
@@ -32,21 +30,20 @@ import FunnelExpressionInput from './FunnelExpressionInput';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { IDatamartUsersAnalyticsService } from '../../services/DatamartUsersAnalyticsService';
 import { ReportViewResponse } from '../../services/ReportService';
-import { shouldUpdateFunnelQueryBuilder, getDefaultStep, checkExpressionsNotEmpty } from './Utils';
+import { shouldUpdateFunnelQueryBuilder, getDefaultStep, checkExpressionsNotEmpty, extractFilters } from './Utils';
 import _ from 'lodash';
+import TimelineStepBuilder, { Step } from './TimelineStepBuilder';
 
 const Option = Select.Option;
 
-export interface Step {
-  id?: string;
-  name: string;
+export interface StepProperties {
   filter_clause: DimensionFilterClause;
   max_days_after_previous_step?: number;
   displayEventTypeWarning?: boolean;
 }
 
 interface State {
-  steps: Step[];
+  steps: Array<Step<StepProperties>>;
   isLoading: boolean;
   dimensionsList: DimensionsList;
   lastFilter?: string;
@@ -54,7 +51,7 @@ interface State {
 
 interface FunnelQueryBuilderProps {
   datamartId: string;
-  filter: FunnelFilter[];
+  steps: Array<Step<StepProperties>>;
   liftFunctionsCallback: (executeQueryFunction: () => void) => void;
   dateRange: McsDateRangeValue;
 }
@@ -93,7 +90,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const {
       location: { search },
-      filter,
+      steps,
     } = this.props;
 
     const { lastFilter } = this.state;
@@ -102,7 +99,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
     const isSearchChanged = prevProps.location.search !== search;
 
-    const filterCopy = JSON.parse(JSON.stringify(filter));
+    const filterCopy = JSON.parse(JSON.stringify(extractFilters(steps)));
     const filterWithoutId = filterCopy.map((f: FunnelFilter) => {
       f.id = undefined;
       return f;
@@ -111,21 +108,22 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const actualFilter = JSON.stringify(filterWithoutId);
 
     const isUrlFilterChanged = lastFilter !== actualFilter;
-    const isFilterNotZero = filter.length > 0;
+
+    const isFilterNotZero = steps.length > 0;
 
     const isFilterFirstStepEqualToDefaultFirstStep = _.isEqual(
-      filter[0].filter_clause,
-      getDefaultStep().filter_clause,
+      steps[0].properties.filter_clause,
+      getDefaultStep().properties.filter_clause,
     );
-    const isStepsNotEqualToFilter = !_.isEqual(this.state.steps, filter);
+    const isStepsNotEqualToFilter = !_.isEqual(this.state.steps, steps);
 
     /**
      * These next conditions prevent the funnel query builder from updating if the steps change
      * but the query isn't executed yet
      */
     const isQueryExecuted = !(
-      (filter.length === DEFAULT_FILTER_LENGTH &&
-        filter[0].filter_clause &&
+      (steps.length === DEFAULT_FILTER_LENGTH &&
+        steps[0].properties.filter_clause &&
         isFilterFirstStepEqualToDefaultFirstStep) ||
       isStepsNotEqualToFilter
     );
@@ -145,11 +143,13 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
    * This component should not update if the queries are only different in group_by_dimension
    */
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { steps: prevFilter, dimensionsList: previousDimensionsList } = this.state;
+    const { dimensionsList: previousDimensionsList } = this.state;
+    const { dimensionsList: nextDimensionsList } = nextState;
+    const prevFilter = extractFilters(this.state.steps)
+    const nextFilter = extractFilters(nextState.steps)
 
-    const { steps: nextFilter, dimensionsList: nextDimensionsList } = nextState;
-
-    const { filter: nextPropsFilter, dateRange } = this.props;
+    const {  dateRange } = this.props;
+    const nextPropsFilter = extractFilters(this.props.steps)
 
     const shouldUpdate =
       shouldUpdateFunnelQueryBuilder(prevFilter, nextFilter) ||
@@ -164,45 +164,33 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const {
       location: { search, pathname },
       history,
-      filter,
+      steps,
       dateRange,
     } = this.props;
 
     try {
-      const identifiedSteps = filter.map((step: Step) => {
-        step.filter_clause.filters.forEach(f => {
+      const identifiedSteps = extractFilters(steps).map((filter: FunnelFilter) => {
+        filter.filter_clause.filters.forEach(f => {
           const newFilterId = f.id ? f.id : this._cuid();
           f.id = newFilterId;
         });
-        const newId = step.id ? step.id : this._cuid();
+        const newId = filter.id ? filter.id : this._cuid();
         return {
-          ...step,
           id: newId,
+          name: filter.name,
+          properties: {
+            filter_clause: filter.filter_clause,
+            max_days_after_previous_step: filter.max_days_after_previous_step,
+          }
         };
       });
+
       this.setState({
         steps: identifiedSteps,
       });
     } catch (error) {
       this.setState({
-        steps: [
-          {
-            id: this._cuid(),
-            name: 'Step 1',
-            filter_clause: {
-              operator: 'AND',
-              filters: [
-                {
-                  dimension_name: 'TYPE',
-                  not: false,
-                  operator: 'EXACT' as DimensionFilterOperator,
-                  expressions: [],
-                  case_sensitive: false,
-                },
-              ],
-            },
-          },
-        ],
+        steps: [getDefaultStep()],
       });
     }
 
@@ -243,26 +231,17 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       });
   };
 
-  addStep = () => {
+  private cloneSteps() {
     const { steps } = this.state;
-    const newSteps = steps.slice();
-
-    newSteps.push(getDefaultStep());
-
-    newSteps.forEach((step, index) => {
-      step.name = `Step ${index + 1}`;
-    });
-
-    this.setState({ steps: newSteps });
-  };
+    return JSON.parse(JSON.stringify(steps));
+  }
 
   addDimensionToStep = (stepId: string) => {
-    const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
+    const newSteps: Array<Step<StepProperties>> = this.cloneSteps();
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        step.filter_clause.operator = 'AND';
-        step.filter_clause.filters.push({
+        step.properties.filter_clause.operator = 'AND';
+        step.properties.filter_clause.filters.push({
           id: this._cuid(),
           dimension_name: 'TYPE',
           not: false,
@@ -276,11 +255,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   };
 
   handleNotSwitcherChange(dimensionIndex: number, stepId: string, value: boolean) {
-    const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
+    const newSteps: Array<Step<StepProperties>> = this.cloneSteps();
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        step.filter_clause.filters.forEach((filter, index) => {
+        step.properties.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
             filter.not = !value;
           }
@@ -316,13 +294,11 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     value: string,
     displayEventTypeWarning?: boolean,
   ) {
-    const { steps } = this.state;
-    // make deep copy of data for comparison in shouldComponentUpdate
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
+    const newSteps: Array<Step<StepProperties>> = this.cloneSteps();
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        step.displayEventTypeWarning = displayEventTypeWarning;
-        step.filter_clause.filters.forEach((filter, index) => {
+        step.properties.displayEventTypeWarning = displayEventTypeWarning;
+        step.properties.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
             filter.dimension_name = value;
             filter.expressions = [];
@@ -336,10 +312,9 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   handleFilterOperatorChange(stepId: string, value: BooleanOperator) {
-    const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
+    const newSteps: Array<Step<StepProperties>> = this.cloneSteps();
     newSteps.forEach(step => {
-      if (step.id === stepId) step.filter_clause.operator = value;
+      if (step.id === stepId) step.properties.filter_clause.operator = value;
     });
     this.setState({
       steps: newSteps,
@@ -351,11 +326,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     stepId: string,
     value: string[],
   ) {
-    const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
+    const newSteps: Array<Step<StepProperties>> = this.cloneSteps();
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        step.filter_clause.filters.forEach((filter, index) => {
+        step.properties.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
             filter.expressions = value.map(v => v.trim());
             if (filter.expressions.length > 1)
@@ -369,11 +343,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   handleMaximumDaysAfterStepChange(stepId: string, value: any) {
-    const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
+    const newSteps: Array<Step<StepProperties>> = this.cloneSteps();
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        step.max_days_after_previous_step = parseInt(value.target.value, 10);
+        step.properties.max_days_after_previous_step = parseInt(value.target.value, 10);
       }
     });
 
@@ -384,7 +357,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     let result = true;
     const { steps } = this.state;
     steps.forEach(step => {
-      step.filter_clause.filters.forEach(filter => {
+      step.properties.filter_clause.filters.forEach(filter => {
         if (!filter.dimension_name || filter.dimension_name.length === 0) result = false;
       });
     });
@@ -393,8 +366,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   };
 
   handleExecuteQueryButtonClick = () => {
-    const { steps } = this.state;
-    if (checkExpressionsNotEmpty(steps) && this.checkDimensionsNotEmpty()) {
+    const filters = extractFilters(this.state.steps);
+    if (checkExpressionsNotEmpty(filters) && this.checkDimensionsNotEmpty()) {
       this.updateFilterQueryStringParams();
     } else {
       this.props.notifyWarning({
@@ -409,7 +382,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     let result = 'equals' as FilterOperatorLabel;
     steps.forEach(step => {
       if (step.id === stepId) {
-        step.filter_clause.filters.forEach((filter, index) => {
+        step.properties.filter_clause.filters.forEach((filter, index) => {
           if (filterIndex === index) {
             if (filter.operator === 'EXACT') result = 'equals' as FilterOperatorLabel;
             else if (filter.operator === 'IN_LIST') result = 'in' as FilterOperatorLabel;
@@ -430,18 +403,18 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
     // deep copy
     const stepsCopy = JSON.parse(JSON.stringify(steps));
-    stepsCopy.forEach((step: Step) => {
+    stepsCopy.forEach((step: Step<StepProperties>) => {
       // step.id = undefined;
 
-      if (step.max_days_after_previous_step === 0) {
-        step.max_days_after_previous_step = undefined;
+      if (step.properties.max_days_after_previous_step === 0) {
+        step.properties.max_days_after_previous_step = undefined;
       }
       // step.filter_clause.filters.forEach(filter => {
       //   filter.id = undefined
       // });
     });
 
-    const stepsFormated = stepsCopy.filter((s: Step) => s.filter_clause.filters.length > 0);
+    const stepsFormated = stepsCopy.filter((s: Step<StepProperties>) => s.properties.filter_clause.filters.length > 0);
     const queryParams = {
       filter: [JSON.stringify(stepsFormated)],
       template: undefined,
@@ -456,29 +429,22 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   removeDimensionFromStep = (stepId: string, filterId: string) => {
-    const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
+    const newSteps: Array<Step<StepProperties>> = this.cloneSteps();
 
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        const filterStepDimensions = step.filter_clause.filters.filter(
+        const filterStepDimensions = step.properties.filter_clause.filters.filter(
           filter => filter.id !== filterId,
         );
-        step.filter_clause.filters = filterStepDimensions;
+        step.properties.filter_clause.filters = filterStepDimensions;
       }
     });
 
     this.setState({ steps: newSteps });
   };
 
-  removeStep = (stepId: string) => {
-    const { steps } = this.state;
-    const newSteps = steps.filter(step => step.id !== stepId);
-    newSteps.forEach((step, index) => {
-      step.name = `Step ${index + 1}`;
-    });
-
-    this.setState({ steps: newSteps });
+  onStepChange = (steps: Array<Step<StepProperties>>) => {
+    this.setState({ steps });
   };
 
   getDimensionNameSelect = () => {
@@ -494,244 +460,203 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     ));
   };
 
-  sortStep = (index: number, direction: 'up' | 'down') => {
-    const { steps } = this.state;
-
-    const temp = steps[index];
-
-    if (direction === 'up' && index > 0) {
-      steps[index] = steps[index - 1];
-      steps[index].name = `Step ${index + 1}`;
-      steps[index - 1] = temp;
-      steps[index - 1].name = `Step ${index}`;
-      this.setState({ steps });
-    }
-
-    if (direction === 'down' && index + 1 < steps.length) {
-      steps[index] = steps[index + 1];
-      steps[index].name = `Step ${index + 1}`;
-      steps[index + 1] = temp;
-      steps[index + 1].name = `Step ${index + 2}`;
-      this.setState({ steps });
-    }
-  };
-
   popupContainer() {
     return document.getElementById('mcs-funnelQueryBuilder_step_dimensions') as HTMLElement;
   }
 
-  computeTimelineEndClassName(stepsNumber: number) {
-    if (stepsNumber < 4) return 'mcs-funnelQueryBuilder_step_timelineEnd';
-    else return 'mcs-funnelQueryBuilder_step_timelineEndWithoutButton';
-  }
+  renderHeaderTimeline = () => {
+    const from = this.props.dateRange.from
+    return (
+      <span>
+        <CalendarOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
+        {from && (
+          <p className={'mcs-funnelQueryBuilder_timeline_date'}>
+            {from.toMoment().format('DD/MM/YYYY 00:00')}
+          </p>
+        )}
+      </span>
+    );
+  };
 
-  render() {
-    const { steps } = this.state;
+  renderFooterTimeline = () => {
+    const to = this.props.dateRange.to
+    return (
+      <span>
+        <FlagOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
+        {to && (
+          <p className={'mcs-funnelQueryBuilder_timeline_date'}>
+            {to.toMoment().format('DD/MM/YYYY 23:59')}
+          </p>
+        )}
+      </span>
+    );
+  };
+
+  renderAfterBulletElement = (step: Step<StepProperties>, index: number) => {
+    return (
+      <span>
+        { step.properties.displayEventTypeWarning && (
+          <div className={'mcs-funnelQueryBuilder_step_warning'}>
+            {/* <CloseOutlined className={'mcs-funnelQueryBuilder_step_warning_icon'} />
+                        <Tag className={'mcs-funnelQueryBuilder_step_warning_desc'}>
+                          {intl.formatMessage(funnelMessages.eventsWarning)}
+                        </Tag> */}
+          </div>
+        )}
+      </span>
+    );
+  };
+
+  renderStepBody = (step: Step<StepProperties>, index: number) => {
     const { datamartId, dateRange } = this.props;
     const { from, to } = dateRange;
 
     return (
-      <div className={'mcs-funnelQueryBuilder'}>
-        <div className={'mcs-funnelQueryBuilder_steps'}>
-          <div className={'mcs-funnelQueryBuilder_step_timelineStart'}>
-            <CalendarOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
-            {from && (
-              <p className={'mcs-funnelQueryBuilder_timeline_date'}>
-                {from.toMoment().format('DD/MM/YYYY 00:00')}
-              </p>
-            )}
+      <span>
+        {index > 0 && (
+          <div className={'mcs-funnelQueryBuilder_maximumDaysAfterStep'}>
+            <Input
+              type='number'
+              className={'mcs-funnelQueryBuilder_maximumDaysAfterStep_input'}
+              min='0'
+              value={step.properties.max_days_after_previous_step}
+              onChange={this.handleMaximumDaysAfterStepChange.bind(this, step.id)}
+            />
+            <p className={'mcs-funnelQueryBuilder_maximumDaysAfterStep_desc'}>
+              {step.properties.max_days_after_previous_step &&
+              step.properties.max_days_after_previous_step > 1
+                ? 'days'
+                : 'day'}{' '}
+              maximum after previous step
+            </p>
           </div>
-          {steps.map((step, index) => {
-            return (
-              <Card key={step.id} className={'mcs-funnelQueryBuilder_step'} bordered={false}>
-                <div className={'mcs-funnelQueryBuilder_step_body'}>
-                  {steps.length > 1 && (
-                    <div className={'mcs-funnelQueryBuilder_step_reorderBtn'}>
-                      {index > 0 && (
-                        <ArrowUpOutlined
-                          className={
-                            'mcs-funnelQueryBuilder_sortBtn mcs-funnelQueryBuilder_sortBtn--up'
-                          }
-                          onClick={this.sortStep.bind(this, index, 'up')}
-                        />
-                      )}
-                      {index + 1 < steps.length && (
-                        <ArrowDownOutlined
-                          className={'mcs-funnelQueryBuilder_sortBtn'}
-                          onClick={this.sortStep.bind(this, index, 'down')}
-                        />
-                      )}
-                    </div>
-                  )}
-                  <div className={'mcs-funnelQueryBuilder_step_content'}>
-                    <div className={'mcs-funnelQueryBuilder_stepHeader'}>
-                      <div className='mcs-funnelQueryBuilder_stepName_title'>{step.name}</div>
-                      <Button
-                        shape='circle'
-                        icon={<CloseOutlined />}
-                        className={'mcs-funnelQueryBuilder_removeStepBtn'}
-                        onClick={this.removeStep.bind(this, step.id)}
-                      />
-                    </div>
-
-                    {index > 0 && (
-                      <div className={'mcs-funnelQueryBuilder_maximumDaysAfterStep'}>
-                        <Input
-                          type='number'
-                          className={'mcs-funnelQueryBuilder_maximumDaysAfterStep_input'}
-                          min='0'
-                          value={step.max_days_after_previous_step}
-                          onChange={this.handleMaximumDaysAfterStepChange.bind(this, step.id)}
-                        />
-                        <p className={'mcs-funnelQueryBuilder_maximumDaysAfterStep_desc'}>
-                          {step.max_days_after_previous_step &&
-                          step.max_days_after_previous_step > 1
-                            ? 'days'
-                            : 'day'}{' '}
-                          maximum after previous step
-                        </p>
-                      </div>
-                    )}
-                    {step.filter_clause.filters.map((filter, filterIndex) => {
-                      return (
-                        <div key={filter.id}>
-                          {filterIndex > 0 && (
-                            <Select
-                              showArrow={false}
-                              defaultValue={'AND'}
-                              className={
-                                'mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators'
-                              }
-                              onChange={this.handleFilterOperatorChange.bind(this, step.id)}
-                              value={step.filter_clause.operator}
-                            >
-                              {booleanOperator.map(bo => {
-                                return (
-                                  <Option key={this._cuid()} value={bo}>
-                                    {bo}
-                                  </Option>
-                                );
-                              })}
-                            </Select>
-                          )}
-                          <div
-                            className={'mcs-funnelQueryBuilder_step_dimensions'}
-                            id='mcs-funnelQueryBuilder_step_dimensions'
-                          >
-                            <Select
-                              value={filter.dimension_name}
-                              showSearch={true}
-                              showArrow={false}
-                              placeholder='Dimension name'
-                              getPopupContainer={this.popupContainer}
-                              className={
-                                'mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions'
-                              }
-                              onChange={this.handleDimensionNameChange.bind(
-                                this,
-                                filterIndex,
-                                step.id,
-                              )}
-                            >
-                              {this.getDimensionNameSelect()}
-                            </Select>
-                            <div className='mcs-funnelQueryBuilder_switch'>
-                              <Switch
-                                defaultChecked={!filter.not}
-                                unCheckedChildren='NOT'
-                                className={'mcs-funnelQueryBuilder_switch_btn'}
-                                onChange={this.handleNotSwitcherChange.bind(
-                                  this,
-                                  filterIndex,
-                                  step.id,
-                                )}
-                              />
-                              {filter.not && (
-                                <McsIcon
-                                  type='info'
-                                  className='mcs-funnelQueryBuilder_notInfo_notSwitcherIcon'
-                                  title={
-                                    'This will filter only activities that have the selected criteria filled with another value than the one(s) selected'
-                                  }
-                                />
-                              )}
-                            </div>
-                            <div className='mcs-funnelQueryBuilder_step_dimensionFilter_operator'>
-                              <span className='mcs-funnelQueryBuilder_step_dimensionFilter_operator_text'>
-                                {this.showFilterSymbol(filterIndex, step.id)}
-                              </span>
-                            </div>
-                            <FunnelExpressionInput
-                              initialValue={filter.expressions}
-                              datamartId={datamartId}
-                              dimensionName={filter.dimension_name}
-                              dimensionIndex={filterIndex}
-                              from={from}
-                              to={to}
-                              stepId={step.id}
-                              handleDimensionExpressionForSelectorChange={this.handleDimensionExpressionForSelectorChange.bind(
-                                this,
-                                filterIndex,
-                                step.id,
-                              )}
-                            />
-                            <Button
-                              shape='circle'
-                              icon={<CloseOutlined />}
-                              className={'mcs-funnelQueryBuilder_removeFilterBtn'}
-                              onClick={this.removeDimensionFromStep.bind(this, step.id, filter.id)}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {
-                      <Button
-                        className='mcs-funnelQueryBuilder_addDimensionBtn'
-                        onClick={this.addDimensionToStep.bind(this, step.id)}
-                      >
-                        <FormattedMessage
-                          id='audience.funnel.querybuilder.newFilter'
-                          defaultMessage='Add a filter'
-                        />
-                      </Button>
-                    }
-                  </div>
-                </div>
-                <div className={'mcs-funnelQueryBuilder_step_bullet'}>
-                  <div className={'mcs-funnelQueryBuilder_step_bullet_icon'} />
-                </div>
-                {step.displayEventTypeWarning && (
-                  <div className={'mcs-funnelQueryBuilder_step_warning'}>
-                    {/* <CloseOutlined className={'mcs-funnelQueryBuilder_step_warning_icon'} />
-                    <Tag className={'mcs-funnelQueryBuilder_step_warning_desc'}>
-                      {intl.formatMessage(funnelMessages.eventsWarning)}
-                    </Tag> */}
-                  </div>
-                )}
-              </Card>
-            );
-          })}
-          <div className={'mcs-funnelQueryBuilder_addStepBlock'}>
-            <div className={this.computeTimelineEndClassName(steps.length)}>
-              <FlagOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
-              {to && (
-                <p className={'mcs-funnelQueryBuilder_timeline_date'}>
-                  {to.toMoment().format('DD/MM/YYYY 23:59')}
-                </p>
+        )}
+        {step.properties.filter_clause.filters.map((filter, filterIndex) => {
+          return (
+            <div key={filter.id}>
+              {filterIndex > 0 && (
+                <Select
+                  showArrow={false}
+                  defaultValue={'AND'}
+                  className={
+                    'mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators'
+                  }
+                  onChange={this.handleFilterOperatorChange.bind(this, step.id)}
+                  value={step.properties.filter_clause.operator}
+                >
+                  {booleanOperator.map(bo => {
+                    return (
+                      <Option key={this._cuid()} value={bo}>
+                        {bo}
+                      </Option>
+                    );
+                  })}
+                </Select>
               )}
-            </div>
-            {steps.length < 4 && (
-              <Button className={'mcs-funnelQueryBuilder_addStepBtn'} onClick={this.addStep}>
-                <FormattedMessage
-                  id='audience.funnel.querybuilder.newStep'
-                  defaultMessage='Add a step'
+              <div
+                className={'mcs-funnelQueryBuilder_step_dimensions'}
+                id='mcs-funnelQueryBuilder_step_dimensions'
+              >
+                <Select
+                  value={filter.dimension_name}
+                  showSearch={true}
+                  showArrow={false}
+                  placeholder='Dimension name'
+                  getPopupContainer={this.popupContainer}
+                  className={
+                    'mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions'
+                  }
+                  onChange={this.handleDimensionNameChange.bind(
+                    this,
+                    filterIndex,
+                    step.id,
+                  )}
+                >
+                  {this.getDimensionNameSelect()}
+                </Select>
+                <div className='mcs-funnelQueryBuilder_switch'>
+                  <Switch
+                    defaultChecked={!filter.not}
+                    unCheckedChildren='NOT'
+                    className={'mcs-funnelQueryBuilder_switch_btn'}
+                    onChange={this.handleNotSwitcherChange.bind(
+                      this,
+                      filterIndex,
+                      step.id,
+                    )}
+                  />
+                  {filter.not && (
+                    <McsIcon
+                      type='info'
+                      className='mcs-funnelQueryBuilder_notInfo_notSwitcherIcon'
+                      title={
+                        'This will filter only activities that have the selected criteria filled with another value than the one(s) selected'
+                      }
+                    />
+                  )}
+                </div>
+                <div className='mcs-funnelQueryBuilder_step_dimensionFilter_operator'>
+                                <span className='mcs-funnelQueryBuilder_step_dimensionFilter_operator_text'>
+                                  {this.showFilterSymbol(filterIndex, step.id)}
+                                </span>
+                </div>
+                <FunnelExpressionInput
+                  initialValue={filter.expressions}
+                  datamartId={datamartId}
+                  dimensionName={filter.dimension_name}
+                  dimensionIndex={filterIndex}
+                  from={from}
+                  to={to}
+                  stepId={step.id}
+                  handleDimensionExpressionForSelectorChange={this.handleDimensionExpressionForSelectorChange.bind(
+                    this,
+                    filterIndex,
+                    step.id,
+                  )}
                 />
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
+                <Button
+                  shape='circle'
+                  icon={<CloseOutlined />}
+                  className={'mcs-funnelQueryBuilder_removeFilterBtn'}
+                  onClick={this.removeDimensionFromStep.bind(this, step.id, filter.id)}
+                />
+              </div>
+            </div>
+          );
+        })}
+        {
+          <Button
+            className='mcs-funnelQueryBuilder_addDimensionBtn'
+            onClick={this.addDimensionToStep.bind(this, step.id)}
+          >
+            <FormattedMessage
+              id='audience.funnel.querybuilder.newFilter'
+              defaultMessage='Add a filter'
+            />
+          </Button>
+        }
+      </span>
+    );
+  };
+
+  render() {
+    const rendering = {
+      renderHeaderTimeline: this.renderHeaderTimeline,
+      renderFooterTimeline: this.renderFooterTimeline,
+      renderStepBody: this.renderStepBody,
+      renderAfterBulletElement: this.renderAfterBulletElement
+    };
+    const stepManagement = {
+      onStepAdded: this.onStepChange,
+      onStepRemoved: this.onStepChange,
+      onStepsReordered: this.onStepChange,
+      getDefaultStep: getDefaultStep
+    }
+
+    return (
+      <span>
+        <TimelineStepBuilder steps={this.state.steps} rendering={ rendering } stepManagement={ stepManagement } maxSteps={ 4 } />
+      </span>
     );
   }
 }
