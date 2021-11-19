@@ -516,6 +516,11 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     return document.getElementById('mcs-funnelQueryBuilder_step_dimensions') as HTMLElement;
   }
 
+  computeTimelineEndClassName(stepsNumber: number) {
+    if (stepsNumber < 4) return 'mcs-funnelQueryBuilder_step_timelineEnd';
+    else return 'mcs-funnelQueryBuilder_step_timelineEndWithoutButton';
+  }
+
   render() {
     const { steps } = this.state;
     const { datamartId, dateRange } = this.props;
@@ -704,7 +709,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             );
           })}
           <div className={'mcs-funnelQueryBuilder_addStepBlock'}>
-            <div className={'mcs-funnelQueryBuilder_step_timelineEnd'}>
+            <div className={this.computeTimelineEndClassName(steps.length)}>
               <FlagOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
               {to && (
                 <p className={'mcs-funnelQueryBuilder_timeline_date'}>
