@@ -4,7 +4,7 @@ import messages from '../../containers/Campaigns/Display/Edit/messages';
 import {
   CalendarOutlined,
   CloseOutlined,
-  FlagOutlined
+  FlagOutlined,
 } from '@ant-design/icons';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
@@ -145,11 +145,11 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const { dimensionsList: previousDimensionsList } = this.state;
     const { dimensionsList: nextDimensionsList } = nextState;
-    const prevFilter = extractFilters(this.state.steps)
-    const nextFilter = extractFilters(nextState.steps)
+    const prevFilter = extractFilters(this.state.steps);
+    const nextFilter = extractFilters(nextState.steps);
 
-    const {  dateRange } = this.props;
-    const nextPropsFilter = extractFilters(this.props.steps)
+    const { dateRange } = this.props;
+    const nextPropsFilter = extractFilters(this.props.steps);
 
     const shouldUpdate =
       shouldUpdateFunnelQueryBuilder(prevFilter, nextFilter) ||
@@ -181,7 +181,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           properties: {
             filter_clause: filter.filter_clause,
             max_days_after_previous_step: filter.max_days_after_previous_step,
-          }
+          },
         };
       });
 
@@ -465,7 +465,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   renderHeaderTimeline = () => {
-    const from = this.props.dateRange.from
+    const from = this.props.dateRange.from;
     return (
       <span>
         <CalendarOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
@@ -479,7 +479,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   };
 
   renderFooterTimeline = () => {
-    const to = this.props.dateRange.to
+    const to = this.props.dateRange.to;
     return (
       <span>
         <FlagOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
@@ -495,7 +495,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   renderAfterBulletElement = (step: Step<StepProperties>, index: number) => {
     return (
       <span>
-        { step.properties.displayEventTypeWarning && (
+        {step.properties.displayEventTypeWarning && (
           <div className={'mcs-funnelQueryBuilder_step_warning'}>
             {/* <CloseOutlined className={'mcs-funnelQueryBuilder_step_warning_icon'} />
                         <Tag className={'mcs-funnelQueryBuilder_step_warning_desc'}>
@@ -644,18 +644,19 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       renderHeaderTimeline: this.renderHeaderTimeline,
       renderFooterTimeline: this.renderFooterTimeline,
       renderStepBody: this.renderStepBody,
-      renderAfterBulletElement: this.renderAfterBulletElement
+      renderAfterBulletElement: this.renderAfterBulletElement,
     };
     const stepManagement = {
       onStepAdded: this.onStepChange,
       onStepRemoved: this.onStepChange,
       onStepsReordered: this.onStepChange,
-      getDefaultStep: getDefaultStep
-    }
+      getDefaultStep: getDefaultStep,
+    };
 
     return (
       <span>
-        <TimelineStepBuilder steps={this.state.steps} rendering={ rendering } stepManagement={ stepManagement } maxSteps={ 4 } />
+        <TimelineStepBuilder steps={this.state.steps} rendering={rendering} stepManagement={stepManagement}
+                             maxSteps={4} />
       </span>
     );
   }

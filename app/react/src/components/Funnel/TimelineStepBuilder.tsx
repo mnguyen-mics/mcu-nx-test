@@ -13,7 +13,7 @@ export interface Step<StepsProperties> {
   properties: StepsProperties;
 }
 
-interface TimelineStepBuilderRendering<StepsProperties>{
+interface TimelineStepBuilderRendering<StepsProperties> {
   renderHeaderTimeline?: () => JSX.Element;
   renderFooterTimeline?: () => JSX.Element;
   renderStepBody: (step: Step<StepsProperties>, index: number) => JSX.Element;
@@ -35,8 +35,7 @@ type Props<StepsProperties> = {
   maxSteps: number;
 };
 
-export default class TimelineStepBuilder<StepsProperties> extends
-  React.Component<Props<StepsProperties>> {
+export default class TimelineStepBuilder<StepsProperties> extends React.Component<Props<StepsProperties>> {
   constructor(props: Props<StepsProperties>) {
     super(props);
 
@@ -58,7 +57,7 @@ export default class TimelineStepBuilder<StepsProperties> extends
 
   getRenamedStep = (step: Step<StepsProperties>, index: number) => {
     step.name = this.props.stepManagement.computeStepName?.(step, index) ?? `Step ${index + 1}`;
-    return step
+    return step;
   };
 
   sortStep = (index: number, direction: 'up' | 'down') => {
@@ -75,14 +74,14 @@ export default class TimelineStepBuilder<StepsProperties> extends
       steps[index] = steps[index + 1];
       steps[index + 1] = temp;
     }
-    this.props.stepManagement.onStepsReordered(steps.map(this.getRenamedStep))
+    this.props.stepManagement.onStepsReordered(steps.map(this.getRenamedStep));
   };
 
   private computeTimelineEndClassName(stepsNumber: number) {
-    if(stepsNumber < this.props.maxSteps)
-      return "mcs-funnelQueryBuilder_step_timelineEnd";
+    if (stepsNumber < this.props.maxSteps)
+      return 'mcs-funnelQueryBuilder_step_timelineEnd';
     else
-      return "mcs-funnelQueryBuilder_step_timelineEndWithoutButton";
+      return 'mcs-funnelQueryBuilder_step_timelineEndWithoutButton';
   }
 
   render() {
@@ -92,7 +91,7 @@ export default class TimelineStepBuilder<StepsProperties> extends
       <div className={'mcs-funnelQueryBuilder'}>
         <div className={'mcs-funnelQueryBuilder_steps'}>
           <div className={'mcs-funnelQueryBuilder_step_timelineStart'}>
-            { this.props.rendering.renderHeaderTimeline?.() }
+            {this.props.rendering.renderHeaderTimeline?.()}
           </div>
           {steps.map((step, index) => {
             return (
@@ -132,13 +131,13 @@ export default class TimelineStepBuilder<StepsProperties> extends
                 <div className={'mcs-funnelQueryBuilder_step_bullet'}>
                   <div className={'mcs-funnelQueryBuilder_step_bullet_icon'}>{index + 1}</div>
                 </div>
-                { this.props.rendering.renderAfterBulletElement?.(step, index)}
+                {this.props.rendering.renderAfterBulletElement?.(step, index)}
               </Card>
             );
           })}
           <div className={'mcs-funnelQueryBuilder_addStepBlock'}>
             <div className={this.computeTimelineEndClassName(steps.length)}>
-              { this.props.rendering.renderFooterTimeline?.()}
+              {this.props.rendering.renderFooterTimeline?.()}
             </div>
             {steps.length < this.props.maxSteps && (
               <Button className={'mcs-funnelQueryBuilder_addStepBtn'} onClick={this.addStep}>

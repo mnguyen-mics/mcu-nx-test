@@ -12,6 +12,7 @@ interface FormattedDates {
   from: string;
   to: string;
 }
+
 export const extractDatesFromProps = (search: string): FunnelDateRange => {
   const dateFilter: McsRange = parseSearch(search, DATE_SEARCH_SETTINGS);
   const formattedDates: FormattedDates = formatMcsDate(dateFilter, true);
@@ -86,7 +87,7 @@ export const getDefaultStep = () => {
           },
         ],
       },
-    }
+    },
   };
 };
 
@@ -123,5 +124,6 @@ export const extractFilters = (steps: Array<Step<StepProperties>>) => {
       filter_clause: step.properties.filter_clause,
       max_days_after_previous_step: step.properties.max_days_after_previous_step,
 
-    }})
-}
+    };
+  });
+};

@@ -161,10 +161,10 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
         name: funnelFilter.name,
         properties: {
           filter_clause: funnelFilter.filter_clause,
-          max_days_after_previous_step: funnelFilter.max_days_after_previous_step
-        }
-      }
-    })
+          max_days_after_previous_step: funnelFilter.max_days_after_previous_step,
+        },
+      };
+    });
   }
 
   render() {
@@ -189,10 +189,10 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
 
     const openComplementaryFunnel = !isComplementaryFunnelOpen
       ? (newComplementaryInfo: ComplementaryInfo) =>
-          this.setState({
-            isComplementaryFunnelOpen: true,
-            complementaryInfo: newComplementaryInfo,
-          })
+        this.setState({
+          isComplementaryFunnelOpen: true,
+          complementaryInfo: newComplementaryInfo,
+        })
       : undefined;
 
     const transformFunnel = this.transformFunnel.bind(this);
