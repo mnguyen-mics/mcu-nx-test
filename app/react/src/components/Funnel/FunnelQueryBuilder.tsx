@@ -416,7 +416,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
     const stepsFormated = stepsCopy.filter((s: Step<StepProperties>) => s.properties.filter_clause.filters.length > 0);
     const queryParams = {
-      filter: [JSON.stringify(stepsFormated)],
+      filter: [JSON.stringify(extractFilters(stepsFormated))],
       template: undefined,
     };
 
