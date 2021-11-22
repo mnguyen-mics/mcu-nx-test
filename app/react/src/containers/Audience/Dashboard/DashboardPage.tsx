@@ -97,10 +97,31 @@ export class DashboardPage extends React.Component<Props> {
             ),
           };
         });
-      dashboardTabs.push({
-        title: 'Old OTQL dashboard',
-        display: defaultContent,
-      });
+
+      if (
+        apiDashboards.length === 1 &&
+        dataFileDashboards?.length === 0 &&
+        datamartAnalyticsConfig?.length === 0
+      )
+        return apiDashboards[0].dashboardContent ? (
+          <div className='m-t-40'>
+            <ScopedDashboardLayout
+              datamartId={datamartId}
+              schema={apiDashboards[0].dashboardContent}
+              source={source}
+            />
+          </div>
+        ) : (
+          <div />
+        );
+      if (
+        (dataFileDashboards && dataFileDashboards.length > 0) ||
+        (datamartAnalyticsConfig && datamartAnalyticsConfig.length > 0)
+      )
+        dashboardTabs.push({
+          title: dataFileDashboards?.length === 0 ? 'Activities analytics' : 'Old OTQL dashboard',
+          display: defaultContent,
+        });
 
       return <McsTabs items={dashboardTabs} className={tabsClassname} animated={false} />;
     } else return defaultContent;
