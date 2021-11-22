@@ -72,7 +72,6 @@ class DashboardPageWrapper extends React.Component<Props, State> {
       dataFileDashboards0 !== dataFileDashboards1 ||
       apiDashboards0 !== apiDashboards1 ||
       source0 !== source1;
-
     return shouldUpdate;
   }
 
@@ -146,7 +145,12 @@ class DashboardPageWrapper extends React.Component<Props, State> {
       'audience-dashboards-datamart_users_analytics',
     );
 
-    if (!isLoading && dataFileDashboards.length === 0 && !shouldDisplayAnalyticsFeature) {
+    if (
+      !isLoading &&
+      dataFileDashboards.length === 0 &&
+      !shouldDisplayAnalyticsFeature &&
+      apiDashboards.length === 0
+    ) {
       return <Error message={intl.formatMessage(messages.comingSoon)} />;
     }
 
@@ -173,7 +177,11 @@ class DashboardPageWrapper extends React.Component<Props, State> {
           datamartId={datamartId}
           apiDashboards={apiDashboardsOpt}
           dataFileDashboards={dataFileDashboardsOpt}
-          datamartAnalyticsConfig={datamartAnalyticsConfig}
+          datamartAnalyticsConfig={
+            hasFeature('audience-dashboards-datamart_users_analytics')
+              ? datamartAnalyticsConfig
+              : []
+          }
           source={source}
           tabsClassname={tabsClassname}
           disableAllUserFilter={disableAllUserFilter}
