@@ -123,7 +123,14 @@ export class DashboardPage extends React.Component<Props> {
           display: defaultContent,
         });
 
-      return <McsTabs items={dashboardTabs} className={tabsClassname} animated={false} />;
+      return (
+        <McsTabs
+          destroyInactiveTabPane={true}
+          items={dashboardTabs}
+          className={tabsClassname}
+          animated={false}
+        />
+      );
     } else return defaultContent;
   };
 
