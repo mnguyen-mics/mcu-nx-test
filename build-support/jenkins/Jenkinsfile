@@ -6,7 +6,7 @@ def checkoutCommit(commit) {
             branches         : [[name: commit]],
             userRemoteConfigs: [[
                                         credentialsId: '6fdbf0f9-8646-414e-8079-d03d2fcdff1a',
-                                        url          : 'git@github.com:MEDIARITHMICS/mediarithmics-platform.git'
+                                        url          : 'git@github.com:MEDIARITHMICS/mediarithmics-navigator.git'
                                 ]]
     ])
 }
