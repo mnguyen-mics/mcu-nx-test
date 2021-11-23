@@ -123,7 +123,6 @@ export const extractFilters = (steps: Array<Step<StepProperties>>) => {
       name: step.name,
       filter_clause: step.properties.filter_clause,
       max_days_after_previous_step: step.properties.max_days_after_previous_step,
-
     };
   });
 };

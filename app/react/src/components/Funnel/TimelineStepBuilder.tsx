@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { Card, Button } from 'antd';
-import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-  CloseOutlined,
-} from '@ant-design/icons';
+import { ArrowUpOutlined, ArrowDownOutlined, CloseOutlined } from '@ant-design/icons';
 import { FormattedMessage } from 'react-intl';
 
 export interface Step<StepsProperties> {
@@ -35,7 +31,9 @@ type Props<StepsProperties> = {
   maxSteps: number;
 };
 
-export default class TimelineStepBuilder<StepsProperties> extends React.Component<Props<StepsProperties>> {
+export default class TimelineStepBuilder<StepsProperties> extends React.Component<
+  Props<StepsProperties>
+> {
   constructor(props: Props<StepsProperties>) {
     super(props);
 
@@ -78,10 +76,8 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
   };
 
   private computeTimelineEndClassName(stepsNumber: number) {
-    if (stepsNumber < this.props.maxSteps)
-      return 'mcs-funnelQueryBuilder_step_timelineEnd';
-    else
-      return 'mcs-funnelQueryBuilder_step_timelineEndWithoutButton';
+    if (stepsNumber < this.props.maxSteps) return 'mcs-funnelQueryBuilder_step_timelineEnd';
+    else return 'mcs-funnelQueryBuilder_step_timelineEndWithoutButton';
   }
 
   render() {

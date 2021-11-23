@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { Select, Button, Switch, Input } from 'antd';
 import messages from '../../containers/Campaigns/Display/Edit/messages';
-import {
-  CalendarOutlined,
-  CloseOutlined,
-  FlagOutlined,
-} from '@ant-design/icons';
+import { CalendarOutlined, CloseOutlined, FlagOutlined } from '@ant-design/icons';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
@@ -30,7 +26,12 @@ import FunnelExpressionInput from './FunnelExpressionInput';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { IDatamartUsersAnalyticsService } from '../../services/DatamartUsersAnalyticsService';
 import { ReportViewResponse } from '../../services/ReportService';
-import { shouldUpdateFunnelQueryBuilder, getDefaultStep, checkExpressionsNotEmpty, extractFilters } from './Utils';
+import {
+  shouldUpdateFunnelQueryBuilder,
+  getDefaultStep,
+  checkExpressionsNotEmpty,
+  extractFilters,
+} from './Utils';
 import _ from 'lodash';
 import TimelineStepBuilder, { Step } from './TimelineStepBuilder';
 
@@ -414,7 +415,9 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       // });
     });
 
-    const stepsFormated = stepsCopy.filter((s: Step<StepProperties>) => s.properties.filter_clause.filters.length > 0);
+    const stepsFormated = stepsCopy.filter(
+      (s: Step<StepProperties>) => s.properties.filter_clause.filters.length > 0,
+    );
     const queryParams = {
       filter: [JSON.stringify(extractFilters(stepsFormated))],
       template: undefined,
@@ -566,11 +569,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                   className={
                     'mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions'
                   }
-                  onChange={this.handleDimensionNameChange.bind(
-                    this,
-                    filterIndex,
-                    step.id,
-                  )}
+                  onChange={this.handleDimensionNameChange.bind(this, filterIndex, step.id)}
                 >
                   {this.getDimensionNameSelect()}
                 </Select>
@@ -579,11 +578,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                     defaultChecked={!filter.not}
                     unCheckedChildren='NOT'
                     className={'mcs-funnelQueryBuilder_switch_btn'}
-                    onChange={this.handleNotSwitcherChange.bind(
-                      this,
-                      filterIndex,
-                      step.id,
-                    )}
+                    onChange={this.handleNotSwitcherChange.bind(this, filterIndex, step.id)}
                   />
                   {filter.not && (
                     <McsIcon
@@ -596,9 +591,9 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                   )}
                 </div>
                 <div className='mcs-funnelQueryBuilder_step_dimensionFilter_operator'>
-                                <span className='mcs-funnelQueryBuilder_step_dimensionFilter_operator_text'>
-                                  {this.showFilterSymbol(filterIndex, step.id)}
-                                </span>
+                  <span className='mcs-funnelQueryBuilder_step_dimensionFilter_operator_text'>
+                    {this.showFilterSymbol(filterIndex, step.id)}
+                  </span>
                 </div>
                 <FunnelExpressionInput
                   initialValue={filter.expressions}
@@ -655,8 +650,12 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
     return (
       <span>
-        <TimelineStepBuilder steps={this.state.steps} rendering={rendering} stepManagement={stepManagement}
-                             maxSteps={4} />
+        <TimelineStepBuilder
+          steps={this.state.steps}
+          rendering={rendering}
+          stepManagement={stepManagement}
+          maxSteps={4}
+        />
       </span>
     );
   }

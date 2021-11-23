@@ -176,7 +176,9 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const funnelFilter: FunnelFilter[] =
-      routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : extractFilters([getDefaultStep()]);
+      routeParams.filter.length > 0
+        ? JSON.parse(routeParams.filter)
+        : extractFilters([getDefaultStep()]);
     const filterWithoutGroupBy: FunnelFilter[] = deepCopy(funnelFilter);
     filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
 
@@ -189,10 +191,10 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
 
     const openComplementaryFunnel = !isComplementaryFunnelOpen
       ? (newComplementaryInfo: ComplementaryInfo) =>
-        this.setState({
-          isComplementaryFunnelOpen: true,
-          complementaryInfo: newComplementaryInfo,
-        })
+          this.setState({
+            isComplementaryFunnelOpen: true,
+            complementaryInfo: newComplementaryInfo,
+          })
       : undefined;
 
     const transformFunnel = this.transformFunnel.bind(this);
