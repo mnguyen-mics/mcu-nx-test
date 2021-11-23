@@ -63,15 +63,23 @@ class DashboardPageWrapper extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { dataFileDashboards: dataFileDashboards0, apiDashboards: apiDashboards0 } = this.state;
-    const { dataFileDashboards: dataFileDashboards1, apiDashboards: apiDashboards1 } = nextState;
-    const { source: source0 } = this.props;
-    const { source: source1 } = nextProps;
+    const {
+      dataFileDashboards: currentDataFileDashboards,
+      apiDashboards: currentApiDashboards,
+    } = this.state;
+    const {
+      dataFileDashboards: nextDataFileDashboards,
+      apiDashboards: nextApiDashboards,
+    } = nextState;
+    const { source: currentSource, defaultSegment: currentDefaultSegment } = this.props;
+    const { source: nextSource, defaultSegment: nextDefaultSegment } = nextProps;
 
     const shouldUpdate =
-      dataFileDashboards0 !== dataFileDashboards1 ||
-      apiDashboards0 !== apiDashboards1 ||
-      source0 !== source1;
+      currentDataFileDashboards !== nextDataFileDashboards ||
+      currentApiDashboards !== nextApiDashboards ||
+      currentSource !== nextSource ||
+      currentDefaultSegment !== nextDefaultSegment;
+
     return shouldUpdate;
   }
 
@@ -81,8 +89,6 @@ class DashboardPageWrapper extends React.Component<Props, State> {
     fetchApiDashboardsFunc: () => Promise<DashboardPageContent[]>,
   ) => {
     const { hasFeature } = this.props;
-
-    this.setState({ isLoading: true });
 
     const promises: Array<
       Promise<DataListResponse<DataFileDashboardResource> | DashboardPageContent[]>
@@ -130,12 +136,12 @@ class DashboardPageWrapper extends React.Component<Props, State> {
       hasFeature,
       datamartId,
       source,
-      datamartAnalyticsConfig,
       tabsClassname,
       disableAllUserFilter,
       defaultSegment,
       className,
       isFullScreenLoading,
+      datamartAnalyticsConfig,
       intl,
     } = this.props;
 

@@ -153,35 +153,38 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       },
     ];
   };
-
-  render() {
+  fetchApiDashboards = () => {
     const {
-      hasFeature,
-      intl,
-      selectedDatamartId,
       match: {
         params: { organisationId },
       },
     } = this.props;
+    return this._dashboardService.getDashboardsPageContents(
+      organisationId,
+      { archived: false },
+      'home',
+    );
+  };
+
+  fetchDataFileDashboards = () => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      selectedDatamartId,
+    } = this.props;
+    return this._dashboardService.getDataFileDashboards(
+      organisationId,
+      selectedDatamartId,
+      'HOME',
+      {},
+    );
+  };
+
+  render() {
+    const { hasFeature, intl, selectedDatamartId } = this.props;
 
     const { datamartAnalyticsDashboardConfig } = this.state;
-
-    const fetchApiDashboards = () => {
-      return this._dashboardService.getDashboardsPageContents(
-        organisationId,
-        { archived: false },
-        'home',
-      );
-    };
-
-    const fetchDataFileDashboards = () => {
-      return this._dashboardService.getDataFileDashboards(
-        organisationId,
-        selectedDatamartId,
-        'HOME',
-        {},
-      );
-    };
 
     return (
       <div className='ant-layout'>
@@ -204,8 +207,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
             <DashboardPageWrapper
               datamartId={selectedDatamartId}
               datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
-              fetchApiDashboards={fetchApiDashboards}
-              fetchDataFileDashboards={fetchDataFileDashboards}
+              fetchApiDashboards={this.fetchApiDashboards}
+              fetchDataFileDashboards={this.fetchDataFileDashboards}
               isFullScreenLoading={false}
             />
           </Content>

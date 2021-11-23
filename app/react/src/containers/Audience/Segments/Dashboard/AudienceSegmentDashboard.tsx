@@ -357,7 +357,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
     const fetchEmptyApiDashboards = () => {
       return new Promise<DashboardPageContent[]>((resolve, _) => {
-        return [];
+        resolve([]);
       });
     };
 
