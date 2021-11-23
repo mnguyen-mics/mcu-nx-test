@@ -102,10 +102,15 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
     const isSearchChanged = prevProps.location.search !== search;
 
-    const actualFilter = JSON.stringify(filter);
+    const filterCopy = JSON.parse(JSON.stringify(filter));
+    const filterWithoutId = filterCopy.map((f: FunnelFilter) => {
+      f.id = undefined;
+      return f;
+    });
+
+    const actualFilter = JSON.stringify(filterWithoutId);
 
     const isUrlFilterChanged = lastFilter !== actualFilter;
-
     const isFilterNotZero = filter.length > 0;
 
     const isFilterFirstStepEqualToDefaultFirstStep = _.isEqual(
@@ -175,7 +180,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           id: newId,
         };
       });
-
       this.setState({
         steps: identifiedSteps,
       });
