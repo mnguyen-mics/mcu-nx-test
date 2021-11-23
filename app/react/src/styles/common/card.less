@@ -237,13 +237,6 @@
     float: left;
     margin-top: 20px;
     word-break: break-all;
-    .event-properties-list-item {
-      .event-properties-sublist {
-        border-left: 3px solid #e1e1e1;
-        margin-left: 40px;
-        padding-left: 5px;
-      }
-    }
   }
 
   .card-tag {
@@ -317,53 +310,4 @@
   .mcs-card-footer-link {
     .mcs-card-inner-action;
   }
-}
-
-.mcs-table-container-full {
-  border-radius: 2px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
-    0 2px 1px -1px rgba(0, 0, 0, 0.12);
-  background-color: #fff;
-
-  .mcs-table-header {
-    width: 100%;
-    background-color: @primary-color;
-    padding: 30px 10px;
-    border-radius: 2px;
-    margin-bottom: 0px;
-    .section {
-      color: white;
-      text-align: center;
-      .mcs-icon {
-        font-size: 5em;
-        color: @info-color;
-      }
-      .title {
-        font-size: 1.5em;
-        font-weight: normal;
-      }
-      .number {
-        font-size: 2.6em;
-        font-weight: bold;
-      }
-    }
-    .section.border {
-      border-right: 1px solid rgba(215, 215, 215, 0.49);
-    }
-  }
-
-  .mcs-table-body {
-    padding: 0px 10px 20px 10px;
-  }
-}
-
-.selected-rows-btn {
-  color: @info-color;
-  &:hover {
-    text-decoration: underline;
-  }
-}
-.selected-rows-alert {
-  background-color: fade(@warning-color, 15%);
-  border-color: fade(@warning-color, 50%);
 }

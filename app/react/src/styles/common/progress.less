@@ -1,39 +1,4 @@
 .mcs-progress-wrapper {
   margin-top: 15px;
   margin-bottom: 30px;
-  .mcs-progress {
-    width: 100%;
-    font-size: 12px;
-    position: relative;
-    display: inline-block;
-    .mcs-progress-outer {
-      display: inline-block;
-      width: 100%;
-      .mcs-progress-inner {
-        display: inline-block;
-        width: 100%;
-        background-color: @border-color-split;
-        border-radius: 100px;
-        vertical-align: middle;
-        .mcs-progress-bg {
-          border-radius: 100px;
-          transition: all 0.4s cubic-bezier(0.08, 0.82, 0.17, 1) 0s;
-          position: relative;
-        }
-        .mcs-progress-bg.success {
-          background-color: @success-color;
-        }
-        .mcs-progress-bg.error {
-          background-color: @error-color;
-        }
-        .mcs-progress-bg.warning {
-          background-color: @warning-color;
-        }
-      }
-    }
-  }
-
-  .mcs-progress-label {
-    color: @text-color;
-  }
 }

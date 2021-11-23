@@ -63,36 +63,6 @@
   }
 }
 
-.mcs_funnel_arrowStep {
-  width: 60px;
-  height: 60px;
-  display: inline-block;
-  transform: rotate(90deg);
-  vertical-align: middle;
-
-  &:before {
-    position: absolute;
-    content: '';
-    border: none;
-    height: 60%;
-    width: 45%;
-    top: 50%;
-    left: 28%;
-    background-color: #678298;
-  }
-
-  &:after {
-    content: '';
-    border-color: transparent;
-    border-style: solid;
-    position: absolute;
-    left: 0;
-    top: -50%;
-    border-width: 30px 30px;
-    border-bottom-color: #678298;
-  }
-}
-
 .mcs-funnel_conversionInfo {
   position: absolute;
   bottom: -14px;
@@ -101,56 +71,18 @@
   display: flex;
 }
 
-.mcs-funnel_stepName,
-.mcs-funnel_metric {
-  padding: 15px;
-  min-height: 42px;
-}
-
-.mcs-funnel_stepName,
 .mcs-funnel_chart:not(:first-of-type) {
   border-left: 1px solid @border-color-split;
-}
-
-.mcs-funnel_metricsBlock {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  border-right: 1px solid #d3dbe1;
 }
 
 .mcs-funnel_deltaInfo {
   margin-left: -16px;
 }
 
-.mcs-funnelQueryBuilder_header_title,
-.mcs-funnel_stepName_desc,
 .mcs-funnel_deltaInfo,
 .mcs-funnel_stepInfo {
   font-size: 12px;
   font-family: 'LLCircularWeb-Book';
-  color: @primary-color;
-}
-
-.mcs-funnel_metric_title {
-  margin-bottom: 8px;
-  font-size: 10px;
-  font-family: 'LLCircularWeb-Book';
-  color: @primary-color;
-}
-
-.mcs-funnel_metric_nbr {
-  font-size: 14px;
-  font-family: @font-family-medium;
-  font-weight: 500;
-  color: @primary-color;
-}
-
-.mcs-funnel_stepName_title {
-  font-size: 12px;
-  font-family: 'LLCircularWeb-Book';
-  font-weight: bold;
-  letter-spacing: normal;
   color: @primary-color;
 }
 
@@ -166,12 +98,6 @@
   padding-bottom: 49px;
 }
 
-.mcs-funnelQueryBuilder_header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
 .mcs-funnel_steps {
   display: flex;
   overflow: hidden;
@@ -181,24 +107,11 @@
   padding-top: 1px;
 }
 
-.mcs-funnel_header_datePicker {
-  width: 146px;
-  height: 33px;
-  border-radius: 4px;
-  border: solid 1px #e1e1e1;
-  background-color: #fff;
-  color: @primary-color;
-}
-
 .mcs-funnelQueryBuilder {
   margin-top: 88px;
   .ant-card-body {
     padding: 15px;
   }
-}
-
-.mcs-funnelQueryBuilder_header {
-  padding: 5px 24px;
 }
 
 .mcs-funnelQueryBuilder_stepHeader {
@@ -516,13 +429,6 @@
   font-family: @font-family-medium;
   font-weight: 500;
   margin-bottom: 10px;
-}
-
-.mcs-funnel_metric {
-  font-family: @font-family-medium;
-  font-weight: 500;
-  padding: 0;
-  font-size: 14px;
 }
 
 .mcs-funnelQueryBuilder_step_bullet {
