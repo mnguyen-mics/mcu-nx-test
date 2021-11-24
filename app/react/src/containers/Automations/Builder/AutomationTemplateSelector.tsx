@@ -40,20 +40,16 @@ class AutomationTemplateSelector extends React.Component<Props> {
             select={onClickOnReactToEvent}
             disabled={disableReactToEvent}
           />
-          {this.props.hasFeature('automations-on-segment-entry') && (
-            <MenuList
-              className='mcs-menu-list-onSegmentEntry'
-              title={formatMessage(messages.onSegmentEntry)}
-              select={onClicOnSegmentEntry}
-            />
-          )}
-          {this.props.hasFeature('automations-on-segment-exit') && (
-            <MenuList
-              className='mcs-menu-list-onSegmentExit'
-              title={formatMessage(messages.onSegmentExit)}
-              select={onClicOnSegmentExit}
-            />
-          )}
+          <MenuList
+            className='mcs-menu-list-onSegmentEntry'
+            title={formatMessage(messages.onSegmentEntry)}
+            select={onClicOnSegmentEntry}
+          />
+          <MenuList
+            className='mcs-menu-list-onSegmentExit'
+            title={formatMessage(messages.onSegmentExit)}
+            select={onClicOnSegmentExit}
+          />
         </Row>
       </Row>
     );

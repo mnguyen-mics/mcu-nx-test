@@ -7,7 +7,6 @@ import {
   ScenarioExitConditionFormData,
   ScenarioExitConditionFormResource,
 } from '../../../../models/automations/automations';
-import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
 import { StorylineNodeModel } from '../domain';
 import UsersCounter from '../UsersCounter';
@@ -30,10 +29,7 @@ interface ExitConditionButtonProps {
   ) => StorylineNodeModel;
 }
 
-type Props = ExitConditionButtonProps &
-  InjectedDrawerProps &
-  InjectedIntlProps &
-  InjectedFeaturesProps;
+type Props = ExitConditionButtonProps & InjectedDrawerProps & InjectedIntlProps;
 
 interface State {
   viewSubmenus: boolean;
@@ -116,18 +112,15 @@ class ExitConditionButton extends React.Component<Props, State> {
   };
 
   buildExitConditionMenu = () => {
-    const { hasFeature } = this.props;
     return (
       <div className='mcs-exitConditionAutomation_menu'>
-        {hasFeature('automations-analytics') ? (
-          <div
-            key='stats'
-            onClick={this.onGlobalExitConditionSelectStats}
-            className='mcs-exitConditionAutomation_menuItem'
-          >
-            <FormattedMessage {...messages.exitConditionStats} />
-          </div>
-        ) : null}
+        <div
+          key='stats'
+          onClick={this.onGlobalExitConditionSelectStats}
+          className='mcs-exitConditionAutomation_menuItem'
+        >
+          <FormattedMessage {...messages.exitConditionStats} />
+        </div>
         <div
           key='config'
           onClick={this.onGlobalExitConditionSelectConfig}
@@ -181,7 +174,6 @@ class ExitConditionButton extends React.Component<Props, State> {
     const {
       exitCondition,
       viewer,
-      hasFeature,
       intl: { formatMessage },
     } = this.props;
     const { viewSubmenus } = this.state;
@@ -191,10 +183,7 @@ class ExitConditionButton extends React.Component<Props, State> {
     const subMenu = viewSubmenus ? this.buildExitConditionMenu() : null;
 
     const usersCounter =
-      hasFeature('automations-analytics') &&
-      exitCondition &&
-      exitCondition.formData.query_text &&
-      viewer ? (
+      exitCondition && exitCondition.formData.query_text && viewer ? (
         <UsersCounter iconName={'user'} numberOfUsers={this.getNumberOfUsers()} />
       ) : null;
 
@@ -265,5 +254,4 @@ const messages = defineMessages({
 export default compose<Props, ExitConditionButtonProps>(
   injectDrawer,
   injectIntl,
-  injectFeatures,
 )(ExitConditionButton);

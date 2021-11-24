@@ -35,7 +35,6 @@ import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/c
 import FeedNodeAutomationDashboardStats, {
   FeedNodeAutomationDashboardStatsProps,
 } from './Dashboard/FeedNode/FeedNodeAutomationDashboardStats';
-import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import UsersCounter from '../UsersCounter';
 import EntryNodeAutomationDashboardStats, {
   EntryNodeAutomationDashboardStatsProps,
@@ -90,7 +89,6 @@ const messages = defineMessages({
 type Props = AutomationNodeProps &
   InjectedDrawerProps &
   InjectedIntlProps &
-  InjectedFeaturesProps &
   RouterProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -444,7 +442,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      hasFeature,
     } = this.props;
     const content: React.ReactNodeArray = [];
 
@@ -459,17 +456,15 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         </div>,
       );
     } else {
-      if (hasFeature('automations-analytics')) {
-        content.push(
-          <div
-            key='stats'
-            onClick={this.viewStats}
-            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
-          >
-            <FormattedMessage {...messages.stats} />
-          </div>,
-        );
-      }
+      content.push(
+        <div
+          key='stats'
+          onClick={this.viewStats}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
+        >
+          <FormattedMessage {...messages.stats} />
+        </div>,
+      );
 
       const gotToSegment = () => {
         if (
@@ -555,7 +550,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   renderQueryEdit = (): React.ReactNodeArray => {
-    const { viewer, node, hasFeature } = this.props;
+    const { viewer, node } = this.props;
     const content: React.ReactNodeArray = [];
 
     if (!viewer) {
@@ -581,17 +576,15 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         );
       }
     } else {
-      if (hasFeature('automations-analytics')) {
-        content.push(
-          <div
-            key='stats'
-            onClick={this.viewStats}
-            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
-          >
-            <FormattedMessage {...messages.stats} />
-          </div>,
-        );
-      }
+      content.push(
+        <div
+          key='stats'
+          onClick={this.viewStats}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
+        >
+          <FormattedMessage {...messages.stats} />
+        </div>,
+      );
 
       content.push(
         <div
@@ -608,10 +601,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   renderEndNodeEdit = (): React.ReactNodeArray => {
-    const { viewer, hasFeature } = this.props;
+    const { viewer } = this.props;
     const content: React.ReactNodeArray = [];
 
-    if (viewer && hasFeature('automations-analytics')) {
+    if (viewer) {
       content.push(
         <div
           key='stats'
@@ -757,22 +750,20 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   render() {
-    const { node, viewer, hasFeature } = this.props;
+    const { node, viewer } = this.props;
     const { nodeName } = this.state;
 
     const icon = this.getIcon(node);
 
-    const nodeCounter =
-      viewer && hasFeature('automations-analytics') ? (
-        <UsersCounter
-          style={{ height: node.getNodeCounterHeight() }}
-          iconName={'user'}
-          numberOfUsers={this.getNumberOfUsers()}
-        />
-      ) : undefined;
+    const nodeCounter = viewer ? (
+      <UsersCounter
+        style={{ height: node.getNodeCounterHeight() }}
+        iconName={'user'}
+        numberOfUsers={this.getNumberOfUsers()}
+      />
+    ) : undefined;
 
-    const booleanMenuTop =
-      viewer && hasFeature('automations-analytics') ? node.getNodeCounterHeight() * 0.75 : 0;
+    const booleanMenuTop = viewer ? node.getNodeCounterHeight() * 0.75 : 0;
 
     const onFocus = () => {
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
@@ -908,5 +899,4 @@ export default compose<{}, AutomationNodeProps>(
   withRouter,
   injectIntl,
   injectDrawer,
-  injectFeatures,
 )(AutomationNodeWidget);
