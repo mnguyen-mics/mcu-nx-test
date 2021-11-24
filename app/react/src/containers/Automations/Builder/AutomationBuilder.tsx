@@ -34,7 +34,6 @@ import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { compose } from 'recompose';
 import ExitConditionButton from './ExitConditionButton/ExitConditionButton';
-import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { ScenarioCountersData } from '../../../utils/ScenarioAnalyticsReportHelper';
 
 export const messages = defineMessages({
@@ -90,7 +89,7 @@ interface State {
   viewNodeSelector: boolean;
 }
 
-type Props = AutomationBuilderProps & InjectedIntlProps & InjectedFeaturesProps;
+type Props = AutomationBuilderProps & InjectedIntlProps;
 
 class AutomationBuilder extends React.Component<Props, State> {
   engine = new DiagramEngine();
@@ -362,7 +361,7 @@ class AutomationBuilder extends React.Component<Props, State> {
 
   render() {
     const { viewNodeSelector } = this.state;
-    const { viewer, exitCondition, datamartId, automationTreeData, hasFeature } = this.props;
+    const { viewer, exitCondition, datamartId, automationTreeData } = this.props;
 
     const scenarioCountersData = isAutomationBuilderVisualizerProps(this.props)
       ? this.props.scenarioCountersData
@@ -396,20 +395,18 @@ class AutomationBuilder extends React.Component<Props, State> {
             </Button>
           </div>
 
-          {hasFeature('automations-global-exit-condition') && (
-            <ExitConditionButton
-              datamartId={datamartId}
-              automationTreeData={automationTreeData}
-              scenarioCountersData={scenarioCountersData}
-              exitCondition={exitCondition}
-              viewer={viewer}
-              updateAutomationData={
-                isAutomationBuilderEditorProp(this.props)
-                  ? this.props.updateAutomationData
-                  : undefined
-              }
-            />
-          )}
+          <ExitConditionButton
+            datamartId={datamartId}
+            automationTreeData={automationTreeData}
+            scenarioCountersData={scenarioCountersData}
+            exitCondition={exitCondition}
+            viewer={viewer}
+            updateAutomationData={
+              isAutomationBuilderEditorProp(this.props)
+                ? this.props.updateAutomationData
+                : undefined
+            }
+          />
         </Col>
         <Col span={viewNodeSelector ? 6 : 0} className='available-nodes-visualizer'>
           <AvailableNodeVisualizer />
@@ -429,20 +426,18 @@ class AutomationBuilder extends React.Component<Props, State> {
               // allowCanvasTranslation={true}
               inverseZoom={true}
             />
-            {hasFeature('automations-global-exit-condition') && (
-              <ExitConditionButton
-                datamartId={datamartId}
-                automationTreeData={automationTreeData}
-                exitCondition={exitCondition}
-                viewer={viewer}
-                scenarioCountersData={scenarioCountersData}
-                updateAutomationData={
-                  isAutomationBuilderEditorProp(this.props)
-                    ? this.props.updateAutomationData
-                    : undefined
-                }
-              />
-            )}
+            <ExitConditionButton
+              datamartId={datamartId}
+              automationTreeData={automationTreeData}
+              exitCondition={exitCondition}
+              viewer={viewer}
+              scenarioCountersData={scenarioCountersData}
+              updateAutomationData={
+                isAutomationBuilderEditorProp(this.props)
+                  ? this.props.updateAutomationData
+                  : undefined
+              }
+            />
           </Col>
         </div>
       );
@@ -452,7 +447,6 @@ class AutomationBuilder extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AutomationBuilderProps>(
-  injectIntl,
-  injectFeatures,
-)(withDragDropContext(AutomationBuilder));
+export default compose<Props, AutomationBuilderProps>(injectIntl)(
+  withDragDropContext(AutomationBuilder),
+);

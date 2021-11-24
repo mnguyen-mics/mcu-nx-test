@@ -13,10 +13,7 @@
     'campaignsSettings-attribution_models',
     'campaignsSettings-email_routers',
     'campaignsSettings-recommenders',
-    'automations-list',
-    'automations-builder',
-    'automations-test-scenario',
-    'automations-add-delete-to-from-segment-node',
+    'automations',
     'creatives-display',
     'creatives-email',
     'library-catalog',
@@ -49,7 +46,6 @@
     'datamartSettings-compartments',
     'datamartSettings-datamart_replication',
     'datamartSettings-event_hubs_replication',
-    'automations-analytics',
     'audience-segment_builder_v2',
     'audience-feature-search'
   ];

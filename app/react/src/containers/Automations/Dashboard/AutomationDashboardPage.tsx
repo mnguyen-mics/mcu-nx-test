@@ -22,7 +22,6 @@ import {
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import AutomationScenarioTest, { AutomationScenarioTestProps } from './Test/AutomationScenarioTest';
-import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import {
   DateSearchSettings,
@@ -56,7 +55,6 @@ interface State {
 type Props = InjectedNotificationProps &
   InjectedDrawerProps &
   InjectedIntlProps &
-  InjectedFeaturesProps &
   RouteComponentProps<AutomationDashboardrams>;
 
 const messages = defineMessages({
@@ -143,7 +141,6 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     needToUpdateLocationSearch: boolean,
     needToGetCountersAnalytics: boolean,
   ) => {
-    const { hasFeature } = this.props;
     if (needToLoadAutomationValues || needToUpdateLocationSearch || needToGetCountersAnalytics) {
       const {
         match: {
@@ -161,8 +158,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
         : parseSearch(search, DATE_SEARCH_SETTINGS);
 
       const shouldUpdateCountersAnalytics =
-        (needToUpdateLocationSearch || needToGetCountersAnalytics) &&
-        hasFeature('automations-analytics');
+        needToUpdateLocationSearch || needToGetCountersAnalytics;
 
       this.setState(
         {
@@ -344,7 +340,6 @@ class AutomationDashboardPage extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl: { formatMessage },
-      hasFeature,
     } = this.props;
     const { automationFormData, isLoading, updating, scenarioCountersData } = this.state;
 
@@ -375,18 +370,14 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     const datamartId = automationFormData.automation?.datamart_id;
     const nodeId = automationFormData.automationTreeData?.node.id;
 
-    const testButton =
-      (automationStatus === 'ACTIVE' || automationStatus === 'PAUSED') &&
+    const testButton = (automationStatus === 'ACTIVE' || automationStatus === 'PAUSED') &&
       datamartId &&
-      nodeId &&
-      hasFeature('automations-test-scenario') ? (
+      nodeId && (
         <Button onClick={this.onTestClick(datamartId, nodeId)} disabled={isLoading}>
           <McsIcon type={'gears'} />
           {formatMessage(messages.testTitle)}
         </Button>
-      ) : null;
-
-    const displayDateRange = hasFeature('automations-analytics');
+      );
 
     return (
       <Layout className='mcs-automationDashboardPage'>
@@ -413,12 +404,10 @@ class AutomationDashboardPage extends React.Component<Props, State> {
             <McsIcon type={'pen'} /> Edit
           </Button>
           {testButton}
-          {displayDateRange && (
-            <span className='mcs-automationDashboardPage_actionBar_dateRange_label' key='label'>
-              {formatMessage(messages.timeWindowLabel)}
-            </span>
-          )}
-          {displayDateRange && this.renderDatePicker()}
+          <span className='mcs-automationDashboardPage_actionBar_dateRange_label' key='label'>
+            {formatMessage(messages.timeWindowLabel)}
+          </span>
+          {this.renderDatePicker()}
         </Actionbar>
 
         <Layout.Content
@@ -444,5 +433,4 @@ export default compose(
   injectIntl,
   injectDrawer,
   injectNotifications,
-  injectFeatures,
 )(AutomationDashboardPage);

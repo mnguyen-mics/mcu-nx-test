@@ -25,7 +25,6 @@ import { WeekDay } from '../../../../../../../utils/DateHelper';
 import { DispatchProp, connect } from 'react-redux';
 import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
 import { getFormValues, change } from 'redux-form';
-import { injectFeatures, InjectedFeaturesProps } from '../../../../../../Features';
 
 export const messages: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -157,7 +156,6 @@ interface MapStateToProps {
 
 type Props = GeneralInformationFormSectionProps &
   InjectedIntlProps &
-  InjectedFeaturesProps &
   ValidatorProps &
   MapStateToProps &
   DispatchProp<any> &
@@ -283,7 +281,6 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
       fieldValidators: { isRequired, isValidInteger, isNotZero },
       intl: { formatMessage },
       disabled,
-      hasFeature,
     } = this.props;
     const { enableTimeWindow, enableDayWindow } = this.state;
 
@@ -337,20 +334,18 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           small={true}
         />
 
-        {hasFeature('automations-wait-node-day-and-time-window') && (
-          <div className={'mcs-automationWaitNodeForm_switchSection'}>
-            <Switch
-              defaultChecked={enableTimeWindow}
-              disabled={disabled}
-              onChange={this.onTimeSwitchChange}
-            />
-            <div className={'mcs-automationWaitNodeForm_switchSection_label'}>
-              {formatMessage(messages.enableTimeWindow)}
-            </div>
+        <div className={'mcs-automationWaitNodeForm_switchSection'}>
+          <Switch
+            defaultChecked={enableTimeWindow}
+            disabled={disabled}
+            onChange={this.onTimeSwitchChange}
+          />
+          <div className={'mcs-automationWaitNodeForm_switchSection_label'}>
+            {formatMessage(messages.enableTimeWindow)}
           </div>
-        )}
+        </div>
 
-        {enableTimeWindow && hasFeature('automations-wait-node-day-and-time-window') && (
+        {enableTimeWindow && (
           <div>
             <div className={'mcs-automationWaitNodeForm_sectionDescription'}>
               {formatMessage(messages.timeWindowTitle)}
@@ -383,20 +378,18 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           </div>
         )}
 
-        {hasFeature('automations-wait-node-day-and-time-window') && (
-          <div className={'mcs-automationWaitNodeForm_switchSection'}>
-            <Switch
-              defaultChecked={enableDayWindow}
-              disabled={disabled}
-              onChange={this.onDaySwitchChange}
-            />
-            <div className={'mcs-automationWaitNodeForm_switchSection_label'}>
-              {formatMessage(messages.enableDayWindow)}
-            </div>
+        <div className={'mcs-automationWaitNodeForm_switchSection'}>
+          <Switch
+            defaultChecked={enableDayWindow}
+            disabled={disabled}
+            onChange={this.onDaySwitchChange}
+          />
+          <div className={'mcs-automationWaitNodeForm_switchSection_label'}>
+            {formatMessage(messages.enableDayWindow)}
           </div>
-        )}
+        </div>
 
-        {enableDayWindow && hasFeature('automations-wait-node-day-and-time-window') && (
+        {enableDayWindow && (
           <div>
             <div className={'mcs-automationWaitNodeForm_sectionDescription'}>
               {formatMessage(messages.dayWindowTitle)}
@@ -427,7 +420,6 @@ const mapStateToProps = (state: MicsReduxState) => ({
 
 export default compose<Props, GeneralInformationFormSectionProps>(
   injectIntl,
-  injectFeatures,
   withValidators,
   withNormalizer,
   connect(mapStateToProps),
