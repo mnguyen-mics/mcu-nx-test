@@ -16,7 +16,6 @@ import TimelineSelector from '../AdvancedSegmentBuilder/TimelineSelector';
 import { formatMetric } from '../../../utils/MetricHelper';
 import { QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
 import DashboardPageWrapper from '../Dashboard/DashboardPageWrapper';
-import { DatamartUsersAnalyticsWrapperProps } from '../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 
 interface StandardSegmentBuilderDashboardProps {
@@ -32,12 +31,7 @@ type Props = InjectedIntlProps &
   InjectedNotificationProps &
   StandardSegmentBuilderDashboardProps &
   InjectedFeaturesProps;
-
-interface State {
-  datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
-}
-
-class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
+class StandardSegmentBuilderDashboard extends React.Component<Props> {
   @lazyInject(TYPES.IDashboardService)
   private _dashboardService: IDashboardService;
   @lazyInject(TYPES.IQueryService)
@@ -45,10 +39,6 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-
-    this.state = {
-      datamartAnalyticsDashboardConfig: [],
-    };
   }
 
   render() {
@@ -61,8 +51,6 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
       organisationId,
       standardSegmentBuilderId,
     } = this.props;
-
-    const { datamartAnalyticsDashboardConfig } = this.state;
 
     const getTimelineSelectorOTQLQuery = (): Promise<string> => {
       const selectionQueryDocument = {
@@ -123,7 +111,6 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
           <DashboardPageWrapper
             className='mcs-dashboardPage_content'
             datamartId={datamartId}
-            datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
             source={queryDocument}
             tabsClassname='m-t-30'
             fetchApiDashboards={fetchApiDashboards}
