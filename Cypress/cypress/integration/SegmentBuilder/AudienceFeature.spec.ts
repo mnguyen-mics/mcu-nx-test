@@ -17,6 +17,8 @@ describe('This test should check that the audience feature forms are working pro
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();
       cy.get('.mcs-tabs_tab--audienceFeatures').click();
+
+      // Create an audience feature
       cy.get('.mcs-audienceFeature_creation_button').click();
       cy.get('.mcs-audienceFeatureName').type('Test Audience Feature Form');
       cy.get('.mcs-audienceFeatureDescription').type('Test Audience Feature Form');
@@ -29,6 +31,7 @@ describe('This test should check that the audience feature forms are working pro
         },
       );
       cy.wait(1000);
+      cy.get('.mcs-OTQLConsoleContainer_tabs').should('contain', 'Query to save');
       cy.get('.mcs-otqlInputEditor_otqlConsole > textarea').type(
         'select {id} from UserPoint where creation_date = $test',
         {
@@ -41,6 +44,8 @@ describe('This test should check that the audience feature forms are working pro
       cy.get('.mcs-audienceFeature_table')
         .should('contain', 'creation_date = $test')
         .and('contain', 'Test Audience Feature Form');
+
+      // Edit an audience feature
       cy.get('.mcs-audienceFeature_table').within($table => {
         cy.get('.mcs-chevron').first().click();
       });
@@ -53,6 +58,15 @@ describe('This test should check that the audience feature forms are working pro
       );
       cy.get('.mcs-audienceFeature_edit_query_button').click();
       cy.wait(5000);
+      cy.get('.mcs-otqlInputEditor_otqlConsole')
+        .should('contain', 'SELECT')
+        .and('contain', '@count')
+        .and('contain', 'FROM')
+        .and('contain', 'UserPoint')
+        .and('contain', 'where')
+        .and('contain', 'creation_date')
+        .and('contain', '=')
+        .and('contain', '$test');
       cy.get('.mcs-otqlInputEditor_otqlConsole > textarea').type(
         '{selectall}{backspace}{backspace}',
         {
@@ -67,11 +81,26 @@ describe('This test should check that the audience feature forms are working pro
           parseSpecialCharSequences: false,
         },
       );
+      cy.contains('Query to save').parent().next().click();
+      cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
+        .last()
+        .type('{selectall}{backspace}{backspace}', {
+          force: true,
+        });
+      cy.wait(1000);
+      cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
+        .last()
+        .type('select {id} from UserPoint where id = $id', {
+          force: true,
+          parseSpecialCharSequences: false,
+        });
       cy.get('.mcs-audienceFeature_update_query').click();
       cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
       cy.get('.mcs-audienceFeature_table')
         .should('contain', 'creation_date > $test and creation_date < $test2')
         .and('contain', 'Test Audience Feature Form - Edit');
+
+      // Delete an audience feature
       cy.get('.mcs-audienceFeature_table').within($table => {
         cy.get('.mcs-chevron').first().click();
       });
@@ -103,7 +132,7 @@ describe('This test should check that the audience feature forms are working pro
         },
       );
       cy.wait(1000);
-      cy.get('.mcs-otqlInputEditor_otqlConsole > textarea').type('select {id} from UserPoint', {
+      cy.get('.mcs-otqlInputEditor_otqlConsole > textarea').type('SELECT {id} from UserPoint', {
         force: true,
         parseSpecialCharSequences: false,
       });
