@@ -283,7 +283,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   render() {
     const { datamartId, intl, editionMode } = this.props;
-    const { schemaLoading, rawSchema, activeKey, panes, tabQueries } = this.state;
+    const { schemaLoading, rawSchema, activeKey, panes, tabQueries, query } = this.state;
 
     if (schemaLoading) {
       return <Loading isFullScreen={true} />;
@@ -294,13 +294,15 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         ? tabQueries.find((tabQ: TabQuery) => tabQ.id === activeKey)
         : undefined;
 
+    const firstTabQuery = tabQueries.find(t => t.id === '1');
     const exportQuery = currentQuery ? currentQuery.query : this.state.query;
+    const queryToUse = editionMode ? (firstTabQuery ? firstTabQuery.query : query) : exportQuery;
 
     let startType = 'UserPoint';
 
     if (rawSchema) {
       const foundType = rawSchema.find(ot => {
-        return !!exportQuery.includes(ot.name);
+        return !!queryToUse.includes(ot.name);
       });
       if (foundType) {
         startType = foundType.name;
@@ -308,7 +310,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     }
     return (
       <Layout>
-        {this.state.query && this.props.renderActionBar(exportQuery, datamartId)}
+        {this.state.query && this.props.renderActionBar(queryToUse, datamartId)}
         <Layout>
           <Content className='mcs-content-container'>
             <Tabs
