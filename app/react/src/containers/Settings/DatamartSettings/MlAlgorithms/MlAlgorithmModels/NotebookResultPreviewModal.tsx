@@ -30,19 +30,21 @@ class NotebookResultPreviewModal extends React.Component<
     const onClick = () => onClose();
 
     return (
-      <Modal
-        title={intl.formatMessage(messages.previewModalTitle)}
-        visible={opened}
-        onCancel={onClose}
-        width={1280}
-        footer={
-          <Button key={1} onClick={onClick}>
-            Ok
-          </Button>
-        }
-      >
-        <IframeSupport content={html} />
-      </Modal>
+      <div className='mcs-modal_container'>
+        <Modal
+          title={intl.formatMessage(messages.previewModalTitle)}
+          visible={opened}
+          onCancel={onClose}
+          width={1280}
+          footer={
+            <Button key={1} onClick={onClick}>
+              Ok
+            </Button>
+          }
+        >
+          <IframeSupport content={html} />
+        </Modal>
+      </div>
     );
   }
 }

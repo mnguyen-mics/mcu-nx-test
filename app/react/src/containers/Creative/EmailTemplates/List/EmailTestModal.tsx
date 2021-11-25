@@ -108,26 +108,28 @@ class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
     };
 
     return (
-      <Modal
-        title={formatMessage(messages.modalTitle)}
-        visible={this.props.isModalVisible}
-        onOk={this.handleOk}
-        onCancel={this.props.handleCancel}
-        confirmLoading={this.state.isLoading}
-      >
-        <p>{formatMessage(messages.modalBody1)}</p>
-        <p>{formatMessage(messages.modalBody2)}</p>
-        <br />
-        {this.state.error ? (
-          <Alert message={formatMessage(messages.inputError)} type='error' />
-        ) : null}
+      <div className='mcs-modal_container'>
+        <Modal
+          title={formatMessage(messages.modalTitle)}
+          visible={this.props.isModalVisible}
+          onOk={this.handleOk}
+          onCancel={this.props.handleCancel}
+          confirmLoading={this.state.isLoading}
+        >
+          <p>{formatMessage(messages.modalBody1)}</p>
+          <p>{formatMessage(messages.modalBody2)}</p>
+          <br />
+          {this.state.error ? (
+            <Alert message={formatMessage(messages.inputError)} type='error' />
+          ) : null}
 
-        <Input
-          onChange={onChange}
-          defaultValue=''
-          placeholder={formatMessage(messages.inputPlaceholder)}
-        />
-      </Modal>
+          <Input
+            onChange={onChange}
+            defaultValue=''
+            placeholder={formatMessage(messages.inputPlaceholder)}
+          />
+        </Modal>
+      </div>
     );
   }
 }

@@ -54,21 +54,23 @@ class Convert2Otql extends React.Component<Props, State> {
     const { query, loading } = this.state;
 
     return (
-      <Modal
-        className='mcs-convert2Otql'
-        {...modalProps}
-        visible={visible}
-        onOk={onOk}
-        title={
-          <FormattedMessage
-            id='queryTool.convert.query-tool-modal-saveas-export-title'
-            defaultMessage='Save As Export'
-          />
-        }
-      >
-        {loading ? <Spin size={'small'} /> : undefined}
-        {query ? <Code language='otql' value={query.output_query_text} /> : undefined}
-      </Modal>
+      <div className='mcs-modal_container'>
+        <Modal
+          className='mcs-convert2Otql'
+          {...modalProps}
+          visible={visible}
+          onOk={onOk}
+          title={
+            <FormattedMessage
+              id='queryTool.convert.query-tool-modal-saveas-export-title'
+              defaultMessage='Save As Export'
+            />
+          }
+        >
+          {loading ? <Spin size={'small'} /> : undefined}
+          {query ? <Code language='otql' value={query.output_query_text} /> : undefined}
+        </Modal>
+      </div>
     );
   }
 }

@@ -209,7 +209,7 @@ class LabelsListPage extends React.Component<Props, LabelsListState> {
       <div className='ant-layout'>
         <Content className='mcs-content-container'>
           <Row className='mcs-table-container'>
-            <div>
+            <div className='mcs-modal_container'>
               <div className='mcs-card-header mcs-card-title'>
                 <span className='mcs-card-title'>
                   <FormattedMessage {...settingsMessages.labels} />

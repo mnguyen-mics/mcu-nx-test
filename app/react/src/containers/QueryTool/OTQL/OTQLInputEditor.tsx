@@ -162,7 +162,11 @@ class OTQLInputEditor extends React.Component<Props, State> {
       <Card
         title={<FormattedMessage id='queryTool.otql.card.title' defaultMessage='OTQL' />}
         buttons={this.buildEditorActions()}
-        className={hasFeature('query-tool-graphs') ? 'mcs-otqlInputEditor_card' : ''}
+        className={
+          hasFeature('query-tool-graphs')
+            ? 'mcs-otqlInputEditor_card mcs-modal_container'
+            : 'mcs-modal_container'
+        }
       >
         <Modal
           title='Query Settings'

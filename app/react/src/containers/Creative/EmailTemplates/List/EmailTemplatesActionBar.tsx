@@ -60,7 +60,7 @@ class EmailTemplatesActionBar extends React.Component<JoinedProps> {
     const hasSelected = !!(rowSelection.selectedRowKeys && rowSelection.selectedRowKeys.length > 0);
 
     return (
-      <Actionbar pathItems={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths} className='mcs-modal_container'>
         <Link to={`/v2/o/${organisationId}/creatives/email/create`}>
           <Button className='mcs-primary' type='primary'>
             <McsIcon type='plus' />{' '}

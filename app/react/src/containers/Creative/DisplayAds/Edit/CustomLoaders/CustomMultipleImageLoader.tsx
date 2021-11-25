@@ -171,7 +171,7 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
 
     return (
       <div className='mcs-custom-loader image-loader'>
-        <div className='square-container'>
+        <div className='square-container mcs-modal_container'>
           {fileList &&
             fileList.map(f => {
               return (

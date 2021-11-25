@@ -362,7 +362,7 @@ class GoalFormSection extends React.Component<Props, State> {
     const { visible, loading } = this.state;
 
     return (
-      <div id='goals'>
+      <div id='goals' className='mcs-modal_container'>
         <FormSection
           dropdownItems={[
             {

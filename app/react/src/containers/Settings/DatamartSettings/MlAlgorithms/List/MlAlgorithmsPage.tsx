@@ -379,19 +379,21 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
     };
 
     return (
-      <Modal
-        title={intl.formatMessage(messages.forkMlAlgorithmModalTitle)}
-        visible={isModalOpen}
-        confirmLoading={modalLoading}
-        onCancel={onCancel}
-        onOk={onOk}
-      >
-        <Spin spinning={modalLoading}>
-          <div>{intl.formatMessage(messages.forkMlAlgorithmModalSubtitle)}</div>
-          <br />
-          <Form layout={'vertical'}>{variableFormSection}</Form>
-        </Spin>
-      </Modal>
+      <div className='mcs-modal_container'>
+        <Modal
+          title={intl.formatMessage(messages.forkMlAlgorithmModalTitle)}
+          visible={isModalOpen}
+          confirmLoading={modalLoading}
+          onCancel={onCancel}
+          onOk={onOk}
+        >
+          <Spin spinning={modalLoading}>
+            <div>{intl.formatMessage(messages.forkMlAlgorithmModalSubtitle)}</div>
+            <br />
+            <Form layout={'vertical'}>{variableFormSection}</Form>
+          </Spin>
+        </Modal>
+      </div>
     );
   };
 

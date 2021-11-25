@@ -457,7 +457,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     const onClickNewExport = () => this.handleModal(true);
 
     return (
-      <div className='ant-layout'>
+      <div className='ant-layout mcs-modal_container'>
         <Modal
           title={<FormattedMessage {...messages.popupTitle} />}
           wrapClassName='vertical-center-modal'

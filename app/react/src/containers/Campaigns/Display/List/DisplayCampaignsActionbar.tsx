@@ -258,7 +258,7 @@ class DisplayCampaignsActionbar extends React.Component<
     };
 
     return (
-      <Actionbar pathItems={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths} className='mcs-modal_container'>
         <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
           <Button className='mcs-primary' type='primary'>
             <McsIcon type='plus' />{' '}

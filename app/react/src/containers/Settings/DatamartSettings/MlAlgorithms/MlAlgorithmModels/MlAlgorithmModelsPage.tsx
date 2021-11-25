@@ -405,37 +405,39 @@ class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModel
       });
 
     return (
-      <Modal
-        title={formatMessage(messages.uploadTitle)}
-        visible={isModalOpen}
-        onOk={this.handleOnUploadButton}
-        okButtonProps={{ disabled: loading }}
-        okText={formatMessage(messages.uploadConfirm)}
-        onCancel={this.handleOpenClose}
-        confirmLoading={loading}
-      >
-        <Spin spinning={loading}>
-          <Input
-            defaultValue={this.state.newModelName}
-            onChange={onChange}
-            placeholder='Name'
-            required={true}
-          />
-          <br />
-          <br />
-          <Dragger {...notebookUploadProps}>
-            <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageNotebook)}</p>
-          </Dragger>
-          <br />
-          <Dragger {...modelUploadProps}>
-            <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageModel)}</p>
-          </Dragger>
-          <br />
-          <Dragger {...resultUploadProps}>
-            <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageResult)}</p>
-          </Dragger>
-        </Spin>
-      </Modal>
+      <div className='mcs-modal_container'>
+        <Modal
+          title={formatMessage(messages.uploadTitle)}
+          visible={isModalOpen}
+          onOk={this.handleOnUploadButton}
+          okButtonProps={{ disabled: loading }}
+          okText={formatMessage(messages.uploadConfirm)}
+          onCancel={this.handleOpenClose}
+          confirmLoading={loading}
+        >
+          <Spin spinning={loading}>
+            <Input
+              defaultValue={this.state.newModelName}
+              onChange={onChange}
+              placeholder='Name'
+              required={true}
+            />
+            <br />
+            <br />
+            <Dragger {...notebookUploadProps}>
+              <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageNotebook)}</p>
+            </Dragger>
+            <br />
+            <Dragger {...modelUploadProps}>
+              <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageModel)}</p>
+            </Dragger>
+            <br />
+            <Dragger {...resultUploadProps}>
+              <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageResult)}</p>
+            </Dragger>
+          </Spin>
+        </Modal>
+      </div>
     );
   };
 

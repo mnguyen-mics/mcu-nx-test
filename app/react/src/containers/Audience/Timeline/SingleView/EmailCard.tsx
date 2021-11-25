@@ -89,72 +89,74 @@ class EmailCard extends React.Component<Props, State> {
         : [];
     return (
       showModal && (
-        <Modal
-          title={formatMessage(messages.titleModalEmail)}
-          visible={showModal}
-          width='70%'
-          onOk={this.handleClose}
-          onCancel={this.handleClose}
-          footer={[
-            <Button key='submit' type='primary' size='large' onClick={this.handleClose}>
-              <FormattedMessage {...messages.okModalEmail} />
-            </Button>,
-          ]}
-        >
-          <Row gutter={10} className='table-line' style={{ display: 'block' }}>
-            <Col span={24} className='title'>
-              <FormattedMessage {...messages.emailInfo} />
-            </Col>
-            <Row>
-              <Col className='table-left' span={12}>
-                <FormattedMessage {...messages.emailAddress} />
+        <div className='mcs-modal_container'>
+          <Modal
+            title={formatMessage(messages.titleModalEmail)}
+            visible={showModal}
+            width='70%'
+            onOk={this.handleClose}
+            onCancel={this.handleClose}
+            footer={[
+              <Button key='submit' type='primary' size='large' onClick={this.handleClose}>
+                <FormattedMessage {...messages.okModalEmail} />
+              </Button>,
+            ]}
+          >
+            <Row gutter={10} className='table-line' style={{ display: 'block' }}>
+              <Col span={24} className='title'>
+                <FormattedMessage {...messages.emailInfo} />
               </Col>
-              <Col className='table-right' span={12}>
-                {selectedAgent.email}
-              </Col>
-            </Row>
-            <Row>
-              <Col className='table-left' span={12}>
-                <FormattedMessage {...messages.emailHash} />
-              </Col>
-              <Col className='table-right' span={12}>
-                {selectedAgent.hash}
-              </Col>
-            </Row>
-            <Row>
-              <Col className='table-left' span={12}>
-                <FormattedMessage {...messages.emailCreation} />
-              </Col>
-              <Col className='table-right' span={12}>
-                {moment(selectedAgent.creation_ts).format('YYYY-MM-DD HH:mm:ss')}
-              </Col>
-            </Row>
-            <Row>
-              <Col className='table-left' span={12}>
-                <FormattedMessage {...messages.emailActivity} />
-              </Col>
-              <Col className='table-right' span={12}>
-                {moment(selectedAgent.last_activity_ts).format('YYYY-MM-DD HH:mm:ss')}
-              </Col>
-            </Row>
-          </Row>
-          <Row style={{ display: 'block' }}>
-            {selectedAgent.providers ? (
-              <div>
-                <Col span={24} className='title'>
-                  <FormattedMessage {...messages.emailConsent} />
+              <Row>
+                <Col className='table-left' span={12}>
+                  <FormattedMessage {...messages.emailAddress} />
                 </Col>
-                <Col span={24}>
-                  <TableViewWithSelectionNotifyerMessages
-                    dataSource={dataSource}
-                    columns={columnsDefinitions}
-                    loading={false}
-                  />
+                <Col className='table-right' span={12}>
+                  {selectedAgent.email}
                 </Col>
-              </div>
-            ) : null}
-          </Row>
-        </Modal>
+              </Row>
+              <Row>
+                <Col className='table-left' span={12}>
+                  <FormattedMessage {...messages.emailHash} />
+                </Col>
+                <Col className='table-right' span={12}>
+                  {selectedAgent.hash}
+                </Col>
+              </Row>
+              <Row>
+                <Col className='table-left' span={12}>
+                  <FormattedMessage {...messages.emailCreation} />
+                </Col>
+                <Col className='table-right' span={12}>
+                  {moment(selectedAgent.creation_ts).format('YYYY-MM-DD HH:mm:ss')}
+                </Col>
+              </Row>
+              <Row>
+                <Col className='table-left' span={12}>
+                  <FormattedMessage {...messages.emailActivity} />
+                </Col>
+                <Col className='table-right' span={12}>
+                  {moment(selectedAgent.last_activity_ts).format('YYYY-MM-DD HH:mm:ss')}
+                </Col>
+              </Row>
+            </Row>
+            <Row style={{ display: 'block' }}>
+              {selectedAgent.providers ? (
+                <div>
+                  <Col span={24} className='title'>
+                    <FormattedMessage {...messages.emailConsent} />
+                  </Col>
+                  <Col span={24}>
+                    <TableViewWithSelectionNotifyerMessages
+                      dataSource={dataSource}
+                      columns={columnsDefinitions}
+                      loading={false}
+                    />
+                  </Col>
+                </div>
+              ) : null}
+            </Row>
+          </Modal>
+        </div>
       )
     );
   };

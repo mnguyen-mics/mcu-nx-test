@@ -54,7 +54,7 @@ class AuditComponent extends React.Component<Props, State> {
     );
 
     return (
-      <div style={{ overflow: 'hidden' }}>
+      <div style={{ overflow: 'hidden' }} className='mcs-modal_container'>
         <div>
           <div className={'float-left'} style={{ lineHeight: '59px' }}>
             <AuditStatusRenderer auditStatus={creative.audit_status} />
