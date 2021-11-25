@@ -190,7 +190,7 @@ class IfNodeForm extends React.Component<Props, State> {
 
     return (
       <Layout className='edit-layout'>
-        <Layout className={'ant-layout'}>
+        <Layout className={'ant-layout mcs-legacy_form_container'}>
           <Actionbar edition={true} pathItems={breadCrumbPaths}>
             <Button onClick={onOtqlSave} type='primary' className={'mcs-primary'}>
               Save

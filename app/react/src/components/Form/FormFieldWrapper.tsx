@@ -61,7 +61,13 @@ const FormFieldWrapper: React.FunctionComponent<FormItemProps & FormFieldWrapper
   }
 
   return (
-    <div className={hasMarginBottom ? '' : 'form-field-wrapper'}>
+    <div
+      className={
+        hasMarginBottom
+          ? 'mcs-legacy_form_container'
+          : 'form-field-wrapper mcs-legacy_form_container'
+      }
+    >
       <Form.Item
         label={label && renderedLabel}
         {...(!small && defaultFieldGridConfig)}

@@ -58,24 +58,26 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
       isEdge,
     } = this.props;
     return (
-      <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
-        <FieldNodeForm
-          availableFields={this.getQueryableFields()}
-          formChange={change}
-          objectType={objectType}
-          name={'fieldNodeForm'}
-          idToAttachDropDowns={idToAttachDropDowns}
-          datamartId={datamartId}
-          runtimeSchemaId={runtimeSchemaId}
-          formName={this.props.form}
-          treeNodePath={treeNodePath}
-          runFieldProposal={runFieldProposal}
-          isEdge={isEdge}
-        />
-        <Button type='primary' className='mcs-primary' htmlType='submit'>
-          Submit
-        </Button>
-      </Form>
+      <div className='mcs-legacy_form_container'>
+        <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
+          <FieldNodeForm
+            availableFields={this.getQueryableFields()}
+            formChange={change}
+            objectType={objectType}
+            name={'fieldNodeForm'}
+            idToAttachDropDowns={idToAttachDropDowns}
+            datamartId={datamartId}
+            runtimeSchemaId={runtimeSchemaId}
+            formName={this.props.form}
+            treeNodePath={treeNodePath}
+            runFieldProposal={runFieldProposal}
+            isEdge={isEdge}
+          />
+          <Button type='primary' className='mcs-primary' htmlType='submit'>
+            Submit
+          </Button>
+        </Form>
+      </div>
     );
   }
 }

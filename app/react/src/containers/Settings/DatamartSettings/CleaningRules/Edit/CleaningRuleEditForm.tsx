@@ -113,7 +113,7 @@ class CleaningRuleEditForm extends React.Component<Props> {
     return (
       <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Layout className='ant-layout-has-sider'>
+        <Layout className='ant-layout-has-sider mcs-legacy_form_container'>
           <ScrollspySider {...sideBarProps} />
           <Form className='edit-layout ant-layout' onSubmit={handleSubmit}>
             {/* This button enables submit on enter */}

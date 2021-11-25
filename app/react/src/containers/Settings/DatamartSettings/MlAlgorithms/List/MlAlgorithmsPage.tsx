@@ -386,6 +386,7 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
           confirmLoading={modalLoading}
           onCancel={onCancel}
           onOk={onOk}
+          className='mcs-legacy_form_container'
         >
           <Spin spinning={modalLoading}>
             <div>{intl.formatMessage(messages.forkMlAlgorithmModalSubtitle)}</div>

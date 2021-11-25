@@ -43,7 +43,7 @@ class OrganisationAccount extends React.Component<Props> {
 
     return (
       <div className='ant-layout'>
-        <Content className='mcs-content-container'>
+        <Content className='mcs-content-container mcs-legacy_form_container'>
           <Form className={'edit-top'}>
             <div className='mcs-card-header mcs-card-title'>
               <span className='mcs-card-title'>

@@ -175,7 +175,7 @@ class ScenarioExitConditionAutomationForm extends React.Component<Props, State> 
     return (
       <Layout className='mcs-reactToEventAutomation edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Layout className={'ant-layout-content'}>
+        <Layout className={'ant-layout-content mcs-legacy_form_container'}>
           {isLoading ? (
             <Loading isFullScreen={true} />
           ) : (

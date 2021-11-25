@@ -527,7 +527,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     };
 
     return (
-      <Layout className='mcs-reactToEventAutomation edit-layout'>
+      <Layout className='mcs-reactToEventAutomation edit-layout mcs-legacy_form_container'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-content'}>
           <Form

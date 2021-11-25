@@ -95,7 +95,7 @@ class OnSegmentEntryInputAutomationForm extends React.Component<Props> {
     return (
       <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Layout className={'ant-layout-has-sider'}>
+        <Layout className={'ant-layout-has-sider mcs-legacy_form_container'}>
           <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
             <Content
               id={FORM_ID}

@@ -53,26 +53,28 @@ class AutomationSimpleForm extends React.Component<
     );
 
     return (
-      <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
-        <BlurredModal onClose={onClose} formId={FORM_ID} opened={visible} footer={modalFooter}>
-          <FormInputField
-            name='name'
-            component={FormInput}
-            validate={[fieldValidators.isRequired]}
-            formItemProps={{
-              label: intl.formatMessage(messages.automationNameLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: intl.formatMessage(messages.automationNamePlaceHolder),
-              className: 'mcs-automationName',
-            }}
-            helpToolTipProps={{
-              title: intl.formatMessage(messages.automationNameTooltip),
-            }}
-          />
-        </BlurredModal>
-      </Form>
+      <div className='mcs-legacy_form_container'>
+        <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
+          <BlurredModal onClose={onClose} formId={FORM_ID} opened={visible} footer={modalFooter}>
+            <FormInputField
+              name='name'
+              component={FormInput}
+              validate={[fieldValidators.isRequired]}
+              formItemProps={{
+                label: intl.formatMessage(messages.automationNameLabel),
+                required: true,
+              }}
+              inputProps={{
+                placeholder: intl.formatMessage(messages.automationNamePlaceHolder),
+                className: 'mcs-automationName',
+              }}
+              helpToolTipProps={{
+                title: intl.formatMessage(messages.automationNameTooltip),
+              }}
+            />
+          </BlurredModal>
+        </Form>
+      </div>
     );
   }
 }

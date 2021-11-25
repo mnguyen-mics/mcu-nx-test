@@ -125,7 +125,7 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
     return (
       <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Layout className={'ant-layout-has-sider'}>
+        <Layout className={'ant-layout-has-sider mcs-legacy_form_container'}>
           <Form className='edit-layout ant-layout' layout={'vertical'}>
             {/* this button enables submit on enter */}
             <button type='submit' style={{ display: 'none' }} />

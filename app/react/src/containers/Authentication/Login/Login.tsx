@@ -156,7 +156,7 @@ const Login = (props: Props) => {
         <div className='image-wrapper'>
           <img alt='mics-logo' className='login-logo' src={'/react/src/assets/images/logo.png'} />
         </div>
-        <div className='login-frame'>
+        <div className='login-frame mcs-legacy_form_container'>
           <Form onFinish={handleSubmit} form={form}>
             {errorMsg}
             <div className='login-password-text'>

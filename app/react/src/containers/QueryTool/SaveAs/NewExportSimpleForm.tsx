@@ -66,33 +66,35 @@ class NewExportSimleForm extends React.Component<
     const { fieldValidators, intl, handleSubmit, csvExportDisabled } = this.props;
 
     return (
-      <Form className='edit-layout ant-layout' layout='vertical' onSubmit={handleSubmit}>
-        <div className='mcs-form-container' style={{ paddingTop: '0px' }}>
-          <FormInputField
-            name='name'
-            component={FormInput}
-            validate={[fieldValidators.isRequired]}
-            formItemProps={{
-              label: intl.formatMessage(messages.exportNameLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: intl.formatMessage(messages.exportNamelPlaceholder),
-              addonAfter: (
-                <FormAddonSelectField
-                  name='outputFormat'
-                  component={AddonSelect}
-                  options={this.getOptionList(csvExportDisabled)}
-                />
-              ),
-            }}
-            helpToolTipProps={{
-              title: intl.formatMessage(messages.exportNameTooltip),
-            }}
-            small={true}
-          />
-        </div>
-      </Form>
+      <div className='mcs-legacy_form_container'>
+        <Form className='edit-layout ant-layout' layout='vertical' onSubmit={handleSubmit}>
+          <div className='mcs-form-container' style={{ paddingTop: '0px' }}>
+            <FormInputField
+              name='name'
+              component={FormInput}
+              validate={[fieldValidators.isRequired]}
+              formItemProps={{
+                label: intl.formatMessage(messages.exportNameLabel),
+                required: true,
+              }}
+              inputProps={{
+                placeholder: intl.formatMessage(messages.exportNamelPlaceholder),
+                addonAfter: (
+                  <FormAddonSelectField
+                    name='outputFormat'
+                    component={AddonSelect}
+                    options={this.getOptionList(csvExportDisabled)}
+                  />
+                ),
+              }}
+              helpToolTipProps={{
+                title: intl.formatMessage(messages.exportNameTooltip),
+              }}
+              small={true}
+            />
+          </div>
+        </Form>
+      </div>
     );
   }
 }
