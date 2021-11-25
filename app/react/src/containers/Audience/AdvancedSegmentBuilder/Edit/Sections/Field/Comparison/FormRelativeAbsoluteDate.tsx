@@ -290,7 +290,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
             </RadioButton>
           </RadioGroup>
         </div>
-        <div>
+        <div className='mcs-datePicker_container'>
           {this.state.datePickerType === 'ABSOLUTE' ? (
             <DatePicker
               allowClear={false}

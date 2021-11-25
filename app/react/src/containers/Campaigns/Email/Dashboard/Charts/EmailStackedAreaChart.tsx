@@ -107,6 +107,7 @@ class EmailStackedAreaChart extends React.Component<Props> {
                 values={dateRangeValue}
                 onChange={onDateRangeChange}
                 messages={mcsdatePickerMsg}
+                className='mcs-datePicker_container'
               />
             </span>
           </Col>

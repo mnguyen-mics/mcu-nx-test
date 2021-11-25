@@ -176,7 +176,12 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
     ) as McsDateRangePickerMessages;
     return (
       <div style={{ marginBottom: 5 }}>
-        <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />
+        <McsDateRangePicker
+          values={values}
+          onChange={onChange}
+          messages={mcsdatePickerMsg}
+          className='mcs-datePicker_container'
+        />
       </div>
     );
   }

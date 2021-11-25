@@ -301,6 +301,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
             values={dateRange}
             onChange={this.handleDateRangePickerChangeFunction}
             messages={mcsdatePickerMsg}
+            className='mcs-datePicker_container'
           />
           {routeParams.filter.length > 0 && (
             <Button

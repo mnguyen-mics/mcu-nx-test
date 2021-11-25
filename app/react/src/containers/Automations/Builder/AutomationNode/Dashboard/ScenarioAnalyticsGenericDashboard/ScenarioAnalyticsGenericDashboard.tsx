@@ -109,6 +109,7 @@ class ScenarioAnalyticsGenericDashboard extends React.Component<Props, State> {
                   values={dateRange}
                   onChange={this.onDatePickerChange}
                   messages={mcsdatePickerMsg}
+                  className='mcs-datePicker_container'
                 />
               </span>
             </Col>

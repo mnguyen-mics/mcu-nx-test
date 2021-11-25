@@ -158,6 +158,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
         excludeToday={true}
         startDate={comparisonStartDate}
         messages={mcsdatePickerMsg}
+        className='mcs-datePicker_container'
       />
     );
   }

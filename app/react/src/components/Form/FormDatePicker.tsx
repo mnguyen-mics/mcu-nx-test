@@ -50,6 +50,7 @@ const FormDatePicker: React.SFC<FormDatePickerProps & WrappedFieldProps> = props
       validateStatus={validateStatus}
       small={props.small}
       {...props.formItemProps}
+      className='mcs-datePicker_container'
     >
       <DatePicker
         allowClear={false}

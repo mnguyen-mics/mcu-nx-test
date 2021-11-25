@@ -92,6 +92,7 @@ class FeedNodeAutomationDashboardStats extends React.Component<Props, State> {
               values={this.state.dateRange}
               onChange={this.onDatePickerChange}
               messages={McsdatePickerMsg}
+              className='mcs-datePicker_container'
             />
           </div>
           <Card>

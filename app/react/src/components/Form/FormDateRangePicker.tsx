@@ -173,7 +173,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
         {...formItemProps}
       >
         <div className='range-picker'>
-          <div className='date-picker'>
+          <div className='date-picker mcs-datePicker_container'>
             <DatePicker
               allowClear={false}
               {...startDatePickerProps}
@@ -188,7 +188,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
           <div className='range-picker-separator'>
             <p className='form-split'>-</p>
           </div>
-          <div className='date-picker'>
+          <div className='date-picker mcs-datePicker_container'>
             <DatePicker
               allowClear={false}
               {...endDatePickerProps}

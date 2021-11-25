@@ -202,7 +202,14 @@ class AdCard extends React.Component<Props, State> {
       mcsDateRangePickerMessages,
       this.props.intl,
     ) as McsDateRangePickerMessages;
-    return <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />;
+    return (
+      <McsDateRangePicker
+        values={values}
+        onChange={onChange}
+        messages={mcsdatePickerMsg}
+        className='mcs-datePicker_container'
+      />
+    );
   }
 
   createLegend() {

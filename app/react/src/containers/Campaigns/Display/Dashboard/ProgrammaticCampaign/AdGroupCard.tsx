@@ -140,7 +140,14 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       mcsDateRangePickerMessages,
       this.props.intl,
     ) as McsDateRangePickerMessages;
-    return <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />;
+    return (
+      <McsDateRangePicker
+        values={values}
+        onChange={onChange}
+        messages={mcsdatePickerMsg}
+        className='mcs-datePicker_container'
+      />
+    );
   }
 
   archiveAdGroups = () => {
