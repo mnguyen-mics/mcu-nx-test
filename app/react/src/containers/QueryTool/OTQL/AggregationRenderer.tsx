@@ -83,18 +83,20 @@ class AggregationRenderer extends React.Component<Props, State> {
   getMetrics = (metrics: OTQLMetric[] = []) => {
     if (metrics.length === 0) return null;
     return (
-      <Table<OTQLMetric>
-        columns={[
-          { title: 'Name', dataIndex: 'name' },
-          { title: 'Value', dataIndex: 'value' },
-        ]}
-        dataSource={metrics}
-        pagination={{
-          size: 'small',
-          showSizeChanger: true,
-          hideOnSinglePage: true,
-        }}
-      />
+      <div className='mcs-table-container'>
+        <Table<OTQLMetric>
+          columns={[
+            { title: 'Name', dataIndex: 'name' },
+            { title: 'Value', dataIndex: 'value' },
+          ]}
+          dataSource={metrics}
+          pagination={{
+            size: 'small',
+            showSizeChanger: true,
+            hideOnSinglePage: true,
+          }}
+        />
+      </div>
     );
   };
 
@@ -241,47 +243,49 @@ class AggregationRenderer extends React.Component<Props, State> {
           key: 'table',
           display: (
             <Card bordered={false}>
-              <Table<OTQLBucket>
-                columns={[
-                  {
-                    title: 'Key',
-                    dataIndex: 'key',
-                    sorter: (a, b) =>
-                      typeof a.key === 'string' &&
-                      typeof b.key === 'string' &&
-                      !isNaN(Date.parse(a.key)) &&
-                      !isNaN(Date.parse(b.key))
-                        ? Date.parse(a.key) - Date.parse(b.key)
-                        : a.key.length - b.key.length,
-                  },
-                  {
-                    title: 'Count',
-                    dataIndex: 'count',
-                    sorter: (a, b) => a.count - b.count,
-                  },
-                  {
-                    render: (text, record) => {
-                      if (bucketHasData(record)) {
-                        return (
-                          <div className='float-right'>
-                            <McsIcon type='chevron-right' />
-                          </div>
-                        );
-                      }
-                      return null;
+              <div className='mcs-table-container'>
+                <Table<OTQLBucket>
+                  columns={[
+                    {
+                      title: 'Key',
+                      dataIndex: 'key',
+                      sorter: (a, b) =>
+                        typeof a.key === 'string' &&
+                        typeof b.key === 'string' &&
+                        !isNaN(Date.parse(a.key)) &&
+                        !isNaN(Date.parse(b.key))
+                          ? Date.parse(a.key) - Date.parse(b.key)
+                          : a.key.length - b.key.length,
                     },
-                  },
-                ]}
-                className='mcs-aggregationRendered_table'
-                onRow={handleOnRow}
-                rowClassName={getRowClassName}
-                dataSource={buckets.buckets}
-                pagination={{
-                  size: 'small',
-                  showSizeChanger: true,
-                  hideOnSinglePage: true,
-                }}
-              />
+                    {
+                      title: 'Count',
+                      dataIndex: 'count',
+                      sorter: (a, b) => a.count - b.count,
+                    },
+                    {
+                      render: (text, record) => {
+                        if (bucketHasData(record)) {
+                          return (
+                            <div className='float-right'>
+                              <McsIcon type='chevron-right' />
+                            </div>
+                          );
+                        }
+                        return null;
+                      },
+                    },
+                  ]}
+                  className='mcs-aggregationRendered_table'
+                  onRow={handleOnRow}
+                  rowClassName={getRowClassName}
+                  dataSource={buckets.buckets}
+                  pagination={{
+                    size: 'small',
+                    showSizeChanger: true,
+                    hideOnSinglePage: true,
+                  }}
+                />
+              </div>
             </Card>
           ),
         },
@@ -323,40 +327,42 @@ class AggregationRenderer extends React.Component<Props, State> {
     }
 
     return (
-      <Table<OTQLBucket>
-        columns={[
-          {
-            title: 'Key',
-            dataIndex: 'key',
-            sorter: (a, b) => a.key.length - b.key.length,
-          },
-          {
-            title: 'Count',
-            dataIndex: 'count',
-            sorter: (a, b) => a.count - b.count,
-          },
-          {
-            render: (text, record) => {
-              if (bucketHasData(record)) {
-                return (
-                  <div className='float-right'>
-                    <McsIcon type='chevron-right' />
-                  </div>
-                );
-              }
-              return null;
+      <div className='mcs-table-container'>
+        <Table<OTQLBucket>
+          columns={[
+            {
+              title: 'Key',
+              dataIndex: 'key',
+              sorter: (a, b) => a.key.length - b.key.length,
             },
-          },
-        ]}
-        onRow={handleOnRow}
-        rowClassName={getRowClassName}
-        dataSource={buckets.buckets}
-        pagination={{
-          size: 'small',
-          showSizeChanger: true,
-          hideOnSinglePage: true,
-        }}
-      />
+            {
+              title: 'Count',
+              dataIndex: 'count',
+              sorter: (a, b) => a.count - b.count,
+            },
+            {
+              render: (text, record) => {
+                if (bucketHasData(record)) {
+                  return (
+                    <div className='float-right'>
+                      <McsIcon type='chevron-right' />
+                    </div>
+                  );
+                }
+                return null;
+              },
+            },
+          ]}
+          onRow={handleOnRow}
+          rowClassName={getRowClassName}
+          dataSource={buckets.buckets}
+          pagination={{
+            size: 'small',
+            showSizeChanger: true,
+            hideOnSinglePage: true,
+          }}
+        />
+      </div>
     );
   };
 

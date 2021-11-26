@@ -335,10 +335,9 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
 
     return (
       <div style={{ marginTop: 40 }}>
-        <Card title={''} buttons={this.generateCatalogSelect()}>
+        <Card title={''} buttons={this.generateCatalogSelect()} className='mcs-table-container'>
           <hr />
           {this.generateBreadcrumb()}
-
           <Table<Category>
             columns={[
               {

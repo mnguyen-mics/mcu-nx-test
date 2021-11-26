@@ -315,7 +315,10 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
                 organisationId={organisationId}
               />
             )}
-            <Card title={formatMessage(messages.exportExecutionsTitle)}>
+            <Card
+              title={formatMessage(messages.exportExecutionsTitle)}
+              className='mcs-table-container'
+            >
               <hr />
               <TableViewWithSelectionNotifyerMessages
                 dataSource={exportExecutions.items}

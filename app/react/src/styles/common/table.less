@@ -1,14 +1,31 @@
 @import 'application.less';
 
-.ant-table-thead > tr > th {
-  color: #919191 !important;
-  background: none !important;
-  padding-top: 0px !important;
-}
+.mcs-table-container {
+  .ant-table-thead > tr > th {
+    color: #919191 !important;
+    background: none !important;
+    padding-top: 0px !important;
+  }
 
-.ant-table-body > tr > th {
-  color: #373737 !important;
-  background: none !important;
+  .ant-table-body > tr > th {
+    color: #373737 !important;
+    background: none !important;
+  }
+
+  .ant-table-column-sorter {
+    position: relative !important;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+    right: 0px !important;
+  }
+
+  display: block;
+  .mcs-content-element.container;
+  margin-top: 40px;
+  .mcs-empty-card {
+    padding: 70px 0;
+  }
 }
 
 .mcs-table-header-with-icons {
@@ -26,15 +43,6 @@
     .mcs-table-header-icon {
       color: #00a1df;
     }
-  }
-}
-
-.mcs-table-container {
-  display: block;
-  .mcs-content-element.container;
-  margin-top: 40px;
-  .mcs-empty-card {
-    padding: 70px 0;
   }
 }
 
@@ -212,12 +220,4 @@
 
 .mcs-table-cursor {
   cursor: pointer;
-}
-
-.ant-table-column-sorter {
-  position: relative !important;
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: 8px;
-  right: 0px !important;
 }

@@ -212,7 +212,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         <Col span={24}>
           <div className='mcs-card-button'>{this.renderDatePicker()}</div>
         </Col>
-        <Col span={24}>
+        <Col span={24} className='mcs-table-container'>
           <TableViewWithSelectionNotifyerMessages
             columns={dataColumns}
             dataSource={dataSet}
