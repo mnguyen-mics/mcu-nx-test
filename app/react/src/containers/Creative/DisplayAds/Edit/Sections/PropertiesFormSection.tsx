@@ -5,11 +5,13 @@ import { Modal } from 'antd';
 import { connect } from 'react-redux';
 import { getFormInitialValues } from 'redux-form';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
 import messages from '../messages';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { FormSection } from '../../../../../components/Form/index';
-import { PluginFieldGenerator } from '../../../../Plugin';
+import {
+  PluginFieldGenerator,
+  PluginSectionGenerator,
+} from '@mediarithmics-private/advanced-components';
 import {
   EditDisplayCreativeRouteMatchParams,
   DisplayCreativeFormData,
@@ -17,7 +19,6 @@ import {
   isDisplayAdResource,
 } from '../domain';
 import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
-import PluginSectionGenerator from '../../../../Plugin/PluginSectionGenerator';
 import { PropertyResourceShape } from '../../../../../models/plugin';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { ExclamationCircleOutlined } from '@ant-design/icons';

@@ -19,7 +19,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { AudienceFeedFormModel, FeedRouteParams } from './domain';
-import GenericPluginContent from '../../../../Plugin/Edit/GenericPluginContent';
+import { GenericPluginContent } from '@mediarithmics-private/advanced-components';
 import {
   IAudienceSegmentFeedService,
   AudienceFeedType,

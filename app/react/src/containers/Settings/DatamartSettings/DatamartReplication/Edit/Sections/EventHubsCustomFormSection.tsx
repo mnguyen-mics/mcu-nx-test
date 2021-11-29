@@ -8,7 +8,7 @@ import withNormalizer, { NormalizerProps } from '../../../../../../components/Fo
 import {
   FormDataFileField,
   FormDataFile,
-} from '../../../../../Plugin/ConnectedFields/FormDataFile';
+} from '@mediarithmics-private/advanced-components';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DatamartReplicationRouteMatchParam } from '../domain';
 

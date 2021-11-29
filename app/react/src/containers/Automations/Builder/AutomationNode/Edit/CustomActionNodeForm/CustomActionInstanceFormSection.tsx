@@ -3,8 +3,10 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Spin } from 'antd';
 import { PropertyResourceShape } from '../../../../../../models/plugin';
-import { PluginFieldGenerator } from '../../../../../Plugin';
-import PluginSectionGenerator from '../../../../../Plugin/PluginSectionGenerator';
+import {
+  PluginFieldGenerator,
+  PluginSectionGenerator,
+} from '@mediarithmics-private/advanced-components';
 import { ExtendedCustomActionInformation } from './CustomActionAutomationForm';
 import messages from './messages';
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Modal, Button } from 'antd';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from './messages';
-import IframeSupport from '../../../../Plugin/ConnectedFields/FormDataFile/HtmlEditor/IframeSupport';
+import { IframeSupport } from '@mediarithmics-private/advanced-components';
 
 export interface NotebookResultPreviewModalProps {
   html: string;

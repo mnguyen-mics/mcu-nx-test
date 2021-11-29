@@ -31,7 +31,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { AudienceFeedTyped } from '../../Segments/Edit/domain';
 import EditPluginModal from './EditPluginModal';
-import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
+import { PluginCardModalTab } from '@mediarithmics-private/advanced-components';
 import messages from '../messages';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { McsIcon, TableViewFilters } from '@mediarithmics-private/mcs-components-library';

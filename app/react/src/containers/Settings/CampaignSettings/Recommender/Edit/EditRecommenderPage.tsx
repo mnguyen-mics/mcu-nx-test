@@ -10,9 +10,10 @@ import {
 } from '../../../../../models/Plugins';
 
 import messages from './messages';
-import GenericPluginContent, {
+import {
+  GenericPluginContent,
   PluginContentOuterProps,
-} from '../../../../Plugin/Edit/GenericPluginContent';
+} from '@mediarithmics-private/advanced-components';
 import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

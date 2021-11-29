@@ -11,14 +11,15 @@ import { compose } from 'recompose';
 import { Modal, Dropdown, Menu, Tooltip } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages, InjectedIntl } from 'react-intl';
 import { IPluginService } from '../../../../../services/PluginService';
-import PluginCardModal, {
+import {
+  PluginCardModal,
   PluginCardModalProps,
-} from '../../../../Plugin/Edit/PluginCard/PluginCardModal';
+  PluginCardModalTab,
+} from '@mediarithmics-private/advanced-components';
 import { PluginLayout } from '../../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../../models/plugin';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
-import { PluginCardModalTab } from '../../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import { withValidators } from '../../../../../components/Form';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import {
@@ -32,6 +33,8 @@ import {
   getFeedStatsUnit,
   FeedStatsCounts,
 } from '../../../../../utils/FeedsStatsReportHelper';
+import FeedChart from './Charts/FeedChart';
+import McsMoment from '../../../../../utils/McsMoment';
 
 export interface FeedCardProps {
   feed: AudienceFeedTyped;
@@ -547,7 +550,17 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             pluginVersionId={feed.version_id}
             save={this.saveOrCreatePluginInstance}
             selectedTab={this.state.modalTab}
-            feedStatsUnit={feedStatsUnit}
+            pluginChart={
+              <FeedChart
+                organisationId={organisationId}
+                feedId={feed.id}
+                feedStatsUnit={feedStatsUnit}
+                dateRange={{
+                  from: new McsMoment('now-7d'),
+                  to: new McsMoment('now'),
+                }}
+              />
+            }
             nameField={{
               label: formatMessage(messages.feedModalNameFieldLabel),
               title: (

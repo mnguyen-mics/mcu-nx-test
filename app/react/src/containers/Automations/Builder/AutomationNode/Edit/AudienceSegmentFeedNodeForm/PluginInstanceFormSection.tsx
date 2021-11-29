@@ -4,9 +4,10 @@ import { compose } from 'recompose';
 import { FormSection } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { StrictlyLayoutablePlugin } from '../../../../../../models/Plugins';
-import PluginSectionGenerator, {
+import {
+  PluginSectionGenerator,
   PluginExtraField,
-} from '../../../../../Plugin/PluginSectionGenerator';
+} from '@mediarithmics-private/advanced-components';
 import messages from './messages';
 
 interface PluginInstanceFormSectionProps {
