@@ -298,6 +298,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
         values={this.state.dateRange}
         onChange={onChange}
         messages={mcsdatePickerMsg}
+        className='mcs-datePicker_container'
       />
     );
   };

@@ -68,7 +68,14 @@ class AdditionDeletion extends React.Component<Props> {
       mcsDateRangePickerMessages,
       this.props.intl,
     ) as McsDateRangePickerMessages;
-    return <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />;
+    return (
+      <McsDateRangePicker
+        values={values}
+        onChange={onChange}
+        messages={mcsdatePickerMsg}
+        className='mcs-datePicker_container'
+      />
+    );
   }
 
   renderStackedAreaCharts() {

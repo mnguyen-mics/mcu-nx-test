@@ -80,6 +80,7 @@ class Overview extends React.Component<Props> {
         onChange={onChange}
         excludeToday={true}
         messages={mcsdatePickerMsg}
+        className='mcs-datePicker_container'
       />
     );
   }

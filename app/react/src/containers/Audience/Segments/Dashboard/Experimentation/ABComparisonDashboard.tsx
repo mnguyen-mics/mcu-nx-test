@@ -248,6 +248,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         excludeToday={true}
         startDate={controlGroupSegment && controlGroupSegment.creation_ts}
         messages={mcsdatePickerMsg}
+        className='mcs-datePicker_container'
       />
     );
   }

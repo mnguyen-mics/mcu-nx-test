@@ -85,7 +85,14 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
       mcsDateRangePickerMessages,
       this.props.intl,
     ) as McsDateRangePickerMessages;
-    return <McsDateRangePicker values={values} onChange={onChange} messages={mcsdatePickerMsg} />;
+    return (
+      <McsDateRangePicker
+        values={values}
+        onChange={onChange}
+        messages={mcsdatePickerMsg}
+        className='mcs-datePicker_container'
+      />
+    );
   }
 
   render() {
