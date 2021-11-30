@@ -354,16 +354,18 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
         {this.renderDatePicker()}
 
         {hasAdsSelected ? (
-          <Modal
-            title={<FormattedMessage {...messages.archiveAdsModalTitle} />}
-            visible={this.state.adModalvisible}
-            onOk={this.handleAdModalOk}
-            onCancel={this.handleCancel}
-          >
-            <p>
-              <FormattedMessage {...messages.archiveAdsModalMessage} />
-            </p>
-          </Modal>
+          <div className='mcs-modal_container'>
+            <Modal
+              title={<FormattedMessage {...messages.archiveAdsModalTitle} />}
+              visible={this.state.adModalvisible}
+              onOk={this.handleAdModalOk}
+              onCancel={this.handleCancel}
+            >
+              <p>
+                <FormattedMessage {...messages.archiveAdsModalMessage} />
+              </p>
+            </Modal>
+          </div>
         ) : null}
         <Slide
           toShow={hasAdsSelected}

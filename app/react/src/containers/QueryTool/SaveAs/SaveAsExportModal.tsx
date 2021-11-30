@@ -32,21 +32,23 @@ class SaveAsExportModal extends React.Component<Props, FormData> {
     };
 
     return (
-      <Modal
-        {...modalProps}
-        visible={visible}
-        onOk={handleOnOk}
-        title={
-          <FormattedMessage
-            id='queryTool.query-tool-modal-saveas-export-title'
-            defaultMessage='Save As Export'
-          />
-        }
-      >
-        {visible && (
-          <NewExportSimpleForm onSubmit={handleOnSubmit} csvExportDisabled={csvExportDisabled} />
-        )}
-      </Modal>
+      <div className='mcs-modal_container'>
+        <Modal
+          {...modalProps}
+          visible={visible}
+          onOk={handleOnOk}
+          title={
+            <FormattedMessage
+              id='queryTool.query-tool-modal-saveas-export-title'
+              defaultMessage='Save As Export'
+            />
+          }
+        >
+          {visible && (
+            <NewExportSimpleForm onSubmit={handleOnSubmit} csvExportDisabled={csvExportDisabled} />
+          )}
+        </Modal>
+      </div>
     );
   }
 }

@@ -145,21 +145,23 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     };
 
     return (
-      <Modal
-        title={formatMessage(messages.newAsset)}
-        visible={this.state.isModalOpen}
-        onOk={this.handleOnUpload}
-        okText={formatMessage(messages.uploadButton)}
-        onCancel={this.handleOpenClose}
-        confirmLoading={this.state.isLoading}
-      >
-        <Spin spinning={this.state.isLoading}>
-          <Dragger {...props}>
-            <p className='ant-upload-text'>{formatMessage(messages.uploadTitle)}</p>
-            <p className='ant-upload-hint'>{formatMessage(messages.uploadMessage)}</p>
-          </Dragger>
-        </Spin>
-      </Modal>
+      <div className='mcs-modal_container'>
+        <Modal
+          title={formatMessage(messages.newAsset)}
+          visible={this.state.isModalOpen}
+          onOk={this.handleOnUpload}
+          okText={formatMessage(messages.uploadButton)}
+          onCancel={this.handleOpenClose}
+          confirmLoading={this.state.isLoading}
+        >
+          <Spin spinning={this.state.isLoading}>
+            <Dragger {...props}>
+              <p className='ant-upload-text'>{formatMessage(messages.uploadTitle)}</p>
+              <p className='ant-upload-hint'>{formatMessage(messages.uploadMessage)}</p>
+            </Dragger>
+          </Spin>
+        </Modal>
+      </div>
     );
   };
 

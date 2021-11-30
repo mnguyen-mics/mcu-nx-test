@@ -121,7 +121,7 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
     };
 
     return (
-      <Actionbar pathItems={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths} className='mcs-modal_container'>
         <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
           <Button className='mcs-primary' type='primary'>
             <McsIcon type='plus' />{' '}

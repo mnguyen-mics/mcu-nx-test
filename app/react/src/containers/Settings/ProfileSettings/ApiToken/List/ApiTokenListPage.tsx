@@ -411,7 +411,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
       this.setState({ name: e.target.value });
 
     return (
-      <div className='ant-layout'>
+      <div className='ant-layout mcs-modal_container'>
         <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchApiTokens}

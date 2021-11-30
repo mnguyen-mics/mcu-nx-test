@@ -302,7 +302,7 @@ class PluginSelectModal extends React.Component<Props, State> {
     }
 
     return (
-      <div>
+      <div className='mcs-modal_container'>
         <Button onClick={this.showModal} disabled={disabledElement}>
           {input.value && input.value.id ? changeButtonText : chooseButtonText}
         </Button>

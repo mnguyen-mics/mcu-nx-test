@@ -34,22 +34,24 @@ class SaveAsUserQuerySegmentModal extends React.Component<Props> {
     };
 
     return (
-      <Modal
-        {...modalProps}
-        visible={visible}
-        onOk={handleOnOk}
-        okButtonProps={{
-          className: 'mcs-saveAsUserQuerySegmentModal_ok_button',
-        }}
-        title={
-          <FormattedMessage
-            id='queryTool.queryTool.query-tool-modal-saveas-export'
-            defaultMessage='Save As User Query Segment'
-          />
-        }
-      >
-        {visible && <NewUserQuerySegmentSimpleForm onSubmit={handleOnSubmit} />}
-      </Modal>
+      <div className='mcs-modal_container'>
+        <Modal
+          {...modalProps}
+          visible={visible}
+          onOk={handleOnOk}
+          okButtonProps={{
+            className: 'mcs-saveAsUserQuerySegmentModal_ok_button',
+          }}
+          title={
+            <FormattedMessage
+              id='queryTool.queryTool.query-tool-modal-saveas-export'
+              defaultMessage='Save As User Query Segment'
+            />
+          }
+        >
+          {visible && <NewUserQuerySegmentSimpleForm onSubmit={handleOnSubmit} />}
+        </Modal>
+      </div>
     );
   }
 }

@@ -346,7 +346,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       });
     };
     const adGroupButtons: JSX.Element = (
-      <span>
+      <span className='mcs-modal_container'>
         {campaign && campaign.model_version !== 'V2014_06' && (
           <Button className='m-r-10' type='primary' onClick={onClick}>
             <FormattedMessage {...messages.newAdGroups} />

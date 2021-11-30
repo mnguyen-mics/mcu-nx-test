@@ -195,24 +195,26 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     };
 
     return (
-      <Modal
-        title={formatMessage(messages.uploadTitle)}
-        visible={isModalOpen}
-        onOk={this.handleOnImportButton}
-        okText={formatMessage(messages.uploadConfirm)}
-        onCancel={this.handleOpenClose}
-        confirmLoading={isLoading}
-      >
-        <Spin spinning={isLoading}>
-          <Dragger {...props}>
-            <p className='ant-upload-hint'>
-              {formatMessage(messages.uploadMessage)}
-              <br />
-              {formatMessage(messages.uploadMessage2)}
-            </p>
-          </Dragger>
-        </Spin>
-      </Modal>
+      <div className='mcs-modal_container'>
+        <Modal
+          title={formatMessage(messages.uploadTitle)}
+          visible={isModalOpen}
+          onOk={this.handleOnImportButton}
+          okText={formatMessage(messages.uploadConfirm)}
+          onCancel={this.handleOpenClose}
+          confirmLoading={isLoading}
+        >
+          <Spin spinning={isLoading}>
+            <Dragger {...props}>
+              <p className='ant-upload-hint'>
+                {formatMessage(messages.uploadMessage)}
+                <br />
+                {formatMessage(messages.uploadMessage2)}
+              </p>
+            </Dragger>
+          </Spin>
+        </Modal>
+      </div>
     );
   };
 

@@ -179,7 +179,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
       ) : undefined;
 
       return (
-        <Actionbar pathItems={breadcrumbPaths}>
+        <Actionbar pathItems={breadcrumbPaths} className='mcs-modal_container'>
           <Modal
             title='Enter the user identifier you want to lookup'
             wrapClassName='vertical-center-modal'
