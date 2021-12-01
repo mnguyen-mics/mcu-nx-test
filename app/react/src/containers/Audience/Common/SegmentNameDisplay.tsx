@@ -78,10 +78,8 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
   }
 
   componentDidUpdate(previousPros: Props) {
-    const {
-      audienceSegmentId,
-      audienceSegmentResource: audienceSegmentResourceFromProps,
-    } = this.props;
+    const { audienceSegmentId, audienceSegmentResource: audienceSegmentResourceFromProps } =
+      this.props;
 
     // If the resource is passed by props, then we check:
     // a. if there was a previous res passed by props

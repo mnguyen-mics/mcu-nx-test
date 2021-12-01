@@ -154,13 +154,8 @@ class DisplayStackedAreaChart<T> extends React.Component<
   }
 
   renderStackedAreaCharts() {
-    const {
-      dataSource,
-      isFetchingCampaignStat,
-      isFetchingOverallStat,
-      overallStat,
-      colors,
-    } = this.props;
+    const { dataSource, isFetchingCampaignStat, isFetchingOverallStat, overallStat, colors } =
+      this.props;
     const { key1, key2 } = this.state;
 
     const optionsForChart = {

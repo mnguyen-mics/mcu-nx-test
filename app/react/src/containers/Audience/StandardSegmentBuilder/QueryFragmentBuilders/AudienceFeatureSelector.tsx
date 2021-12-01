@@ -260,46 +260,44 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     });
   };
 
-  onSelectFeature = (
-    audienceFeature: AudienceFeatureResource,
-    finalValue?: FinalValueResource,
-  ) => () => {
-    const { audienceFeatureSelection } = this.state;
+  onSelectFeature =
+    (audienceFeature: AudienceFeatureResource, finalValue?: FinalValueResource) => () => {
+      const { audienceFeatureSelection } = this.state;
 
-    const newAudienceFeatureSelection = audienceFeatureSelection;
-    const featureId = audienceFeature.id;
-    if (Object.keys(audienceFeatureSelection).includes(featureId)) {
-      const addOrDeleteValue = (val?: FinalValueResource) => {
-        const values = audienceFeatureSelection[featureId].finalValues;
-        if (!val) return undefined;
-        return values?.map(valueResource => valueResource.value).includes(val.value)
-          ? values.filter(v => v.value !== val.value)
-          : values?.concat(val);
-      };
-      if (!!finalValue) {
-        const newValues = addOrDeleteValue(finalValue);
-        if (newValues?.length === 0) delete newAudienceFeatureSelection[featureId];
-        else
-          newAudienceFeatureSelection[featureId] = {
-            finalValues: !!audienceFeatureSelection[featureId].finalValues
-              ? newValues
-              : [finalValue],
-            audienceFeature: audienceFeature,
-          };
+      const newAudienceFeatureSelection = audienceFeatureSelection;
+      const featureId = audienceFeature.id;
+      if (Object.keys(audienceFeatureSelection).includes(featureId)) {
+        const addOrDeleteValue = (val?: FinalValueResource) => {
+          const values = audienceFeatureSelection[featureId].finalValues;
+          if (!val) return undefined;
+          return values?.map(valueResource => valueResource.value).includes(val.value)
+            ? values.filter(v => v.value !== val.value)
+            : values?.concat(val);
+        };
+        if (!!finalValue) {
+          const newValues = addOrDeleteValue(finalValue);
+          if (newValues?.length === 0) delete newAudienceFeatureSelection[featureId];
+          else
+            newAudienceFeatureSelection[featureId] = {
+              finalValues: !!audienceFeatureSelection[featureId].finalValues
+                ? newValues
+                : [finalValue],
+              audienceFeature: audienceFeature,
+            };
+        } else {
+          if (!audienceFeatureSelection[featureId].finalValues)
+            delete audienceFeatureSelection[featureId];
+        }
       } else {
-        if (!audienceFeatureSelection[featureId].finalValues)
-          delete audienceFeatureSelection[featureId];
+        newAudienceFeatureSelection[`${featureId}`] = {
+          finalValues: finalValue ? [finalValue] : undefined,
+          audienceFeature: audienceFeature,
+        };
       }
-    } else {
-      newAudienceFeatureSelection[`${featureId}`] = {
-        finalValues: finalValue ? [finalValue] : undefined,
-        audienceFeature: audienceFeature,
-      };
-    }
-    this.setState({
-      audienceFeatureSelection: newAudienceFeatureSelection,
-    });
-  };
+      this.setState({
+        audienceFeatureSelection: newAudienceFeatureSelection,
+      });
+    };
 
   onTagClose = (featureId: string) => () => {
     const { audienceFeatureSelection } = this.state;

@@ -174,9 +174,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       pluginProperties: [],
     };
 
-    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'EXTERNAL_FEED',
-    );
+    this._audienceExternalFeedServiceFactory =
+      this._audienceSegmentFeedServiceFactory('EXTERNAL_FEED');
     this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     if (this.props.feed) {

@@ -407,18 +407,17 @@ export class AutomationFormService implements IAutomationFormService {
   getFeedNodePromise = (node: FeedNodeResource): Promise<FeedNodeResource> => {
     if (!node.feed_id) return Promise.resolve(node);
 
-    const thenForGetFeeds = (feedType: 'EXTERNAL_FEED' | 'TAG_FEED') => (
-      feeds: DataListResponse<AudienceFeed>,
-    ) => {
-      const foundFeed = feeds.data.find(feed => feed.id === node.feed_id);
-      if (foundFeed) {
-        const audienceFeedTyped: AudienceFeedTyped = {
-          ...foundFeed,
-          type: feedType,
-        };
-        return audienceFeedTyped;
-      } else return Promise.reject(undefined);
-    };
+    const thenForGetFeeds =
+      (feedType: 'EXTERNAL_FEED' | 'TAG_FEED') => (feeds: DataListResponse<AudienceFeed>) => {
+        const foundFeed = feeds.data.find(feed => feed.id === node.feed_id);
+        if (foundFeed) {
+          const audienceFeedTyped: AudienceFeedTyped = {
+            ...foundFeed,
+            type: feedType,
+          };
+          return audienceFeedTyped;
+        } else return Promise.reject(undefined);
+      };
 
     const feedP: Promise<AudienceFeedTyped | undefined> = this.externalFeedService
       .getFeeds({ scenario_id: node.scenario_id })
@@ -649,43 +648,42 @@ export class AutomationFormService implements IAutomationFormService {
       const abnNodes: ABNNodeResource[] = nodesData.data.filter(isAbnNode);
       const edges = edgesData.data;
 
-      const nodePromises: Array<
-        Promise<DataResponse<ScenarioNodeShape> | undefined>
-      > = abnNodes.map(abnNode => {
-        const associatedEdges = edges.filter(edge => {
-          return edge.source_id === abnNode.id;
-        });
-
-        const edgeSelectionIds = Object.keys(abnNode.edges_selection);
-
-        const doSelectionsAndEdgesMatch =
-          edgeSelectionIds.length === associatedEdges.length &&
-          associatedEdges.every(edge => edgeSelectionIds.includes(edge.id));
-
-        if (!doSelectionsAndEdgesMatch && associatedEdges.length !== 0) {
-          const edgesSelection: EdgeSelection = {};
-          const gap = 100.0 / associatedEdges.length;
-
-          associatedEdges.forEach((edge, index) => {
-            const min = gap * index;
-            const max = gap * (index + 1.0);
-
-            edgesSelection[edge.id] = {
-              min: min,
-              max: max,
-            };
+      const nodePromises: Array<Promise<DataResponse<ScenarioNodeShape> | undefined>> =
+        abnNodes.map(abnNode => {
+          const associatedEdges = edges.filter(edge => {
+            return edge.source_id === abnNode.id;
           });
 
-          const modifiedNode: ABNNodeResource = {
-            ...abnNode,
-            edges_selection: edgesSelection,
-          };
+          const edgeSelectionIds = Object.keys(abnNode.edges_selection);
 
-          return this._scenarioService.updateScenarioNode(scenarioId, abnNode.id, modifiedNode);
-        }
+          const doSelectionsAndEdgesMatch =
+            edgeSelectionIds.length === associatedEdges.length &&
+            associatedEdges.every(edge => edgeSelectionIds.includes(edge.id));
 
-        return Promise.resolve(undefined);
-      });
+          if (!doSelectionsAndEdgesMatch && associatedEdges.length !== 0) {
+            const edgesSelection: EdgeSelection = {};
+            const gap = 100.0 / associatedEdges.length;
+
+            associatedEdges.forEach((edge, index) => {
+              const min = gap * index;
+              const max = gap * (index + 1.0);
+
+              edgesSelection[edge.id] = {
+                min: min,
+                max: max,
+              };
+            });
+
+            const modifiedNode: ABNNodeResource = {
+              ...abnNode,
+              edges_selection: edgesSelection,
+            };
+
+            return this._scenarioService.updateScenarioNode(scenarioId, abnNode.id, modifiedNode);
+          }
+
+          return Promise.resolve(undefined);
+        });
       return Promise.all(nodePromises);
     });
   };
@@ -762,20 +760,99 @@ export class AutomationFormService implements IAutomationFormService {
     parentNodeId: string,
   ): Promise<any> => {
     const tasks = storylineNodes.map(
-      (storylineNode): Task => () => {
-        const node = storylineNode.node;
-        if (isScenarioNodeShape(node)) {
-          if (isEmailCampaignNode(node)) {
-            const saveOrCreateCampaignPromise = this.saveSubEmailCampaign(
-              organisationId,
-              node.formData,
-              node.initialFormData,
-              node.campaign_id,
-            );
-            return saveOrCreateCampaignPromise.then(campaignId => {
-              return this.saveOrCreateNode(automationId, storylineNode, {
-                campaign_id: campaignId,
-              }).then(res => {
+      (storylineNode): Task =>
+        () => {
+          const node = storylineNode.node;
+          if (isScenarioNodeShape(node)) {
+            if (isEmailCampaignNode(node)) {
+              const saveOrCreateCampaignPromise = this.saveSubEmailCampaign(
+                organisationId,
+                node.formData,
+                node.initialFormData,
+                node.campaign_id,
+              );
+              return saveOrCreateCampaignPromise.then(campaignId => {
+                return this.saveOrCreateNode(automationId, storylineNode, {
+                  campaign_id: campaignId,
+                }).then(res => {
+                  return this.saveOrCreateEdges(automationId, {
+                    source_id: parentNodeId,
+                    target_id: res.data.id,
+                    edgeResource: storylineNode.in_edge,
+                  }).then(() => {
+                    return this.iterate(
+                      organisationId,
+                      datamartId,
+                      automationId,
+                      storylineNode.out_edges,
+                      res.data.id,
+                    );
+                  });
+                });
+              });
+            } else if (isAddToSegmentNode(node)) {
+              const saveOrCreateSegmentPromise = node.user_list_segment_id
+                ? Promise.resolve(node.user_list_segment_id)
+                : this.saveAudienceSegment(
+                    organisationId,
+                    datamartId,
+                    node.formData.audienceSegmentName ? node.formData.audienceSegmentName : '',
+                    node.formData.ttl.value
+                      ? moment
+                          .duration(Number(node.formData.ttl.value), node.formData.ttl.unit)
+                          .asMilliseconds()
+                      : undefined,
+                  );
+              return saveOrCreateSegmentPromise
+                .then(audienceSegmentId => {
+                  return this.saveProcessingSelections(
+                    audienceSegmentId,
+                    node.formData.processingActivities,
+                  );
+                })
+                .then(audienceSegmentId => {
+                  return this.saveOrCreateNode(
+                    automationId,
+                    storylineNode,
+                    undefined,
+                    undefined,
+                    audienceSegmentId,
+                  ).then(res => {
+                    return this.saveOrCreateEdges(automationId, {
+                      source_id: parentNodeId,
+                      target_id: res.data.id,
+                      edgeResource: storylineNode.in_edge,
+                    }).then(() => {
+                      let nextNodes = storylineNode.out_edges;
+                      if (
+                        node.formData.audienceSegmentId &&
+                        isFakeId(node.formData.audienceSegmentId) &&
+                        isAddToSegmentNode(res.data)
+                      ) {
+                        nextNodes = this.iterateToUpdateDeleteFromSegmentNodes(
+                          node.formData.audienceSegmentId,
+                          res.data.user_list_segment_id,
+                          storylineNode.out_edges,
+                        );
+                      }
+                      return this.iterate(
+                        organisationId,
+                        datamartId,
+                        automationId,
+                        nextNodes,
+                        res.data.id,
+                      );
+                    });
+                  });
+                });
+            } else if (isDeleteFromSegmentNode(node)) {
+              return this.saveOrCreateNode(
+                automationId,
+                storylineNode,
+                undefined,
+                undefined,
+                node.formData.segmentId,
+              ).then(res => {
                 return this.saveOrCreateEdges(automationId, {
                   source_id: parentNodeId,
                   target_id: res.data.id,
@@ -790,94 +867,44 @@ export class AutomationFormService implements IAutomationFormService {
                   );
                 });
               });
-            });
-          } else if (isAddToSegmentNode(node)) {
-            const saveOrCreateSegmentPromise = node.user_list_segment_id
-              ? Promise.resolve(node.user_list_segment_id)
-              : this.saveAudienceSegment(
-                  organisationId,
-                  datamartId,
-                  node.formData.audienceSegmentName ? node.formData.audienceSegmentName : '',
-                  node.formData.ttl.value
-                    ? moment
-                        .duration(Number(node.formData.ttl.value), node.formData.ttl.unit)
-                        .asMilliseconds()
-                    : undefined,
-                );
-            return saveOrCreateSegmentPromise
-              .then(audienceSegmentId => {
-                return this.saveProcessingSelections(
-                  audienceSegmentId,
-                  node.formData.processingActivities,
-                );
-              })
-              .then(audienceSegmentId => {
+            } else if (isQueryInputNode(node) || isIfNode(node)) {
+              const saveOrCreateQueryPromise = node.query_id
+                ? this._queryService.updateQuery(datamartId, node.query_id, node.formData)
+                : this._queryService.createQuery(datamartId, node.formData);
+              return saveOrCreateQueryPromise.then(queryRes => {
                 return this.saveOrCreateNode(
                   automationId,
                   storylineNode,
                   undefined,
-                  undefined,
-                  audienceSegmentId,
+                  queryRes.data.id,
                 ).then(res => {
                   return this.saveOrCreateEdges(automationId, {
                     source_id: parentNodeId,
                     target_id: res.data.id,
                     edgeResource: storylineNode.in_edge,
                   }).then(() => {
-                    let nextNodes = storylineNode.out_edges;
-                    if (
-                      node.formData.audienceSegmentId &&
-                      isFakeId(node.formData.audienceSegmentId) &&
-                      isAddToSegmentNode(res.data)
-                    ) {
-                      nextNodes = this.iterateToUpdateDeleteFromSegmentNodes(
-                        node.formData.audienceSegmentId,
-                        res.data.user_list_segment_id,
-                        storylineNode.out_edges,
-                      );
-                    }
                     return this.iterate(
                       organisationId,
                       datamartId,
                       automationId,
-                      nextNodes,
+                      storylineNode.out_edges,
                       res.data.id,
                     );
                   });
                 });
               });
-          } else if (isDeleteFromSegmentNode(node)) {
-            return this.saveOrCreateNode(
-              automationId,
-              storylineNode,
-              undefined,
-              undefined,
-              node.formData.segmentId,
-            ).then(res => {
-              return this.saveOrCreateEdges(automationId, {
-                source_id: parentNodeId,
-                target_id: res.data.id,
-                edgeResource: storylineNode.in_edge,
-              }).then(() => {
-                return this.iterate(
-                  organisationId,
-                  datamartId,
-                  automationId,
-                  storylineNode.out_edges,
-                  res.data.id,
-                );
-              });
-            });
-          } else if (isQueryInputNode(node) || isIfNode(node)) {
-            const saveOrCreateQueryPromise = node.query_id
-              ? this._queryService.updateQuery(datamartId, node.query_id, node.formData)
-              : this._queryService.createQuery(datamartId, node.formData);
-            return saveOrCreateQueryPromise.then(queryRes => {
+            } else if (isCustomActionNode(node) && node.formData && node.formData.customActionId) {
+              const customActionId = node.custom_action_id
+                ? node.custom_action_id
+                : node.formData.customActionId;
+
               return this.saveOrCreateNode(
                 automationId,
                 storylineNode,
                 undefined,
-                queryRes.data.id,
+                undefined,
+                undefined,
+                customActionId,
               ).then(res => {
                 return this.saveOrCreateEdges(automationId, {
                   source_id: parentNodeId,
@@ -893,57 +920,46 @@ export class AutomationFormService implements IAutomationFormService {
                   );
                 });
               });
-            });
-          } else if (isCustomActionNode(node) && node.formData && node.formData.customActionId) {
-            const customActionId = node.custom_action_id
-              ? node.custom_action_id
-              : node.formData.customActionId;
+            } else if (isFeedNode(node) && node.formData && node.strictlyLayoutablePlugin) {
+              const feedIdP =
+                !node.feed_id && node.strictlyLayoutablePlugin.plugin_preset
+                  ? this.saveFeedIfNeeded(
+                      organisationId,
+                      datamartId,
+                      automationId,
+                      node.formData,
+                      node.strictlyLayoutablePlugin,
+                      node.strictlyLayoutablePlugin.plugin_preset,
+                    )
+                  : Promise.resolve(node.feed_id);
 
-            return this.saveOrCreateNode(
-              automationId,
-              storylineNode,
-              undefined,
-              undefined,
-              undefined,
-              customActionId,
-            ).then(res => {
-              return this.saveOrCreateEdges(automationId, {
-                source_id: parentNodeId,
-                target_id: res.data.id,
-                edgeResource: storylineNode.in_edge,
-              }).then(() => {
-                return this.iterate(
-                  organisationId,
-                  datamartId,
+              return feedIdP.then(feedId => {
+                return this.saveOrCreateNode(
                   automationId,
-                  storylineNode.out_edges,
-                  res.data.id,
-                );
+                  storylineNode,
+                  undefined,
+                  undefined,
+                  undefined,
+                  undefined,
+                  feedId,
+                ).then(res => {
+                  return this.saveOrCreateEdges(automationId, {
+                    source_id: parentNodeId,
+                    target_id: res.data.id,
+                    edgeResource: storylineNode.in_edge,
+                  }).then(() => {
+                    return this.iterate(
+                      organisationId,
+                      datamartId,
+                      automationId,
+                      storylineNode.out_edges,
+                      res.data.id,
+                    );
+                  });
+                });
               });
-            });
-          } else if (isFeedNode(node) && node.formData && node.strictlyLayoutablePlugin) {
-            const feedIdP =
-              !node.feed_id && node.strictlyLayoutablePlugin.plugin_preset
-                ? this.saveFeedIfNeeded(
-                    organisationId,
-                    datamartId,
-                    automationId,
-                    node.formData,
-                    node.strictlyLayoutablePlugin,
-                    node.strictlyLayoutablePlugin.plugin_preset,
-                  )
-                : Promise.resolve(node.feed_id);
-
-            return feedIdP.then(feedId => {
-              return this.saveOrCreateNode(
-                automationId,
-                storylineNode,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                feedId,
-              ).then(res => {
+            } else if (isAbnNode(node) || isEndNode(node) || isWaitNode(node)) {
+              return this.saveOrCreateNode(automationId, storylineNode).then(res => {
                 return this.saveOrCreateEdges(automationId, {
                   source_id: parentNodeId,
                   target_id: res.data.id,
@@ -958,27 +974,10 @@ export class AutomationFormService implements IAutomationFormService {
                   );
                 });
               });
-            });
-          } else if (isAbnNode(node) || isEndNode(node) || isWaitNode(node)) {
-            return this.saveOrCreateNode(automationId, storylineNode).then(res => {
-              return this.saveOrCreateEdges(automationId, {
-                source_id: parentNodeId,
-                target_id: res.data.id,
-                edgeResource: storylineNode.in_edge,
-              }).then(() => {
-                return this.iterate(
-                  organisationId,
-                  datamartId,
-                  automationId,
-                  storylineNode.out_edges,
-                  res.data.id,
-                );
-              });
-            });
+            }
           }
-        }
-        return Promise.resolve();
-      },
+          return Promise.resolve();
+        },
     );
 
     return executeTasksInSequence(tasks);

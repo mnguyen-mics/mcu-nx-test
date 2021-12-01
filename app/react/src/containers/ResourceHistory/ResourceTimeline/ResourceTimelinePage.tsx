@@ -23,13 +23,8 @@ class ResourceTimelinePage extends React.Component<Props> {
   }
 
   render() {
-    const {
-      resourceType,
-      resourceId,
-      handleClose,
-      formatProperty,
-      resourceLinkHelper,
-    } = this.props;
+    const { resourceType, resourceId, handleClose, formatProperty, resourceLinkHelper } =
+      this.props;
     return (
       <div className='ant-layout edit-layout'>
         <ResourceTimelineActionBar handleClose={handleClose} formatProperty={formatProperty} />

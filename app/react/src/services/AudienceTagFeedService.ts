@@ -50,7 +50,8 @@ export interface IAudienceTagFeedService {
 @injectable()
 export class AudienceTagFeedService
   extends AudienceSegmentFeedService<AudienceTagFeed>
-  implements IAudienceTagFeedService {
+  implements IAudienceTagFeedService
+{
   getFeeds(options: GetFeeds): Promise<DataListResponse<AudienceTagFeed>> {
     const endpoint = 'audience_segments.tag_feeds';
     return ApiService.getRequest(endpoint, options);

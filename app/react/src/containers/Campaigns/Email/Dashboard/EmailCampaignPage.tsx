@@ -250,12 +250,8 @@ class EmailCampaign extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const {
-      campaign,
-      isLoadingCampaignStatReport,
-      campaignStatReport,
-      isLoadingCampaign,
-    } = this.state;
+    const { campaign, isLoadingCampaignStatReport, campaignStatReport, isLoadingCampaign } =
+      this.state;
 
     const filter = parseSearch(
       search,

@@ -16,7 +16,7 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import { Omit } from '../../../../../utils/Types';
 import { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspySider';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 export interface ProcessingEditFormProps extends Omit<ConfigProps<ProcessingFormData>, 'form'> {
   close: () => void;

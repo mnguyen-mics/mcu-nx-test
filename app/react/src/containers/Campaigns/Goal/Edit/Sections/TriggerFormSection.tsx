@@ -19,8 +19,10 @@ import JSONQL, {
 } from '../../../../Audience/Segments/Edit/Sections/query/JSONQL';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
-const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<JSONQLInputEditorProps>;
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<OTQLInputEditorProps>;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> =
+  Field as new () => GenericField<JSONQLInputEditorProps>;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> =
+  Field as new () => GenericField<OTQLInputEditorProps>;
 
 const messages = defineMessages({
   sectionSubtitle1: {

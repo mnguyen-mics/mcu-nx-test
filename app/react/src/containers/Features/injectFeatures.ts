@@ -35,13 +35,8 @@ export default compose<any, InjectedFeaturesProps>(
   withRouter,
   connect(mapStateToProps),
   mapProps((props: Props) => {
-    const {
-      getDefaultDatamart,
-      getFeatureFlagClient,
-      getConnectedUser,
-      hasFeatureStore,
-      ...rest
-    } = props;
+    const { getDefaultDatamart, getFeatureFlagClient, getConnectedUser, hasFeatureStore, ...rest } =
+      props;
     const organisationId =
       rest.match && rest.match.params && rest.match.params.organisationId
         ? rest.match.params.organisationId

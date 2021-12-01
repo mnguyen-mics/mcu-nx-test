@@ -18,9 +18,8 @@ import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 
-const ServiceItemTableSelector: React.ComponentClass<
-  TableSelectorProps<ServiceItemShape>
-> = TableSelector;
+const ServiceItemTableSelector: React.ComponentClass<TableSelectorProps<ServiceItemShape>> =
+  TableSelector;
 
 export interface ServiceItemSelectorProps {
   selectedServiceItemIds: string[];

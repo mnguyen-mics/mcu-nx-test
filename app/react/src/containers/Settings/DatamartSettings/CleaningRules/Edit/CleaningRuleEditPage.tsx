@@ -289,13 +289,10 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       const ruleAndFilterOpt = ruleAndOptions[0];
       const options = ruleAndOptions[1];
 
-      const cleaningRule:
-        | UserEventCleaningRuleResource
-        | UserProfileCleaningRuleResource = isUserEventCleaningRuleAndOptionalFilter(
-        ruleAndFilterOpt,
-      )
-        ? ruleAndFilterOpt.rule
-        : ruleAndFilterOpt;
+      const cleaningRule: UserEventCleaningRuleResource | UserProfileCleaningRuleResource =
+        isUserEventCleaningRuleAndOptionalFilter(ruleAndFilterOpt)
+          ? ruleAndFilterOpt.rule
+          : ruleAndFilterOpt;
 
       const period = cleaningRule.life_duration
         ? this.getPeriodNumberAndUnit(cleaningRule.life_duration)
@@ -697,13 +694,8 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      loading,
-      cleaningRuleFormData,
-      channelOptions,
-      compartmentOptions,
-      cleaningRuleType,
-    } = this.state;
+    const { loading, cleaningRuleFormData, channelOptions, compartmentOptions, cleaningRuleType } =
+      this.state;
 
     if (loading) {
       return <Loading isFullScreen={true} />;

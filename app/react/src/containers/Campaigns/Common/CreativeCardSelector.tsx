@@ -16,9 +16,8 @@ import { CollectionSelectorProps } from '@mediarithmics-private/mcs-components-l
 const CreativeCollectionSelector: React.ComponentClass<
   CollectionSelectorProps<CreativeResourceShape>
 > = CollectionSelector;
-const CreativeResourceCard: React.ComponentClass<
-  CreativeCardProps<CreativeResourceShape>
-> = CreativeCard;
+const CreativeResourceCard: React.ComponentClass<CreativeCardProps<CreativeResourceShape>> =
+  CreativeCard;
 
 const messages = defineMessages({
   titleForEmailTemplates: {
@@ -108,26 +107,25 @@ class CreativeCardSelector extends React.Component<Props> {
     <span>{creative.name ? creative.name : 'No Title'}</span>
   );
 
-  renderCreativeFooter = (
-    isSelected: boolean,
-    handleSelect: (element: CreativeResourceShape) => void,
-  ) => (creative: CreativeResourceShape) => {
-    const buttonProps: ButtonProps = {
-      onClick: () => handleSelect(creative),
-    };
-    let selectButtonLabel = messages.selectButton;
-    if (isSelected) {
-      selectButtonLabel = messages.selectButtonSelected;
-      buttonProps.className = 'mcs-primary';
-      buttonProps.type = 'primary';
-    }
+  renderCreativeFooter =
+    (isSelected: boolean, handleSelect: (element: CreativeResourceShape) => void) =>
+    (creative: CreativeResourceShape) => {
+      const buttonProps: ButtonProps = {
+        onClick: () => handleSelect(creative),
+      };
+      let selectButtonLabel = messages.selectButton;
+      if (isSelected) {
+        selectButtonLabel = messages.selectButtonSelected;
+        buttonProps.className = 'mcs-primary';
+        buttonProps.type = 'primary';
+      }
 
-    return (
-      <Button {...buttonProps}>
-        <FormattedMessage {...selectButtonLabel} />
-      </Button>
-    );
-  };
+      return (
+        <Button {...buttonProps}>
+          <FormattedMessage {...selectButtonLabel} />
+        </Button>
+      );
+    };
 
   renderCreative = (
     creative: CreativeResourceShape,

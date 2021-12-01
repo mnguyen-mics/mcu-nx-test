@@ -88,9 +88,8 @@ class EditPluginModal extends React.Component<Props, State> {
       isLoading: true,
     };
 
-    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'EXTERNAL_FEED',
-    );
+    this._audienceExternalFeedServiceFactory =
+      this._audienceSegmentFeedServiceFactory('EXTERNAL_FEED');
     this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     this.feedService =
@@ -217,9 +216,7 @@ class EditPluginModal extends React.Component<Props, State> {
       feed,
       modalTab,
       match: {
-        params: {
-          organisationId
-        }
+        params: { organisationId },
       },
       onClose,
       intl: { formatMessage },
@@ -245,14 +242,14 @@ class EditPluginModal extends React.Component<Props, State> {
         }}
         pluginChart={
           <FeedChart
-                organisationId={organisationId}
-                feedId={feed.id}
-                feedStatsUnit={feedStatsUnit}
-                dateRange={{
-                  from: new McsMoment('now-7d'),
-                  to: new McsMoment('now'),
-                }}
-              />
+            organisationId={organisationId}
+            feedId={feed.id}
+            feedStatsUnit={feedStatsUnit}
+            dateRange={{
+              from: new McsMoment('now-7d'),
+              to: new McsMoment('now'),
+            }}
+          />
         }
         save={this.savePluginInstance}
         pluginProperties={pluginProperties}

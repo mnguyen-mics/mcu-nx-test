@@ -16,7 +16,7 @@ import { Omit } from '../../../utils/Types';
 
 export const FORM_ID = 'importForm';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 const messages = defineMessages({
   sectionTitleGeneral: {

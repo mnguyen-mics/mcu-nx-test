@@ -142,15 +142,12 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
     );
   };
 
-  makeStandardSegmentBuilderRedirection = (
-    organisationId: string,
-    datamartId: string,
-    builderId: string,
-  ) => () => {
-    return this.props.history.push(
-      `/v2/o/${organisationId}/audience/segment-builder/standard?datamartId=${datamartId}&standardSegmentBuilderId=${builderId}`,
-    );
-  };
+  makeStandardSegmentBuilderRedirection =
+    (organisationId: string, datamartId: string, builderId: string) => () => {
+      return this.props.history.push(
+        `/v2/o/${organisationId}/audience/segment-builder/standard?datamartId=${datamartId}&standardSegmentBuilderId=${builderId}`,
+      );
+    };
 
   render() {
     const {

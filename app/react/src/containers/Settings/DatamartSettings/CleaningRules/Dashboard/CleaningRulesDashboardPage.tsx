@@ -182,24 +182,23 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
       this._datamartService
         .getCleaningRules(filter.datamartId, options)
         .then(resultCleaningRules => {
-          const cleaningRulesP: Array<
-            Promise<ExtendedCleaningRuleResourceWithFilter>
-          > = resultCleaningRules.data.map(cleaningRule => {
-            return filter.type === 'USER_EVENT_CLEANING_RULE'
-              ? this._datamartService
-                  .getContentFilter(filter.datamartId, cleaningRule.id)
-                  .then(resFilter => {
-                    const contentFilter = resFilter.data;
-                    const cleaningRuleWithFilter: ExtendedCleaningRuleResourceWithFilter = {
-                      ...cleaningRule,
-                      ...contentFilter,
-                    };
+          const cleaningRulesP: Array<Promise<ExtendedCleaningRuleResourceWithFilter>> =
+            resultCleaningRules.data.map(cleaningRule => {
+              return filter.type === 'USER_EVENT_CLEANING_RULE'
+                ? this._datamartService
+                    .getContentFilter(filter.datamartId, cleaningRule.id)
+                    .then(resFilter => {
+                      const contentFilter = resFilter.data;
+                      const cleaningRuleWithFilter: ExtendedCleaningRuleResourceWithFilter = {
+                        ...cleaningRule,
+                        ...contentFilter,
+                      };
 
-                    return cleaningRuleWithFilter;
-                  })
-                  .catch(err => Promise.resolve(cleaningRule))
-              : Promise.resolve(cleaningRule);
-          });
+                      return cleaningRuleWithFilter;
+                    })
+                    .catch(err => Promise.resolve(cleaningRule))
+                : Promise.resolve(cleaningRule);
+            });
 
           Promise.all(cleaningRulesP)
             .then(cleaningRules => {

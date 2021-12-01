@@ -33,7 +33,7 @@ import ServiceItemsFormSection, {
   ServiceItemsFormSectionProps,
 } from './sections/ServiceItemsFormSection';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 export interface OfferFormProps extends Omit<ConfigProps<OfferFormData>, 'form'> {
   close: () => void;

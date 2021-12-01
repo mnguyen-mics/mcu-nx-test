@@ -83,7 +83,8 @@ export interface IAudienceSegmentFeedService {
 
 export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
   extends PluginInstanceService<AudienceFeed>
-  implements IAudienceSegmentFeedService {
+  implements IAudienceSegmentFeedService
+{
   feedType: AudienceFeedType;
   segmentId: string;
 

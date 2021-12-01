@@ -63,7 +63,7 @@ type JoinedProps = EditAdGroupsFormProps &
   RouteComponentProps<{ campaignId: string }> &
   InjectedFormProps<EditAdGroupsFormData>;
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 class EditAdGroupsForm extends React.Component<JoinedProps, EditAdGroupsFormState> {
   @lazyInject(TYPES.IDisplayCampaignService)

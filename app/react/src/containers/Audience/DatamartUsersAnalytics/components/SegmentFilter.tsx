@@ -176,12 +176,8 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
   handleOnAllUserFilterToggle = () => this.toggleAllUserFilter();
 
   render() {
-    const {
-      segmentSearchDisplayed,
-      appliedSegmentFilters,
-      allUsersEnabled,
-      allUsersFilterColor,
-    } = this.state;
+    const { segmentSearchDisplayed, appliedSegmentFilters, allUsersEnabled, allUsersFilterColor } =
+      this.state;
     const {
       className,
       datamartId,

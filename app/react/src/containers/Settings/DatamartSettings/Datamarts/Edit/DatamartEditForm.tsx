@@ -27,7 +27,7 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 
 import EventRulesSection, { EventRulesSectionProps } from '../../Common/EventRulesSection';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 const EventRulesFieldArray = FieldArray as new () => GenericFieldArray<
   Field,

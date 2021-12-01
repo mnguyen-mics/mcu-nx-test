@@ -5,10 +5,7 @@ import messages from '../../List/messages';
 import { FormInput, FormSection, FormInputField } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
-import {
-  FormDataFileField,
-  FormDataFile,
-} from '@mediarithmics-private/advanced-components';
+import { FormDataFileField, FormDataFile } from '@mediarithmics-private/advanced-components';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DatamartReplicationRouteMatchParam } from '../domain';
 

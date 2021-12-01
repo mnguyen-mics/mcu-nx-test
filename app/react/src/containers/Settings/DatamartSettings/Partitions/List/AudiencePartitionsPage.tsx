@@ -247,12 +247,8 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       workspace,
       intl,
     } = this.props;
-    const {
-      hasAudiencePartitions,
-      initialFetching,
-      fetchingPartitions,
-      audiencePartitions,
-    } = this.state;
+    const { hasAudiencePartitions, initialFetching, fetchingPartitions, audiencePartitions } =
+      this.state;
 
     const filter = parseSearch<PartitionFilterParams>(search, PARTITIONS_SEARCH_SETTINGS);
 

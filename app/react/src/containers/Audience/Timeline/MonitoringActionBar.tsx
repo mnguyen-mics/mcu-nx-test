@@ -139,13 +139,8 @@ class MonitoringActionbar extends React.Component<Props, State> {
       selectedDatamart,
     } = this.props;
 
-    const {
-      identifierId,
-      identifierType,
-      compartments,
-      isLoading,
-      selectedCompartment,
-    } = this.state;
+    const { identifierId, identifierType, compartments, isLoading, selectedCompartment } =
+      this.state;
 
     const breadcrumbPaths = [
       <Link key='1' to={`/v2/o/${organisationId}/audience/timeline`}>

@@ -20,7 +20,7 @@ import UserResource from '../../../../../models/directory/UserResource';
 
 const FORM_ID = 'userForm';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 const messages = defineMessages({
   sectionTitleGeneral: {

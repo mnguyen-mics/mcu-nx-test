@@ -17,7 +17,8 @@ export interface IEmailRouterService {
 @injectable()
 export class EmailRouterService
   extends PluginInstanceService<EmailRouter>
-  implements IEmailRouterService {
+  implements IEmailRouterService
+{
   constructor() {
     super('email_routers');
   }

@@ -29,7 +29,7 @@ import ScrollspySider, { SidebarWrapperProps } from '../../../../components/Layo
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
   Field,

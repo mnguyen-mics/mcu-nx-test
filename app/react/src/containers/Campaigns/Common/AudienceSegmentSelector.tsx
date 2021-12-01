@@ -26,9 +26,8 @@ import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../redux/Session/selectors';
 
-const SegmentTableSelector: React.ComponentClass<
-  TableSelectorProps<AudienceSegmentShape>
-> = TableSelector;
+const SegmentTableSelector: React.ComponentClass<TableSelectorProps<AudienceSegmentShape>> =
+  TableSelector;
 
 const messages = defineMessages({
   segmentSelectorTitle: {

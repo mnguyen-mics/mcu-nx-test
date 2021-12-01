@@ -55,9 +55,11 @@ import { FormInfiniteSearchObjectProps } from '../../../../../../components/Form
 import { DefaultOptionProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 
 export const FormTagSelectField = Field as new () => GenericField<FormTagSelectProps>;
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
+export const FormRelativeAbsoluteDateField =
+  Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;
-export const FormInfiniteSearchObjectField = Field as new () => GenericField<FormInfiniteSearchObjectProps>;
+export const FormInfiniteSearchObjectField =
+  Field as new () => GenericField<FormInfiniteSearchObjectProps>;
 
 export interface FieldNodeFormProps {
   expressionIndex?: number;
@@ -167,10 +169,8 @@ class FieldNodeForm extends React.Component<Props, State> {
   componentDidUpdate(previousProps: Props) {
     const { formValues, expressionIndex, formChange, name, isEdge } = this.props;
 
-    const {
-      formValues: previousFormValues,
-      expressionIndex: previousExpressionIndex,
-    } = previousProps;
+    const { formValues: previousFormValues, expressionIndex: previousExpressionIndex } =
+      previousProps;
 
     const field = this.getField(formValues, expressionIndex);
     const fieldName = field ? field.field : undefined;

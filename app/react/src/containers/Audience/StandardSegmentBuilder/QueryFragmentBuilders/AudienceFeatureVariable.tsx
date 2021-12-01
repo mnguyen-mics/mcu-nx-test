@@ -47,7 +47,8 @@ import { FORM_ID } from '../constants';
 import { Tooltip } from 'antd';
 import { truncate } from './AudienceFeatureSelectionTag';
 
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
+export const FormRelativeAbsoluteDateField =
+  Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
 export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;
 
@@ -55,7 +56,8 @@ export const FormSearchObjectListField = Field as new () => GenericField<FormSea
 
 export const FormSearchMatchField = Field as new () => GenericField<FormSearchMatchProps>;
 
-export const FormSearchSingleStringField = Field as new () => GenericField<FormSearchSingleValueProps>;
+export const FormSearchSingleStringField =
+  Field as new () => GenericField<FormSearchSingleValueProps>;
 
 export interface AudienceFeatureVariableProps {
   datamartId: string;

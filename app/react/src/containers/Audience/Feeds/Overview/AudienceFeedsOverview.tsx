@@ -72,9 +72,8 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
       },
     };
 
-    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'EXTERNAL_FEED',
-    );
+    this._audienceExternalFeedServiceFactory =
+      this._audienceSegmentFeedServiceFactory('EXTERNAL_FEED');
     this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     this.externalfeedService = this._audienceExternalFeedServiceFactory('');

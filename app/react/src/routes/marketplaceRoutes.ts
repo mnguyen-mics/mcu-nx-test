@@ -10,6 +10,5 @@ export const marketplaceDefinition: NavigatorDefinition = {
   },
 };
 
-export const marketplaceRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
-  marketplaceDefinition,
-);
+export const marketplaceRoutes: NavigatorRoute[] =
+  generateRoutesFromDefinition(marketplaceDefinition);

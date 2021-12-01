@@ -92,6 +92,5 @@ export const datastudioDefinition: NavigatorDefinition = {
   },
 };
 
-export const datastudioRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
-  datastudioDefinition,
-);
+export const datastudioRoutes: NavigatorRoute[] =
+  generateRoutesFromDefinition(datastudioDefinition);

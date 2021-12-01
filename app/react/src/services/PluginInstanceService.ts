@@ -26,7 +26,8 @@ export interface IPluginInstanceService<T> {
 
 @injectable()
 abstract class PluginInstanceService<T extends PluginInstance>
-  implements IPluginInstanceService<T> {
+  implements IPluginInstanceService<T>
+{
   @inject(TYPES.IPluginService)
   _pluginService: IPluginService;
 

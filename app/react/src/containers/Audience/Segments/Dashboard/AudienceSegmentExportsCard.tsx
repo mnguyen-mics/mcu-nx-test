@@ -58,9 +58,10 @@ interface State {
   filter: Filters;
 }
 
-const AudienceSegmentExportJobTableView = TableViewWithSelectionNotifyerMessages as React.ComponentClass<
-  TableViewProps<AudienceSegmentExportJobExecutionResource>
->;
+const AudienceSegmentExportJobTableView =
+  TableViewWithSelectionNotifyerMessages as React.ComponentClass<
+    TableViewProps<AudienceSegmentExportJobExecutionResource>
+  >;
 
 const messages = defineMessages({
   submissionDate: {
@@ -326,12 +327,8 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
     } = this.props;
-    const {
-      isLoadingExecutions,
-      isLoadingCompartments,
-      compartments,
-      selectedCompartmentId,
-    } = this.state;
+    const { isLoadingExecutions, isLoadingCompartments, compartments, selectedCompartmentId } =
+      this.state;
 
     const pagination = {
       current: this.state.filter.currentPage,

@@ -60,19 +60,17 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
     this.left = viewportOffset ? viewportOffset.left : 0;
   };
 
-  changeBooleanOperator = (operator: {
-    booleanOperator: QueryBooleanOperator;
-    negation: boolean;
-  }) => () => {
-    const { node, treeNodeOperations, lockGlobalInteraction } = this.props;
-    lockGlobalInteraction(false);
-    this.setState({ focus: false });
-    return treeNodeOperations.updateNode(node.treeNodePath, {
-      ...node.objectOrGroupNode,
-      negation: operator.negation,
-      boolean_operator: operator.booleanOperator,
-    });
-  };
+  changeBooleanOperator =
+    (operator: { booleanOperator: QueryBooleanOperator; negation: boolean }) => () => {
+      const { node, treeNodeOperations, lockGlobalInteraction } = this.props;
+      lockGlobalInteraction(false);
+      this.setState({ focus: false });
+      return treeNodeOperations.updateNode(node.treeNodePath, {
+        ...node.objectOrGroupNode,
+        negation: operator.negation,
+        boolean_operator: operator.booleanOperator,
+      });
+    };
 
   removeGroup = () => {
     const { node, treeNodeOperations, lockGlobalInteraction } = this.props;

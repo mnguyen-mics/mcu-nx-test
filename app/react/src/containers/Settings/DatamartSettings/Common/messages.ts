@@ -63,8 +63,7 @@ export default defineMessages({
       'If your segment is subject to user consent, you can automate whether or not users should be included in the segment by linking it to a Processing Activity. Processing Activities can be managed in your {organisationSettings}.',
   },
   organisationSettings: {
-    id:
-      'settings.datamart.processings.forAddToSegmentAutomationNode.section.subtitle.organisationSettings',
+    id: 'settings.datamart.processings.forAddToSegmentAutomationNode.section.subtitle.organisationSettings',
     defaultMessage: 'organisation settings',
   },
   audienceSegment: {

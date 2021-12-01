@@ -58,8 +58,10 @@ export const FORM_ID = 'audienceSegmentForm';
 
 const Content = Layout.Content;
 
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<OTQLInputEditorProps>;
-const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<JSONQLInputEditorProps>;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> =
+  Field as new () => GenericField<OTQLInputEditorProps>;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> =
+  Field as new () => GenericField<JSONQLInputEditorProps>;
 
 const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
   Field,

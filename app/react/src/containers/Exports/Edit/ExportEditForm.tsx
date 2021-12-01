@@ -22,7 +22,7 @@ import { DatamartResource } from '../../../models/datamart/DatamartResource';
 
 const FORM_ID = 'exportForm';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 const messages = defineMessages({
   sectionTitleGeneral: {
@@ -59,7 +59,8 @@ interface ExportEditFormProps extends Omit<ConfigProps<ExportFormData>, 'form'> 
   datamart?: DatamartResource;
 }
 
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<OTQLInputEditorProps>;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> =
+  Field as new () => GenericField<OTQLInputEditorProps>;
 
 type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   ExportEditFormProps &

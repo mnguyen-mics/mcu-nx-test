@@ -114,9 +114,8 @@ class EditMobileAppPage extends React.Component<Props, State> {
           );
         });
 
-      const getVisitAnalyzerSelections = this._channelService.getVisitAnalyzerSelections(
-        mobileApplicationId,
-      );
+      const getVisitAnalyzerSelections =
+        this._channelService.getVisitAnalyzerSelections(mobileApplicationId);
 
       Promise.all([
         getMobileApplication,

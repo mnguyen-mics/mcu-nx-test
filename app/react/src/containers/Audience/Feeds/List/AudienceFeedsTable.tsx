@@ -86,9 +86,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'EXTERNAL_FEED',
-    );
+    this._audienceExternalFeedServiceFactory =
+      this._audienceSegmentFeedServiceFactory('EXTERNAL_FEED');
     this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
     this.state = {
       list: {

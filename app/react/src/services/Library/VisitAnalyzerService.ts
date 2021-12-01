@@ -16,7 +16,8 @@ export interface IVisitAnalyzerService extends PluginInstanceService<VisitAnalyz
 @injectable()
 export class VisitAnalyzerService
   extends PluginInstanceService<VisitAnalyzer>
-  implements IVisitAnalyzerService {
+  implements IVisitAnalyzerService
+{
   constructor() {
     super('visit_analyzer_models');
   }

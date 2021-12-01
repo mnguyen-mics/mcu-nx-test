@@ -58,17 +58,17 @@ class CustomObjectRenderer extends React.Component<Props, State> {
   };
 
   // Used to apply a custom template to display the value
-  getApplyTemplateOpt = (key: string, value: AnyJson) => (
-    layer: TemplateDefinitions,
-  ): JSX.Element | null => {
-    // If a template exists for the key, in the layer
-    if (key in layer) {
-      // The template is applied to the value
-      const returnedValue = layer[key](value);
-      return <CustomPropertyRenderer name={key} value={returnedValue} />;
-    }
-    return null;
-  };
+  getApplyTemplateOpt =
+    (key: string, value: AnyJson) =>
+    (layer: TemplateDefinitions): JSX.Element | null => {
+      // If a template exists for the key, in the layer
+      if (key in layer) {
+        // The template is applied to the value
+        const returnedValue = layer[key](value);
+        return <CustomPropertyRenderer name={key} value={returnedValue} />;
+      }
+      return null;
+    };
 
   // Function used to create extended templates from other extended templates, relatively (using key)
   createRecLocalTemplates = (localTemplates: ExtendedTemplates, key: string): ExtendedTemplates => {
@@ -210,10 +210,8 @@ class CustomObjectRenderer extends React.Component<Props, State> {
     // First complex case : Array
 
     if (Array.isArray(objectToBeRendered)) {
-      const {
-        listToBeRendered,
-        viewMoreButton: viewMoreButtonForList,
-      } = this.reduceListAndGetViewMore(objectToBeRendered);
+      const { listToBeRendered, viewMoreButton: viewMoreButtonForList } =
+        this.reduceListAndGetViewMore(objectToBeRendered);
 
       const renderedElements: JSX.Element | JSX.Element[] =
         listToBeRendered.length !== 0
@@ -265,10 +263,8 @@ class CustomObjectRenderer extends React.Component<Props, State> {
       );
     }
 
-    const {
-      listToBeRendered: transformedProperties,
-      viewMoreButton: viewMoreButtonObject,
-    } = this.reduceListAndGetViewMore(nonNullPropertiesOfTheObject);
+    const { listToBeRendered: transformedProperties, viewMoreButton: viewMoreButtonObject } =
+      this.reduceListAndGetViewMore(nonNullPropertiesOfTheObject);
 
     //
     // Map to render each property of the object

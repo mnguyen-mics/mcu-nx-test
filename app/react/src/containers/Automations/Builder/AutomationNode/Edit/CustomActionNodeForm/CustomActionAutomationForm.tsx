@@ -196,13 +196,12 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
             },
           };
 
-          const returnedExtendedCustomActionsInformation: ExtendedCustomActionInformation[] = extendedCustomActionsInformation.map(
-            extendedCustomActionInformation => {
+          const returnedExtendedCustomActionsInformation: ExtendedCustomActionInformation[] =
+            extendedCustomActionsInformation.map(extendedCustomActionInformation => {
               if (extendedCustomActionInformation.customAction.id !== customActionResource.id) {
                 return extendedCustomActionInformation;
               } else return customActionInformation;
-            },
-          );
+            });
           this.dispatchProperties(
             customActionInformation.layoutInformation?.customActionProperties,
           );
@@ -238,13 +237,12 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
 
       customActionsP
         .then(customActions => {
-          const extendedCustomActionsInformation: ExtendedCustomActionInformation[] = customActions.map(
-            (customActionResource: CustomActionResource) => {
+          const extendedCustomActionsInformation: ExtendedCustomActionInformation[] =
+            customActions.map((customActionResource: CustomActionResource) => {
               return {
                 customAction: customActionResource,
               };
-            },
-          );
+            });
           this.dispatchExtendedCustomActionsInformation(extendedCustomActionsInformation);
           this.setState(
             {

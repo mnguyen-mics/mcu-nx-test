@@ -16,9 +16,8 @@ import { getWorkspace } from '../../../../redux/Session/selectors';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
-const AttributionModelTableSelector: React.ComponentClass<
-  TableSelectorProps<AttributionModel>
-> = TableSelector;
+const AttributionModelTableSelector: React.ComponentClass<TableSelectorProps<AttributionModel>> =
+  TableSelector;
 const messages = defineMessages({
   attributionModelSelectorColumnType: {
     id: 'attributionModel.selector.column.attribution.type',

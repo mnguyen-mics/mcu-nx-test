@@ -47,15 +47,8 @@ class FormUpload extends React.Component<JoinedProps, State> {
   }
 
   render() {
-    const {
-      input,
-      meta,
-      formItemProps,
-      inputProps,
-      helpToolTipProps,
-      disabled,
-      small,
-    } = this.props;
+    const { input, meta, formItemProps, inputProps, helpToolTipProps, disabled, small } =
+      this.props;
 
     const { file } = this.state;
 
