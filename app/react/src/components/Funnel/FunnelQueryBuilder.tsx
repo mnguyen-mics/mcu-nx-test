@@ -636,6 +636,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   render() {
     const rendering = {
+      shouldDisplayNumbersInBullet: false,
       renderHeaderTimeline: this.renderHeaderTimeline,
       renderFooterTimeline: this.renderFooterTimeline,
       renderStepBody: this.renderStepBody,
