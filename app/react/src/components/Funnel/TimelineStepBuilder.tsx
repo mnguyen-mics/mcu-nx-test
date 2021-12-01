@@ -10,6 +10,7 @@ export interface Step<StepsProperties> {
 }
 
 interface TimelineStepBuilderRendering<StepsProperties> {
+  shouldDisplayNumbersInBullet: boolean;
   renderHeaderTimeline?: () => JSX.Element;
   renderFooterTimeline?: () => JSX.Element;
   renderStepBody: (step: Step<StepsProperties>, index: number) => JSX.Element;
@@ -125,7 +126,9 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
                   </div>
                 </div>
                 <div className={'mcs-funnelQueryBuilder_step_bullet'}>
-                  <div className={'mcs-funnelQueryBuilder_step_bullet_icon'}>{index + 1}</div>
+                  <div className={'mcs-funnelQueryBuilder_step_bullet_icon'}>
+                    {this.props.rendering.shouldDisplayNumbersInBullet ? index + 1 : ''}
+                  </div>
                 </div>
                 {this.props.rendering.renderAfterBulletElement?.(step, index)}
               </Card>
