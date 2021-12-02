@@ -14,6 +14,7 @@ import {
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { AudienceFeatureSearchSettings } from '../../../../../services/AudienceFeatureService';
+import { Tooltip } from 'antd';
 
 export interface AudienceFeatureTableProps {
   isLoading: boolean;
@@ -91,16 +92,18 @@ class AudienceFeatureTable extends React.Component<Props> {
         isHideable: false,
         render: (text: string, record: AudienceFeatureResource) => {
           return (
-            <Link
-              to={{
-                pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/${record.id}/edit`,
-                state: {
-                  datamartId: datamartId,
-                },
-              }}
-            >
-              {text}
-            </Link>
+            <Tooltip title={text}>
+              <Link
+                to={{
+                  pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/${record.id}/edit`,
+                  state: {
+                    datamartId: datamartId,
+                  },
+                }}
+              >
+                {text.length > 60 ? `${text.substring(0, 60)}...` : text}
+              </Link>
+            </Tooltip>
           );
         },
       },
@@ -109,14 +112,26 @@ class AudienceFeatureTable extends React.Component<Props> {
         key: 'description',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => text,
+        render: (text?: string) => {
+          return (
+            <Tooltip title={text}>
+              {text && text.length > 30 ? `${text.substring(0, 30)}...` : text}
+            </Tooltip>
+          );
+        },
       },
       {
         title: formatMessage(messages.audienceFeatureObjectTreeExpression),
         key: 'object_tree_expression',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => text,
+        render: (text?: string) => {
+          return (
+            <Tooltip title={text}>
+              {text && text.length > 60 ? `${text.substring(0, 60)}...` : text}
+            </Tooltip>
+          );
+        },
       },
     ];
 
