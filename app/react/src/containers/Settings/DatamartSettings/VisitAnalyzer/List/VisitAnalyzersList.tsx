@@ -250,7 +250,12 @@ class VisitAnalyzersList extends Component<
       history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`);
 
     const buttons = [
-      <Button key='create' type='primary' onClick={onClick}>
+      <Button
+        key='create'
+        type='primary'
+        className='mcs-VisitAnalyzersList_creation_button'
+        onClick={onClick}
+      >
         <FormattedMessage {...messages.newVisitAnalyzer} />
       </Button>,
     ];
