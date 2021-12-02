@@ -94,13 +94,14 @@ class EventRulesSection extends React.Component<Props> {
       formattedEventRule.model.event_template &&
       formattedEventRule.model.event_template.$properties
     ) {
-      formattedEventRule.model.event_template.$properties = formattedEventRule.model.event_template.$properties.reduce(
-        (acc: { [key: string]: string }, cur: { leftValue: string; rightValue: string }) => {
-          acc[cur.leftValue] = cur.rightValue;
-          return acc;
-        },
-        {},
-      );
+      formattedEventRule.model.event_template.$properties =
+        formattedEventRule.model.event_template.$properties.reduce(
+          (acc: { [key: string]: string }, cur: { leftValue: string; rightValue: string }) => {
+            acc[cur.leftValue] = cur.rightValue;
+            return acc;
+          },
+          {},
+        );
     }
 
     const allFields = fields.getAll();
@@ -160,51 +161,53 @@ class EventRulesSection extends React.Component<Props> {
     });
   };
 
-  openInitialEventRuleSelector = (
-    type:
-      | 'CATALOG_AUTO_MATCH'
-      | 'PROPERTY_TO_ORIGIN_COPY'
-      | 'USER_IDENTIFIER_INSERTION'
-      | 'URL_MATCH',
-  ) => () => {
-    let initialValues = {};
-    switch (type) {
-      case 'CATALOG_AUTO_MATCH':
-        initialValues = {
-          model: { type: 'CATALOG_AUTO_MATCH', auto_match_type: 'CATEGORY' },
-        };
-        break;
-      case 'PROPERTY_TO_ORIGIN_COPY':
-        initialValues = {
-          model: { type: 'PROPERTY_TO_ORIGIN_COPY', property_source: 'URL' },
-        };
-        break;
-      case 'USER_IDENTIFIER_INSERTION':
-        initialValues = {
-          model: {
-            type: 'USER_IDENTIFIER_INSERTION',
-            hash_function: 'SHA_256',
-            identifier_creation: 'USER_ACCOUNT',
-          },
-        };
-        break;
-      case 'URL_MATCH':
-        initialValues = { model: { type: 'URL_MATCH' } };
-        break;
-    }
+  openInitialEventRuleSelector =
+    (
+      type:
+        | 'CATALOG_AUTO_MATCH'
+        | 'PROPERTY_TO_ORIGIN_COPY'
+        | 'USER_IDENTIFIER_INSERTION'
+        | 'URL_MATCH',
+    ) =>
+    () => {
+      let initialValues = {};
+      switch (type) {
+        case 'CATALOG_AUTO_MATCH':
+          initialValues = {
+            model: { type: 'CATALOG_AUTO_MATCH', auto_match_type: 'CATEGORY' },
+          };
+          break;
+        case 'PROPERTY_TO_ORIGIN_COPY':
+          initialValues = {
+            model: { type: 'PROPERTY_TO_ORIGIN_COPY', property_source: 'URL' },
+          };
+          break;
+        case 'USER_IDENTIFIER_INSERTION':
+          initialValues = {
+            model: {
+              type: 'USER_IDENTIFIER_INSERTION',
+              hash_function: 'SHA_256',
+              identifier_creation: 'USER_ACCOUNT',
+            },
+          };
+          break;
+        case 'URL_MATCH':
+          initialValues = { model: { type: 'URL_MATCH' } };
+          break;
+      }
 
-    const props: EventRulesFormProps = {
-      close: this.props.closeNextDrawer,
-      onSubmit: this.updateEventRules,
-      breadCrumbPaths: [this.props.intl.formatMessage(messages.sectionTitleCreateEventRule)],
-      initialValues: initialValues,
-      datamartId: this.props.datamartId,
+      const props: EventRulesFormProps = {
+        close: this.props.closeNextDrawer,
+        onSubmit: this.updateEventRules,
+        breadCrumbPaths: [this.props.intl.formatMessage(messages.sectionTitleCreateEventRule)],
+        initialValues: initialValues,
+        datamartId: this.props.datamartId,
+      };
+
+      this.props.openNextDrawer<EventRulesFormProps>(EventRulesForm, {
+        additionalProps: props,
+      });
     };
-
-    this.props.openNextDrawer<EventRulesFormProps>(EventRulesForm, {
-      additionalProps: props,
-    });
-  };
 
   getEventRulesRecords = () => {
     const { fields } = this.props;

@@ -24,7 +24,7 @@ import { DefaultOptionProps } from '../../../../../components/Form/FormSelect/De
 
 export const FORM_ID = 'cleaningRuleForm';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 export interface CleaningRuleEditFormProps extends Omit<ConfigProps<CleaningRuleFormData>, 'form'> {
   close: () => void;

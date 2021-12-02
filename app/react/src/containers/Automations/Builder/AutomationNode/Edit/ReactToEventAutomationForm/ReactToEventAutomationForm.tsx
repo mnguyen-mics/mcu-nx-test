@@ -716,8 +716,7 @@ const messages = defineMessages({
     defaultMessage: 'When the user views the site home page',
   },
   $item_list_view: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.itemListView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.itemListView',
     defaultMessage:
       'When the user views a list of products in a category page or in a search results page',
   },
@@ -730,8 +729,7 @@ const messages = defineMessages({
     defaultMessage: 'When the user views the basket page',
   },
   $transaction_confirmed: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.transactionConfirmed',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.transactionConfirmed',
     defaultMessage: 'When the user views the transaction confirmation page',
   },
   $conversion: {

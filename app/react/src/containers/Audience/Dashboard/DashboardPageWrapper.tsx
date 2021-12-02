@@ -63,14 +63,10 @@ class DashboardPageWrapper extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const {
-      dataFileDashboards: currentDataFileDashboards,
-      apiDashboards: currentApiDashboards,
-    } = this.state;
-    const {
-      dataFileDashboards: nextDataFileDashboards,
-      apiDashboards: nextApiDashboards,
-    } = nextState;
+    const { dataFileDashboards: currentDataFileDashboards, apiDashboards: currentApiDashboards } =
+      this.state;
+    const { dataFileDashboards: nextDataFileDashboards, apiDashboards: nextApiDashboards } =
+      nextState;
     const { source: currentSource, defaultSegment: currentDefaultSegment } = this.props;
     const { source: nextSource, defaultSegment: nextDefaultSegment } = nextProps;
 

@@ -14,6 +14,5 @@ export const featureFlagDefinition: NavigatorDefinition = {
   },
 };
 
-export const featureFlagRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
-  featureFlagDefinition,
-);
+export const featureFlagRoutes: NavigatorRoute[] =
+  generateRoutesFromDefinition(featureFlagDefinition);

@@ -26,7 +26,8 @@ export interface MlFunctionQueryStringParameters {
 @injectable()
 export class MlFunctionService
   extends PluginInstanceService<MlFunctionResource>
-  implements IMlFunctionService {
+  implements IMlFunctionService
+{
   constructor() {
     super('ml_functions');
   }

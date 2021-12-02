@@ -74,10 +74,8 @@ class UserPointsLineChart extends React.Component<Props, State> {
   }
 
   componentDidUpdate(previousProps: Props) {
-    const {
-      analyticsEntity: previousAnalyticsEntity,
-      dateRange: previousDateRange,
-    } = previousProps;
+    const { analyticsEntity: previousAnalyticsEntity, dateRange: previousDateRange } =
+      previousProps;
     const { analyticsEntity, dateRange } = this.props;
     const { isLoading } = this.state;
 
@@ -124,14 +122,15 @@ class UserPointsLineChart extends React.Component<Props, State> {
           ],
         };
 
-        const reportViewResourceP: Promise<ReportViewResponse> = this._scenarioAnalyticsService.getAnalytics(
-          datamartId,
-          metrics,
-          new McsMoment(formatedInclusiveDateRange.from),
-          new McsMoment(formatedInclusiveDateRange.to),
-          dimensions,
-          dimensionFilterClauses,
-        );
+        const reportViewResourceP: Promise<ReportViewResponse> =
+          this._scenarioAnalyticsService.getAnalytics(
+            datamartId,
+            metrics,
+            new McsMoment(formatedInclusiveDateRange.from),
+            new McsMoment(formatedInclusiveDateRange.to),
+            dimensions,
+            dimensionFilterClauses,
+          );
 
         reportViewResourceP
           .then(reportViewResource => {

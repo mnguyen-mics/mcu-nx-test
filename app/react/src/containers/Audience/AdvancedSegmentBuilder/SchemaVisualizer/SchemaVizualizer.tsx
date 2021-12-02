@@ -104,57 +104,55 @@ export default class SchemaVizualizer extends React.Component<
     searchString?: string,
   ) =>
     gData &&
-    gData.fields.map(
-      (item): DataNode => {
-        if (isSchemaItem(item)) {
-          return {
-            title: disableDragAndDrop ? (
-              <FieldStandardNode
-                id={item.id}
-                item={item}
-                type='object'
-                searchString={searchString}
-                hasChildren={true}
-              />
-            ) : (
-              <FieldNode
-                id={item.id}
-                item={item}
-                type='object'
-                searchString={searchString}
-                hasChildren={true}
-              />
-            ),
-            key: cuid(),
-            selectable: false,
-            className: 'mcs-schemaVizualizer_fieldNode_parent',
-            children: this.unfilteredLoop(item, item.schemaType, disableDragAndDrop, searchString),
-          };
-        }
+    gData.fields.map((item): DataNode => {
+      if (isSchemaItem(item)) {
         return {
           title: disableDragAndDrop ? (
             <FieldStandardNode
               id={item.id}
-              type='field'
-              schemaType={objectType}
-              item={item as FieldInfoEnhancedResource}
+              item={item}
+              type='object'
               searchString={searchString}
+              hasChildren={true}
             />
           ) : (
             <FieldNode
               id={item.id}
-              type='field'
-              schemaType={objectType}
-              item={item as FieldInfoEnhancedResource}
+              item={item}
+              type='object'
               searchString={searchString}
+              hasChildren={true}
             />
           ),
           key: cuid(),
-          className: 'mcs-schemaVizualizer_fieldNode_child',
           selectable: false,
+          className: 'mcs-schemaVizualizer_fieldNode_parent',
+          children: this.unfilteredLoop(item, item.schemaType, disableDragAndDrop, searchString),
         };
-      },
-    );
+      }
+      return {
+        title: disableDragAndDrop ? (
+          <FieldStandardNode
+            id={item.id}
+            type='field'
+            schemaType={objectType}
+            item={item as FieldInfoEnhancedResource}
+            searchString={searchString}
+          />
+        ) : (
+          <FieldNode
+            id={item.id}
+            type='field'
+            schemaType={objectType}
+            item={item as FieldInfoEnhancedResource}
+            searchString={searchString}
+          />
+        ),
+        key: cuid(),
+        className: 'mcs-schemaVizualizer_fieldNode_child',
+        selectable: false,
+      };
+    });
   loop = (
     gData: SchemaItem,
     objectType?: string,
@@ -183,93 +181,86 @@ export default class SchemaVizualizer extends React.Component<
           return false;
         return true;
       })
-      .map(
-        (item): DataNode => {
-          if (
-            isSchemaItem(item) &&
-            searchString &&
-            (item.decorator
-              ? item.decorator.label.toLowerCase().includes(searchString.toLowerCase())
-              : item.name.toLowerCase().includes(searchString.toLowerCase()))
-          ) {
-            return {
-              title: disableDragAndDrop ? (
-                <FieldStandardNode
-                  id={item.id}
-                  item={item}
-                  type='object'
-                  searchString={searchString}
-                  hasChildren={true}
-                />
-              ) : (
-                <FieldNode
-                  id={item.id}
-                  item={item}
-                  type='object'
-                  searchString={searchString}
-                  hasChildren={true}
-                />
-              ),
-              key: cuid(),
-              className: 'mcs-schemaVizualizer_fieldNode_parent',
-              selectable: false,
-              children: this.unfilteredLoop(
-                item,
-                item.schemaType,
-                disableDragAndDrop,
-                searchString,
-              ),
-            };
-          }
-          if (isSchemaItem(item)) {
-            return {
-              title: disableDragAndDrop ? (
-                <FieldStandardNode
-                  id={item.id}
-                  item={item}
-                  type='object'
-                  searchString={searchString}
-                  hasChildren={true}
-                />
-              ) : (
-                <FieldNode
-                  id={item.id}
-                  item={item}
-                  type='object'
-                  searchString={searchString}
-                  hasChildren={true}
-                />
-              ),
-              key: cuid(),
-              className: 'mcs-schemaVizualizer_fieldNode_parent',
-              selectable: false,
-              children: this.loop(item, item.schemaType, searchString, disableDragAndDrop),
-            };
-          }
+      .map((item): DataNode => {
+        if (
+          isSchemaItem(item) &&
+          searchString &&
+          (item.decorator
+            ? item.decorator.label.toLowerCase().includes(searchString.toLowerCase())
+            : item.name.toLowerCase().includes(searchString.toLowerCase()))
+        ) {
           return {
             title: disableDragAndDrop ? (
               <FieldStandardNode
                 id={item.id}
-                type='field'
-                schemaType={objectType}
-                item={item as FieldInfoEnhancedResource}
+                item={item}
+                type='object'
                 searchString={searchString}
+                hasChildren={true}
               />
             ) : (
               <FieldNode
                 id={item.id}
-                type='field'
-                schemaType={objectType}
-                item={item as FieldInfoEnhancedResource}
+                item={item}
+                type='object'
                 searchString={searchString}
+                hasChildren={true}
               />
             ),
             key: cuid(),
-            className: 'mcs-schemaVizualizer_fieldNode_child',
+            className: 'mcs-schemaVizualizer_fieldNode_parent',
             selectable: false,
+            children: this.unfilteredLoop(item, item.schemaType, disableDragAndDrop, searchString),
           };
-        },
-      );
+        }
+        if (isSchemaItem(item)) {
+          return {
+            title: disableDragAndDrop ? (
+              <FieldStandardNode
+                id={item.id}
+                item={item}
+                type='object'
+                searchString={searchString}
+                hasChildren={true}
+              />
+            ) : (
+              <FieldNode
+                id={item.id}
+                item={item}
+                type='object'
+                searchString={searchString}
+                hasChildren={true}
+              />
+            ),
+            key: cuid(),
+            className: 'mcs-schemaVizualizer_fieldNode_parent',
+            selectable: false,
+            children: this.loop(item, item.schemaType, searchString, disableDragAndDrop),
+          };
+        }
+        return {
+          title: disableDragAndDrop ? (
+            <FieldStandardNode
+              id={item.id}
+              type='field'
+              schemaType={objectType}
+              item={item as FieldInfoEnhancedResource}
+              searchString={searchString}
+            />
+          ) : (
+            <FieldNode
+              id={item.id}
+              type='field'
+              schemaType={objectType}
+              item={item as FieldInfoEnhancedResource}
+              searchString={searchString}
+            />
+          ),
+          key: cuid(),
+          className: 'mcs-schemaVizualizer_fieldNode_child',
+          selectable: false,
+        };
+      });
 
   componentDidUpdate(previousProps: SchemaVizualizerProps, previousState: SchemaVizualizerState) {
     const { schema, disableDragAndDrop } = this.props;

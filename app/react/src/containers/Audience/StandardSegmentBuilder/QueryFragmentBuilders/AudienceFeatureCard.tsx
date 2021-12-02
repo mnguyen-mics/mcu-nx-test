@@ -45,14 +45,8 @@ class AudienceFeatureCard extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      audienceFeature,
-      intl,
-      searchValue,
-      onSelectFeature,
-      finalValues,
-      isSettingsMode,
-    } = this.props;
+    const { audienceFeature, intl, searchValue, onSelectFeature, finalValues, isSettingsMode } =
+      this.props;
     const { cardToggled, dropdownVisible } = this.state;
     const onCardClick = (e: any) => {
       if (e.target.className === 'mcs-standardSegmentBuilder_featureCardFinalValue') {

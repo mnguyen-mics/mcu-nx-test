@@ -19,7 +19,8 @@ export interface IAttributionModelService extends PluginInstanceService<Attribut
 @injectable()
 export class AttributionModelService
   extends PluginInstanceService<AttributionModel>
-  implements IAttributionModelService {
+  implements IAttributionModelService
+{
   constructor() {
     super('attribution_models');
   }

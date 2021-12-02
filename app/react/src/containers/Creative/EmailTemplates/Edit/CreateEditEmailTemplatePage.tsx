@@ -2,13 +2,12 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import PluginEditForm from '../../../Plugin/Edit/PluginEditForm';
+import { PluginEditForm } from '@mediarithmics-private/advanced-components';
 import { EditContentLayout } from '../../../../components/Layout';
 import { PluginVersionResource } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
 import { DataResponse } from '../../../../services/ApiService';
-
 import messages from './messages';
 import injectNotifications, {
   InjectedNotificationProps,

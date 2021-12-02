@@ -31,7 +31,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { AudienceFeedTyped } from '../../Segments/Edit/domain';
 import EditPluginModal from './EditPluginModal';
-import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
+import { PluginCardModalTab } from '@mediarithmics-private/advanced-components';
 import messages from '../messages';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { McsIcon, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
@@ -86,9 +86,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'EXTERNAL_FEED',
-    );
+    this._audienceExternalFeedServiceFactory =
+      this._audienceSegmentFeedServiceFactory('EXTERNAL_FEED');
     this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
     this.state = {
       list: {

@@ -80,10 +80,11 @@ class CompartmentEditPage extends React.Component<Props, State> {
     const compartmentId = compartmentIdFromURLParam || compartmentIdFromLocState;
 
     if (compartmentId) {
-      const getCompartment = this._datamartService.getUserAccountCompartmentDatamartSelectionResource(
-        datamartId,
-        compartmentId,
-      );
+      const getCompartment =
+        this._datamartService.getUserAccountCompartmentDatamartSelectionResource(
+          datamartId,
+          compartmentId,
+        );
 
       const getProcessingSelections = this._datamartService
         .getProcessingSelectionsByCompartment(datamartId, compartmentId)
@@ -299,9 +300,10 @@ class CompartmentEditPage extends React.Component<Props, State> {
         updatedUserAccountCompartment,
       )
       .then(_ => {
-        const updatedCompartmentDatamartSelection: Partial<UserAccountCompartmentDatamartSelectionResource> = {
-          default: compartmentFormData.compartment.default,
-        };
+        const updatedCompartmentDatamartSelection: Partial<UserAccountCompartmentDatamartSelectionResource> =
+          {
+            default: compartmentFormData.compartment.default,
+          };
 
         return this._datamartService.updateUserAccountCompartmentDatamartSelectionResource(
           compartmentFormData.compartment.datamart_id!,
@@ -326,11 +328,12 @@ class CompartmentEditPage extends React.Component<Props, State> {
       .then(res => {
         const returnedUserAccountCompartment = res.data;
 
-        const partialCompartmentDatamartSelection: Partial<UserAccountCompartmentDatamartSelectionResource> = {
-          datamart_id: compartmentFormData.compartment.datamart_id,
-          compartment_id: returnedUserAccountCompartment.id,
-          default: compartmentFormData.compartment.default,
-        };
+        const partialCompartmentDatamartSelection: Partial<UserAccountCompartmentDatamartSelectionResource> =
+          {
+            datamart_id: compartmentFormData.compartment.datamart_id,
+            compartment_id: returnedUserAccountCompartment.id,
+            default: compartmentFormData.compartment.default,
+          };
         return this._datamartService.createUserAccountCompartmentDatamartSelectionResource(
           compartmentFormData.compartment.datamart_id!,
           partialCompartmentDatamartSelection,

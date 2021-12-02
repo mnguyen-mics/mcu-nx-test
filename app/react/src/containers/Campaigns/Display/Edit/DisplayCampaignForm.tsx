@@ -30,7 +30,7 @@ import AdGroupFormSection, {
 import * as SessionSelectors from '../../../../redux/Session/selectors';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 export const GoalFieldArray = FieldArray as new () => GenericFieldArray<
   Field,

@@ -19,7 +19,7 @@ import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
 
 const FORM_ID = 'userForm';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 const messages = defineMessages({
   sectionTitleGeneral: {

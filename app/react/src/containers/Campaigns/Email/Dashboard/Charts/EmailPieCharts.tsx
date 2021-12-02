@@ -23,13 +23,8 @@ type Props = EmailPieChartsProps & InjectedThemeColorsProps & InjectedIntlProps;
 
 class EmailPieCharts extends React.Component<Props> {
   renderPieCharts = (deliveryReport: EmailDeliveryReport) => {
-    const {
-      emailClicks,
-      emailDelivered,
-      emailOpened,
-      emailUnsubscribed,
-      emailSent,
-    } = deliveryReport;
+    const { emailClicks, emailDelivered, emailOpened, emailUnsubscribed, emailSent } =
+      deliveryReport;
 
     const generateData = (type: string) => {
       const { colors } = this.props;

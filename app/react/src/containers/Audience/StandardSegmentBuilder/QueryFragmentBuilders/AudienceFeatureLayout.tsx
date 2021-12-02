@@ -12,7 +12,8 @@ import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/
 import { Spin, Row, Col, Button } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
+export const FormRelativeAbsoluteDateField =
+  Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
 interface State {
   audienceFeature?: AudienceFeatureResource;

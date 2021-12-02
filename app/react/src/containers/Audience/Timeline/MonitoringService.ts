@@ -122,11 +122,11 @@ export class MonitoringService implements IMonitoringService {
 
         return getUsersAccountCompartment(profileApiResponse)
           .then(usersAccountCompartments => {
-            const formattedUsersAccountCompartmentsResponse: FormattedUserAccountCompartmentResource = {};
+            const formattedUsersAccountCompartmentsResponse: FormattedUserAccountCompartmentResource =
+              {};
             for (const usersAccountCompartment of usersAccountCompartments) {
-              formattedUsersAccountCompartmentsResponse[
-                usersAccountCompartment.id
-              ] = usersAccountCompartment;
+              formattedUsersAccountCompartmentsResponse[usersAccountCompartment.id] =
+                usersAccountCompartment;
             }
 
             // Default accumulator value

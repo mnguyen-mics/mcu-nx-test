@@ -40,7 +40,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 const FormDomainFields = FieldArray as new () => GenericFieldArray<DomainFieldProps>;
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
   Field,

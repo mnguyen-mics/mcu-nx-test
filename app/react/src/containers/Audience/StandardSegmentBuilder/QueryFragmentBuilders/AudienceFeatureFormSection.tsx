@@ -25,14 +25,8 @@ type Props = WrappedFieldArrayProps<StandardSegmentBuilderParametricPredicateNod
 
 class AudienceFeatureFormSection extends React.Component<Props> {
   render() {
-    const {
-      fields,
-      datamartId,
-      objectTypes,
-      removeGroup,
-      audienceFeatures,
-      formChange,
-    } = this.props;
+    const { fields, datamartId, objectTypes, removeGroup, audienceFeatures, formChange } =
+      this.props;
 
     const removeFieldOrGroup = (index: number) => () => {
       if (fields.getAll().length === 1) {

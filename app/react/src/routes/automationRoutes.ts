@@ -49,6 +49,5 @@ export const automationDefinition: NavigatorDefinition = {
   },
 };
 
-export const automationRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
-  automationDefinition,
-);
+export const automationRoutes: NavigatorRoute[] =
+  generateRoutesFromDefinition(automationDefinition);

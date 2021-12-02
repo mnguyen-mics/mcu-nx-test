@@ -32,7 +32,8 @@ export interface ICustomActionService {
 @injectable()
 export class CustomActionService
   extends PluginInstanceService<CustomActionResource>
-  implements ICustomActionService {
+  implements ICustomActionService
+{
   constructor() {
     super('scenario_custom_actions');
   }

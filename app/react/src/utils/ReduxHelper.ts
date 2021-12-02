@@ -95,35 +95,34 @@ const defaultMetadata = {
   total: 0,
 };
 
-export const createRequestMetadataReducer = (requestTypes: CreateRequestType) => (
-  state = defaultMetadata,
-  action: Action<Payload>,
-) => {
-  switch (action.type) {
-    case requestTypes.REQUEST:
-      return {
-        ...state,
-        isFetching: true,
-      };
-    case requestTypes.SUCCESS:
-      return {
-        ...state,
-        isFetching: false,
-        total: action.payload.total,
-      };
-    case requestTypes.FAILURE:
-      return {
-        ...state,
-        isFetching: false,
-        error: action.payload,
-      };
-    case requestTypes.EXPIRED_PASSWORD:
-      return {
-        ...state,
-        isFetching: false,
-        error: action.payload,
-      };
-    default:
-      return state;
-  }
-};
+export const createRequestMetadataReducer =
+  (requestTypes: CreateRequestType) =>
+  (state = defaultMetadata, action: Action<Payload>) => {
+    switch (action.type) {
+      case requestTypes.REQUEST:
+        return {
+          ...state,
+          isFetching: true,
+        };
+      case requestTypes.SUCCESS:
+        return {
+          ...state,
+          isFetching: false,
+          total: action.payload.total,
+        };
+      case requestTypes.FAILURE:
+        return {
+          ...state,
+          isFetching: false,
+          error: action.payload,
+        };
+      case requestTypes.EXPIRED_PASSWORD:
+        return {
+          ...state,
+          isFetching: false,
+          error: action.payload,
+        };
+      default:
+        return state;
+    }
+  };

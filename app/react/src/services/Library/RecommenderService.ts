@@ -32,7 +32,8 @@ export interface IRecommenderService extends PluginInstanceService<Recommender> 
 @injectable()
 export class RecommenderService
   extends PluginInstanceService<Recommender>
-  implements IRecommenderService {
+  implements IRecommenderService
+{
   constructor() {
     super('recommenders');
   }

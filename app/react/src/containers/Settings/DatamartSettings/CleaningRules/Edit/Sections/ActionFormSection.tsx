@@ -64,7 +64,8 @@ class ActionFormSection extends React.Component<Props> {
       },
     ];
 
-    const CleaningRuleLifeTimeDurationField = Field as new () => GenericField<CleaningRuleLifeTimeDurationProps>;
+    const CleaningRuleLifeTimeDurationField =
+      Field as new () => GenericField<CleaningRuleLifeTimeDurationProps>;
 
     return (
       <div>

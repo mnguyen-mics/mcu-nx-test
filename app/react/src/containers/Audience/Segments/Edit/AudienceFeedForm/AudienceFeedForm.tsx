@@ -19,7 +19,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { AudienceFeedFormModel, FeedRouteParams } from './domain';
-import GenericPluginContent from '../../../../Plugin/Edit/GenericPluginContent';
+import { GenericPluginContent } from '@mediarithmics-private/advanced-components';
 import {
   IAudienceSegmentFeedService,
   AudienceFeedType,
@@ -126,9 +126,8 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
     super(props);
     const type = props.type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED' ? 'EXTERNAL_FEED' : 'TAG_FEED';
 
-    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'EXTERNAL_FEED',
-    );
+    this._audienceExternalFeedServiceFactory =
+      this._audienceSegmentFeedServiceFactory('EXTERNAL_FEED');
     this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     this.feedService =

@@ -54,24 +54,23 @@ class QueryFragmentFormSection extends React.Component<Props> {
   // ----------------------------------
   // Utilities
 
-  private addToGroup = (groupIndex: number) => (
-    predicates: StandardSegmentBuilderParametricPredicateNode[],
-  ) => {
-    const { fields, change } = this.props;
+  private addToGroup =
+    (groupIndex: number) => (predicates: StandardSegmentBuilderParametricPredicateNode[]) => {
+      const { fields, change } = this.props;
 
-    const updatedGroups = fields.getAll().map((field, i) => {
-      if (i === groupIndex) {
-        return {
-          ...field,
-          expressions: field.expressions.concat(predicates),
-        };
-      } else {
-        return field;
-      }
-    });
+      const updatedGroups = fields.getAll().map((field, i) => {
+        if (i === groupIndex) {
+          return {
+            ...field,
+            expressions: field.expressions.concat(predicates),
+          };
+        } else {
+          return field;
+        }
+      });
 
-    change(fields.name, updatedGroups);
-  };
+      change(fields.name, updatedGroups);
+    };
 
   // ----------------------------------
   // Rendering

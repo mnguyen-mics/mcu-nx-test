@@ -2,9 +2,10 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import GenericPluginContent, {
+import {
+  GenericPluginContent,
   PluginContentOuterProps,
-} from '../../../../Plugin/Edit/GenericPluginContent';
+} from '@mediarithmics-private/advanced-components';
 import {
   AttributionModel,
   PluginResource,

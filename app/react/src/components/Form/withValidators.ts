@@ -70,23 +70,29 @@ export interface ValidatorProps {
   fieldValidators: FieldValidatorsProps;
 }
 
-const isRequired = (formatMessage: FormatMessageHandler): Validator => value => {
-  return !value || (value.length !== undefined && !value.length)
-    ? formatMessage(defaultErrorMessages.required)
-    : undefined;
-};
+const isRequired =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    return !value || (value.length !== undefined && !value.length)
+      ? formatMessage(defaultErrorMessages.required)
+      : undefined;
+  };
 
-const isNotZero = (formatMessage: FormatMessageHandler): Validator => value => {
-  return value && value === '0' ? formatMessage(defaultErrorMessages.positiveNumber) : undefined;
-};
+const isNotZero =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    return value && value === '0' ? formatMessage(defaultErrorMessages.positiveNumber) : undefined;
+  };
 
-const formatIsNotZero = (formatMessage: FormatMessageHandler): Validator => value => {
-  const format = value ? value.split('x') : '';
+const formatIsNotZero =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    const format = value ? value.split('x') : '';
 
-  return value && format && (Number(format[0]) === 0 || Number(format[1]) === 0)
-    ? formatMessage(defaultErrorMessages.formatNotZero)
-    : '';
-};
+    return value && format && (Number(format[0]) === 0 || Number(format[1]) === 0)
+      ? formatMessage(defaultErrorMessages.formatNotZero)
+      : '';
+  };
 
 /**
  *
@@ -94,61 +100,74 @@ const formatIsNotZero = (formatMessage: FormatMessageHandler): Validator => valu
  *
  * @param formatMessage
  */
-const isValidDomain = (formatMessage: FormatMessageHandler): Validator => value => {
-  return value &&
-    !/^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/gim.test(value)
-    ? formatMessage(defaultErrorMessages.invalidDomain)
-    : undefined;
-};
+const isValidDomain =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    return value &&
+      !/^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/gim.test(value)
+      ? formatMessage(defaultErrorMessages.invalidDomain)
+      : undefined;
+  };
 
-const isValidEmail = (formatMessage: FormatMessageHandler): Validator => value => {
-  return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)
-    ? formatMessage(defaultErrorMessages.invalidEmail)
-    : undefined;
-};
+const isValidEmail =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    return value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)
+      ? formatMessage(defaultErrorMessages.invalidEmail)
+      : undefined;
+  };
 
-const isValidFloat = (formatMessage: FormatMessageHandler): Validator => value => {
-  return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value)
-    ? formatMessage(defaultErrorMessages.invalidFloat)
-    : undefined;
-};
+const isValidFloat =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    return value && !/^[0-9]+(\.[0-9]{1,2})?$/i.test(value)
+      ? formatMessage(defaultErrorMessages.invalidFloat)
+      : undefined;
+  };
 
-const isValidDouble = (formatMessage: FormatMessageHandler): Validator => value => {
-  return value && (isNaN(Number(value)) || value.length > 18)
-    ? formatMessage(defaultErrorMessages.invalidNumber)
-    : undefined;
-};
+const isValidDouble =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    return value && (isNaN(Number(value)) || value.length > 18)
+      ? formatMessage(defaultErrorMessages.invalidNumber)
+      : undefined;
+  };
 
-const isValidInteger = (formatMessage: FormatMessageHandler): Validator => value => {
-  return value && !/^\d+$/.test(value)
-    ? formatMessage(defaultErrorMessages.invalidNumber)
-    : undefined;
-};
+const isValidInteger =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    return value && !/^\d+$/.test(value)
+      ? formatMessage(defaultErrorMessages.invalidNumber)
+      : undefined;
+  };
 
 const isValidNumber = (value: any) => !/^\s*$/.test(value) && !isNaN(value);
 
-const isValidArrayOfNumber = (formatMessage: FormatMessageHandler): Validator => value => {
-  return !(value && Array.isArray(value) && value.every(v => isValidNumber(v)))
-    ? formatMessage(defaultErrorMessages.invalidNumber)
-    : undefined;
-};
+const isValidArrayOfNumber =
+  (formatMessage: FormatMessageHandler): Validator =>
+  value => {
+    return !(value && Array.isArray(value) && value.every(v => isValidNumber(v)))
+      ? formatMessage(defaultErrorMessages.invalidNumber)
+      : undefined;
+  };
 
-const isCharLengthLessThan = (formatMessage: FormatMessageHandler) => (
-  length: number,
-): Validator => value => {
-  return value && value.length >= length
-    ? formatMessage(defaultErrorMessages.exceedMaxCharacters, { length: length })
-    : undefined;
-};
+const isCharLengthLessThan =
+  (formatMessage: FormatMessageHandler) =>
+  (length: number): Validator =>
+  value => {
+    return value && value.length >= length
+      ? formatMessage(defaultErrorMessages.exceedMaxCharacters, { length: length })
+      : undefined;
+  };
 
-const isIntegerBetween = (formatMessage: FormatMessageHandler) => (
-  min: number,
-  max: number,
-): Validator => value => {
-  return value && parseInt(value, 10) >= min && parseInt(value, 10) <= max
-    ? formatMessage(defaultErrorMessages.integerOutOfRange, { min: min, max: max })
-    : undefined;
-};
+const isIntegerBetween =
+  (formatMessage: FormatMessageHandler) =>
+  (min: number, max: number): Validator =>
+  value => {
+    return value && parseInt(value, 10) >= min && parseInt(value, 10) <= max
+      ? formatMessage(defaultErrorMessages.integerOutOfRange, { min: min, max: max })
+      : undefined;
+  };
 
 export default compose<{}, ValidatorProps>(
   injectIntl,

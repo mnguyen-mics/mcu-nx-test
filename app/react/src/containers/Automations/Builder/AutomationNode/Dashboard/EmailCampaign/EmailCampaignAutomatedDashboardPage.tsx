@@ -165,12 +165,8 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<Props, State> 
   render() {
     const { intl } = this.props;
 
-    const {
-      campaign,
-      isLoadingCampaignStatReport,
-      campaignStatReport,
-      isLoadingCampaign,
-    } = this.state;
+    const { campaign, isLoadingCampaignStatReport, campaignStatReport, isLoadingCampaign } =
+      this.state;
 
     const handleDateRangeChange = (newRange: McsDateRangeValue) =>
       this.setState({ dateRange: newRange });

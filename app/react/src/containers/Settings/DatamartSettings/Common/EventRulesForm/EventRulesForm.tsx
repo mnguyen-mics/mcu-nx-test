@@ -33,7 +33,7 @@ const messages = defineMessages({
   },
 });
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 export interface EventRulesFormProps extends Omit<ConfigProps<EventRulesFormData>, 'form'> {
   close: () => void;

@@ -58,9 +58,9 @@ class AutomationLinkWidget extends React.Component<Props> {
     const props = this.props;
 
     const Bottom = React.cloneElement(
-      (props.diagramEngine.getFactoryForLink(
-        this.props.link,
-      ) as AutomationLinkFactory).generateLinkSegment(this.props.link, this, false, path),
+      (
+        props.diagramEngine.getFactoryForLink(this.props.link) as AutomationLinkFactory
+      ).generateLinkSegment(this.props.link, this, false, path),
       {
         ref: (ref: any) => ref && this.refPaths.push(ref),
       },

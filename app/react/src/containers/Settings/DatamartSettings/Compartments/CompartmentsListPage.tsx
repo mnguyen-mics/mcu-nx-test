@@ -186,13 +186,8 @@ class CompartmentsListPage extends React.Component<Props, CompartmentsListPageSt
       location: { search },
       workspace,
     } = this.props;
-    const {
-      isFetchingCompartments,
-      totalCompartments,
-      compartments,
-      noCompartmentYet,
-      filter,
-    } = this.state;
+    const { isFetchingCompartments, totalCompartments, compartments, noCompartmentYet, filter } =
+      this.state;
 
     const datamartItems = workspace(organisationId).datamarts.map(d => ({
       key: d.id,

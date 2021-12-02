@@ -299,20 +299,19 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       },
     ];
 
-    const profileBasedAddedDataColumns: Array<
-      DataColumnDefinition<ExtendedCleaningRuleResource>
-    > = [
-      {
-        title: formatMessage(messages.compartmentFilter),
-        key: 'compartment_filter',
-        isHideable: false,
-        render: (text: string, record: UserProfileCleaningRuleResource) => (
-          <span>
-            {record.compartment_filter ? record.compartment_filter : formatMessage(messages.all)}
-          </span>
-        ),
-      },
-    ];
+    const profileBasedAddedDataColumns: Array<DataColumnDefinition<ExtendedCleaningRuleResource>> =
+      [
+        {
+          title: formatMessage(messages.compartmentFilter),
+          key: 'compartment_filter',
+          isHideable: false,
+          render: (text: string, record: UserProfileCleaningRuleResource) => (
+            <span>
+              {record.compartment_filter ? record.compartment_filter : formatMessage(messages.all)}
+            </span>
+          ),
+        },
+      ];
 
     const baseDataColumns: Array<DataColumnDefinition<ExtendedCleaningRuleResource>> = [
       {

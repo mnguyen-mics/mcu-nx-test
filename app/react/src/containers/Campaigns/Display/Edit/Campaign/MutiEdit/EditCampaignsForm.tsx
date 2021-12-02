@@ -65,7 +65,7 @@ type JoinedProps = EditCampaignsFormProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedFormProps<EditCampaignsFormData>;
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 class EditCampaignsForm extends React.Component<JoinedProps, EditCampaignsFormState> {
   @lazyInject(TYPES.IDisplayCampaignService)

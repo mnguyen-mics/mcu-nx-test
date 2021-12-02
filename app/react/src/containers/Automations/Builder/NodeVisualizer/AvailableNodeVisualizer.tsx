@@ -191,66 +191,65 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
       });
     }, Promise.resolve([]));
 
-    const pluginLayoutsAndVersionPropertiesP: Promise<
-      PluginLayoutAndVersionProperties[]
-    > = pluginPresetFeedsP.then(pluginPresets => {
-      const distinctPluginVersionIds = [
-        ...new Set(pluginPresets.map(preset => preset.plugin_version_id)),
-      ];
+    const pluginLayoutsAndVersionPropertiesP: Promise<PluginLayoutAndVersionProperties[]> =
+      pluginPresetFeedsP.then(pluginPresets => {
+        const distinctPluginVersionIds = [
+          ...new Set(pluginPresets.map(preset => preset.plugin_version_id)),
+        ];
 
-      return Promise.all(
-        distinctPluginVersionIds.map(pluginVersionId => {
-          const associatedPluginId = pluginPresets.find(
-            preset => preset.plugin_version_id === pluginVersionId,
-          )?.plugin_id;
+        return Promise.all(
+          distinctPluginVersionIds.map(pluginVersionId => {
+            const associatedPluginId = pluginPresets.find(
+              preset => preset.plugin_version_id === pluginVersionId,
+            )?.plugin_id;
 
-          const pluginLayoutP = associatedPluginId
-            ? this._pluginService
-                .getLocalizedPluginLayout(associatedPluginId, pluginVersionId)
-                .then(pluginLayout => {
-                  return pluginLayout !== null ? pluginLayout : undefined;
-                })
-            : Promise.resolve(undefined);
+            const pluginLayoutP = associatedPluginId
+              ? this._pluginService
+                  .getLocalizedPluginLayout(associatedPluginId, pluginVersionId)
+                  .then(pluginLayout => {
+                    return pluginLayout !== null ? pluginLayout : undefined;
+                  })
+              : Promise.resolve(undefined);
 
-          const pluginVersionP = associatedPluginId
-            ? this._pluginService
-                .getPluginVersion(associatedPluginId, pluginVersionId)
-                .then(resPluginVersion => resPluginVersion.data)
-                .catch(err => undefined)
-            : Promise.resolve(undefined);
+            const pluginVersionP = associatedPluginId
+              ? this._pluginService
+                  .getPluginVersion(associatedPluginId, pluginVersionId)
+                  .then(resPluginVersion => resPluginVersion.data)
+                  .catch(err => undefined)
+              : Promise.resolve(undefined);
 
-          const pluginVersionPropertiesP = associatedPluginId
-            ? this._pluginService
-                .getPluginVersionProperties(associatedPluginId, pluginVersionId)
-                .then(resPluginVersionProperties => resPluginVersionProperties.data)
-                .catch(err => undefined)
-            : Promise.resolve(undefined);
+            const pluginVersionPropertiesP = associatedPluginId
+              ? this._pluginService
+                  .getPluginVersionProperties(associatedPluginId, pluginVersionId)
+                  .then(resPluginVersionProperties => resPluginVersionProperties.data)
+                  .catch(err => undefined)
+              : Promise.resolve(undefined);
 
-          return Promise.all([pluginLayoutP, pluginVersionP, pluginVersionPropertiesP]).then(
-            resPluginLayoutAndVersion => {
-              const pluginLayout = resPluginLayoutAndVersion[0];
-              const pluginVersion = resPluginLayoutAndVersion[1];
-              const pluginVersionProperties = resPluginLayoutAndVersion[2];
+            return Promise.all([pluginLayoutP, pluginVersionP, pluginVersionPropertiesP]).then(
+              resPluginLayoutAndVersion => {
+                const pluginLayout = resPluginLayoutAndVersion[0];
+                const pluginVersion = resPluginLayoutAndVersion[1];
+                const pluginVersionProperties = resPluginLayoutAndVersion[2];
 
-              return { pluginLayout, pluginVersion, pluginVersionProperties };
-            },
-          );
-        }),
-      ).then(resPluginLayoutsAndVersions =>
-        resPluginLayoutsAndVersions.reduce((acc: PluginLayoutAndVersionProperties[], el) => {
-          if (el.pluginLayout && el.pluginVersion && el.pluginVersionProperties) {
-            return acc.concat([
-              {
-                pluginLayout: el.pluginLayout,
-                pluginVersion: el.pluginVersion,
-                pluginVersionProperties: el.pluginVersionProperties,
+                return { pluginLayout, pluginVersion, pluginVersionProperties };
               },
-            ]);
-          }
-          return acc;
-        }, []),
-      );
-    });
+            );
+          }),
+        ).then(resPluginLayoutsAndVersions =>
+          resPluginLayoutsAndVersions.reduce((acc: PluginLayoutAndVersionProperties[], el) => {
+            if (el.pluginLayout && el.pluginVersion && el.pluginVersionProperties) {
+              return acc.concat([
+                {
+                  pluginLayout: el.pluginLayout,
+                  pluginVersion: el.pluginVersion,
+                  pluginVersionProperties: el.pluginVersionProperties,
+                },
+              ]);
+            }
+            return acc;
+          }, []),
+        );
+      });
 
     return Promise.all([pluginLayoutsAndVersionPropertiesP, pluginPresetFeedsP])
       .then(resLayoutsAndPresets => {
@@ -310,10 +309,11 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
               } else return o;
             };
 
-            const pluginVersionProperties = associatedLayoutAndVersionProperties.pluginVersionProperties.reduce(
-              reduceFunctionForPropertyResourceShape,
-              {},
-            );
+            const pluginVersionProperties =
+              associatedLayoutAndVersionProperties.pluginVersionProperties.reduce(
+                reduceFunctionForPropertyResourceShape,
+                {},
+              );
 
             const propertiesWithPreset = pluginPreset.properties.reduce(
               reduceFunctionForPluginPresetProperty,

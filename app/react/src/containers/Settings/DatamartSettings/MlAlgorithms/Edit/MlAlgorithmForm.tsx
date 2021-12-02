@@ -19,7 +19,7 @@ import { MlAlgorithmFormData } from '../domain';
 
 export const FORM_ID = 'mlAlgorithmForm';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 interface MlAlgorithmFormProps extends Omit<ConfigProps<MlAlgorithmFormData>, 'form'> {
   onClose: () => void;

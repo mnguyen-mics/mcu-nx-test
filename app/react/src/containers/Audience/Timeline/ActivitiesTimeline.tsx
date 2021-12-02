@@ -79,10 +79,8 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const { selectedDatamart, userIdentifier } = this.props;
 
-    const {
-      selectedDatamart: prevSelectedDatamart,
-      userIdentifier: prevUserIdentifier,
-    } = prevProps;
+    const { selectedDatamart: prevSelectedDatamart, userIdentifier: prevUserIdentifier } =
+      prevProps;
 
     if (
       !!userIdentifier.id &&
@@ -156,30 +154,27 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       });
     });
 
-    const {
-      scenarioActivities,
-      nodeEnterActivitiesToBeRemoved,
-      nodeExitActivitiesToBeRemoved,
-    } = userScenarioActivities.reduce(
-      (acc, current) => {
-        return {
-          scenarioActivities: [...acc.scenarioActivities, current.scenarioActivity],
-          nodeEnterActivitiesToBeRemoved: [
-            ...acc.nodeEnterActivitiesToBeRemoved,
-            current.nodeEnterActivity,
-          ],
-          nodeExitActivitiesToBeRemoved: [
-            ...acc.nodeExitActivitiesToBeRemoved,
-            current.nodeExitActivity,
-          ],
-        };
-      },
-      {
-        scenarioActivities: [],
-        nodeEnterActivitiesToBeRemoved: [],
-        nodeExitActivitiesToBeRemoved: [],
-      },
-    );
+    const { scenarioActivities, nodeEnterActivitiesToBeRemoved, nodeExitActivitiesToBeRemoved } =
+      userScenarioActivities.reduce(
+        (acc, current) => {
+          return {
+            scenarioActivities: [...acc.scenarioActivities, current.scenarioActivity],
+            nodeEnterActivitiesToBeRemoved: [
+              ...acc.nodeEnterActivitiesToBeRemoved,
+              current.nodeEnterActivity,
+            ],
+            nodeExitActivitiesToBeRemoved: [
+              ...acc.nodeExitActivitiesToBeRemoved,
+              current.nodeExitActivity,
+            ],
+          };
+        },
+        {
+          scenarioActivities: [],
+          nodeEnterActivitiesToBeRemoved: [],
+          nodeExitActivitiesToBeRemoved: [],
+        },
+      );
 
     return lodash.difference(
       activities.concat(scenarioActivities),

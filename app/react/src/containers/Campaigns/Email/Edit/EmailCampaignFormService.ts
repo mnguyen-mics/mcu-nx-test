@@ -37,9 +37,7 @@ type TCampaignId = string;
 export interface IEmailCampaignFormService {
   loadCampaign: (emailCampaignId: string) => Promise<EmailCampaignFormData>;
   loadBlast: (emailCampaignId: string, blastId: string) => Promise<EmailBlastFormData>;
-  loadCampaignDependencies: (
-    campaignId: string,
-  ) => Promise<{
+  loadCampaignDependencies: (campaignId: string) => Promise<{
     blastFields: BlastFieldModel[];
     routerFields: RouterFieldModel[];
   }>;
@@ -95,9 +93,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     });
   }
 
-  loadCampaignDependencies(
-    campaignId: string,
-  ): Promise<{
+  loadCampaignDependencies(campaignId: string): Promise<{
     blastFields: BlastFieldModel[];
     routerFields: RouterFieldModel[];
   }> {

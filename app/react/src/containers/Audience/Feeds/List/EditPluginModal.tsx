@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { AudienceFeedTyped } from '../../Segments/Edit/domain';
-import PluginCardModal from '../../../Plugin/Edit/PluginCard/PluginCardModal';
 import { IPluginService } from '../../../../services/PluginService';
 import {
   AudienceFeedType,
@@ -12,7 +11,7 @@ import { PropertyResourceShape } from '../../../../models/plugin';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
+import { PluginCardModalTab, PluginCardModal } from '@mediarithmics-private/advanced-components';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { injectIntl, defineMessages, InjectedIntlProps } from 'react-intl';
 import { withValidators } from '../../../../components/Form';
@@ -20,6 +19,8 @@ import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { getFeedStatsUnit } from '../../../../utils/FeedsStatsReportHelper';
+import FeedChart from '../../Segments/Dashboard/Feeds/Charts/FeedChart';
+import McsMoment from '../../../../utils/McsMoment';
 
 export interface EditPluginModalProps {
   feed: AudienceFeedTyped;
@@ -87,9 +88,8 @@ class EditPluginModal extends React.Component<Props, State> {
       isLoading: true,
     };
 
-    this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'EXTERNAL_FEED',
-    );
+    this._audienceExternalFeedServiceFactory =
+      this._audienceSegmentFeedServiceFactory('EXTERNAL_FEED');
     this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     this.feedService =
@@ -215,6 +215,9 @@ class EditPluginModal extends React.Component<Props, State> {
     const {
       feed,
       modalTab,
+      match: {
+        params: { organisationId },
+      },
       onClose,
       intl: { formatMessage },
       fieldValidators: { isRequired },
@@ -237,7 +240,17 @@ class EditPluginModal extends React.Component<Props, State> {
           current_version_id: feed.version_id,
           plugin_layout: layout,
         }}
-        feedStatsUnit={feedStatsUnit}
+        pluginChart={
+          <FeedChart
+            organisationId={organisationId}
+            feedId={feed.id}
+            feedStatsUnit={feedStatsUnit}
+            dateRange={{
+              from: new McsMoment('now-7d'),
+              to: new McsMoment('now'),
+            }}
+          />
+        }
         save={this.savePluginInstance}
         pluginProperties={pluginProperties}
         disableFields={feed.status === 'ACTIVE' || feed.status === 'PUBLISHED'}

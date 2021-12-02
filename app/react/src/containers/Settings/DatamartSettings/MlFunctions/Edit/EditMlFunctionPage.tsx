@@ -2,16 +2,17 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import GenericPluginContent, {
+import {
+  GenericPluginContent,
   PluginContentOuterProps,
-} from '../../../../Plugin/Edit/GenericPluginContent';
+  SpecificFieldsFunction,
+} from '@mediarithmics-private/advanced-components';
 import { PluginProperty, PluginResource, PluginInstance } from '../../../../../models/Plugins';
 import { DatamartSelector } from '../../../../Datamart';
 import messages from './messages';
 import { Omit } from '../../../../../utils/Types';
 import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
 import { IMlFunctionService } from '../../../../../services/MlFunctionService';
-import { SpecificFieldsFunction } from '../../../../Plugin/Edit/PluginEditForm';
 import GeneralInformation from './GeneralInformationSection';
 import injectNotifications, {
   InjectedNotificationProps,

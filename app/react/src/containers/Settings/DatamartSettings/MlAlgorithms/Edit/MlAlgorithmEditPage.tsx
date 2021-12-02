@@ -167,18 +167,17 @@ class MlAlgorithmEditPage extends React.Component<Props, MlAlgorithmCreateEditSt
       }
     });
 
-    const newMlAlgorithmVariables: Array<
-      Partial<MlAlgorithmVariableResource>
-    > = formData.mlAlgorithmVariablesKeyValues
-      .filter(entry => entry.leftValue !== '')
-      .map(entry => {
-        return {
-          key: entry.leftValue,
-          value: entry.rightValue,
-          ml_algorithm_id: formData.mlAlgorithm.id || undefined,
-          id: previousKeys.includes(entry.leftValue) ? keyToIds[entry.leftValue] : undefined,
-        };
-      });
+    const newMlAlgorithmVariables: Array<Partial<MlAlgorithmVariableResource>> =
+      formData.mlAlgorithmVariablesKeyValues
+        .filter(entry => entry.leftValue !== '')
+        .map(entry => {
+          return {
+            key: entry.leftValue,
+            value: entry.rightValue,
+            ml_algorithm_id: formData.mlAlgorithm.id || undefined,
+            id: previousKeys.includes(entry.leftValue) ? keyToIds[entry.leftValue] : undefined,
+          };
+        });
 
     this.setState({ loading: true });
 

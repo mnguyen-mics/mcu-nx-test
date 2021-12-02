@@ -35,9 +35,11 @@ interface SegmentTypeSelectorProps {
 type Props = SegmentTypeSelectorProps;
 
 class SegmentTypeSelector extends React.Component<Props> {
-  onSelect = (item: AudienceSegmentType, expertQuery: boolean = false) => () => {
-    this.props.onSelect(item, expertQuery ? 'OTQL' : 'JSON_OTQL');
-  };
+  onSelect =
+    (item: AudienceSegmentType, expertQuery: boolean = false) =>
+    () => {
+      this.props.onSelect(item, expertQuery ? 'OTQL' : 'JSON_OTQL');
+    };
 
   render() {
     const { segmentTypesToDisplay } = this.props;

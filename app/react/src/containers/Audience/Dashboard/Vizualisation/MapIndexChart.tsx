@@ -265,17 +265,8 @@ class MapIndexChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const {
-      title,
-      colors,
-      intl,
-      shouldCompare,
-      vertical,
-      sortKey,
-      labels,
-      tooltip,
-      height,
-    } = this.props;
+    const { title, colors, intl, shouldCompare, vertical, sortKey, labels, tooltip, height } =
+      this.props;
 
     const optionsForChart = {
       xKey: 'xKey',

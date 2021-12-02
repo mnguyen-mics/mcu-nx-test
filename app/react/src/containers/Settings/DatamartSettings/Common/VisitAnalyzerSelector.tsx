@@ -17,9 +17,8 @@ import { getWorkspace } from '../../../../redux/Session/selectors';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
-const VisitAnalyzerTableSelector: React.ComponentClass<
-  TableSelectorProps<VisitAnalyzer>
-> = TableSelector;
+const VisitAnalyzerTableSelector: React.ComponentClass<TableSelectorProps<VisitAnalyzer>> =
+  TableSelector;
 
 const messages = defineMessages({
   visitAnalyzerSelectorTitle: {

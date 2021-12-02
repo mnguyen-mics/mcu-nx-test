@@ -203,101 +203,103 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     );
   };
 
-  private saveGroups = (
-    groups: StandardSegmentBuilderParametricPredicateGroupNode[],
-    groupsLocation: 'include' | 'exclude',
-  ) => (newGroups: StandardSegmentBuilderParametricPredicateGroupNode[]) => {
-    const { change } = this.props;
-    change(groupsLocation, groups.concat(newGroups));
-  };
-
-  private addToNewGroup = (
-    save: (_: StandardSegmentBuilderParametricPredicateGroupNode[]) => void,
-  ) => (predicates: StandardSegmentBuilderParametricPredicateNode[]) => {
-    let newGroups: StandardSegmentBuilderParametricPredicateGroupNode[] = [];
-    predicates.forEach(predicate => {
-      const newGroup: StandardSegmentBuilderParametricPredicateGroupNode = {
-        expressions: [predicate],
-      };
-      newGroups = newGroups.concat(newGroup);
-    });
-    save(newGroups);
-  };
-
-  private addAudienceFeature = (
-    processPredicate: (_: StandardSegmentBuilderParametricPredicateNode[]) => void,
-  ) => (audienceFeatureSelection: AudienceFeatureSelection) => {
-    const { closeNextDrawer } = this.props;
-
-    const newParametricPredicate = (
-      audienceFeature: AudienceFeatureResource,
-    ): StandardSegmentBuilderParametricPredicateNode => {
-      const generateParameters = () => {
-        const parameters: { [key: string]: any } = {};
-        const concatenateOrNot = (newValue: any, existingValue?: any) => {
-          return existingValue ? existingValue.concat(newValue) : [newValue];
-        };
-        const finalValues = audienceFeatureSelection[audienceFeature.id].finalValues;
-        if (audienceFeature.variables) {
-          audienceFeature.variables.forEach(variable => {
-            if (finalValues) {
-              finalValues.forEach(val => {
-                if (variable.path.every((v, i) => v === val.path[i])) {
-                  const insertFinalValue = (typeList: boolean) => {
-                    switch (variable.type) {
-                      case 'Int':
-                      case 'Float':
-                      case 'ID':
-                        parameters[variable.parameter_name] = typeList
-                          ? concatenateOrNot(
-                              parseInt(val.value, 10),
-                              parameters[variable.parameter_name],
-                            )
-                          : parseInt(val.value, 10);
-                        break;
-                      default:
-                        parameters[variable.parameter_name] = typeList
-                          ? concatenateOrNot(val.value, parameters[variable.parameter_name])
-                          : val.value;
-                        break;
-                    }
-                  };
-                  if (variable.container_type === 'List') {
-                    insertFinalValue(true);
-                  } else {
-                    insertFinalValue(false);
-                  }
-                } else {
-                  parameters[variable.parameter_name] = undefined;
-                }
-              });
-            }
-          });
-        }
-        return parameters;
-      };
-      return {
-        type: 'PARAMETRIC_PREDICATE',
-        parametric_predicate_id: audienceFeature.id,
-        parameters: generateParameters(),
-      };
+  private saveGroups =
+    (
+      groups: StandardSegmentBuilderParametricPredicateGroupNode[],
+      groupsLocation: 'include' | 'exclude',
+    ) =>
+    (newGroups: StandardSegmentBuilderParametricPredicateGroupNode[]) => {
+      const { change } = this.props;
+      change(groupsLocation, groups.concat(newGroups));
     };
-    const predicates: StandardSegmentBuilderParametricPredicateNode[] = Object.keys(
-      audienceFeatureSelection,
-    ).map(featureKey => {
-      return newParametricPredicate(audienceFeatureSelection[featureKey].audienceFeature);
-    });
 
-    processPredicate(predicates);
+  private addToNewGroup =
+    (save: (_: StandardSegmentBuilderParametricPredicateGroupNode[]) => void) =>
+    (predicates: StandardSegmentBuilderParametricPredicateNode[]) => {
+      let newGroups: StandardSegmentBuilderParametricPredicateGroupNode[] = [];
+      predicates.forEach(predicate => {
+        const newGroup: StandardSegmentBuilderParametricPredicateGroupNode = {
+          expressions: [predicate],
+        };
+        newGroups = newGroups.concat(newGroup);
+      });
+      save(newGroups);
+    };
 
-    const newAudienceFeatures = Object.keys(audienceFeatureSelection).map(id => {
-      return audienceFeatureSelection[id].audienceFeature;
-    });
-    this.setState({
-      audienceFeatures: this.state.audienceFeatures?.concat(newAudienceFeatures),
-    });
-    closeNextDrawer();
-  };
+  private addAudienceFeature =
+    (processPredicate: (_: StandardSegmentBuilderParametricPredicateNode[]) => void) =>
+    (audienceFeatureSelection: AudienceFeatureSelection) => {
+      const { closeNextDrawer } = this.props;
+
+      const newParametricPredicate = (
+        audienceFeature: AudienceFeatureResource,
+      ): StandardSegmentBuilderParametricPredicateNode => {
+        const generateParameters = () => {
+          const parameters: { [key: string]: any } = {};
+          const concatenateOrNot = (newValue: any, existingValue?: any) => {
+            return existingValue ? existingValue.concat(newValue) : [newValue];
+          };
+          const finalValues = audienceFeatureSelection[audienceFeature.id].finalValues;
+          if (audienceFeature.variables) {
+            audienceFeature.variables.forEach(variable => {
+              if (finalValues) {
+                finalValues.forEach(val => {
+                  if (variable.path.every((v, i) => v === val.path[i])) {
+                    const insertFinalValue = (typeList: boolean) => {
+                      switch (variable.type) {
+                        case 'Int':
+                        case 'Float':
+                        case 'ID':
+                          parameters[variable.parameter_name] = typeList
+                            ? concatenateOrNot(
+                                parseInt(val.value, 10),
+                                parameters[variable.parameter_name],
+                              )
+                            : parseInt(val.value, 10);
+                          break;
+                        default:
+                          parameters[variable.parameter_name] = typeList
+                            ? concatenateOrNot(val.value, parameters[variable.parameter_name])
+                            : val.value;
+                          break;
+                      }
+                    };
+                    if (variable.container_type === 'List') {
+                      insertFinalValue(true);
+                    } else {
+                      insertFinalValue(false);
+                    }
+                  } else {
+                    parameters[variable.parameter_name] = undefined;
+                  }
+                });
+              }
+            });
+          }
+          return parameters;
+        };
+        return {
+          type: 'PARAMETRIC_PREDICATE',
+          parametric_predicate_id: audienceFeature.id,
+          parameters: generateParameters(),
+        };
+      };
+      const predicates: StandardSegmentBuilderParametricPredicateNode[] = Object.keys(
+        audienceFeatureSelection,
+      ).map(featureKey => {
+        return newParametricPredicate(audienceFeatureSelection[featureKey].audienceFeature);
+      });
+
+      processPredicate(predicates);
+
+      const newAudienceFeatures = Object.keys(audienceFeatureSelection).map(id => {
+        return audienceFeatureSelection[id].audienceFeature;
+      });
+      this.setState({
+        audienceFeatures: this.state.audienceFeatures?.concat(newAudienceFeatures),
+      });
+      closeNextDrawer();
+    };
 
   private selectNewAudienceFeature = (
     onSelect: (audienceFeatureSelection: AudienceFeatureSelection) => void,
@@ -315,11 +317,10 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     });
   };
 
-  private selectAndAddFeature = (
-    processPredicate: (_: StandardSegmentBuilderParametricPredicateNode[]) => void,
-  ) => () => {
-    this.selectNewAudienceFeature(this.addAudienceFeature(processPredicate));
-  };
+  private selectAndAddFeature =
+    (processPredicate: (_: StandardSegmentBuilderParametricPredicateNode[]) => void) => () => {
+      this.selectNewAudienceFeature(this.addAudienceFeature(processPredicate));
+    };
 
   private toggleDashboard = () => {
     this.setState({

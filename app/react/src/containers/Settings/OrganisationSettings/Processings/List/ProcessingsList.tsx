@@ -276,29 +276,28 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
       message: formatMessage(messages.emptyProcessings),
     };
 
-    const actionColumns:
-      | Array<ActionsColumnDefinition<ProcessingResource>>
-      | undefined = authorizeEditActions
-      ? [
-          {
-            key: 'action',
-            actions: () => [
-              {
-                message: formatMessage(messages.editProcessing),
-                callback: this.editProcessing,
-              },
-              {
-                message: formatMessage(messages.archiveProcessing),
-                callback: this.archiveProcessing,
-              },
-              {
-                message: formatMessage(messages.deleteProcessing),
-                callback: this.deleteProcessing,
-              },
-            ],
-          },
-        ]
-      : undefined;
+    const actionColumns: Array<ActionsColumnDefinition<ProcessingResource>> | undefined =
+      authorizeEditActions
+        ? [
+            {
+              key: 'action',
+              actions: () => [
+                {
+                  message: formatMessage(messages.editProcessing),
+                  callback: this.editProcessing,
+                },
+                {
+                  message: formatMessage(messages.archiveProcessing),
+                  callback: this.archiveProcessing,
+                },
+                {
+                  message: formatMessage(messages.deleteProcessing),
+                  callback: this.deleteProcessing,
+                },
+              ],
+            },
+          ]
+        : undefined;
 
     const createProcessing = () => {
       if (this.hasRightToPerformActionsOnProcessing()) {

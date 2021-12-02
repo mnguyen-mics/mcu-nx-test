@@ -11,7 +11,7 @@ import FormLayoutActionbar, {
 import { BasicProps } from 'antd/lib/layout/layout';
 import { McsFormSection } from '../../../../utils/FormHelper';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 export interface DisplayCreativeFormLayoutProps {
   actionBarButtonText: FormattedMessage.MessageDescriptor;

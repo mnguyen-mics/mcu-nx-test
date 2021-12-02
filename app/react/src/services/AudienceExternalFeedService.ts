@@ -55,7 +55,8 @@ export interface IAudienceExternalFeedService {
 @injectable()
 export class AudienceExternalFeedService
   extends AudienceSegmentFeedService<AudienceExternalFeed>
-  implements IAudienceExternalFeedService {
+  implements IAudienceExternalFeedService
+{
   getFeeds(options: GetFeeds): Promise<DataListResponse<AudienceExternalFeed>> {
     const endpoint = 'audience_segments.external_feeds';
     return ApiService.getRequest(endpoint, options);

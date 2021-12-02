@@ -23,7 +23,7 @@ import ScrollspySider, {
 } from '../../../../../components/Layout/ScrollspySider';
 import { Omit } from '../../../../../utils/Types';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
+const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 const BlastSectionFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   BlastFormSectionProps
