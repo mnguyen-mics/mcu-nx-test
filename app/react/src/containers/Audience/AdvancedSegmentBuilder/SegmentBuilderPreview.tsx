@@ -13,14 +13,11 @@ import { messages } from './messages';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { IStandardSegmentBuilderQueryService } from '../StandardSegmentBuilder/StandardSegmentBuilderQueryService';
 import { lazyInject } from '../../../config/inversify.config';
-import StandardSegmentBuilderContainer, {
-  StandardSegmentBuilderContainerProps,
-} from '../StandardSegmentBuilder/StandardSegmentBuilderContainer';
-import {
-  StandardSegmentBuilderQueryDocument,
-  StandardSegmentBuilderResource,
-} from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { UserQuerySegmentEditor } from '../../../models/audiencesegment/AudienceSegmentResource';
+import StandardSegmentBuilderPreview, {
+  StandardSegmentBuilderPreviewProps,
+} from '../StandardSegmentBuilder/StandardSegmentBuilderPreview';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
 export interface SegmentBuilderPreviewProps {
@@ -32,7 +29,6 @@ export interface SegmentBuilderPreviewProps {
   isTrigger?: boolean;
   isEdge?: boolean;
   segmentEditor?: UserQuerySegmentEditor;
-  standardSegmentBuilder?: StandardSegmentBuilderResource;
 }
 
 type Props = SegmentBuilderPreviewProps & InjectedIntlProps & InjectedDrawerProps;
@@ -42,7 +38,7 @@ class SegmentBuilderPreview extends React.Component<Props> {
   private _standardSegmentBuilderQueryService: IStandardSegmentBuilderQueryService;
 
   openEditor = () => {
-    const { intl, value, segmentEditor, standardSegmentBuilder } = this.props;
+    const { intl, value, segmentEditor, datamartId } = this.props;
 
     const createActionBar = (onSave: () => void, onClose: () => void, query: any) => {
       return (
@@ -77,12 +73,12 @@ class SegmentBuilderPreview extends React.Component<Props> {
     };
 
     if (segmentEditor === 'STANDARD_SEGMENT_BUILDER') {
-      const actionbar = (query: StandardSegmentBuilderQueryDocument, datamartId: string) => {
+      const onClose = () => this.props.closeNextDrawer();
+      const actionbar = (query: StandardSegmentBuilderQueryDocument) => {
         const onSave = () => {
           if (this.props.onChange) this.props.onChange(JSON.stringify(query));
           this.props.closeNextDrawer();
         };
-        const onClose = () => this.props.closeNextDrawer();
         return createActionBar(onSave, onClose, query);
       };
 
@@ -92,25 +88,23 @@ class SegmentBuilderPreview extends React.Component<Props> {
         ? jsonParsedValue.where.expressions
         : [];
 
-      return (
-        standardSegmentBuilder &&
-        this.props.openNextDrawer<StandardSegmentBuilderContainerProps>(
-          StandardSegmentBuilderContainer,
-          {
-            additionalProps: {
-              renderActionBar: actionbar,
-              initialValues: jsonParsedValue
-                ? this._standardSegmentBuilderQueryService.generateStandardSegmentBuilderFormData(
-                    whereExpressionsFromValue,
-                  )
-                : undefined,
-              standardSegmentBuilder: standardSegmentBuilder,
-            },
+      return this.props.openNextDrawer<StandardSegmentBuilderPreviewProps>(
+        StandardSegmentBuilderPreview,
+        {
+          additionalProps: {
+            renderActionBar: actionbar,
+            datamartId: datamartId,
+            initialValues: jsonParsedValue
+              ? this._standardSegmentBuilderQueryService.generateStandardSegmentBuilderFormData(
+                  whereExpressionsFromValue,
+                )
+              : undefined,
+            handleClose: onClose,
           },
-        )
+        },
       );
     } else {
-      const actionbar = (query: GraphdbQueryDocument, datamartId: string) => {
+      const actionbar = (query: GraphdbQueryDocument) => {
         const onSave = () => {
           if (this.props.onChange) this.props.onChange(JSON.stringify(query));
           this.props.closeNextDrawer();

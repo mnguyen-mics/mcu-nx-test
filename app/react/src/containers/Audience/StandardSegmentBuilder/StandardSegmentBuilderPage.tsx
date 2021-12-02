@@ -211,7 +211,6 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
             }),
             query_id: res.data.id,
             segment_editor: 'STANDARD_SEGMENT_BUILDER',
-            standard_segment_builder_id: selectedStandardSegmentBuilder?.id,
           };
           return this._audienceSegmentService.saveSegment(
             match.params.organisationId,
