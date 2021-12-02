@@ -7,6 +7,8 @@ import {
 import { Col, Layout, Row } from 'antd';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { ConfigProps } from 'redux-form';
 import { FormTitle } from '../../../components/Form';
@@ -29,10 +31,17 @@ const messages = defineMessages({
     id: 'segment.edit.builderSelectorSubtitle',
     defaultMessage: 'Choose your builder template',
   },
-  noStandardBuilders: {
-    id: 'segment.edit.noStandardBuilder',
-    defaultMessage:
-      'You need to set up audience features to use this builder. Contact your CSM to get started!',
+  noStandardBuildersBeginning: {
+    id: 'segment.edit.noStandardBuilderBeginning',
+    defaultMessage: 'This segment was created with a standard segment builder, you should ',
+  },
+  noStandardBuildersLink: {
+    id: 'segment.edit.noStandardBuilderLink',
+    defaultMessage: 'create a template',
+  },
+  noStandardBuildersEnd: {
+    id: 'segment.edit.noStandardBuilderEnd',
+    defaultMessage: ' to edit this segment.',
   },
 });
 
@@ -46,7 +55,9 @@ export interface StandardSegmentBuilderPreviewProps
   handleClose: () => void;
 }
 
-type Props = StandardSegmentBuilderPreviewProps & InjectedIntlProps;
+type Props = StandardSegmentBuilderPreviewProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 interface State {
   selectedStandardSegmentBuilder?: StandardSegmentBuilderResource;
@@ -86,7 +97,14 @@ class StandardSegmentBuilderPreview extends React.Component<Props, State> {
     return (
       <React.Fragment>
         {standardSegmentBuilders?.map(b => {
-          return <MenuList key={b.id} title={b.name} select={this.handleSelect(b)} />;
+          return (
+            <MenuList
+              className='mcs-standardSegmentBuilderSelector_standardSegmentBuilderList_element'
+              key={b.id}
+              title={b.name}
+              select={this.handleSelect(b)}
+            />
+          );
         })}
       </React.Fragment>
     );
@@ -98,12 +116,13 @@ class StandardSegmentBuilderPreview extends React.Component<Props, State> {
       intl: { formatMessage },
       initialValues,
       handleClose,
+      datamartId,
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
-    const {
-      selectedStandardSegmentBuilder,
-      standardSegmentBuilders,
-      isLoadingBuilders,
-    } = this.state;
+    const { selectedStandardSegmentBuilder, standardSegmentBuilders, isLoadingBuilders } =
+      this.state;
 
     return isLoadingBuilders ? (
       <Loading isFullScreen={true} />
@@ -132,11 +151,20 @@ class StandardSegmentBuilderPreview extends React.Component<Props, State> {
           {standardSegmentBuilders?.length === 0 ? (
             <Row className='mcs-segmentEditionStandardSegmentBuilderSelector_container'>
               <Col className='mcs_segmentEditionStandardSegmentBuilderSelector_emptyCard'>
-                {formatMessage(messages.noStandardBuilders)}
+                <div>
+                  {formatMessage(messages.noStandardBuildersBeginning)}
+                  <Link
+                    onClick={handleClose}
+                    to={`/v2/o/${organisationId}/settings/datamart/${datamartId}/standard_segment_builder/create`}
+                  >
+                    {formatMessage(messages.noStandardBuildersLink)}
+                  </Link>
+                  {formatMessage(messages.noStandardBuildersEnd)}
+                </div>
               </Col>
             </Row>
           ) : (
-            <Row className='mcs-selector_container'>
+            <Row className='mcs-selector_container mcs-standardSegmentBuilderSelector_standardSegmentBuilderList_container'>
               <Row className='menu'>{this.getMenu()}</Row>
             </Row>
           )}
@@ -146,6 +174,7 @@ class StandardSegmentBuilderPreview extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, StandardSegmentBuilderPreviewProps>(injectIntl)(
-  StandardSegmentBuilderPreview,
-);
+export default compose<Props, StandardSegmentBuilderPreviewProps>(
+  injectIntl,
+  withRouter,
+)(StandardSegmentBuilderPreview);
