@@ -55,5 +55,53 @@ declare namespace Cypress {
      * Create a segment using the UI
      */
     createSegmentFromUI(type: string, processingName?: string): void;
+
+    /**
+     * Create a standard segment builder
+     * You can add initial audience features with the standard segment builder by adding an optional argument audienceFeaturesIds
+     * @example
+     */
+    createStandardSegmentBuilder(
+      standardSegmentBuilderName: string,
+      audienceFeaturesIds?: string[],
+    ): void;
+
+    /**
+     * Create an audience feature
+     * @param audienceFeatureName
+     * @param objectTreeExpression
+     * @param audienceFeatureDescription
+     * @param folderId
+     * @param addressableObject
+     */
+    createAudienceFeature(
+      audienceFeatureName: string,
+      objectTreeExpression: string,
+      audienceFeatureDescription?: string,
+      folderId?: string,
+      addressableObject?: string,
+    ): void;
+    /**
+     * Create channel
+     * @param accessToken
+     * @param datamartId
+     * @param objectBody
+     * @example
+     * cy.createChannel(accessToken, '1234', {{
+          name: 'test',
+          domain: 'test.com',
+          enable_analytics: false,
+          type: 'MOBILE_APPLICATION',
+        }})
+     */
+    createChannel(accessToken: string, datamartId: string, objectBody: object): Chainable<any>;
+
+    /**
+     *
+     * @param accessToken
+     * @param datamartId
+     * @param objectBody
+     */
+    createActivity(accessToken: string, datamartId: string, objectBody: object): Chainable<any>;
   }
 }

@@ -623,6 +623,77 @@ Cypress.Commands.add(
   },
 );
 
+Cypress.Commands.add(
+  'createStandardSegmentBuilder',
+  (standardSegmentBuilderName: string, audienceFeaturesIds: string[] = []) => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+          data.datamartId
+        }/standard_segment_builders`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          name: standardSegmentBuilderName,
+          initial_audience_feature_ids: audienceFeaturesIds,
+        },
+      });
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'createAudienceFeature',
+  (
+    audienceFeatureName: string,
+    objectTreeExpression: string,
+    audienceFeatureDescription?: string,
+    folderId?: string,
+    addressableObject: string = 'UserPoint',
+  ) => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          name: audienceFeatureName,
+          description: audienceFeatureDescription,
+          object_tree_expression: objectTreeExpression,
+          addressable_object: addressableObject,
+          folder_id: folderId,
+        },
+      });
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'createChannel',
+  (accessToken: string, datamartId: string, objectBody: object) => {
+    cy.request({
+      url: `${Cypress.env('apiDomain')}/v1/datamarts/${datamartId}/channels`,
+      method: 'POST',
+      headers: { Authorization: accessToken },
+      body: objectBody,
+    });
+  },
+);
+
+Cypress.Commands.add(
+  'createActivity',
+  (accessToken: string, datamartId: string, objectBody: object) => {
+    cy.request({
+      url: `${Cypress.env(
+        'apiDomain',
+      )}/v1/datamarts/${datamartId}/user_activities?processing_pipeline=false`,
+      method: 'POST',
+      headers: { Authorization: accessToken },
+      body: objectBody,
+    });
+  },
+);
+
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
