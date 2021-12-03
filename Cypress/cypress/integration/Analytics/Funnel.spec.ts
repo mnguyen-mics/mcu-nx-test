@@ -123,7 +123,7 @@ describe('Should test the funnel', () => {
     });
   });
 
-  it('should test a funnel display with data', () => {
+  it.skip('should test a funnel display with data', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.request({
