@@ -44,7 +44,6 @@ describe('This test should check that the audience feature forms are working pro
           $ts: new Date().getTime(),
           $events: [],
         }).then(() => {
-          cy.wait(10000);
           cy.goToHome(data.organisationId);
           cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
           cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();

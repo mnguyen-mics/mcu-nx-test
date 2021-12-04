@@ -10,6 +10,25 @@ declare namespace Cypress {
     login(email?: string, password?: string): Chainable<any>;
 
     /**
+     * Log in navigator. Default values are 'dev@mediarithmics.com' and 'aoc', so remember to change this if you are doing calls on prod° environment..
+     * @param email
+     * @param password
+     * @example
+     * cy.login('toto**at**mediarithmics.com', '1234')
+     */
+    kcLogin(email?: string, password?: string): Chainable<any>;
+
+    /**
+     * Logout from computing-console
+     * @param root
+     * @param realm
+     * @param redirect_uri
+     * @example
+     * cy.logout()
+     */
+    logout(root?: string, realm?: string, redirect_uri?: string): Chainable<any>;
+
+    /**
      * Switch current organisation. The full name isn't required, it will click on the first organisation in the list matching the parameter.
      * @example
      * cy.switchOrg('yellow velvet')
