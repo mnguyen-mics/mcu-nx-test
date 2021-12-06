@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Tabs } from 'antd';
+import { Alert, Layout, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
@@ -50,6 +50,7 @@ export interface OTQLConsoleContainerProps {
   query?: string;
   queryEditorClassName?: string;
   editionMode?: boolean;
+  createdQueryId?: string;
 }
 
 interface State {
@@ -282,7 +283,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { datamartId, intl, editionMode } = this.props;
+    const { datamartId, intl, editionMode, createdQueryId } = this.props;
     const { schemaLoading, rawSchema, activeKey, panes, tabQueries, query } = this.state;
 
     if (schemaLoading) {
@@ -329,6 +330,15 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                   key={pane.key}
                   closable={pane.closable}
                 >
+                  {createdQueryId && (
+                    <Alert
+                      className={'mcs-OTQLConsoleContainer_tabs_createdQueryMessage'}
+                      message={`Query ${createdQueryId} created.`}
+                      type='success'
+                      closable={true}
+                      showIcon={true}
+                    />
+                  )}
                   <div className={'mcs-OTQLConsoleContainer_tab_content'}>
                     {pane.content}
                     <div className='schema-visualizer'>

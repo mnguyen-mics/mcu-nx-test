@@ -21,6 +21,9 @@ import { MicsReduxState } from '../../utils/ReduxHelper';
 import { Alert } from 'antd';
 import { ITagService } from '../../services/TagService';
 import { ProcessingSelectionResource } from '../../models/processing';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../Notifications/injectNotifications';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -30,7 +33,14 @@ interface MapStateToProps {
   connectedUser: any;
 }
 
-type Props = RouteComponentProps<QueryToolPageRouteParams> & MapStateToProps & InjectedIntlProps;
+interface QueryToolPageState {
+  createdQueryId?: string;
+}
+
+type Props = RouteComponentProps<QueryToolPageRouteParams> &
+  MapStateToProps &
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 const messages = defineMessages({
   queryBuilder: {
@@ -44,7 +54,7 @@ const messages = defineMessages({
   },
 });
 
-class QueryToolPage extends React.Component<Props> {
+class QueryToolPage extends React.Component<Props, QueryToolPageState> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
@@ -56,6 +66,13 @@ class QueryToolPage extends React.Component<Props> {
 
   @lazyInject(TYPES.ITagService)
   private _tagService: ITagService;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      createdQueryId: undefined,
+    };
+  }
 
   getSelectedDatamart = () => {
     const { connectedUser, location } = this.props;
@@ -81,7 +98,7 @@ class QueryToolPage extends React.Component<Props> {
 
   render() {
     const { intl, location, history, match } = this.props;
-
+    const { createdQueryId } = this.state;
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       history.push({
         pathname: location.pathname,
@@ -163,10 +180,28 @@ class QueryToolPage extends React.Component<Props> {
               });
           });
       };
+
+      const saveAsTechnicalQuery = () => {
+        return this._queryService
+          .createQuery(datamartId, {
+            query_language: 'OTQL',
+            query_text: query,
+          })
+          .then(d => d.data)
+          .then(queryResource => {
+            this.setState({
+              createdQueryId: queryResource.id,
+            });
+          })
+          .catch(err => {
+            this.props.notifyError(err);
+          });
+      };
       return (
         <SaveQueryAsActionBar
           saveAsUserQuery={saveAsUserQuery}
           saveAsExort={saveAsExport}
+          saveAsTechnicalQuery={saveAsTechnicalQuery}
           csvExportDisabled={true}
           breadcrumb={[intl.formatMessage(messages.queryBuilder)]}
         />
@@ -185,7 +220,11 @@ class QueryToolPage extends React.Component<Props> {
           />
         )}
         {selectedDatamart && selectedDatamart.storage_model_version === 'v201709' && (
-          <QueryToolSelector renderActionBar={OTQLActionbar} datamartId={selectedDatamart.id} />
+          <QueryToolSelector
+            renderActionBar={OTQLActionbar}
+            datamartId={selectedDatamart.id}
+            createdQueryId={createdQueryId}
+          />
         )}
         {selectedDatamart && selectedDatamart.storage_model_version === 'v201506' && (
           <Alert message={intl.formatMessage(messages.noMoreSupported)} type='warning' />
@@ -197,6 +236,7 @@ class QueryToolPage extends React.Component<Props> {
 
 export default compose(
   injectIntl,
+  injectNotifications,
   withRouter,
   connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,

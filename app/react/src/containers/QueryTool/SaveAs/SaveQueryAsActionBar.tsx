@@ -17,6 +17,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
   saveAsExort?: (formData: NewExportSimpleFormData) => Promise<any>;
+  saveAsTechnicalQuery?: () => Promise<any>;
   convertToOtql?: () => Promise<DataResponse<QueryTranslationResource>>;
   breadcrumb: React.ReactNode[];
   csvExportDisabled?: boolean;
@@ -55,12 +56,15 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
       breadcrumb,
       csvExportDisabled,
       hasFeature,
+      saveAsTechnicalQuery,
     } = this.props;
     const handleMenuClick = (e: any) => {
       if (e.key === 'USER_QUERY') {
         this.setState({ segmentModalVisible: true });
       } else if (e.key === 'EXPORT') {
         this.setState({ exportModalVisible: true });
+      } else if (e.key === 'TECHNICAL_QUERY' && saveAsTechnicalQuery) {
+        saveAsTechnicalQuery();
       }
     };
 
@@ -121,6 +125,12 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
             />
           </Menu.Item>
         )}
+        <Menu.Item className='mcs-saveQueryAsActionBar_menu_userQuery' key='TECHNICAL_QUERY'>
+          <FormattedMessage
+            id='queryTool.query-builder-page-actionbar-saveas-techbical-query'
+            defaultMessage='Technical query'
+          />
+        </Menu.Item>
       </Menu>
     );
 
