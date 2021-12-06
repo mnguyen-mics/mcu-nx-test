@@ -47,12 +47,12 @@ import ProcessingActivitiesFormSection, {
 import {
   isPartialUserListSegment,
   UserQuerySegment,
+  UserQuerySegmentEditor,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { IQueryService } from '../../../../services/QueryService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { connect } from 'react-redux';
-import { StandardSegmentBuilderResource } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export const FORM_ID = 'audienceSegmentForm';
 
@@ -85,7 +85,7 @@ export interface AudienceSegmentFormProps
   segmentType?: AudienceSegmentType;
   goToSegmentTypeSelection?: () => void;
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
-  standardSegmentBuilder?: StandardSegmentBuilderResource;
+  segmentEditor: UserQuerySegmentEditor;
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
@@ -113,15 +113,8 @@ class EditAudienceSegmentForm extends React.Component<Props> {
   };
 
   renderPropertiesField = () => {
-    const {
-      datamart,
-      queryLanguage,
-      intl,
-      initialValues,
-      segmentType,
-      audienceSegmentFormData,
-      standardSegmentBuilder,
-    } = this.props;
+    const { datamart, queryLanguage, intl, initialValues, segmentType, audienceSegmentFormData } =
+      this.props;
     const type = segmentType
       ? segmentType
       : initialValues && initialValues.audienceSegment
@@ -191,7 +184,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                 context: 'GOALS',
                 queryHasChanged: this.hasQueryChanged(),
                 segmentEditor: (initialValues.audienceSegment as UserQuerySegment).segment_editor,
-                standardSegmentBuilder: standardSegmentBuilder,
               }}
             />,
           )
@@ -229,7 +221,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       initialProcessingSelectionsForWarning,
       audienceSegmentFormData,
       queryLanguage,
-      standardSegmentBuilder,
+      segmentEditor,
     } = this.props;
 
     const type = segmentType
@@ -250,7 +242,8 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       actionBarProps.convert2Otql = () => {
         const queryTranslationRequest: QueryTranslationRequest = {
           input_query_language: query.query_language,
-          input_query_language_subtype: standardSegmentBuilder ? 'PARAMETRIC' : undefined,
+          input_query_language_subtype:
+            segmentEditor === 'STANDARD_SEGMENT_BUILDER' ? 'PARAMETRIC' : undefined,
           input_query_text: query.query_text,
           output_query_language: 'OTQL',
         };

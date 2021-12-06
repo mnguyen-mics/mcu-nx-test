@@ -18,6 +18,7 @@ import { QueryLanguage, DatamartResource } from '../../../../models/datamart/Dat
 import {
   UserQuerySegment,
   AudienceSegmentType,
+  UserQuerySegmentEditor,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { Loading } from '../../../../components';
 import DatamartSelector from './../../../Datamart/DatamartSelector';
@@ -31,8 +32,6 @@ import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
-import { IStandardSegmentBuilderService } from '../../../../services/StandardSegmentBuilderService';
-import { StandardSegmentBuilderResource } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Link } from 'react-router-dom';
 
 const messagesMap = defineMessages({
@@ -60,7 +59,7 @@ interface State {
   loading: boolean;
   selectedDatamart?: DatamartResource;
   displayDatamartSelector: boolean;
-  standardSegmentBuilder?: StandardSegmentBuilderResource;
+  segmentEditor: UserQuerySegmentEditor;
 }
 
 interface MapStateToProps {
@@ -80,9 +79,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
 
-  @lazyInject(TYPES.IStandardSegmentBuilderService)
-  private _standardSegmentBuilderService: IStandardSegmentBuilderService;
-
   constructor(props: Props) {
     super(props);
 
@@ -90,6 +86,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       audienceSegmentFormData: INITIAL_AUDIENCE_SEGMENT_FORM_DATA,
       loading: true,
       displayDatamartSelector: true,
+      segmentEditor: 'ADVANCED_SEGMENT_BUILDER',
     };
   }
 
@@ -158,19 +155,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               if (initialData.query) {
                 newState.queryLanguage = initialData.query.query_language;
                 const audienceSegment = initialData.audienceSegment as UserQuerySegment;
-                if (audienceSegment.standard_segment_builder_id) {
-                  this._standardSegmentBuilderService
-                    .getStandardSegmentBuilder(
-                      audienceSegment.datamart_id,
-                      audienceSegment.standard_segment_builder_id,
-                    )
-                    .then(res => {
-                      newState.standardSegmentBuilder = res.data;
-                      this.setState(newState as State);
-                    });
-                } else {
-                  this.setState(newState as State);
-                }
+                newState.segmentEditor = audienceSegment.segment_editor;
+                this.setState(newState as State);
               } else {
                 this.setState(newState as State);
               }
@@ -447,7 +433,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       loading,
       displayDatamartSelector,
       queryLanguage,
-      standardSegmentBuilder,
+      segmentEditor,
     } = this.state;
 
     const audienceSegmentName =
@@ -519,7 +505,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         segmentType={selectedSegmentType}
         goToSegmentTypeSelection={resetFormData}
         initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
-        standardSegmentBuilder={standardSegmentBuilder}
+        segmentEditor={segmentEditor}
       />
     ) : displayDatamartSelector ? (
       <DatamartSelector
