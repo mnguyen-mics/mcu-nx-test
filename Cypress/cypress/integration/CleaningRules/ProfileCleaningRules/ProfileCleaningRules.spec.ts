@@ -1,13 +1,10 @@
 describe('Profile Cleaning Rules Tests', () => {
-  before(() => {
-    cy.login();
-  });
   beforeEach(() => {
-    cy.restoreLocalStorageCache();
+    cy.login();
   });
 
   afterEach(() => {
-    cy.saveLocalStorageCache();
+    cy.clearLocalStorage();
   });
   it('should test the profile cleaning rules forms', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
@@ -63,6 +60,7 @@ describe('Profile Cleaning Rules Tests', () => {
 
   it('should check that only draft profile cleaning rules can be updated', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.switchOrg(data.organisationName);
       cy.get('.mcs-options').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.cleaningRules').click();
