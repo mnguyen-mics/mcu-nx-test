@@ -137,7 +137,10 @@ export interface VisitAnalyzer extends PluginInstance {
   version_value: string;
   visit_analyzer_plugin_id: string;
   organisation_id: string;
-  error_recovery_strategy: string;
+  error_recovery_strategy:
+    | 'STORE_WITH_ERROR_ID'
+    | 'STORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS'
+    | 'DROP';
 }
 
 export interface Recommender extends PluginInstance {

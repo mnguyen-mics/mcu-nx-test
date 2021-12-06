@@ -30,6 +30,7 @@ import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { Link } from 'react-router-dom';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
+import { executeTasksInSequence } from '../../../../../utils/PromiseHelper';
 
 interface State {
   siteData: SiteFormData;
@@ -122,7 +123,7 @@ class SiteEditPage extends React.Component<Props, State> {
         getVisitAnalyzerSelections,
       ])
         .then(res => {
-          const formData = {
+          return {
             site: res[0].data,
             initialProcessingSelectionResources: res[3].map(
               processingAndSelection => processingAndSelection.processingSelectionResource,
@@ -130,19 +131,17 @@ class SiteEditPage extends React.Component<Props, State> {
             processingActivities: res[3].map(processingAndSelection =>
               createFieldArrayModel(processingAndSelection.processingResource),
             ),
-            visitAnalyzerFields:
-              res[4].data && res[4].data.length > 0 && res[4].data[0].visit_analyzer_model_id
-                ? [
-                    createFieldArrayModel({
-                      visit_analyzer_model_id: res[4].data[0].visit_analyzer_model_id,
-                    }),
-                  ]
-                : [],
+            visitAnalyzerFields: res[4].data
+              ? res[4].data.map(visitAnalyzerModel =>
+                  createFieldArrayModel({
+                    visit_analyzer_model_id: visitAnalyzerModel.visit_analyzer_model_id,
+                  }),
+                )
+              : [],
             initialVisitAnalyzerSelections: res[4].data,
             eventRulesFields: res[1].data.map((er: EventRules) => createFieldArrayModel(er)),
             aliases: res[2].data.map(al => createFieldArrayModel(al)),
           };
-          return formData;
         })
         .then((formData: SiteFormData) =>
           this.setState({
@@ -249,15 +248,10 @@ class SiteEditPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    const getVisitAnalyzerId = (visitAnalyzerFields: VisitAnalyzerFieldModel[]) => {
-      if (
-        visitAnalyzerFields.length &&
-        visitAnalyzerFields[0].model &&
-        visitAnalyzerFields[0].model.visit_analyzer_model_id
-      ) {
-        return visitAnalyzerFields[0].model.visit_analyzer_model_id;
-      }
-      return null;
+    const getVisitAnalyzerIds = (visitAnalyzerFields: VisitAnalyzerFieldModel[]) => {
+      return visitAnalyzerFields.map(
+        visitAnalyzerField => visitAnalyzerField.model.visit_analyzer_model_id,
+      );
     };
 
     const generateEventRulesTasks = (site: ChannelResource): Array<Promise<any>> => {
@@ -339,40 +333,45 @@ class SiteEditPage extends React.Component<Props, State> {
     const generateVisitAnalyzerSelectionsTasks = (
       channel: ChannelResource,
     ): Array<Promise<any>> => {
-      const initialVisitAnalyzerModelId =
-        (siteFormData.initialVisitAnalyzerSelections &&
-          siteFormData.initialVisitAnalyzerSelections.length > 0 &&
-          siteFormData.initialVisitAnalyzerSelections[0].visit_analyzer_model_id) ||
-        null;
-      const currentVisitAnalyzerModelId = getVisitAnalyzerId(siteFormData.visitAnalyzerFields);
+      const initialVisitAnalyzerModelIds = siteFormData.initialVisitAnalyzerSelections.map(
+        channelVisitAnalyzerSelectionResource =>
+          channelVisitAnalyzerSelectionResource.visit_analyzer_model_id,
+      );
+      const initialSelectionsIds = siteFormData.initialVisitAnalyzerSelections.map(
+        channelVisitAnalyzerSelectionResource => channelVisitAnalyzerSelectionResource.id,
+      );
+      const currentVisitAnalyzerModelIds = getVisitAnalyzerIds(siteFormData.visitAnalyzerFields);
+      const deleteAllVisitAnalysersPromise = (
+        selectionIds: string[],
+      ): Array<() => Promise<any>> => {
+        return selectionIds.map(
+          id => () => this._channelService.deleteVisitAnalyzerSelection(channel.id, id),
+        );
+      };
+      const createAllVisitAnalysersPromise = (
+        visitAnalyzerModelId: string[],
+      ): Array<() => Promise<any>> => {
+        return visitAnalyzerModelId.map(
+          id => () => this._channelService.createVisitAnalyzerSelection(channel.id, id),
+        );
+      };
 
-      if (currentVisitAnalyzerModelId && !initialVisitAnalyzerModelId) {
+      if (currentVisitAnalyzerModelIds && !initialVisitAnalyzerModelIds) {
         return [
-          this._channelService.createVisitAnalyzerSelection(
-            channel.id,
-            currentVisitAnalyzerModelId,
-          ),
+          executeTasksInSequence(createAllVisitAnalysersPromise(currentVisitAnalyzerModelIds)),
         ];
-      } else if (initialVisitAnalyzerModelId && !currentVisitAnalyzerModelId) {
-        return [
-          this._channelService.deleteVisitAnalyzerSelection(
-            channel.id,
-            siteFormData.initialVisitAnalyzerSelections[0].id,
-          ),
-        ];
+      } else if (initialVisitAnalyzerModelIds && !currentVisitAnalyzerModelIds) {
+        return [executeTasksInSequence(deleteAllVisitAnalysersPromise(initialSelectionsIds))];
       } else if (
-        currentVisitAnalyzerModelId &&
-        initialVisitAnalyzerModelId &&
-        currentVisitAnalyzerModelId !== initialVisitAnalyzerModelId
+        currentVisitAnalyzerModelIds &&
+        initialVisitAnalyzerModelIds &&
+        currentVisitAnalyzerModelIds !== initialVisitAnalyzerModelIds
       ) {
         return [
-          this._channelService.deleteVisitAnalyzerSelection(
-            channel.id,
-            siteFormData.initialVisitAnalyzerSelections[0].id,
-          ),
-          this._channelService.createVisitAnalyzerSelection(
-            channel.id,
-            currentVisitAnalyzerModelId,
+          executeTasksInSequence(
+            deleteAllVisitAnalysersPromise(initialSelectionsIds).concat(
+              createAllVisitAnalysersPromise(currentVisitAnalyzerModelIds),
+            ),
           ),
         ];
       } else {
@@ -450,7 +449,6 @@ class SiteEditPage extends React.Component<Props, State> {
       if (siteFormData.site.id) {
         const mbApp = {
           ...siteFormData.site,
-          visit_analyzer_model_id: getVisitAnalyzerId(siteFormData.visitAnalyzerFields),
         };
 
         return this._channelService

@@ -114,26 +114,6 @@
   }
 }
 
-.mcs-funnelQueryBuilder_stepHeader {
-  display: flex;
-  justify-content: space-between;
-}
-
-.mcs-funnelQueryBuilder_step_body {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.mcs-funnelQueryBuilder_step_content {
-  width: 100%;
-}
-
-.mcs-funnelQueryBuilder_step_reorderBtn {
-  vertical-align: middle;
-  margin-right: 30px;
-}
-
 .mcs-funnelQueryBuilder_executeQueryBtn {
   margin-left: 15px;
 }
@@ -215,7 +195,7 @@
   }
 }
 
-.mcs-funnelQueryBuilder_removeStepBtn,
+.mcs-timelineStepBuilder_removeStepBtn,
 .mcs-funnelQueryBuilder_removeFilterBtn {
   border: 0;
   box-shadow: none;
@@ -253,40 +233,6 @@
   font-weight: 500;
   font-size: 12px;
   box-shadow: none;
-}
-
-.mcs-funnelQueryBuilder_addStepBlock {
-  position: relative;
-}
-
-.mcs-funnelQueryBuilder_addStepBtn,
-.mcs-funnelQueryBuilder_addStepBtn:hover,
-.mcs-funnelQueryBuilder_addStepBtn:active,
-.mcs-funnelQueryBuilder_addStepBtn:focus {
-  font-family: @font-family-medium;
-  font-size: 12px;
-  font-weight: 500;
-  border: none;
-  color: @info-color;
-  background: none;
-  padding: 10px 236px;
-  border-radius: 3px;
-  border: solid 1px #d3dbe1;
-  width: 100%;
-  margin-bottom: 15px;
-  box-shadow: 0;
-}
-
-.mcs-funnelQueryBuilder_sortBtn {
-  display: block;
-  width: 25px;
-  font-size: 18px;
-  text-align: center;
-  cursor: pointer;
-
-  &--up {
-    margin-bottom: 10px;
-  }
 }
 
 .mcs-funnelQueryBuilder_switch {
@@ -431,47 +377,16 @@
   margin-bottom: 10px;
 }
 
-.mcs-funnelQueryBuilder_step_bullet {
-  position: absolute;
-  left: -56px;
-  bottom: -10px;
-  padding: 10px 0;
-  background: @layout-content-background;
-
-  &_icon {
-    width: 20px;
-    height: 20px;
-    background-color: @info-color;
-    border-radius: 50%;
-  }
-}
-
-.mcs-funnelQueryBuilder_step_timelineStart {
-  position: absolute;
-  top: -30px;
-  left: -10px;
-
+.mcs-timelineStepBuilder_step_timelineStart {
   .mcs-funnelQueryBuilder_timeline_icon {
     margin-right: 10px;
   }
 }
 
-.mcs-funnelQueryBuilder_step_timelineEnd {
-  position: absolute;
-  top: 66px;
-  left: -56px;
-  padding: 10px 0 70px;
-  min-width: 150px;
-  background: @layout-content-background;
-
+.mcs-timelineStepBuilder_step_timelineEnd {
   .mcs-funnelQueryBuilder_timeline_icon {
     margin-right: 10px;
   }
-}
-
-.mcs-funnelQueryBuilder_step_timelineEndWithoutButton {
-  .mcs-funnelQueryBuilder_step_timelineEnd;
-  top: 11px;
 }
 
 .mcs-funnelQueryBuilder_timeline_date {
@@ -485,31 +400,6 @@
   font-size: 20px;
   color: @info-color;
   vertical-align: middle;
-}
-
-.mcs-funnelQueryBuilder_maximumDaysAfterStep {
-  margin-bottom: 20px;
-
-  &_input {
-    display: inline-block;
-    padding: 5px;
-    width: 40px;
-    height: 32px;
-    border-radius: 3px;
-    border: solid 1px #d3dbe1;
-    background-color: #fafafa;
-    text-align: center;
-  }
-
-  &_desc {
-    display: inline-block;
-    width: 185px;
-    height: 15px;
-    margin-left: 5px;
-    font-family: 'LLCircularWeb-Book';
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.65);
-  }
 }
 
 .mcs-funnelEmptyState {
@@ -545,32 +435,6 @@
   .ant-select-arrow {
     font-size: 10px;
     color: #cccccc;
-  }
-}
-
-.mcs-funnelQueryBuilder_step_warning {
-  position: absolute;
-  right: -338px;
-  top: 60px;
-
-  &_icon {
-    font-size: 20px;
-    color: #fd7c12;
-  }
-
-  &_desc {
-    width: 291px;
-    font-feature-settings: normal;
-    white-space: pre-wrap;
-    margin-left: 7px;
-    padding: 3px 10px;
-    border-radius: 3px;
-    font-family: 'LLCircularWeb-Book';
-    color: #fff;
-    font-size: 10px;
-    background-color: #fd7c12;
-    line-height: normal;
-    letter-spacing: normal;
   }
 }
 
