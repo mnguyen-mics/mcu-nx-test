@@ -263,28 +263,23 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const datamartId = segment && segment.datamart_id;
 
     const breadcrumbPaths = [
-      <Link
-        className='mcs-segmentsActionbar_audienceSegmentsTableLink'
-        key='1'
-        to={`/v2/o/${organisationId}/audience/segments`}
-      >
-        {formatMessage(segmentMessages.audienceSegment)}
-      </Link>,
-      segment ? (
-        <span>
-          {(segment as AudienceSegmentResource).name}
-          {hasFeature('dashboards-new-engine') && (
-            <MentionTag
-              mention={'BETA'}
-              customContent={'dashboards-new-engine'}
-              tooltip={intl.formatMessage(messages.mentionTagTooltip)}
-              className='mcs-homePage_mentionTag'
-            />
-          )}
-        </span>
-      ) : (
-        ''
-      ),
+      <div key='breadcrumb'>
+        <Link
+          className='mcs-segmentsActionbar_audienceSegmentsTableLink'
+          key='1'
+          to={`/v2/o/${organisationId}/audience/segments`}
+        >
+          {formatMessage(segmentMessages.audienceSegment)}
+        </Link>
+        {hasFeature('dashboards-new-engine') && (
+          <MentionTag
+            mention={'BETA'}
+            customContent={'dashboards-new-engine'}
+            tooltip={intl.formatMessage(messages.mentionTagTooltip)}
+            className='mcs-homePage_mentionTag'
+          />
+        )}
+      </div>,
     ];
 
     const onClick = () => {

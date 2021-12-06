@@ -11,6 +11,7 @@ import { isUserQuerySegment } from '../Edit/domain';
 import { audienceSegmentTypeMessages, userQuerySegmentSubtypeMessages } from './messages';
 import {
   ApiOutlined,
+  CalendarOutlined,
   DatabaseOutlined,
   RocketOutlined,
   SolutionOutlined,
@@ -70,22 +71,29 @@ class AudienceSegmentHeader extends React.Component<Props> {
       segment && segment.creation_ts ? moment.unix(segment.creation_ts / 1000).toDate() : undefined;
 
     const createdOn = dateCreatedOn ? (
-      <span className='mcs-audienceSegmentDashboard_createdOn'>{`${formatMessage(
-        localMessages.createdOn,
-      )} ${dateCreatedOn.toLocaleDateString()} - ${dateCreatedOn.toLocaleTimeString()}`}</span>
+      <span className='mcs-audienceSegmentDashboard_createdOn'>
+        <CalendarOutlined />
+        <span className='mcs-audienceSegmentHeader_created_on_message'>
+          {`${formatMessage(
+            localMessages.createdOn,
+          )} ${dateCreatedOn.toLocaleDateString()} - ${dateCreatedOn.toLocaleTimeString()}`}
+        </span>
+      </span>
     ) : undefined;
 
     const segmentType = segment ? (
       <React.Fragment>
-        {iconType} {renderName()}
-        {isUserQuerySegment(segment) &&
-          segment.subtype &&
-          segment.subtype === 'AB_TESTING_EXPERIMENT' && (
-            <div className='mcs-audienceSegmentDashboard_subtype'>
-              <FormattedMessage {...userQuerySegmentSubtypeMessages[segment.subtype]} />
-            </div>
-          )}
-        {createdOn}
+        <div className='mcs-audienceSegmentHeader_segment_type'>
+          {iconType} {renderName()}
+          {isUserQuerySegment(segment) &&
+            segment.subtype &&
+            segment.subtype === 'AB_TESTING_EXPERIMENT' && (
+              <div className='mcs-audienceSegmentDashboard_subtype'>
+                <FormattedMessage {...userQuerySegmentSubtypeMessages[segment.subtype]} />
+              </div>
+            )}
+          {createdOn}
+        </div>
       </React.Fragment>
     ) : (
       <span />
@@ -93,7 +101,13 @@ class AudienceSegmentHeader extends React.Component<Props> {
 
     return (
       <ContentHeader
-        title={<SegmentNameDisplay audienceSegmentResource={segment} />}
+        title={
+          <SegmentNameDisplay
+            audienceSegmentResource={segment}
+            className='mcs-segmentNameDisplay'
+          />
+        }
+        className='mcs-audienceSegmentHeader'
         subTitle={segmentType}
         loading={isLoading}
       />

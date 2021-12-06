@@ -33,6 +33,7 @@ interface DashboardPageWrapperProps {
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   tabsClassname?: string;
   className?: string;
+  segmentDashboardTechnicalInformation?: React.ReactNode;
 }
 
 type Props = DashboardPageWrapperProps &
@@ -139,6 +140,7 @@ class DashboardPageWrapper extends React.Component<Props, State> {
       isFullScreenLoading,
       datamartAnalyticsConfig,
       intl,
+      segmentDashboardTechnicalInformation,
     } = this.props;
 
     const { isLoading, dataFileDashboards, apiDashboards } = this.state;
@@ -153,6 +155,7 @@ class DashboardPageWrapper extends React.Component<Props, State> {
       !shouldDisplayAnalyticsFeature &&
       apiDashboards.length === 0
     ) {
+      if (segmentDashboardTechnicalInformation) return segmentDashboardTechnicalInformation;
       return <Error message={intl.formatMessage(messages.comingSoon)} />;
     }
 
@@ -174,6 +177,7 @@ class DashboardPageWrapper extends React.Component<Props, State> {
 
       return (
         <DashboardPage
+          intl={intl}
           hasFeature={hasFeature}
           className={className}
           datamartId={datamartId}
@@ -188,6 +192,7 @@ class DashboardPageWrapper extends React.Component<Props, State> {
           tabsClassname={tabsClassname}
           disableAllUserFilter={disableAllUserFilter}
           defaultSegment={defaultSegment}
+          segmentDashboardTechnicalInformation={segmentDashboardTechnicalInformation}
         />
       );
     }
