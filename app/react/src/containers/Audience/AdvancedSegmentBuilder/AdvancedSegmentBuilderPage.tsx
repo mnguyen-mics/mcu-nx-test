@@ -21,12 +21,11 @@ import { IAudienceSegmentService } from '../../../services/AudienceSegmentServic
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { IQueryService } from '../../../services/QueryService';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { ITagService, MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Alert } from 'antd';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
-import { ITagService } from '../../../services/TagService';
 import { ProcessingSelectionResource } from '../../../models/processing';
 
 export interface QueryBuilderPageRouteParams {

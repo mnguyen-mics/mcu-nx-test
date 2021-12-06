@@ -14,7 +14,7 @@ import { DatamartWithMetricResource } from '../../../../models/datamart/Datamart
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import * as SessionHelper from '../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { isUserQuerySegment } from '../Edit/domain';
 import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import injectNotifications, {

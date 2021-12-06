@@ -9,9 +9,10 @@ import { lazyInject } from '../../../../../../config/inversify.config';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
 import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import injectThemeColors, {
+import {
+  injectThemeColors,
   InjectedThemeColorsProps,
-} from '../../../../../Helpers/injectThemeColors';
+} from '@mediarithmics-private/advanced-components';
 import { formatMcsDate } from '../../../../../../utils/McsMoment';
 import { Card } from 'antd';
 import { BarChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';

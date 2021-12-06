@@ -1,5 +1,5 @@
 import { ReportViewResponse, parseFilter, Filter } from './ReportService';
-import ApiService from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
 import McsMoment, { formatMcsDate } from '../utils/McsMoment';
 import { injectable } from 'inversify';
 

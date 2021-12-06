@@ -1,5 +1,8 @@
 import { PropertyResourceShape } from './../models/plugin/index';
-import { DataListResponse, DataResponse } from './ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { PluginLayout } from './../models/plugin/PluginLayout';
 import { injectable } from 'inversify';
 import PluginInstanceService from './PluginInstanceService';

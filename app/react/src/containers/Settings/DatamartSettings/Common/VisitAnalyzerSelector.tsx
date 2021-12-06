@@ -14,7 +14,7 @@ import { IVisitAnalyzerService } from '../../../../services/Library/VisitAnalyze
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { connect } from 'react-redux';
 import { getWorkspace } from '../../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
 const VisitAnalyzerTableSelector: React.ComponentClass<TableSelectorProps<VisitAnalyzer>> =

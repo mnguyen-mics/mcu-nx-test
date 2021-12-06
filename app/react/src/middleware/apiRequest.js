@@ -1,4 +1,4 @@
-import ApiService from '../services/ApiService.ts';
+import { ApiService } from '@mediarithmics-private/advanced-components';
 
 export const CALL_API = Symbol('Call Api');
 

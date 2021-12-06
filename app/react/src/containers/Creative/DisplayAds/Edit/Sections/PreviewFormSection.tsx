@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { getFormInitialValues } from 'redux-form';
 import { compose } from 'recompose';
 import { Spin } from 'antd';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 const Dimensions = require('react-dimensions');
 
 interface MapStateProps {

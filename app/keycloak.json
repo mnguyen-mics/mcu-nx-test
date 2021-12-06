@@ -1,0 +1,8 @@
+{
+  "realm": "mediarithmics",
+  "auth-server-url": "https://auth.mediarithmics.local/auth/",
+  "ssl-required": "external",
+  "resource": "mediarithmics-navigator",
+  "public-client": true,
+  "confidential-port": 0
+}

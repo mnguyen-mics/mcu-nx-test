@@ -13,7 +13,7 @@ import { RouteComponentProps } from 'react-router';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition, NavigatorSubMenuDefinition } from '../../routes/domain';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { McsIcon, MentionTag } from '@mediarithmics-private/mcs-components-library';
 
 const { SubMenu } = Menu;

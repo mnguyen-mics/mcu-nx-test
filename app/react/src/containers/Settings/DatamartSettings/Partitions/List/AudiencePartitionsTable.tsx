@@ -4,7 +4,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { compose } from 'recompose';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
-import { DataListResponse } from '../../../../../services/ApiService';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { PartitionFilterParams } from './AudiencePartitionsPage';
 import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
 import {

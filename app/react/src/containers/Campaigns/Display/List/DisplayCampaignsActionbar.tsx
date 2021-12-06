@@ -27,7 +27,7 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { RouteComponentProps } from 'react-router';
 import messages from './messages';
-import { DrawableContent, injectDrawer } from '../../../../components/Drawer/index';
+import { injectDrawer } from '../../../../components/Drawer/index';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -35,6 +35,7 @@ import injectNotifications, {
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { ExtendedTableRowSelection } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { DrawableContent } from '@mediarithmics-private/advanced-components/lib/components/drawer';
 
 const { Dropdown } = PopupContainer;
 

@@ -11,7 +11,7 @@ import { FORM_ID, AddToSegmentAutomationFormData } from '../domain';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import * as React from 'react';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Omit, connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Layout } from 'antd';

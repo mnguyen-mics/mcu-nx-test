@@ -8,12 +8,12 @@ import { Input, Button, Form, Alert, Switch, Divider } from 'antd';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import log from '../../../utils/Logger';
 import { logIn } from '../../../redux/Login/actions';
-import { Credentials } from '../../../services/AuthService';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import LocalStorage from '../../../services/LocalStorage';
 import { StaticContext } from 'react-router';
 import { LocationDescriptorObject } from 'history';
+import { Credentials } from '@mediarithmics-private/advanced-components/lib/services/AuthService';
 
 const FormItem = Form.Item;
 

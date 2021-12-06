@@ -1,4 +1,4 @@
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const getOrgFeatures = (state: MicsReduxState) => state.features.organisation;
 

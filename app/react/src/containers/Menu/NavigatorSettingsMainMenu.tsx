@@ -10,7 +10,7 @@ import { hasDatamarts } from '../../redux/Session/selectors';
 import { getOrgFeatures } from '../../redux/Features/selectors';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition } from '../../routes/domain';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface NavigatorSettingsMainMenuStoreProps {
   organisationHasDatamarts: (organisationId: string) => boolean;

@@ -15,7 +15,10 @@ import injectNotifications, {
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { defineMessages, InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import LocalStorage from '../../../../services/LocalStorage';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
 import { IDatamartService } from '../../../../services/DatamartService';

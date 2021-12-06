@@ -31,7 +31,7 @@ import { Index } from '../../../utils';
 import { IMPORTS_SEARCH_SETTINGS } from './constants';
 import { connect } from 'react-redux';
 import { Label } from '../../Labels/Labels';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,

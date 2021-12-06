@@ -15,7 +15,7 @@ import { QueryResource, DatamartResource } from '../../../models/datamart/Datama
 import { IDatamartService } from '../../../services/DatamartService';
 import DatamartSelector from '../../Datamart/DatamartSelector';
 import { Export } from '../../../models/exports/exports';
-import { DataResponse } from '../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';

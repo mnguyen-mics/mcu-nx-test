@@ -5,7 +5,8 @@ import {
   EventType,
   isHistoryLinkEvent,
 } from '../models/resourceHistory/ResourceHistory';
-import ApiService, { DataListResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { injectable } from 'inversify';
 
 export interface GetGenericHistoryOptions {

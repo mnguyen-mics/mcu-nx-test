@@ -1,5 +1,9 @@
 import { ProcessingResource } from './../models/processing';
-import ApiService, { DataResponse, DataListResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { Cookie, OrganisationResource } from '../models/organisation/organisation';
 import { UserWorkspaceResource } from '../models/directory/UserProfileResource';
 import { BillingAccountResource } from '../models/billingAccounts/BillingAccountResource';

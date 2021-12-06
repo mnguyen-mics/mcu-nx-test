@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from 'react';
 import { render } from 'react-dom';
+import { KeycloakService } from '@mediarithmics-private/advanced-components';
 
 import App from './App';
 
@@ -11,4 +12,8 @@ declare global {
   }
 }
 
-render(<App />, document.getElementById('mcs-react-app'));
+const renderApp = () => {
+  render(<App />, document.getElementById('mcs-react-app'));
+};
+
+KeycloakService.isKeycloakEnabled() ? KeycloakService.initKeycloak(renderApp) : renderApp();

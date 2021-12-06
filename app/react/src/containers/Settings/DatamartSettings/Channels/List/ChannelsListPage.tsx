@@ -6,7 +6,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -34,7 +34,7 @@ import {
   parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import { DataResponse } from '../../../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { IDatamartUsersAnalyticsService } from '../../../../../services/DatamartUsersAnalyticsService';
 import { flatten } from 'lodash';
 import McsMoment from '../../../../../utils/McsMoment';

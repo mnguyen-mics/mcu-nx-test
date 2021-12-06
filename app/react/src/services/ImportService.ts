@@ -1,6 +1,10 @@
 import { Import, ImportExecution, MakeJobExecutionAction } from './../models/imports/imports';
 import { injectable } from 'inversify';
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 
 export interface GetImportsOptions extends PaginatedApiParam {

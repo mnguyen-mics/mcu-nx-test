@@ -20,7 +20,7 @@ import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IMonitoringService } from './MonitoringService';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Loading } from '../../../components';
 import { EmptyTableView, DeviceCard } from '@mediarithmics-private/mcs-components-library';
 import { deviceCardMessages, convertMessageDescriptorToString } from '../../../IntlMessages';

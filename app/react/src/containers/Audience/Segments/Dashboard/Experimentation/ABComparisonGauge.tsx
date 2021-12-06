@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { messages } from '../AudienceSegment';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { formatMetric } from '../../../../../utils/MetricHelper';
@@ -12,7 +11,7 @@ export interface ABComparisonGaugeProps {
   weight?: number;
 }
 
-type Props = ABComparisonGaugeProps & InjectedIntlProps & InjectedThemeColorsProps;
+type Props = ABComparisonGaugeProps & InjectedIntlProps;
 
 class ABComparisonGauge extends React.Component<Props> {
   getGaugeRatio = (percent: number) => {
@@ -58,7 +57,4 @@ class ABComparisonGauge extends React.Component<Props> {
   }
 }
 
-export default compose<{}, ABComparisonGaugeProps>(
-  injectIntl,
-  injectThemeColors,
-)(ABComparisonGauge);
+export default compose<{}, ABComparisonGaugeProps>(injectIntl)(ABComparisonGauge);

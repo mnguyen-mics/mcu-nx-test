@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import log from '../../utils/Logger';
 import * as SessionHelper from '../../redux/Session/selectors';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 let limiter = 0;
 

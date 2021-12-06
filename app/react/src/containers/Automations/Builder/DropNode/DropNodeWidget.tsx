@@ -8,7 +8,10 @@ import { compose } from 'recompose';
 import DropTarget from 'react-dnd/lib/DropTarget';
 import { TreeNodeOperations } from '../domain';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 
 interface DropNodeProps {
   node: DropNodeModel;

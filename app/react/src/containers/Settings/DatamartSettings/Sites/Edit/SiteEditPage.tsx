@@ -25,11 +25,11 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { TYPES } from '../../../../../constants/types';
 import queryString from 'query-string';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { Link } from 'react-router-dom';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface State {
   siteData: SiteFormData;

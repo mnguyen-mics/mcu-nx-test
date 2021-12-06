@@ -2,7 +2,6 @@ import * as React from 'react';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { Layout, Row } from 'antd';
@@ -11,6 +10,7 @@ import messages from '../messages';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { LegalBasis } from '../../../../../models/processing';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 

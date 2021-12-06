@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { PieChart, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';

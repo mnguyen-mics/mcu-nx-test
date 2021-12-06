@@ -4,7 +4,7 @@ import messages from './messages';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { ILabelService } from '../../services/LabelsService';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { LabelsSelector } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';

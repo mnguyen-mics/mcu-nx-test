@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import { addLocaleData, injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 import Datalayer from './Datalayer';
 import LayoutManager from './Layout/LayoutManager';
-import { ForgotPassword } from '../Authentication/ForgotPassword';
-import { Login } from '../Authentication/Login';
-import { SetPassword } from '../Authentication/SetPassword';
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
 import { isAppInitialized } from '../../redux/App/selectors';
@@ -23,17 +20,12 @@ import DrawerManager from '../../components/Drawer/DrawerManager';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import NoAccess from './NoAccess';
 import { NavigatorRoute } from '../../routes/domain';
-import { CommunityChangePassword } from '../Communities/ChangePassword';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { INavigatorService } from '../../services/NavigatorService';
 import { Notifications } from '../../containers/Notifications';
 import { Error, Loading } from '@mediarithmics-private/mcs-components-library';
-import {
-  AuthenticatedRoute,
-  IAuthService,
-  MicsReduxState,
-} from '@mediarithmics-private/advanced-components';
+import { RenderOnAuthenticated, MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -57,12 +49,9 @@ type JoinedProps = MapStateToProps &
 
 addLocaleData(enLocaleData || frLocaleData);
 
-class Navigator extends React.Component<JoinedProps, NavigatorState> {
+class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState> {
   @lazyInject(TYPES.INavigatorService)
   private _navigatorService: INavigatorService;
-
-  @lazyInject(TYPES.IAuthService)
-  private _authService: IAuthService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -99,14 +88,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           );
         }
         this.props.setColorsStore(mcsColors);
-        document.addEventListener(
-          'unauthorizedEvent',
-          e => {
-            this._authService.deleteCredentials();
-            this.props.history.push({ pathname: '/', state: this.props.location.state });
-          },
-          false,
-        );
       })
       .catch(() => this.setState({ adBlockOn: true }));
   }
@@ -117,8 +98,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
   render() {
     const {
-      defaultWorkspaceOrganisationId,
-      workspaces,
       intl: { formatMessage },
       initialized,
       initializationError,
@@ -151,41 +130,25 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     }
 
     const basePath = '/v2/o/:organisationId(\\d+)';
-    const homeUrl =
-      workspaces &&
-      defaultWorkspaceOrganisationId &&
-      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)] &&
-      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts &&
-      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts.length > 0
-        ? `/v2/o/${defaultWorkspaceOrganisationId}/audience/segments`
-        : `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
 
-    const renderRoute = ({ match }: RouteComponentProps<{ organisationId: string }>) => {
-      const authenticated = this._authService.isAuthenticated();
-      let redirectToUrl = '/login';
-      if (authenticated) {
-        redirectToUrl = homeUrl;
-      }
+    const renderSlashRoute = ({ match }: RouteComponentProps<{ organisationId: string }>) => {
+      const redirectTo = () => {
+        const { defaultWorkspaceOrganisationId, workspaces } = this.props;
 
-      log.debug(`Redirect from ${match.url}  to ${redirectToUrl}`);
-      return <Redirect to={{ pathname: redirectToUrl, state: this.props.location.state }} />;
-    };
-    const loginRouteRender = () => {
-      const authenticated =
-        this._authService.isAuthenticated() || this._authService.canAuthenticate();
-      if (authenticated) return <Redirect to={homeUrl} />;
-      this.props.logOut();
-      return <Login />;
-    };
-
-    const logoutRouteRender = () => {
-      const redirectCb = () => {
-        this.props.history.push({
-          pathname: '/',
-        });
+        if (defaultWorkspaceOrganisationId && defaultWorkspaceOrganisationId !== 'none') {
+          const homeUrl =
+            workspaces?.[parseInt(defaultWorkspaceOrganisationId, 0)]?.datamarts?.length > 0
+              ? `/v2/o/${defaultWorkspaceOrganisationId}/audience/segments`
+              : `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
+          return homeUrl;
+        }
+        return undefined;
       };
-      this.props.logOut(undefined, { redirectCb });
-      return null;
+      return (
+        <RenderOnAuthenticated getRedirectUriFunction={redirectTo}>
+          <Loading isFullScreen={true} />
+        </RenderOnAuthenticated>
+      );
     };
 
     const errorRouteRender = () => {
@@ -193,8 +156,8 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     };
 
     const routeMapping = routes.map((route: NavigatorRoute, i) => {
-      const authenticateRouteRender = (props: any) => {
-        const comps =
+      const renderRoute = (props: any) => {
+        const compsForRender =
           route.layout === 'main'
             ? {
                 contentComponent: route.contentComponent,
@@ -205,28 +168,8 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
                 editComponent: route.editComponent,
               }
             : { contentComponent: route.contentComponent };
-        const datalayer = route.datalayer;
-        return (
-          <Datalayer datalayer={datalayer}>
-            <Notifications />
-            <div className='drawer-wrapper'>
-              <DrawerManager />
-            </div>
-            <LayoutManager
-              layout={route.layout}
-              organisationSelector={OrgSelector}
-              showOrgSelector={nbWorkspaces > 0}
-              orgSelectorSize={selectorSize}
-              {...comps}
-              {...props}
-            />
-            <div id='mcs-edit-modal' />
-          </Datalayer>
-        );
-      };
 
-      const notAuthorizedRouteRender = (props: any) => {
-        const comps =
+        const compsForRenderWhenError =
           route.layout === 'main'
             ? {
                 contentComponent: NoAccess,
@@ -238,63 +181,53 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             : {
                 editComponent: NoAccess,
               };
+
         const datalayer = route.datalayer;
+
+        const renderValue = (comps: {
+          contentComponent?: React.ComponentType;
+          actionBarComponent?: React.ComponentType | null;
+        }) => {
+          return (
+            <Datalayer datalayer={datalayer}>
+              <Notifications />
+              <div className='drawer-wrapper'>
+                <DrawerManager />
+              </div>
+              <LayoutManager
+                layout={route.layout}
+                organisationSelector={OrgSelector}
+                showOrgSelector={nbWorkspaces > 0}
+                orgSelectorSize={selectorSize}
+                {...comps}
+                {...props}
+              />
+              <div id='mcs-edit-modal' />
+            </Datalayer>
+          );
+        };
+
         return (
-          <Datalayer datalayer={datalayer}>
-            <Notifications />
-            <div className='drawer-wrapper'>
-              <DrawerManager />
-            </div>
-            <LayoutManager
-              layout={route.layout}
-              organisationSelector={OrgSelector}
-              showOrgSelector={nbWorkspaces > 0}
-              orgSelectorSize={selectorSize}
-              {...comps}
-              {...props}
-            />
-            <div id='mcs-edit-modal' />
-          </Datalayer>
+          <RenderOnAuthenticated
+            requiredFeatures={route.requiredFeature}
+            requireDatamart={route.requireDatamart}
+            renderOnError={renderValue(compsForRenderWhenError)}
+          >
+            {renderValue(compsForRender)}
+          </RenderOnAuthenticated>
         );
       };
+
       log.trace(`Available route : ${basePath}${route.path}`);
 
-      return (
-        <AuthenticatedRoute
-          key={0} // shared key to reuse layout and avoid remounting components on route change
-          exact={true}
-          path={`${basePath}${route.path}`}
-          render={authenticateRouteRender}
-          errorRender={notAuthorizedRouteRender}
-          requiredFeatures={route.requiredFeature}
-          requireDatamart={route.requireDatamart}
-        />
-      );
+      return <Route exact={true} path={`${basePath}${route.path}`} render={renderRoute} key={0} />;
     });
 
     return (
       <Switch>
-        <Route exact={true} path='/set-password' component={SetPassword} />
-        <Route exact={true} path='/' render={renderRoute} />
-
+        <Route exact={true} path='/' render={renderSlashRoute} />
+        <Route exact={true} path='/#/' render={renderSlashRoute} />
         {routeMapping}
-
-        <Route exact={true} path='/login' render={loginRouteRender} />
-        <Route exact={true} path='/logout' render={logoutRouteRender} />
-
-        <Route
-          exact={true}
-          path='/:communityToken/change-password'
-          component={CommunityChangePassword}
-        />
-        <Route
-          exact={true}
-          path='/:communityToken/set-password'
-          component={CommunityChangePassword}
-        />
-
-        <Route exact={true} path='/v2/forgot_password' component={ForgotPassword} />
-
         <Route render={errorRouteRender} />
       </Switch>
     );
@@ -317,4 +250,4 @@ export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
-)(Navigator);
+)(NavigatorWithKeycloak);

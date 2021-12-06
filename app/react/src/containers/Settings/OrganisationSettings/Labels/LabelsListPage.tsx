@@ -15,7 +15,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { lazyInject } from '../../../../config/inversify.config';
 import { ILabelService } from '../../../../services/LabelsService';
 import { TYPES } from '../../../../constants/types';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 interface Options {

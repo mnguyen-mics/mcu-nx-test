@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Spin, Tag } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { Card } from '@mediarithmics-private/mcs-components-library';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { GraphQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 

@@ -28,7 +28,7 @@ import StandardSegmentBuilderDashboard from './StandardSegmentBuilderDashboard';
 import QueryFragmentFormSection, {
   QueryFragmentFormSectionProps,
 } from './QueryFragmentBuilders/QueryFragmentFormSection';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';

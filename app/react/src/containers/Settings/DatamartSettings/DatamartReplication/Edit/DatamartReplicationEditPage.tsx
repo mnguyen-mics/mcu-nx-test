@@ -13,7 +13,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Layout, message, Row, Col } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';

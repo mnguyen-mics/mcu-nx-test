@@ -1,4 +1,4 @@
-import { createRequestTypes } from '../utils/ReduxHelper';
+import { createRequestTypes } from '@mediarithmics-private/advanced-components';
 
 export const ACTION_BAR_BREADCRUMB_POP = 'ACTION_BAR_BREADCRUMB_POP';
 export const ACTION_BAR_BREADCRUMB_PUSH = 'ACTION_BAR_BREADCRUMB_PUSH';

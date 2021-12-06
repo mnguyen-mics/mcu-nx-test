@@ -3,15 +3,17 @@ import thunkMiddleware from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
 import { apiRequest, logoutListener } from '../middleware';
 import rootReducer from '../reducers';
-import sagas from '../redux/sagas';
 import container from '../config/inversify.config';
 import { TYPES } from '../constants/types';
 import { INavigatorService } from '../services/NavigatorService';
-import { IAuthService } from '../services/AuthService';
 import { ILabelService } from '../services/LabelsService';
 import { IOrganisationService } from '../services/OrganisationService';
-import { MicsReduxState } from '../utils/ReduxHelper';
-import { ITagService } from '../services/TagService';
+import {
+  IAuthService,
+  ITagService,
+  MicsReduxState,
+} from '@mediarithmics-private/advanced-components';
+import sagas from '../redux/sagas';
 
 function bindDependencies(
   func: (

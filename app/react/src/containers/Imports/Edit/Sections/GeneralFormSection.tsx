@@ -14,7 +14,7 @@ import {
 } from '../../../../components/Form';
 import { FORM_ID } from '../ImportEditForm';
 import { Import } from '../../../../models/imports/imports';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const messages = defineMessages({
   sectionTitleGeneral: {

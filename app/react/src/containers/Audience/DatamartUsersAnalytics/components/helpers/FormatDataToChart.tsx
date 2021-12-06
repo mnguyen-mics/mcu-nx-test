@@ -20,7 +20,10 @@ import { ReportView } from '../../../../../models/ReportView';
 import { AREA_OPACITY } from '../../../../../components/Charts/domain';
 import moment from 'moment';
 import numeral from 'numeral';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { EmptyRecords } from '../../../../../components';

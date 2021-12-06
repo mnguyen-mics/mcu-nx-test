@@ -17,9 +17,8 @@ import { lazyInject } from '../../config/inversify.config';
 import { IQueryService } from '../../services/QueryService';
 import { IExportService } from '../../services/Library/ExportService';
 import QueryToolSelector from '../QueryTool/QueryToolSelector';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { ITagService, MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Alert } from 'antd';
-import { ITagService } from '../../services/TagService';
 import { ProcessingSelectionResource } from '../../models/processing';
 
 export interface QueryToolPageRouteParams {

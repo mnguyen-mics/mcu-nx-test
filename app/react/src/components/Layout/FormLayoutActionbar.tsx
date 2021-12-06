@@ -6,7 +6,7 @@ import { Button } from 'antd';
 import { ButtonProps } from 'antd/lib/button/button';
 import { compose } from 'recompose';
 import { Omit } from '../../utils/Types';
-import { DataResponse } from '../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { QueryTranslationResource } from '../../models/datamart/DatamartResource';
 import Convert2Otql from '../../containers/QueryTool/SaveAs/Convet2Otql';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';

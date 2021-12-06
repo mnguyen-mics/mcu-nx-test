@@ -8,7 +8,7 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import { NewExportSimpleFormData } from './NewExportSimpleForm';
 import { NewUserQuerySimpleFormData } from './NewUserQuerySegmentSimpleForm';
-import { DataResponse } from '../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { QueryTranslationResource } from '../../../models/datamart/DatamartResource';
 import Convert2Otql from './Convet2Otql';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';

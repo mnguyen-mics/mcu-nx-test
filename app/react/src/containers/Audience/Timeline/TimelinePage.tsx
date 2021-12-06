@@ -14,7 +14,7 @@ import { UserWorkspaceResource } from '../../../models/directory/UserProfileReso
 import { DatamartSelector } from '../../Datamart';
 import { Cookies } from '../../../models/timeline/timeline';
 import { ErrorBoundary } from '@mediarithmics-private/mcs-components-library';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { notifyError } from '../../../redux/Notifications/actions';
 
 const messages = defineMessages({

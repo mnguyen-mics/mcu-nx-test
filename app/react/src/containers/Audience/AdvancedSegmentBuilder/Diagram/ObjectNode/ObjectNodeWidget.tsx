@@ -25,7 +25,10 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { frequencyModeMessageMap } from '../../messages';
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import messages from '../Common/messages';
 

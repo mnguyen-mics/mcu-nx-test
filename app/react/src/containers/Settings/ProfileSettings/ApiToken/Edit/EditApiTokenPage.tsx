@@ -12,8 +12,8 @@ import EditApiTokenForm from './EditApiTokenForm';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IApiTokenService } from '../../../../../services/ApiTokenService';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { Link } from 'react-router-dom';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const messages = defineMessages({
   newApiToken: {

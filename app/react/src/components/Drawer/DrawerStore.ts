@@ -1,5 +1,7 @@
-import { DrawableContentOptions, DrawableContent } from './index';
-
+import {
+  DrawableContent,
+  DrawableContentOptions,
+} from '@mediarithmics-private/advanced-components/lib/components/drawer';
 import lodash from 'lodash';
 
 export interface DrawerStore {

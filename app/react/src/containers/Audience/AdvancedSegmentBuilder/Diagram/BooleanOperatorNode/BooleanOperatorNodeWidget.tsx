@@ -6,7 +6,6 @@ import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 import WindowBodyPortal from '../../../../../components/WindowBodyPortal';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import { compose } from 'recompose';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import { FormattedMessage } from 'react-intl';
 import messages from '../Common/messages';
@@ -35,7 +34,7 @@ interface BooleanOperatorNodeWidgetProps {
 
 type OperatorName = 'AND' | 'OR' | 'AND_NOT' | 'OR_NOT';
 
-type Props = DroppedItemProps & BooleanOperatorNodeWidgetProps & InjectedThemeColorsProps;
+type Props = DroppedItemProps & BooleanOperatorNodeWidgetProps;
 interface State {
   hover: boolean;
   focus: boolean;
@@ -311,5 +310,4 @@ export default compose<Props, BooleanOperatorNodeWidgetProps>(
       isDragging: !!monitor.getItemType(),
     }),
   ),
-  injectThemeColors,
 )(BooleanOperatorNodeWidget);

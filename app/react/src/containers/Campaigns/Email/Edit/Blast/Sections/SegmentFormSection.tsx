@@ -23,7 +23,7 @@ import McsMoment from '../../../../../../utils/McsMoment';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 export interface SegmentFormSectionProps extends ReduxFormChangeProps {
   formName: string;

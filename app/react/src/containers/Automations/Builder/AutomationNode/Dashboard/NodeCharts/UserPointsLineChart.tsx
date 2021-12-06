@@ -8,9 +8,10 @@ import {
   ScenarioAnalyticsMetric,
 } from '../../../../../../utils/ScenarioAnalyticsReportHelper';
 import { Index } from '../../../../../../utils';
-import injectThemeColors, {
+import {
+  injectThemeColors,
   InjectedThemeColorsProps,
-} from '../../../../../Helpers/injectThemeColors';
+} from '@mediarithmics-private/advanced-components';
 import { AnalyticsEntity } from '../ScenarioAnalyticsGenericDashboard/ScenarioAnalyticsGenericDashboard';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { lazyInject } from '../../../../../../config/inversify.config';

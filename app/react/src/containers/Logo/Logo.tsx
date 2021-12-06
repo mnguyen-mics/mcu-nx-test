@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 
 import { getLogo } from '../../redux/Session/actions';
 import { MenuMode } from 'antd/lib/menu';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 export interface LogoProps {
   mode: MenuMode;

@@ -18,7 +18,7 @@ import {
 import { IMPORTS_SEARCH_SETTINGS } from './constants';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import ImportsContentContainer from './ImportsContentContainer';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 export interface ImportFilterParams
   extends PaginationSearchSettings,

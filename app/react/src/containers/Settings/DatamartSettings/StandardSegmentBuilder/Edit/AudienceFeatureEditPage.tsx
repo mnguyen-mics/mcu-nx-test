@@ -21,7 +21,7 @@ import { message, Modal } from 'antd';
 import { Loading } from '../../../../../components';
 import { Link } from 'react-router-dom';
 import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
-import { DataResponse } from '../../../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 
 type Props = InjectedNotificationProps &
   InjectedIntlProps &

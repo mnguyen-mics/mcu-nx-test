@@ -20,7 +20,10 @@ import DatamartUsersAnalyticsWrapper, {
   DatamartUsersAnalyticsWrapperProps,
   FILTERS,
 } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { Card, Alert } from 'antd';
 import { McsTabs, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import { Loading } from '../../../../../components';

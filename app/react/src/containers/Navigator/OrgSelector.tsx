@@ -13,7 +13,7 @@ import OrgLogo from '../Logo/OrgLogo';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import Search from 'antd/lib/input/Search';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { IOrganisationService } from '../../services/OrganisationService';

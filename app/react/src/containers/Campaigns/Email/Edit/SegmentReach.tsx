@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { getDefaultDatamart } from '../../../../redux/Session/selectors';
 import { EditEmailBlastRouteMatchParam } from './domain';
 import { formatMetric } from '../../../../utils/MetricHelper';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 import { TYPES } from '../../../../constants/types';

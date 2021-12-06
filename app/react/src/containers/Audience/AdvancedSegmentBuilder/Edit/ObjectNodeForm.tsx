@@ -26,7 +26,7 @@ import { QueryBooleanOperator } from '../../../../models/datamart/graphdb/QueryD
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import FieldNodeSection, { FieldNodeSectionProps } from './Sections/FieldNodeSection';
 import { typesTrigger } from '../domain';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 

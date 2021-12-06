@@ -7,7 +7,10 @@ import messages from '../messages';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import moment from 'moment';
 import CustomObjectRendererWrapper, {
   RenderingTemplates,

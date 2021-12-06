@@ -1,7 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
-import injectDrawer, { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { RecordElement, RelatedRecords } from '../../../../../components/RelatedRecord';
@@ -14,6 +13,8 @@ import { ServiceItemShape } from '../../../../../models/servicemanagement/Public
 import { IServiceOfferPageService } from '../../ServiceOfferPageService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { injectDrawer } from '../../../../../components/Drawer';
 
 export interface ServiceItemsFormSectionProps extends ReduxFormChangeProps {}
 

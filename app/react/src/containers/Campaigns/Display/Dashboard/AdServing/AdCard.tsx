@@ -22,10 +22,13 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import McsMoment from '../../../../../utils/McsMoment';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import ReportService from '../../../../../services/ReportService';
 import { makeCancelable } from '../../../../../utils/ApiHelper';
-import { CancelablePromise } from '../../../../../services/ApiService';
+import { CancelablePromise } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { Index } from '../../../../../utils';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';

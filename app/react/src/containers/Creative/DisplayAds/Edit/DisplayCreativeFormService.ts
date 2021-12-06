@@ -2,7 +2,6 @@ import { ICreativeService } from './../../../../services/CreativeService';
 import { IPluginService } from './../../../../services/PluginService';
 import { CreativeSubtype } from './../../../../models/creative/CreativeResource';
 import { DisplayCreativeFormData, isDisplayAdResource, DisplayAdShape } from './domain';
-import { extractData, extractDataList } from '../../../../services/ApiService';
 import { DisplayAdCreateRequest } from '../../../../models/creative/CreativeResource';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import {
@@ -12,6 +11,7 @@ import {
 import { UploadFile } from 'antd/lib/upload/interface';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../constants/types';
+import { extractData, extractDataList } from '../../../../utils/ApiHelper';
 
 type TCreativeId = string;
 

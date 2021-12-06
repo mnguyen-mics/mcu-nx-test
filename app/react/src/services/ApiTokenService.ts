@@ -1,4 +1,8 @@
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import ApiTokenResource from '../models/directory/ApiTokenResource';
 import { injectable } from 'inversify';
 

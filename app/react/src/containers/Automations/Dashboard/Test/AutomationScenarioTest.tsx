@@ -14,7 +14,7 @@ import { Cookies, isUserPointIdentifier } from '../../../../models/timeline/time
 import { getWorkspace } from '../../../../redux/Session/selectors';
 import { IScenarioService } from '../../../../services/ScenarioService';
 import { IUserDataService } from '../../../../services/UserDataService';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';

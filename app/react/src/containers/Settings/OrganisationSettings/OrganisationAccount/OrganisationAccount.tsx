@@ -7,7 +7,7 @@ import LogoInput from './LogoInput';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 export interface OrganisationAccountProps {

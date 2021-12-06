@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import { getDefaultDatamart } from '../../../../../redux/Session/selectors';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const { Dropdown } = PopupContainer;
 

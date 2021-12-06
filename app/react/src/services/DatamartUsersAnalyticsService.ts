@@ -1,4 +1,4 @@
-import ApiService from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
 import { injectable } from 'inversify';
 import { ReportViewResponse } from './ReportService';
 import { ReportRequestBody, DimensionFilterClause } from '../models/ReportRequestBody';

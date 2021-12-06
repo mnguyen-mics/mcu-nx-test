@@ -1,5 +1,9 @@
 import { AttributionModel } from './../models/Plugins';
-import ApiService, { DataResponse, DataListResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import PluginInstanceService from './PluginInstanceService';
 import { PluginLayout } from '../models/plugin/PluginLayout';

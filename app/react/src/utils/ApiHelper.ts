@@ -1,3 +1,7 @@
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 export interface PaginatedApiParam {
   first_result?: number;
   max_results?: number;
@@ -14,6 +18,14 @@ export function getPaginatedApiParam(
     first_result: (page - 1) * pageSize,
     max_results: pageSize,
   };
+}
+
+export function extractData<T>(dataResponse: DataResponse<T>) {
+  return dataResponse.data;
+}
+
+export function extractDataList<T>(dataResponse: DataListResponse<T>) {
+  return dataResponse.data;
 }
 
 type PromiseFactory<T> = (...args: any[]) => Promise<T>;

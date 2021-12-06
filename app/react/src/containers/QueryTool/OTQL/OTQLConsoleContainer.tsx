@@ -8,7 +8,7 @@ import { OTQLResult, QueryPrecisionMode } from '../../../models/datamart/graphdb
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { DataResponse } from '../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import SchemaVizualizer from '../../Audience/AdvancedSegmentBuilder/SchemaVisualizer/SchemaVizualizer';
 import { computeFinalSchemaItem } from '../../Audience/AdvancedSegmentBuilder/domain';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';

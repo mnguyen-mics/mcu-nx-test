@@ -5,7 +5,10 @@ import { compose } from 'recompose';
 import messages from '../messages';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import {

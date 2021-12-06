@@ -7,7 +7,7 @@ import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 
 import { FormSection, withValidators } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import { WizardValidObjectTypeField, getValidObjectType, getEventsNames } from './domain';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { connect, DispatchProp } from 'react-redux';
 import {
   QueryDocument,

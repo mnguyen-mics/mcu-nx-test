@@ -16,7 +16,10 @@ import { formatMetric, normalizeReportView } from '../../../../utils/MetricHelpe
 import McsMoment from '../../../../utils/McsMoment';
 import ReportService from '../../../../services/ReportService';
 import { takeLatest } from '../../../../utils/ApiHelper';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';

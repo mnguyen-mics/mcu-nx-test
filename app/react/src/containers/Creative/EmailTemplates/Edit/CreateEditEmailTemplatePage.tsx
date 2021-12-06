@@ -7,7 +7,7 @@ import { EditContentLayout } from '../../../../components/Layout';
 import { PluginVersionResource } from '../../../../models/Plugins';
 import { Loading } from '../../../../components';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
-import { DataResponse } from '../../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import messages from './messages';
 import injectNotifications, {
   InjectedNotificationProps,

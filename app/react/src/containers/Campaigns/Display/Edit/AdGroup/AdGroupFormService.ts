@@ -2,7 +2,6 @@ import { IDisplayCampaignService } from './../../../../../services/DisplayCampai
 import { IDisplayCreativeFormService } from './../../../../Creative/DisplayAds/Edit/DisplayCreativeFormService';
 import { AdGroupResource } from './../../../../../models/campaign/display/AdGroupResource';
 import { omit } from 'lodash';
-import { extractDataList, extractData } from '../../../../../services/ApiService';
 import {
   AdGroupFormData,
   AdFieldModel,
@@ -26,6 +25,7 @@ import { EditAdGroupsFormData } from './MultiEdit/EditAdGroupsForm';
 import operation from '../../Edit/AdGroup/domain';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../../constants/types';
+import { extractData, extractDataList } from '../../../../../utils/ApiHelper';
 
 type AdGroupId = string;
 

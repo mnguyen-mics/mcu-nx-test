@@ -11,6 +11,7 @@ import { FormSection } from '../../../../../components/Form/index';
 import {
   PluginFieldGenerator,
   PluginSectionGenerator,
+  MicsReduxState,
 } from '@mediarithmics-private/advanced-components';
 import {
   EditDisplayCreativeRouteMatchParams,
@@ -20,7 +21,6 @@ import {
 } from '../domain';
 import { DisplayAdResource } from '../../../../../models/creative/CreativeResource';
 import { PropertyResourceShape } from '../../../../../models/plugin';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface MapStateProps {

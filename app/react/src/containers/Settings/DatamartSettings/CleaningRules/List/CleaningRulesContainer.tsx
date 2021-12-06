@@ -23,7 +23,7 @@ import { UserWorkspaceResource } from '../../../../../models/directory/UserProfi
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { connect } from 'react-redux';
 import { CleaningRulesFilter } from '../domain';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';

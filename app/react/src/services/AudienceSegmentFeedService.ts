@@ -1,6 +1,9 @@
 import PluginInstanceService from './PluginInstanceService';
 import { AudienceTagFeed, AudienceFeed, Status, PluginProperty } from '../models/Plugins';
-import { DataListResponse, DataResponse } from './ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PaginatedApiParam } from '../utils/ApiHelper';

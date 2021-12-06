@@ -1,6 +1,6 @@
 import { PluginProperty } from '../../../../../models/Plugins';
 import { executeTasksInSequence } from '../../../../../utils/PromiseHelper';
-import { DataResponse } from '../../../../../services/ApiService';
+import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { AudienceFeedFormModel } from './domain';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { injectable, inject } from 'inversify';

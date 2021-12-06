@@ -16,7 +16,7 @@ import { FORM_ID } from '../EventRulesForm';
 import { EventRulesFormData } from '../../domain';
 import { IDatamartService } from '../../../../../../services/DatamartService';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../../models/datamart/DatamartResource';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 

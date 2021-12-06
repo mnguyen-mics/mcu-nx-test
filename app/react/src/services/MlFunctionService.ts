@@ -1,4 +1,8 @@
-import ApiService, { DataResponse, DataListResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { MlFunctionResource } from '../models/datamart/MlFunction';
 import PluginInstanceService from './PluginInstanceService';
 import { PluginLayout } from '../models/plugin/PluginLayout';

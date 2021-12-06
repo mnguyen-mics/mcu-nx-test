@@ -1,4 +1,4 @@
-import { ThemeColorsShape } from '../containers/Helpers/injectThemeColors';
+import { ThemeColorsShape } from '@mediarithmics-private/advanced-components/lib/utils/ThemeColors';
 import { ImportExecution } from '../models/imports/imports';
 import { DatamartReplicationJobExecutionResource } from '../models/settings/settings';
 

@@ -9,7 +9,7 @@ import messages from './messages';
 import { compose } from 'recompose';
 import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { KeycloakService, MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../Features';
 import { ProductionApiEnvironment } from '../Navigator/Layout/LayoutHelper';
@@ -47,6 +47,20 @@ class NavigatorHeader extends React.Component<Props> {
 
     const organisationName = workspace(organisationId).organisation_name;
 
+    const logoutMessage = (
+      <FormattedMessage id='components.header.logOut' defaultMessage='Log out' />
+    );
+
+    const logOutFunction = () => KeycloakService.doLogout();
+
+    const logOut = KeycloakService.isKeycloakEnabled() ? (
+      <div onClick={logOutFunction} key={1}>
+        {logoutMessage}
+      </div>
+    ) : (
+      <Link to='/logout'>{logoutMessage}</Link>
+    );
+
     const accountMenu = (
       <Menu>
         <Menu.Item key='email' disabled={true}>
@@ -62,11 +76,7 @@ class NavigatorHeader extends React.Component<Props> {
             <FormattedMessage {...messages.account} />
           </Link>
         </Menu.Item>
-        <Menu.Item key='logout'>
-          <Link to='/logout'>
-            <FormattedMessage id='components.header.logOut' defaultMessage='Log out' />
-          </Link>
-        </Menu.Item>
+        <Menu.Item key='logout'>{logOut}</Menu.Item>
       </Menu>
     );
 

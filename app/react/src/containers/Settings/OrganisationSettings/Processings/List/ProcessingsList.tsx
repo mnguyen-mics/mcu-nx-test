@@ -8,7 +8,10 @@ import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchH
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { TYPES } from '../../../../../constants/types';
-import { DataListResponse, DataResponse } from '../../../../../services/ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { OrganisationResource } from '../../../../../models/organisation/organisation';
 import { lazyInject } from '../../../../../config/inversify.config';

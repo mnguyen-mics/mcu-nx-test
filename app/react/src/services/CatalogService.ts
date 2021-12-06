@@ -6,7 +6,11 @@ import {
 } from './../models/servicemanagement/PublicServiceItemResource';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import { injectable } from 'inversify';
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import {
   ServiceCategoryTree,
   ServiceFamily,

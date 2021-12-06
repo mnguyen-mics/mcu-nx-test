@@ -48,7 +48,7 @@ import { IDatamartService } from '../../../../../../services/DatamartService';
 import { IComparmentService } from '../../../../../../services/CompartmentService';
 import { getCoreReferenceTypeAndModel, FieldProposalLookup } from '../../../domain';
 import { IChannelService } from '../../../../../../services/ChannelService';
-import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { IReferenceTableService } from '../../../../../../services/ReferenceTableService';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../../Datamart';
 import { FormInfiniteSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormInfiniteSearchObject';

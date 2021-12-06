@@ -4,9 +4,9 @@ import { FunnelDateRange, FunnelFilter } from '../../models/datamart/UserActivit
 import lodash from 'lodash';
 import { BooleanOperator, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import cuid from 'cuid';
-import { ThemeColorsShape } from '../../containers/Helpers/injectThemeColors';
 import { Step } from './TimelineStepBuilder';
 import { StepProperties } from './FunnelQueryBuilder';
+import { ThemeColorsShape } from '@mediarithmics-private/advanced-components/lib/utils/ThemeColors';
 
 interface FormattedDates {
   from: string;

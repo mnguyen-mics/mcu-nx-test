@@ -28,7 +28,7 @@ import AdGroupFormSection, {
   AdGroupFormSectionProps,
 } from './Sections/Programmatic/AdGroupFormSection';
 import * as SessionSelectors from '../../../../redux/Session/selectors';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 

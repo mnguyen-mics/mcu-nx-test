@@ -8,7 +8,10 @@ import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constant
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import chroma from 'chroma-js';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import { isEqual, difference } from 'lodash';
 import cuid from 'cuid';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';

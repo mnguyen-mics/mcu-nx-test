@@ -9,7 +9,10 @@ import messages from '../messages';
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsMoment from '../../../../../utils/McsMoment';
-import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import {
+  injectThemeColors,
+  InjectedThemeColorsProps,
+} from '@mediarithmics-private/advanced-components';
 import {
   DoubleStackedAreaChart,
   EmptyChart,

@@ -11,7 +11,7 @@ import { MenuMode } from 'antd/lib/menu';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../Notifications/injectNotifications';
-import { MicsReduxState } from '../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const Dragger = Upload.Dragger;
 

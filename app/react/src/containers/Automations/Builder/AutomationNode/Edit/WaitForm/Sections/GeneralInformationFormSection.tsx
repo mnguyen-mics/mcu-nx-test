@@ -23,7 +23,7 @@ import { Switch } from 'antd';
 import moment, { Moment } from 'moment';
 import { WeekDay } from '../../../../../../../utils/DateHelper';
 import { DispatchProp, connect } from 'react-redux';
-import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { getFormValues, change } from 'redux-form';
 
 export const messages: {

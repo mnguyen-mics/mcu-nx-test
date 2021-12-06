@@ -10,7 +10,7 @@ import { UserAccountCompartmentDatamartSelectionResource } from '../../../../mod
 import { Filter } from '../Common/domain';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { getWorkspace } from '../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import {
