@@ -5,7 +5,7 @@ import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Row, Col, Tooltip, Modal, Tag } from 'antd';
 import messages from '../messages';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import {
   injectThemeColors,

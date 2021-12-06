@@ -4,7 +4,7 @@ import { Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 
 import messages from '../../messages';
