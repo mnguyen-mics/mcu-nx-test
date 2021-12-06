@@ -3,7 +3,7 @@ import { Row, Col, Modal } from 'antd';
 import moment from 'moment';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/styles/hljs';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import messages from '../messages';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { UserActivityEventResource } from '../../../../models/datamart/UserActivityResource';
