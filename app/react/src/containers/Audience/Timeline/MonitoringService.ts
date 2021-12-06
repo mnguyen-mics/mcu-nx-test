@@ -344,6 +344,7 @@ export class MonitoringService implements IMonitoringService {
         const userIdentifier = {
           id: identifierId,
           type: identifierType,
+          compartmentId: compartmentId,
         };
         return this.fetchMonitoringDataByIdentifier(userIdentifier, datamart).then(res => {
           if (res[1]) {
