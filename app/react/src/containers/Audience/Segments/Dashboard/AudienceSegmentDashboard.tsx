@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  Card,
-  McsTabs,
-  ContentHeader,
-  Loading,
-} from '@mediarithmics-private/mcs-components-library';
+import { Card, McsTabs, Loading } from '@mediarithmics-private/mcs-components-library';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { EditAudienceSegmentParam, isUserQuerySegment } from '../Edit/domain';
 import injectNotifications, {
@@ -355,12 +350,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       );
     };
 
-    const fetchEmptyApiDashboards = () => {
-      return new Promise<DashboardPageContent[]>((resolve, _) => {
-        resolve([]);
-      });
-    };
-
     const shouldDisplayAnalyticsFeature =
       charts.length === 0 &&
       hasFeature('audience-dashboards-datamart_users_analytics') &&
@@ -384,28 +373,24 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
             fetchApiDashboards={fetchApiDashboards}
             fetchDataFileDashboards={fetchDataFileDashboards}
             datamartId={segment?.datamart_id}
+            datamartAnalyticsConfig={
+              shouldDisplayAnalyticsFeature ? datamartAnalyticsDashboardConfig : []
+            }
             source={segment}
-            tabsClassname='m-t-30'
-            isFullScreenLoading={false}
-          />
-        )}
-        {charts.length ? <ContentHeader size='medium' title='Technical Information' /> : null}
-        <Card>
-          <McsTabs items={this.buildItems()} />
-        </Card>
-        {shouldDisplayAnalyticsFeature && datamart && (
-          <DashboardPageWrapper
-            fetchApiDashboards={fetchEmptyApiDashboards}
-            fetchDataFileDashboards={fetchDataFileDashboards}
-            datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
-            datamartId={datamart.id}
-            disableAllUserFilter={true}
             defaultSegment={currentSegment}
             tabsClassname='m-t-30'
             isFullScreenLoading={false}
+            disableAllUserFilter={true}
+            segmentDashboardTechnicalInformation={
+              <div>
+                <Card className='mcs-audienceSegmentDashboard_technical_information'>
+                  <McsTabs items={this.buildItems()} />
+                </Card>
+                <FeedCardList />
+              </div>
+            }
           />
         )}
-        <FeedCardList />
       </div>
     );
   }

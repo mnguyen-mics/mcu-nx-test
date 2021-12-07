@@ -15,6 +15,7 @@ interface SegmentNameDisplayProps {
   onLoad?: (segment?: AudienceSegmentShape) => void;
   tableViewMode?: boolean;
   showId?: boolean;
+  className?: string;
 }
 
 interface State {
@@ -132,7 +133,7 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, showId } = this.props;
+    const { intl, showId, className } = this.props;
     const { audienceSegmentResource } = this.state;
 
     // This can happen when the component isrenderloading the segment name (or if something shitty happened)
@@ -141,19 +142,19 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
     let audienceSegmentName = audienceSegmentResource.name;
     if (audienceSegmentResource.type === 'USER_ACTIVATION') {
       if (audienceSegmentResource.clickers) {
-        audienceSegmentName = `${this.ellipsizeSegmentName(
-          audienceSegmentResource.name,
-        )} - ${intl.formatMessage(localMessages.CLICKERS)}`;
+        audienceSegmentName = `${audienceSegmentResource.name} - ${intl.formatMessage(
+          localMessages.CLICKERS,
+        )}`;
       } else if (audienceSegmentResource.exposed) {
-        audienceSegmentName = `${this.ellipsizeSegmentName(
-          audienceSegmentResource.name,
-        )} - ${intl.formatMessage(localMessages.EXPOSED)}`;
+        audienceSegmentName = `${audienceSegmentResource.name} - ${intl.formatMessage(
+          localMessages.EXPOSED,
+        )}`;
       }
     }
     return (
-      <span title={audienceSegmentResource.name}>
-        {showId && this.displayId()} {this.ellipsizeSegmentName(audienceSegmentName)}
-      </span>
+      <div className={className} title={audienceSegmentResource.name}>
+        {showId && this.displayId()} {audienceSegmentName}
+      </div>
     );
   }
 }

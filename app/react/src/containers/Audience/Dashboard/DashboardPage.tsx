@@ -14,6 +14,7 @@ import { LabeledValue } from 'antd/lib/select';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import ScopedDashboardLayout from './ScopedDashboardLayout';
+import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 
 export interface DashboardPageProps {
   dataFileDashboards?: DataFileDashboardResource[];
@@ -25,9 +26,16 @@ export interface DashboardPageProps {
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   tabsClassname?: string;
   className?: string;
+  segmentDashboardTechnicalInformation?: React.ReactNode;
 }
+const messagesDashboardPage = defineMessages({
+  technicalInformationTab: {
+    id: 'dashboard.page.technical.information.tab',
+    defaultMessage: 'Technical information',
+  },
+});
 
-type Props = DashboardPageProps & InjectedFeaturesProps;
+type Props = DashboardPageProps & InjectedFeaturesProps & InjectedIntlProps;
 
 export class DashboardPage extends React.Component<Props> {
   constructor(props: Props) {
@@ -43,7 +51,11 @@ export class DashboardPage extends React.Component<Props> {
     defaultSegment?: LabeledValue,
     tabsClassname?: string,
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
+    segmentDashboardTechnicalInformation?: React.ReactNode,
   ) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const defaultContent = (
       <div>
         {dataFileDashboards &&
@@ -101,7 +113,8 @@ export class DashboardPage extends React.Component<Props> {
       if (
         apiDashboards.length === 1 &&
         dataFileDashboards?.length === 0 &&
-        datamartAnalyticsConfig?.length === 0
+        datamartAnalyticsConfig?.length === 0 &&
+        !segmentDashboardTechnicalInformation
       )
         return apiDashboards[0].dashboardContent ? (
           <div className='m-t-40'>
@@ -114,6 +127,12 @@ export class DashboardPage extends React.Component<Props> {
         ) : (
           <div />
         );
+      if (segmentDashboardTechnicalInformation) {
+        dashboardTabs.unshift({
+          title: formatMessage(messagesDashboardPage.technicalInformationTab),
+          display: <div>{segmentDashboardTechnicalInformation}</div>,
+        });
+      }
       if (
         (dataFileDashboards && dataFileDashboards.length > 0) ||
         (datamartAnalyticsConfig && datamartAnalyticsConfig.length > 0)
@@ -131,6 +150,29 @@ export class DashboardPage extends React.Component<Props> {
           animated={false}
         />
       );
+    } else if (segmentDashboardTechnicalInformation) {
+      const dashboardTabs = [];
+      dashboardTabs.push({
+        title: 'Technical information',
+        display: <div>{segmentDashboardTechnicalInformation}</div>,
+      });
+      if (
+        (dataFileDashboards && dataFileDashboards.length > 0) ||
+        (datamartAnalyticsConfig && datamartAnalyticsConfig.length > 0)
+      ) {
+        dashboardTabs.push({
+          title: dataFileDashboards?.length === 0 ? 'Activities analytics' : 'Old OTQL dashboard',
+          display: defaultContent,
+        });
+        return (
+          <McsTabs
+            destroyInactiveTabPane={true}
+            items={dashboardTabs}
+            className={tabsClassname}
+            animated={false}
+          />
+        );
+      } else return <div>{segmentDashboardTechnicalInformation}</div>;
     } else return defaultContent;
   };
 
@@ -145,6 +187,7 @@ export class DashboardPage extends React.Component<Props> {
       tabsClassname,
       source,
       className,
+      segmentDashboardTechnicalInformation,
     } = this.props;
 
     return (
@@ -158,10 +201,11 @@ export class DashboardPage extends React.Component<Props> {
           defaultSegment,
           tabsClassname,
           source,
+          segmentDashboardTechnicalInformation,
         )}
       </div>
     );
   }
 }
 
-export default compose<Props, DashboardPageProps>(injectFeatures)(DashboardPage);
+export default compose<Props, DashboardPageProps>(injectFeatures, injectIntl)(DashboardPage);
