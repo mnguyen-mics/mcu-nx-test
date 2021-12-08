@@ -412,7 +412,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     };
 
     return (
-      <Card title={title} buttons={adGroupButtons}>
+      <Card title={title} buttons={adGroupButtons} className='mcs-table-container'>
         <hr />
         <DisplayCampaignAdGroupTable
           isFetching={isFetching || isUpdatingStatuses}

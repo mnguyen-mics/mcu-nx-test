@@ -431,7 +431,10 @@ class Imports extends React.Component<JoinedProps, State> {
                 organisationId={organisationId}
               />
             )}
-            <Card title={formatMessage(messages.importExecutionsTitle)}>
+            <Card
+              title={formatMessage(messages.importExecutionsTitle)}
+              className='mcs-table-container'
+            >
               <hr />
               <TableViewWithSelectionNotifyerMessages
                 dataSource={importExecutions.items}

@@ -386,6 +386,7 @@ class ABDetailsTable extends React.Component<Props, State> {
             {this.renderDatePicker()}
           </React.Fragment>
         }
+        className='mcs-table-container'
       >
         <TableViewFilters
           columns={this.buildDataColumns()}
