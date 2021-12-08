@@ -11,6 +11,7 @@ import { injectFeatures, InjectedFeaturesProps } from '../Features';
 export interface IQueryToolSelectorProps {
   datamartId: string;
   renderActionBar: (query: string, datamartId: string) => React.ReactNode;
+  createdQueryId?: string;
 }
 
 export type Languages = 'OTQL' | 'GRAPHQL';
@@ -46,7 +47,6 @@ class QueryToolSelector extends React.Component<Props, State> {
 
   public render() {
     const { queryLanguage } = this.state;
-
     if (queryLanguage) {
       switch (queryLanguage) {
         case 'GRAPHQL':
