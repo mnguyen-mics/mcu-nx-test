@@ -355,7 +355,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     const sectionsOrSpin = isFetchingCustomActions ? <Spin /> : renderedSections;
 
     return (
-      <Layout className='edit-layout'>
+      <Layout className='edit-layout mcs-legacy_form_container'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>

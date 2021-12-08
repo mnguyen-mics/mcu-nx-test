@@ -58,7 +58,7 @@ const ForgotPassword = (props: Props) => {
       <div className='reset-password-title'>
         <FormattedMessage {...messages.resetPasswordTitle} />
       </div>
-      <div className='reset-password-container-frame'>
+      <div className='reset-password-container-frame mcs-legacy_form_container'>
         {!passwordSentSuccess && (
           <Form onFinish={handleSubmit} form={form} className='reset-password-form'>
             {errorMsg}

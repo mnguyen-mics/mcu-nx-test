@@ -309,8 +309,29 @@
   }
 }
 
-.ant-legacy-form-item {
-  font-size: inherit;
+.mcs-legacy_form_container {
+  .ant-legacy-form {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    font-variant: normal !important;
+  }
+
+  .ant-legacy-form-item {
+    font-variant: normal !important;
+    font-size: inherit;
+  }
+
+  .ant-legacy-form label {
+    font-size: 12px !important;
+  }
+
+  .ant-legacy-form-vertical {
+    .form-field-wrapper {
+      .ant-legacy-form-item-label {
+        white-space: initial;
+      }
+    }
+  }
 }
 
 .automation-form {
@@ -446,13 +467,6 @@
   }
 }
 
-.ant-legacy-form-vertical {
-  .form-field-wrapper {
-    .ant-legacy-form-item-label {
-      white-space: initial;
-    }
-  }
-}
 .mics-error-text {
   color: @error-color;
   line-height: 1.524;

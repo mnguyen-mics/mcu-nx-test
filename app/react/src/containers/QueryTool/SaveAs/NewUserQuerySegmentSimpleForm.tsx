@@ -110,115 +110,117 @@ class NewUserQuerySegmentSimleForm extends React.Component<
       });
 
     return (
-      <Form className='edit-layout ant-layout' layout='vertical' onSubmit={handleSubmit}>
-        <div className='mcs-form-container' style={{ paddingTop: '0px' }}>
-          <FormInputField
-            name='name'
-            component={FormInput}
-            validate={[fieldValidators.isRequired]}
-            formItemProps={{
-              label: intl.formatMessage(messages.segmentNameLabel),
-              required: true,
-            }}
-            inputProps={{
-              className: 'mcs-newUserQuerySegmentSimpleForm_name_input',
-              placeholder: intl.formatMessage(messages.segmentNamePlaceHolder),
-            }}
-            helpToolTipProps={{
-              title: intl.formatMessage(messages.segmentNameTooltip),
-            }}
-            small={true}
-          />
-          {this.renderProcessingActivitiesSection()}
-          <Button className='optional-section-title' onClick={toggleAdvancedSection}>
-            <McsIcon type='settings' />
-            <span className='step-title'>
-              {intl.formatMessage(messages.segmentAdvancedButtonLabel)}
-            </span>
-            <McsIcon type='chevron' />
-          </Button>
-          {this.state.displayAdvancedSection && (
-            <div>
-              <div className='optional-section-content'>
+      <div className='mcs-legacy_form_container'>
+        <Form className='edit-layout ant-layout' layout='vertical' onSubmit={handleSubmit}>
+          <div className='mcs-form-container' style={{ paddingTop: '0px' }}>
+            <FormInputField
+              name='name'
+              component={FormInput}
+              validate={[fieldValidators.isRequired]}
+              formItemProps={{
+                label: intl.formatMessage(messages.segmentNameLabel),
+                required: true,
+              }}
+              inputProps={{
+                className: 'mcs-newUserQuerySegmentSimpleForm_name_input',
+                placeholder: intl.formatMessage(messages.segmentNamePlaceHolder),
+              }}
+              helpToolTipProps={{
+                title: intl.formatMessage(messages.segmentNameTooltip),
+              }}
+              small={true}
+            />
+            {this.renderProcessingActivitiesSection()}
+            <Button className='optional-section-title' onClick={toggleAdvancedSection}>
+              <McsIcon type='settings' />
+              <span className='step-title'>
+                {intl.formatMessage(messages.segmentAdvancedButtonLabel)}
+              </span>
+              <McsIcon type='chevron' />
+            </Button>
+            {this.state.displayAdvancedSection && (
+              <div>
+                <div className='optional-section-content'>
+                  <FormInputField
+                    name='technical_name'
+                    component={FormInput}
+                    formItemProps={{
+                      label: intl.formatMessage(messages.segmentTechinicalNameLabel),
+                    }}
+                    inputProps={{
+                      placeholder: intl.formatMessage(messages.segmentTechinicalNamePlaceholder),
+                    }}
+                    helpToolTipProps={{
+                      title: intl.formatMessage(messages.segmentTechinicalNameTooltip),
+                    }}
+                    small={true}
+                  />
+                </div>
                 <FormInputField
-                  name='technical_name'
+                  name='defaultLifetime'
                   component={FormInput}
+                  validate={[fieldValidators.isValidInteger, fieldValidators.isNotZero]}
                   formItemProps={{
-                    label: intl.formatMessage(messages.segmentTechinicalNameLabel),
+                    label: intl.formatMessage(messages.segmentDefaultLifetimeLabel),
                   }}
                   inputProps={{
-                    placeholder: intl.formatMessage(messages.segmentTechinicalNamePlaceholder),
+                    addonAfter: (
+                      <FormAddonSelectField
+                        name='defaultLifetimeUnit'
+                        component={AddonSelect}
+                        options={[
+                          {
+                            value: 'days',
+                            title: intl.formatMessage(messages.segmentDefaultLifetimeOptionDAY),
+                          },
+                          {
+                            value: 'weeks',
+                            title: intl.formatMessage(messages.segmentDefaultLifetimeOptionWEEK),
+                          },
+                          {
+                            value: 'months',
+                            title: intl.formatMessage(messages.segmentDefaultLifetimeOptionMONTH),
+                          },
+                        ]}
+                      />
+                    ),
+                    placeholder: intl.formatMessage(messages.segmentDefaultLifetimePlaceholder),
+                    style: { width: '100%' },
                   }}
                   helpToolTipProps={{
-                    title: intl.formatMessage(messages.segmentTechinicalNameTooltip),
+                    title: intl.formatMessage(messages.segmentDefaultLifetimeTooltip),
+                  }}
+                  small={true}
+                />
+                <FormBooleanField
+                  name='persisted'
+                  component={FormBoolean}
+                  formItemProps={{
+                    label: intl.formatMessage(messages.segmentPersistedLabel),
+                    hasMarginBottom: true,
+                  }}
+                  helpToolTipProps={{
+                    title: intl.formatMessage(messages.segmentPersistedTooltip),
+                  }}
+                  small={true}
+                />
+                <FormBooleanField
+                  name='paused'
+                  component={FormBoolean}
+                  formItemProps={{
+                    label: intl.formatMessage(messages.segmentPausedLabel),
+                    hasMarginBottom: true,
+                  }}
+                  helpToolTipProps={{
+                    title: intl.formatMessage(messages.segmentPausedTooltip),
                   }}
                   small={true}
                 />
               </div>
-              <FormInputField
-                name='defaultLifetime'
-                component={FormInput}
-                validate={[fieldValidators.isValidInteger, fieldValidators.isNotZero]}
-                formItemProps={{
-                  label: intl.formatMessage(messages.segmentDefaultLifetimeLabel),
-                }}
-                inputProps={{
-                  addonAfter: (
-                    <FormAddonSelectField
-                      name='defaultLifetimeUnit'
-                      component={AddonSelect}
-                      options={[
-                        {
-                          value: 'days',
-                          title: intl.formatMessage(messages.segmentDefaultLifetimeOptionDAY),
-                        },
-                        {
-                          value: 'weeks',
-                          title: intl.formatMessage(messages.segmentDefaultLifetimeOptionWEEK),
-                        },
-                        {
-                          value: 'months',
-                          title: intl.formatMessage(messages.segmentDefaultLifetimeOptionMONTH),
-                        },
-                      ]}
-                    />
-                  ),
-                  placeholder: intl.formatMessage(messages.segmentDefaultLifetimePlaceholder),
-                  style: { width: '100%' },
-                }}
-                helpToolTipProps={{
-                  title: intl.formatMessage(messages.segmentDefaultLifetimeTooltip),
-                }}
-                small={true}
-              />
-              <FormBooleanField
-                name='persisted'
-                component={FormBoolean}
-                formItemProps={{
-                  label: intl.formatMessage(messages.segmentPersistedLabel),
-                  hasMarginBottom: true,
-                }}
-                helpToolTipProps={{
-                  title: intl.formatMessage(messages.segmentPersistedTooltip),
-                }}
-                small={true}
-              />
-              <FormBooleanField
-                name='paused'
-                component={FormBoolean}
-                formItemProps={{
-                  label: intl.formatMessage(messages.segmentPausedLabel),
-                  hasMarginBottom: true,
-                }}
-                helpToolTipProps={{
-                  title: intl.formatMessage(messages.segmentPausedTooltip),
-                }}
-                small={true}
-              />
-            </div>
-          )}
-        </div>
-      </Form>
+            )}
+          </div>
+        </Form>
+      </div>
     );
   }
 }

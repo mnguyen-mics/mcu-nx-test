@@ -187,7 +187,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
           />
         </div>
         <div className='reset-password-title'>{pageType}</div>
-        <div className='reset-password-container-frame'>
+        <div className='reset-password-container-frame mcs-legacy_form_container'>
           {fetchingPasswReq && <Spin size='large' />}
           {!fetchingPasswReq && !passReq && (
             <div>

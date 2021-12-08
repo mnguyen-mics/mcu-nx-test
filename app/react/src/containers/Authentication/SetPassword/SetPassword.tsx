@@ -127,7 +127,7 @@ class SetPassword extends React.Component<Props, State> {
         <div className='reset-password-title'>
           <FormattedMessage {...messages.setPassword} />
         </div>
-        <div className='reset-password-container-frame'>
+        <div className='reset-password-container-frame mcs-legacy_form_container'>
           <Form onSubmit={this.handleSubmit} className='login-form'>
             {errorMsg}
             <div className='password-text'>
