@@ -6,8 +6,6 @@ import { compose } from 'recompose';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { VisitAnalyzerFieldModel } from './domain';
 import FormSection from '../../../../components/Form/FormSection';
-import { RelatedRecords } from '@mediarithmics-private/mcs-components-library';
-import RecordElement from '../../../../components/RelatedRecord/RecordElement';
 import VisitAnalyzerSelector, { VisitAnalyzerSelectorProps } from '../Common/VisitAnalyzerSelector';
 import { VisitAnalyzer } from '../../../../models/Plugins';
 import { PropertyResourceShape, StringPropertyResource } from '../../../../models/plugin/index';
@@ -21,6 +19,12 @@ import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer'
 import { lazyInject } from '../../../../config/inversify.config';
 import { IVisitAnalyzerService } from '../../../../services/Library/VisitAnalyzerService';
 import { TYPES } from '../../../../constants/types';
+import TimelineStepBuilder, {
+  Step,
+} from '../../../../components/TimelineStepBuilder/TimelineStepBuilder';
+import { DatabaseOutlined, GlobalOutlined } from '@ant-design/icons';
+import { EmptyRecords } from '@mediarithmics-private/mcs-components-library';
+import { Tooltip } from 'antd';
 
 export interface VisitAnalyzerSectionProps extends ReduxFormChangeProps {}
 
@@ -29,11 +33,13 @@ type Props = VisitAnalyzerSectionProps &
   InjectedIntlProps &
   InjectedDrawerProps;
 
+interface VisitAnalyzerData {
+  visitAnalyzer?: VisitAnalyzer;
+  properties: PropertyResourceShape[];
+}
+
 interface State {
-  visitAnalyzerData: {
-    visitAnalyzer?: VisitAnalyzer;
-    properties: PropertyResourceShape[];
-  };
+  steps: Array<Step<VisitAnalyzerData>>;
 }
 
 const messages = defineMessages({
@@ -41,24 +47,46 @@ const messages = defineMessages({
     id: 'settings.form.activityAnalyzer.addExisting',
     defaultMessage: 'Add Existing',
   },
+  addStepButton: {
+    id: 'settings.form.activityAnalyzer.addStep',
+    defaultMessage: 'Add a Visit Analyzer',
+  },
   sectionSubtitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.subtitle',
     defaultMessage:
-      'Add a Visit Analyzer to your property. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your DMP.',
+      'Add Visit Analyzers to your property. They are run in sequences. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your datamart.',
   },
   sectionTitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.title',
-    defaultMessage: 'Visit Analyzer',
+    defaultMessage: 'Visit Analyzers',
   },
   sectionEmptyVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.empty',
     defaultMessage: 'There is no Visit Analyzer selected yet!',
   },
+  newVisitAnalyzerSelection: {
+    id: 'settings.form.activityAnalyzer.new',
+    defaultMessage: 'New Visit Analyzer',
+  },
+  sectionGeneralErrorRecoveryStrategyHelperSTORE_WITH_ERROR_ID: {
+    id: 'settings.form.activityAnalyzer.error-recovery-strategy.STORE_WITH_ERROR_ID',
+    defaultMessage:
+      'Store With Error Id: If the Visit Analyzer failed, the activity will be sent to the next Visit Analyzer without any modification of this one.',
+  },
+  sectionGeneralErrorRecoveryStrategyHelperSTORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS: {
+    id: 'settings.form.activityAnalyzer.error-recovery-strategy.STORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS',
+    defaultMessage:
+      'Store With Error Id And Skip Upcoming Analyzers: If the Visit Analyzer failed, the activity will be saved without any modification of this one.',
+  },
+  sectionGeneralErrorRecoveryStrategyHelperDROP: {
+    id: 'settings.form.activityAnalyzer.error-recovery-strategy.DROP',
+    defaultMessage: 'Drop: If the Visit Analyzer failed, the activity won’t be saved.',
+  },
 });
 
 class VisitAnalyzerSection extends React.Component<Props, State> {
   cancelablePromise: CancelablePromise<
-    [DataResponse<VisitAnalyzer>, DataListResponse<PropertyResourceShape>]
+    Array<[DataResponse<VisitAnalyzer>, DataListResponse<PropertyResourceShape>]>
   >;
 
   @lazyInject(TYPES.IVisitAnalyzerService)
@@ -67,25 +95,31 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      visitAnalyzerData: {
-        properties: [],
-      },
+      steps: [this.getDefaultStep()],
     };
   }
 
   componentDidMount() {
-    const visitAnalyzerField = this.props.fields.getAll()[0];
-    if (visitAnalyzerField)
-      this.fetchActivityAnalyzer(visitAnalyzerField.model.visit_analyzer_model_id);
+    const visitAnalyzerFields = this.props.fields.getAll();
+    if (visitAnalyzerFields)
+      this.fetchActivityAnalyzer(
+        visitAnalyzerFields.map(
+          visitAnalyzerField => visitAnalyzerField.model.visit_analyzer_model_id,
+        ),
+      );
   }
 
   componentDidUpdate(previousProps: Props) {
-    const previousVisitAnalyzerField = previousProps.fields.getAll()[0];
+    const previousVisitAnalyzerFields = previousProps.fields.getAll();
 
-    const visitAnalyzerField = this.props.fields.getAll()[0];
+    const visitAnalyzerFields = this.props.fields.getAll();
 
-    if (visitAnalyzerField && previousVisitAnalyzerField !== visitAnalyzerField) {
-      this.fetchActivityAnalyzer(visitAnalyzerField.model.visit_analyzer_model_id);
+    if (visitAnalyzerFields && previousVisitAnalyzerFields !== visitAnalyzerFields) {
+      this.fetchActivityAnalyzer(
+        visitAnalyzerFields.map(
+          visitAnalyzerField => visitAnalyzerField.model.visit_analyzer_model_id,
+        ),
+      );
     }
   }
 
@@ -93,20 +127,34 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
     if (this.cancelablePromise) this.cancelablePromise.cancel();
   }
 
-  fetchActivityAnalyzer = (visitAnalyzerId: string) => {
+  fetchActivityAnalyzer = (visitAnalyzerIds: string[]) => {
     this.cancelablePromise = makeCancelable(
-      Promise.all([
-        this._visitAnalyzerService.getInstanceById(visitAnalyzerId),
-        this._visitAnalyzerService.getInstanceProperties(visitAnalyzerId),
-      ]),
+      Promise.all(
+        visitAnalyzerIds.map(visitAnalyzerId =>
+          Promise.all([
+            this._visitAnalyzerService.getInstanceById(visitAnalyzerId),
+            this._visitAnalyzerService.getInstanceProperties(visitAnalyzerId),
+          ]),
+        ),
+      ),
     );
 
     this.cancelablePromise.promise.then(results => {
       this.setState({
-        visitAnalyzerData: {
-          visitAnalyzer: results[0].data,
-          properties: results[1].data,
-        },
+        steps: visitAnalyzerIds.map((visitAnalyzerId, index) => ({
+          id: cuid(),
+          name: this.getName(
+            {
+              visitAnalyzer: results[index][0].data,
+              properties: results[index][1].data,
+            },
+            index,
+          ),
+          properties: {
+            visitAnalyzer: results[index][0].data,
+            properties: results[index][1].data,
+          },
+        })),
       });
     });
   };
@@ -114,24 +162,28 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   updateActivityAnalyzer = (visitAnalyzer: VisitAnalyzer[]) => {
     const { fields, formChange } = this.props;
 
-    const newField: VisitAnalyzerFieldModel[] = [
-      {
+    const newFields: VisitAnalyzerFieldModel[] = fields.getAll().map((field, currentIndex) => {
+      return {
         key: cuid(),
-        model: { visit_analyzer_model_id: visitAnalyzer[0].id },
+        model: {
+          visit_analyzer_model_id: field.model.visit_analyzer_model_id,
+        },
+      };
+    });
+    newFields.push({
+      key: cuid(),
+      model: {
+        visit_analyzer_model_id: visitAnalyzer[0].id,
       },
-    ];
+    });
 
-    formChange((fields as any).name, newField);
+    formChange((fields as any).name, newFields);
     this.props.closeNextDrawer();
   };
 
   openActivityAnalyzerSelector = () => {
-    const { fields } = this.props;
-
-    const selectedVisitAnalyzerIds = fields.getAll().map(p => p.model.visit_analyzer_model_id);
-
     const props: VisitAnalyzerSelectorProps = {
-      selectedVisitAnalyzerIds,
+      selectedVisitAnalyzerIds: [],
       close: this.props.closeNextDrawer,
       save: this.updateActivityAnalyzer,
     };
@@ -140,69 +192,138 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
       additionalProps: props,
     });
   };
-
-  getActivityAnalyzerRecords = () => {
-    const { fields } = this.props;
-    const { visitAnalyzerData } = this.state;
-
-    const getName = (field: VisitAnalyzerFieldModel) => {
-      const name = visitAnalyzerData.visitAnalyzer && visitAnalyzerData.visitAnalyzer.name;
-      const typeP = visitAnalyzerData.properties.find(p => p.technical_name === 'name');
-      const providerP = visitAnalyzerData.properties.find(p => p.technical_name === 'provider');
-
-      if (name && typeP && providerP) {
-        return `${name} (${(typeP as StringPropertyResource).value.value} - ${
-          (providerP as StringPropertyResource).value.value
-        })`;
-      }
-
-      return field.model.visit_analyzer_model_id;
-    };
-
-    return fields.map((name, index) => {
-      const removeField = () => fields.remove(index);
-
-      const field = fields.get(index);
-
-      return (
-        <RecordElement
-          key={field.key}
-          recordIconType='optimization'
-          record={field}
-          title={getName}
-          onRemove={removeField}
-        />
-      );
-    });
+  renderHeaderTimeline = () => {
+    return <GlobalOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />;
   };
 
-  render() {
-    const {
-      intl: { formatMessage },
-    } = this.props;
+  renderFooterTimeline = () => {
+    return <DatabaseOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />;
+  };
+
+  renderStepBody = (step: Step<VisitAnalyzerData>, index: number) => {
+    return <React.Fragment />;
+  };
+
+  renderStepHeader = (step: Step<VisitAnalyzerData>, index: number) => {
+    const errorStrategy = step.properties.visitAnalyzer?.error_recovery_strategy;
+    type helperKey =
+      | 'sectionGeneralErrorRecoveryStrategyHelperDROP'
+      | 'sectionGeneralErrorRecoveryStrategyHelperSTORE_WITH_ERROR_ID'
+      | 'sectionGeneralErrorRecoveryStrategyHelperSTORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS';
+    const key = ('sectionGeneralErrorRecoveryStrategyHelper' + errorStrategy) as helperKey;
+    const tooltipMessage = errorStrategy ? this.props.intl.formatMessage(messages[key]) : '';
+    return (
+      <div className='mcs-timelineStepBuilder_stepName_title'>
+        <div className={'mcs-VisitAnalyzerFormSection_timeline_stepName'}>{step.name}</div>
+        <Tooltip title={tooltipMessage} placement='right'>
+          <div className={'mcs-VisitAnalyzerFormSection_timeline_errorRecoveryStrategy'}>
+            {errorStrategy}
+          </div>
+        </Tooltip>
+      </div>
+    );
+  };
+
+  getDefaultStep = (): Step<VisitAnalyzerData> => {
+    return {
+      id: cuid(),
+      name: this.props.intl.formatMessage(messages.newVisitAnalyzerSelection),
+      properties: {
+        visitAnalyzer: undefined,
+        properties: [],
+      },
+    };
+  };
+
+  getName = (visitAnalyzerData: VisitAnalyzerData, index: number) => {
+    const name = visitAnalyzerData?.visitAnalyzer?.name;
+    const typeP =
+      visitAnalyzerData?.properties &&
+      visitAnalyzerData?.properties.find(p => p.technical_name === 'name');
+    const providerP =
+      visitAnalyzerData?.properties &&
+      visitAnalyzerData?.properties.find(p => p.technical_name === 'provider');
+
+    if (name && typeP && providerP) {
+      return `${name} (${(typeP as StringPropertyResource).value.value} - ${
+        (providerP as StringPropertyResource).value.value
+      })`;
+    } else {
+      return (
+        visitAnalyzerData?.visitAnalyzer?.id ??
+        this.props.intl.formatMessage(messages.newVisitAnalyzerSelection)
+      );
+    }
+  };
+
+  onStepAdded = () => {
+    this.openActivityAnalyzerSelector();
+  };
+
+  onStepChange = (steps: Array<Step<VisitAnalyzerData>>) => {
+    const { fields, formChange } = this.props;
+    const newFields: VisitAnalyzerFieldModel[] = steps.map(step => {
+      return {
+        key: cuid(),
+        model: {
+          visit_analyzer_model_id: step.properties.visitAnalyzer?.id!,
+        },
+      };
+    });
+
+    formChange((fields as any).name, newFields);
+
+    this.setState({ steps });
+  };
+
+  getActivityAnalyzerRecords = () => {
+    const rendering = {
+      shouldDisplayNumbersInBullet: false,
+      renderHeaderTimeline: this.renderHeaderTimeline,
+      renderFooterTimeline: this.renderFooterTimeline,
+      renderStepBody: this.renderStepBody,
+      renderStepHeader: this.renderStepHeader,
+      shouldRenderDisabledArrow: true,
+      getAddStepText: () => messages.addStepButton,
+    };
+    const stepManagement = {
+      computeStepName: (step: Step<VisitAnalyzerData>, index: number) =>
+        this.getName(step.properties, index),
+      onStepAdded: this.onStepAdded,
+      onStepRemoved: this.onStepChange,
+      onStepsReordered: this.onStepChange,
+      getDefaultStep: this.getDefaultStep,
+    };
 
     return (
-      <div>
+      <React.Fragment>
         <FormSection
-          dropdownItems={[
-            {
-              id: messages.dropdownAddExisting.id,
-              message: messages.dropdownAddExisting,
-              onClick: this.openActivityAnalyzerSelector,
-            },
-          ]}
           subtitle={messages.sectionSubtitleVisitAnalyzer}
           title={messages.sectionTitleVisitAnalyzer}
         />
 
-        <RelatedRecords
-          emptyOption={{
-            iconType: 'optimization',
-            message: formatMessage(messages.sectionEmptyVisitAnalyzer),
-          }}
-        >
-          {this.getActivityAnalyzerRecords()}
-        </RelatedRecords>
+        <div className={'mcs-VisitAnalyzerFormSection_timeline'}>
+          {!this.state.steps.length && (
+            <EmptyRecords
+              iconType={'optimization'}
+              message={this.props.intl.formatMessage(messages.sectionEmptyVisitAnalyzer)}
+            />
+          )}
+          <TimelineStepBuilder
+            steps={this.state.steps}
+            rendering={rendering}
+            stepManagement={stepManagement}
+            maxSteps={5}
+          />
+        </div>
+      </React.Fragment>
+    );
+  };
+
+  render() {
+    return (
+      <div className={'mcs-visitAnalyzerFormSection_section'}>
+        {this.getActivityAnalyzerRecords()}
       </div>
     );
   }

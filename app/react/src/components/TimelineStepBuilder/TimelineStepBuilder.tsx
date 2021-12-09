@@ -13,8 +13,11 @@ interface TimelineStepBuilderRendering<StepsProperties> {
   shouldDisplayNumbersInBullet: boolean;
   renderHeaderTimeline?: () => JSX.Element;
   renderFooterTimeline?: () => JSX.Element;
+  renderStepHeader?: (step: Step<StepsProperties>, index: number) => JSX.Element;
   renderStepBody: (step: Step<StepsProperties>, index: number) => JSX.Element;
   renderAfterBulletElement?: (step: Step<StepsProperties>, index: number) => JSX.Element;
+  getAddStepText?: () => { id: string; defaultMessage?: string };
+  shouldRenderDisabledArrow?: boolean;
 }
 
 interface StepManagement<StepsProperties> {
@@ -77,56 +80,75 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
   };
 
   private computeTimelineEndClassName(stepsNumber: number) {
-    if (stepsNumber < this.props.maxSteps) return 'mcs-funnelQueryBuilder_step_timelineEnd';
-    else return 'mcs-funnelQueryBuilder_step_timelineEndWithoutButton';
+    if (stepsNumber < this.props.maxSteps) return 'mcs-timelineStepBuilder_step_timelineEnd';
+    else return 'mcs-timelineStepBuilder_step_timelineEndWithoutButton';
   }
 
   render() {
     const { steps } = this.props;
 
     return (
-      <div className={'mcs-funnelQueryBuilder'}>
-        <div className={'mcs-funnelQueryBuilder_steps'}>
-          <div className={'mcs-funnelQueryBuilder_step_timelineStart'}>
+      <div className={'mcs-timelineStepBuilder ' + (steps.length === 0 ? 'empty' : '')}>
+        <div className={'mcs-timelineStepBuilder_steps'}>
+          <div className={'mcs-timelineStepBuilder_step_timelineStart'}>
             {this.props.rendering.renderHeaderTimeline?.()}
           </div>
           {steps.map((step, index) => {
             return (
-              <Card key={step.id} className={'mcs-funnelQueryBuilder_step'} bordered={false}>
-                <div className={'mcs-funnelQueryBuilder_step_body'}>
+              <Card key={step.id} className={'mcs-timelineStepBuilder_step'} bordered={false}>
+                <div className={'mcs-timelineStepBuilder_step_body'}>
                   {steps.length > 1 && (
-                    <div className={'mcs-funnelQueryBuilder_step_reorderBtn'}>
-                      {index > 0 && (
+                    <div className={'mcs-timelineStepBuilder_step_reorderBtn'}>
+                      {(this.props.rendering.shouldRenderDisabledArrow || index > 0) && (
                         <ArrowUpOutlined
                           className={
-                            'mcs-funnelQueryBuilder_sortBtn mcs-funnelQueryBuilder_sortBtn--up'
+                            'mcs-timelineStepBuilder_sortBtn mcs-timelineStepBuilder_sortBtn--up ' +
+                            (index > 0 ? '' : 'disabled')
                           }
-                          onClick={this.sortStep.bind(this, index, 'up')}
+                          onClick={
+                            index > 0
+                              ? this.sortStep.bind(this, index, 'up')
+                              : () => {
+                                  return;
+                                }
+                          }
                         />
                       )}
-                      {index + 1 < steps.length && (
+                      {(this.props.rendering.shouldRenderDisabledArrow ||
+                        index + 1 < steps.length) && (
                         <ArrowDownOutlined
-                          className={'mcs-funnelQueryBuilder_sortBtn'}
-                          onClick={this.sortStep.bind(this, index, 'down')}
+                          className={
+                            'mcs-timelineStepBuilder_sortBtn ' +
+                            (index + 1 < steps.length ? '' : 'disabled')
+                          }
+                          onClick={
+                            index + 1 < steps.length
+                              ? this.sortStep.bind(this, index, 'down')
+                              : () => {
+                                  return;
+                                }
+                          }
                         />
                       )}
                     </div>
                   )}
-                  <div className={'mcs-funnelQueryBuilder_step_content'}>
-                    <div className={'mcs-funnelQueryBuilder_stepHeader'}>
-                      <div className='mcs-funnelQueryBuilder_stepName_title'>{step.name}</div>
+                  <div className={'mcs-timelineStepBuilder_step_content'}>
+                    <div className={'mcs-timelineStepBuilder_stepHeader'}>
+                      {this.props.rendering.renderStepHeader?.(step, index) || (
+                        <div className='mcs-timelineStepBuilder_stepName_title'>{step.name}</div>
+                      )}
                       <Button
                         shape='circle'
                         icon={<CloseOutlined />}
-                        className={'mcs-funnelQueryBuilder_removeStepBtn'}
+                        className={'mcs-timelineStepBuilder_removeStepBtn'}
                         onClick={this.removeStep.bind(this, step.id)}
                       />
                     </div>
                     {this.props.rendering.renderStepBody(step, index)}
                   </div>
                 </div>
-                <div className={'mcs-funnelQueryBuilder_step_bullet'}>
-                  <div className={'mcs-funnelQueryBuilder_step_bullet_icon'}>
+                <div className={'mcs-timelineStepBuilder_step_bullet'}>
+                  <div className={'mcs-timelineStepBuilder_step_bullet_icon'}>
                     {this.props.rendering.shouldDisplayNumbersInBullet ? index + 1 : ''}
                   </div>
                 </div>
@@ -134,15 +156,17 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
               </Card>
             );
           })}
-          <div className={'mcs-funnelQueryBuilder_addStepBlock'}>
+          <div className={'mcs-timelineStepBuilder_addStepBlock'}>
             <div className={this.computeTimelineEndClassName(steps.length)}>
               {this.props.rendering.renderFooterTimeline?.()}
             </div>
             {steps.length < this.props.maxSteps && (
-              <Button className={'mcs-funnelQueryBuilder_addStepBtn'} onClick={this.addStep}>
+              <Button className={'mcs-timelineStepBuilder_addStepBtn'} onClick={this.addStep}>
                 <FormattedMessage
-                  id='audience.funnel.querybuilder.newStep'
-                  defaultMessage='Add a step'
+                  {...(this.props.rendering.getAddStepText?.() || {
+                    id: 'timeline.stepBuilder.newStep',
+                    defaultMessage: 'Add a step',
+                  })}
                 />
               </Button>
             )}

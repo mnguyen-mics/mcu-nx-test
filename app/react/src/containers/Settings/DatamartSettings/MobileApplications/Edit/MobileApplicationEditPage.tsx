@@ -32,6 +32,7 @@ import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { Link } from 'react-router-dom';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
+import { executeTasksInSequence } from '../../../../../utils/PromiseHelper';
 
 interface State {
   mobileApplicationData: MobileApplicationFormData;
@@ -124,7 +125,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
         getVisitAnalyzerSelections,
       ])
         .then(res => {
-          const formData = {
+          return {
             mobileapplication: res[0].data,
             initialProcessingSelectionResources: res[2].map(
               processingAndSelection => processingAndSelection.processingSelectionResource,
@@ -132,18 +133,16 @@ class EditMobileAppPage extends React.Component<Props, State> {
             processingActivities: res[2].map(processingAndSelection =>
               createFieldArrayModel(processingAndSelection.processingResource),
             ),
-            visitAnalyzerFields:
-              res[3].data && res[3].data.length > 0 && res[3].data[0].visit_analyzer_model_id
-                ? [
-                    createFieldArrayModel({
-                      visit_analyzer_model_id: res[3].data[0].visit_analyzer_model_id,
-                    }),
-                  ]
-                : [],
+            visitAnalyzerFields: res[3].data
+              ? res[3].data.map(visitAnalyzerModel =>
+                  createFieldArrayModel({
+                    visit_analyzer_model_id: visitAnalyzerModel.visit_analyzer_model_id,
+                  }),
+                )
+              : [],
             initialVisitAnalyzerSelections: res[3].data,
             eventRulesFields: res[1].data.map((er: EventRules) => createFieldArrayModel(er)),
           };
-          return formData;
         })
         .then((formData: MobileApplicationFormData) =>
           this.setState({
@@ -255,15 +254,10 @@ class EditMobileAppPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    const getVisitAnalyzerId = (visitAnalyzerFields: VisitAnalyzerFieldModel[]) => {
-      if (
-        visitAnalyzerFields.length &&
-        visitAnalyzerFields[0].model &&
-        visitAnalyzerFields[0].model.visit_analyzer_model_id
-      ) {
-        return visitAnalyzerFields[0].model.visit_analyzer_model_id;
-      }
-      return null;
+    const getVisitAnalyzerIds = (visitAnalyzerFields: VisitAnalyzerFieldModel[]) => {
+      return visitAnalyzerFields.map(
+        visitAnalyzerField => visitAnalyzerField.model.visit_analyzer_model_id,
+      );
     };
 
     const generateEventRulesTasks = (channel: ChannelResource): Array<Promise<any>> => {
@@ -372,42 +366,48 @@ class EditMobileAppPage extends React.Component<Props, State> {
     const generateVisitAnalyzerSelectionsTasks = (
       channel: ChannelResource,
     ): Array<Promise<any>> => {
-      const initialVisitAnalyzerModelId =
-        (mobileApplicationFormData.initialVisitAnalyzerSelections &&
-          mobileApplicationFormData.initialVisitAnalyzerSelections.length > 0 &&
-          mobileApplicationFormData.initialVisitAnalyzerSelections[0].visit_analyzer_model_id) ||
-        null;
-      const currentVisitAnalyzerModelId = getVisitAnalyzerId(
+      const initialVisitAnalyzerModelIds =
+        mobileApplicationFormData.initialVisitAnalyzerSelections.map(
+          channelVisitAnalyzerSelectionResource =>
+            channelVisitAnalyzerSelectionResource.visit_analyzer_model_id,
+        );
+      const initialSelectionsIds = mobileApplicationFormData.initialVisitAnalyzerSelections.map(
+        channelVisitAnalyzerSelectionResource => channelVisitAnalyzerSelectionResource.id,
+      );
+      const currentVisitAnalyzerModelIds = getVisitAnalyzerIds(
         mobileApplicationFormData.visitAnalyzerFields,
       );
+      const deleteAllVisitAnalysersPromise = (
+        selectionIds: string[],
+      ): Array<() => Promise<any>> => {
+        return selectionIds.map(
+          id => () => this._channelService.deleteVisitAnalyzerSelection(channel.id, id),
+        );
+      };
+      const createAllVisitAnalysersPromise = (
+        visitAnalyzerModelId: string[],
+      ): Array<() => Promise<any>> => {
+        return visitAnalyzerModelId.map(
+          id => () => this._channelService.createVisitAnalyzerSelection(channel.id, id),
+        );
+      };
 
-      if (currentVisitAnalyzerModelId && !initialVisitAnalyzerModelId) {
+      if (currentVisitAnalyzerModelIds && !initialVisitAnalyzerModelIds) {
         return [
-          this._channelService.createVisitAnalyzerSelection(
-            channel.id,
-            currentVisitAnalyzerModelId,
-          ),
+          executeTasksInSequence(createAllVisitAnalysersPromise(currentVisitAnalyzerModelIds)),
         ];
-      } else if (initialVisitAnalyzerModelId && !currentVisitAnalyzerModelId) {
-        return [
-          this._channelService.deleteVisitAnalyzerSelection(
-            channel.id,
-            mobileApplicationFormData.initialVisitAnalyzerSelections[0].id,
-          ),
-        ];
+      } else if (initialVisitAnalyzerModelIds && !currentVisitAnalyzerModelIds) {
+        return [executeTasksInSequence(deleteAllVisitAnalysersPromise(initialSelectionsIds))];
       } else if (
-        currentVisitAnalyzerModelId &&
-        initialVisitAnalyzerModelId &&
-        currentVisitAnalyzerModelId !== initialVisitAnalyzerModelId
+        currentVisitAnalyzerModelIds &&
+        initialVisitAnalyzerModelIds &&
+        currentVisitAnalyzerModelIds !== initialVisitAnalyzerModelIds
       ) {
         return [
-          this._channelService.deleteVisitAnalyzerSelection(
-            channel.id,
-            mobileApplicationFormData.initialVisitAnalyzerSelections[0].id,
-          ),
-          this._channelService.createVisitAnalyzerSelection(
-            channel.id,
-            currentVisitAnalyzerModelId,
+          executeTasksInSequence(
+            deleteAllVisitAnalysersPromise(initialSelectionsIds).concat(
+              createAllVisitAnalysersPromise(currentVisitAnalyzerModelIds),
+            ),
           ),
         ];
       } else {
@@ -428,9 +428,6 @@ class EditMobileAppPage extends React.Component<Props, State> {
         const type: 'MOBILE_APPLICATION' = 'MOBILE_APPLICATION';
         const mbApp = {
           ...mobileApplicationFormData.mobileapplication,
-          visit_analyzer_model_id: getVisitAnalyzerId(
-            mobileApplicationFormData.visitAnalyzerFields,
-          ),
           type: type,
         };
         // TODO: use ChannelService.updateChannel when available

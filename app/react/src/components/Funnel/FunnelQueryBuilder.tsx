@@ -33,7 +33,7 @@ import {
   extractFilters,
 } from './Utils';
 import _ from 'lodash';
-import TimelineStepBuilder, { Step } from './TimelineStepBuilder';
+import TimelineStepBuilder, { Step } from '../TimelineStepBuilder/TimelineStepBuilder';
 
 const Option = Select.Option;
 
@@ -650,14 +650,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     };
 
     return (
-      <span>
+      <div className={'mcs-funnelQueryBuilder'}>
         <TimelineStepBuilder
           steps={this.state.steps}
           rendering={rendering}
           stepManagement={stepManagement}
           maxSteps={4}
         />
-      </span>
+      </div>
     );
   }
 }
