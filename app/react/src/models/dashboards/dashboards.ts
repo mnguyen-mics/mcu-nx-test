@@ -68,6 +68,7 @@ export interface DashboardContentDataset {
 
 export interface DashboardsOptions {
   archived?: boolean;
+  isCommunity?: boolean;
 }
 
 export interface BaseComponent {

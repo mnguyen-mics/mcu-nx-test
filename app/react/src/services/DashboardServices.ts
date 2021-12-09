@@ -151,6 +151,8 @@ export class DashboardService implements IDashboardService {
     const params = {
       archived: options?.archived,
       searching_organisation_id: organisationId,
+      organisation_id: organisationId,
+      is_community: options?.isCommunity,
     };
     return ApiService.getRequest(endpoint, params).catch(err => {
       log.warn(`Cannot retrieve dashboards for the organisation ${organisationId}`, err);
