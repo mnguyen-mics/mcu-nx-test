@@ -54,7 +54,7 @@ const messages = defineMessages({
   sectionSubtitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.subtitle',
     defaultMessage:
-      'Add Visit Analyzers to your property. They are run in sequences. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your DMP.',
+      'Add Visit Analyzers to your property. They are run in sequences. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your datamart.',
   },
   sectionTitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.title',
