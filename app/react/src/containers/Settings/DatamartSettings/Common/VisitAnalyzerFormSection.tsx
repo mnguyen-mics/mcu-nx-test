@@ -47,6 +47,10 @@ const messages = defineMessages({
     id: 'settings.form.activityAnalyzer.addExisting',
     defaultMessage: 'Add Existing',
   },
+  addStepButton: {
+    id: 'settings.form.activityAnalyzer.addStep',
+    defaultMessage: 'Add a Visit Analyzer',
+  },
   sectionSubtitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.subtitle',
     defaultMessage:
@@ -280,6 +284,7 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
       renderStepBody: this.renderStepBody,
       renderStepHeader: this.renderStepHeader,
       shouldRenderDisabledArrow: true,
+      getAddStepText: () => messages.addStepButton,
     };
     const stepManagement = {
       computeStepName: (step: Step<VisitAnalyzerData>, index: number) =>

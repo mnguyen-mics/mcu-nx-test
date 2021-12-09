@@ -16,6 +16,7 @@ interface TimelineStepBuilderRendering<StepsProperties> {
   renderStepHeader?: (step: Step<StepsProperties>, index: number) => JSX.Element;
   renderStepBody: (step: Step<StepsProperties>, index: number) => JSX.Element;
   renderAfterBulletElement?: (step: Step<StepsProperties>, index: number) => JSX.Element;
+  getAddStepText?: () => { id: string; defaultMessage?: string };
   shouldRenderDisabledArrow?: boolean;
 }
 
@@ -161,7 +162,12 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
             </div>
             {steps.length < this.props.maxSteps && (
               <Button className={'mcs-timelineStepBuilder_addStepBtn'} onClick={this.addStep}>
-                <FormattedMessage id='timeline.stepBuilder.newStep' defaultMessage='Add a step' />
+                <FormattedMessage
+                  {...(this.props.rendering.getAddStepText?.() || {
+                    id: 'timeline.stepBuilder.newStep',
+                    defaultMessage: 'Add a step',
+                  })}
+                />
               </Button>
             )}
           </div>
