@@ -16,7 +16,7 @@ interface TimelineStepBuilderRendering<StepsProperties> {
   renderStepHeader?: (step: Step<StepsProperties>, index: number) => JSX.Element;
   renderStepBody: (step: Step<StepsProperties>, index: number) => JSX.Element;
   renderAfterBulletElement?: (step: Step<StepsProperties>, index: number) => JSX.Element;
-  renderDisabledArrow?: boolean;
+  shouldRenderDisabledArrow?: boolean;
 }
 
 interface StepManagement<StepsProperties> {
@@ -98,7 +98,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
                 <div className={'mcs-timelineStepBuilder_step_body'}>
                   {steps.length > 1 && (
                     <div className={'mcs-timelineStepBuilder_step_reorderBtn'}>
-                      {(this.props.rendering.renderDisabledArrow || index > 0) && (
+                      {(this.props.rendering.shouldRenderDisabledArrow || index > 0) && (
                         <ArrowUpOutlined
                           className={
                             'mcs-timelineStepBuilder_sortBtn mcs-timelineStepBuilder_sortBtn--up ' +
@@ -113,7 +113,8 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
                           }
                         />
                       )}
-                      {(this.props.rendering.renderDisabledArrow || index + 1 < steps.length) && (
+                      {(this.props.rendering.shouldRenderDisabledArrow ||
+                        index + 1 < steps.length) && (
                         <ArrowDownOutlined
                           className={
                             'mcs-timelineStepBuilder_sortBtn ' +

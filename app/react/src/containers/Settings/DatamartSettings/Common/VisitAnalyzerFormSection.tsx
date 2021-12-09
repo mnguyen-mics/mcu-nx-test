@@ -50,11 +50,11 @@ const messages = defineMessages({
   sectionSubtitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.subtitle',
     defaultMessage:
-      'Add a Visit Analyzer to your property. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your DMP.',
+      'Add Visit Analyzers to your property. They are run in sequences. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your DMP.',
   },
   sectionTitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.title',
-    defaultMessage: 'Visit Analyzer',
+    defaultMessage: 'Visit Analyzers',
   },
   sectionEmptyVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.empty',
@@ -279,7 +279,7 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
       renderFooterTimeline: this.renderFooterTimeline,
       renderStepBody: this.renderStepBody,
       renderStepHeader: this.renderStepHeader,
-      renderDisabledArrow: true,
+      shouldRenderDisabledArrow: true,
     };
     const stepManagement = {
       computeStepName: (step: Step<VisitAnalyzerData>, index: number) =>
