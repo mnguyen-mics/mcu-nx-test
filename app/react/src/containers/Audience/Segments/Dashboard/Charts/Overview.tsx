@@ -26,6 +26,7 @@ import {
   mcsDateRangePickerMessages,
 } from '../../../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import McsMoment from '../../../../../utils/McsMoment';
 
 interface OverviewProps {
   isFetching: boolean;
@@ -54,6 +55,14 @@ class Overview extends React.Component<Props> {
     };
 
     history.push(nextLocation);
+  }
+
+  componentDidMount() {
+    const initialMcsDateRangeValue = {
+      from: new McsMoment('now-30d'),
+      to: new McsMoment('now'),
+    };
+    this.updateLocationSearch(initialMcsDateRangeValue);
   }
 
   renderDatePicker() {
