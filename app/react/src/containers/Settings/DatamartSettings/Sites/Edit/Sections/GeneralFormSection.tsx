@@ -53,6 +53,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.contentSectionGeneralNamePlaceholder),
+            className: 'mcs-generalFormSection_site_name',
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentSectionGeneralNameTooltip),
@@ -69,6 +70,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.contentSectionGeneralTokenPlaceholder),
+            className: 'mcs-generalFormSection_site_token',
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentSectionGeneralTokenTooltip),
@@ -88,6 +90,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.contentSectionGeneralDomainPlaceholder),
+            className: 'mcs-generalFormSection_site_domain',
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentSectionGeneralDomainTooltip),

@@ -437,13 +437,15 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     const menu = (
       <Menu className='mcs-menu-antd-customized'>
-        <Menu.Item>{this.buildNewActionElement(organisationId, 'SITE')}</Menu.Item>
+        <Menu.Item className='mcs-channelsListPage_new_site_button'>
+          {this.buildNewActionElement(organisationId, 'SITE')}
+        </Menu.Item>
         <Menu.Item>{this.buildNewActionElement(organisationId, 'MOBILE_APPLICATION')}</Menu.Item>
       </Menu>
     );
 
     const dropdownButton = (
-      <Dropdown overlay={menu} trigger={['click']}>
+      <Dropdown overlay={menu} trigger={['click']} className='mcs-channelsListPage_new_button'>
         <Button type='primary'>
           <FormattedMessage {...messages.newChannel} />
           <DownOutlined />

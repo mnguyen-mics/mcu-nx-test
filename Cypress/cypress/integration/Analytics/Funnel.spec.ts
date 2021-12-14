@@ -171,15 +171,15 @@ describe('Should test the funnel', () => {
       cy.switchOrg(data.organisationName);
       cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
       cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
-      cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
-      cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
+      cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
+      cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').first().click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions--BRAND').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').first().should('contain', 'Brand');
-      cy.get('.mcs-funnelQueryBuilder_sortBtn').first().click();
-      cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(2).click();
-      cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(3).click();
-      cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(1).click();
+      cy.get('.mcs-timelineStepBuilder_sortBtn').first().click();
+      cy.get('.mcs-timelineStepBuilder_sortBtn').eq(2).click();
+      cy.get('.mcs-timelineStepBuilder_sortBtn').eq(3).click();
+      cy.get('.mcs-timelineStepBuilder_sortBtn').eq(1).click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').first().should('contain', 'Brand');
     });
   });
@@ -258,13 +258,13 @@ describe('Should test the funnel', () => {
   it('should test the steps, dimensions deletion', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
-      cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 1);
-      cy.get('.mcs-funnelQueryBuilder_removeStepBtn').click();
-      cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 0);
-      cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
-      cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 1);
-      cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
-      cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 2);
+      cy.get('.mcs-timelineStepBuilder_step').should('have.length', 1);
+      cy.get('.mcs-timelineStepBuilder_removeStepBtn').click();
+      cy.get('.mcs-timelineStepBuilder_step').should('have.length', 0);
+      cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
+      cy.get('.mcs-timelineStepBuilder_step').should('have.length', 1);
+      cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
+      cy.get('.mcs-timelineStepBuilder_step').should('have.length', 2);
       cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 2);
       cy.get('.mcs-funnelQueryBuilder_removeFilterBtn').first().click();
       cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 1);
@@ -450,7 +450,7 @@ describe('Should test the funnel', () => {
                   cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
                     'test_percentage' + '{enter}',
                   );
-                  cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
+                  cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
                   cy.get('.mcs-funnelQueryBuilder_select--dimensions').eq(1).click().type('brand');
                   cy.wait(1000);
                   cy.get('.mcs-funnelQueryBuilder_select--dimensions--BRAND').click({
@@ -512,10 +512,10 @@ describe('Should test the funnel', () => {
         });
       });
       cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '100');
-      cy.get('.mcs-funnelQueryBuilder_step_timelineStart').within(() => {
+      cy.get('.mcs-timelineStepBuilder_step_timelineStart').within(() => {
         cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(-7, 0, true));
       });
-      cy.get('.mcs-funnelQueryBuilder_step_timelineEnd').within(() => {
+      cy.get('.mcs-timelineStepBuilder_step_timelineEnd').within(() => {
         cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, 0, true));
       });
     });
@@ -544,10 +544,10 @@ describe('Should test the funnel', () => {
         });
       });
       cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '200');
-      cy.get('.mcs-funnelQueryBuilder_step_timelineStart').within(() => {
+      cy.get('.mcs-timelineStepBuilder_step_timelineStart').within(() => {
         cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, 0, true));
       });
-      cy.get('.mcs-funnelQueryBuilder_step_timelineEnd').within(() => {
+      cy.get('.mcs-timelineStepBuilder_step_timelineEnd').within(() => {
         cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, 0, true));
       });
     });
@@ -575,10 +575,10 @@ describe('Should test the funnel', () => {
         });
       });
       cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '300');
-      cy.get('.mcs-funnelQueryBuilder_step_timelineStart').within(() => {
+      cy.get('.mcs-timelineStepBuilder_step_timelineStart').within(() => {
         cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, -1, true));
       });
-      cy.get('.mcs-funnelQueryBuilder_step_timelineEnd').within(() => {
+      cy.get('.mcs-timelineStepBuilder_step_timelineEnd').within(() => {
         cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, 0, true));
       });
     });
@@ -588,8 +588,16 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.get('.mcs-dateRangePicker').click();
-      cy.get('.ant-picker-input').eq(0).find('input').clear({ force: true }).type(getDate(0, -3));
-      cy.get('.ant-picker-input').eq(1).find('input').clear({ force: true }).type(getDate(0, -2));
+      cy.get('.ant-picker-input')
+        .eq(0)
+        .find('input')
+        .clear({ force: true })
+        .type(getDate(0, -3), { force: true });
+      cy.get('.ant-picker-input')
+        .eq(1)
+        .find('input')
+        .clear({ force: true })
+        .type(`${getDate(0, -2)}{enter}`, { force: true });
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.reload();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
@@ -608,10 +616,10 @@ describe('Should test the funnel', () => {
         });
       });
       cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '400');
-      cy.get('.mcs-funnelQueryBuilder_step_timelineStart').within(() => {
+      cy.get('.mcs-timelineStepBuilder_step_timelineStart').within(() => {
         cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, -3, true));
       });
-      cy.get('.mcs-funnelQueryBuilder_step_timelineEnd').within(() => {
+      cy.get('.mcs-timelineStepBuilder_step_timelineEnd').within(() => {
         cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, -2, true));
       });
     });
@@ -621,8 +629,16 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.get('.mcs-dateRangePicker').click();
-      cy.get('.ant-picker-input').eq(0).find('input').clear({ force: true }).type(getDate(0, -3));
-      cy.get('.ant-picker-input').eq(1).find('input').clear({ force: true }).type(getDate(0, -2));
+      cy.get('.ant-picker-input')
+        .eq(0)
+        .find('input')
+        .clear({ force: true })
+        .type(getDate(0, -3), { force: true });
+      cy.get('.ant-picker-input')
+        .eq(1)
+        .find('input')
+        .clear({ force: true })
+        .type(`${getDate(0, -2)}{enter}`, { force: true });
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.reload();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
@@ -650,8 +666,16 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.get('.mcs-dateRangePicker').click();
-      cy.get('.ant-picker-input').eq(0).find('input').clear({ force: true }).type(getDate(0, -3));
-      cy.get('.ant-picker-input').eq(1).find('input').clear({ force: true }).type(getDate(0, -2));
+      cy.get('.ant-picker-input')
+        .eq(0)
+        .find('input')
+        .clear({ force: true })
+        .type(getDate(0, -3), { force: true });
+      cy.get('.ant-picker-input')
+        .eq(1)
+        .find('input')
+        .clear({ force: true })
+        .type(`${getDate(0, -2)}{enter}`, { force: true });
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.reload();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
@@ -836,7 +860,7 @@ describe('Should test the funnel', () => {
             cy.contains(`${complementaryChannel.body.data.id} - test_complementary`).click({
               force: true,
             });
-            cy.get('.mcs-funnelQueryBuilder_addStepBtn').click({ force: true });
+            cy.get('.mcs-timelineStepBuilder_addStepBtn').click({ force: true });
             cy.get('.mcs-funnelQueryBuilder_select--dimensions').eq(1).type('conversion');
             cy.get('.mcs-funnelQueryBuilder_select--dimensions--HAS_CONVERSION').click();
             cy.get('.mcs-funnelQueryBuilder_dimensionValue').eq(1).dblclick();

@@ -156,6 +156,7 @@ class ChannelsTable extends React.Component<Props> {
           currentPage: 1,
         }),
       defaultValue: filter.keywords,
+      className: 'mcs-channelsTable_search_bar',
     };
 
     const actionColumns: Array<ActionsColumnDefinition<ChannelResourceShape>> = [
