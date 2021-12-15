@@ -4,7 +4,9 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { TableSelector } from '@mediarithmics-private/mcs-components-library';
 import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { StringPropertyResource } from '../../../../models/plugin';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { VisitAnalyzer } from '../../../../models/Plugins';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -89,14 +91,16 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
     this.props.save(visitAnalyzers);
   };
 
-  fetchVisitAnalyzers = () => {
+  fetchVisitAnalyzers = (filter?: SearchFilter) => {
     const {
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    const options: any = {};
+    const options: any = {
+      ...getPaginatedApiParam(filter?.currentPage, filter?.pageSize),
+    };
 
     return this._visitAnalyzerService.getVisitAnalyzers(organisationId, options).then(res => {
       // fetch properties to update state
@@ -182,6 +186,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
     return (
       <VisitAnalyzerTableSelector
         actionBarTitle={formatMessage(messages.visitAnalyzerSelectorTitle)}
+        displayFiltering={false}
         selectedIds={selectedVisitAnalyzerIds}
         fetchDataList={this.fetchVisitAnalyzers}
         fetchData={fetchVisitAnalyzer}
