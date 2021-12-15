@@ -91,7 +91,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
     this.props.save(visitAnalyzers);
   };
 
-  fetchVisitAnalyzers = (filter: SearchFilter) => {
+  fetchVisitAnalyzers = (filter?: SearchFilter) => {
     const {
       match: {
         params: { organisationId },
@@ -99,12 +99,8 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
     } = this.props;
 
     const options: any = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      ...getPaginatedApiParam(filter?.currentPage, filter?.pageSize),
     };
-
-    if (filter.keywords) {
-      options.name = filter.keywords;
-    }
 
     return this._visitAnalyzerService.getVisitAnalyzers(organisationId, options).then(res => {
       // fetch properties to update state
@@ -190,7 +186,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
     return (
       <VisitAnalyzerTableSelector
         actionBarTitle={formatMessage(messages.visitAnalyzerSelectorTitle)}
-        displayFiltering={true}
+        displayFiltering={false}
         selectedIds={selectedVisitAnalyzerIds}
         fetchDataList={this.fetchVisitAnalyzers}
         fetchData={fetchVisitAnalyzer}
