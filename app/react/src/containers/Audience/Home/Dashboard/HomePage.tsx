@@ -13,7 +13,7 @@ import { IDashboardService } from '../../../../services/DashboardServices';
 import {
   withDatamartSelector,
   WithDatamartSelectorProps,
-} from '../../../Datamart/WithDatamartSelector';
+} from '@mediarithmics-private/advanced-components';
 import { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import {

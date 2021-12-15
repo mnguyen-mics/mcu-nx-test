@@ -21,7 +21,7 @@ import { IUserActivitiesFunnelService } from '../../../services/UserActivitiesFu
 import {
   withDatamartSelector,
   WithDatamartSelectorProps,
-} from '../../Datamart/WithDatamartSelector';
+} from '@mediarithmics-private/advanced-components';
 import ExportService from '../../../services/ExportService';
 import injectNotifications, {
   InjectedNotificationProps,

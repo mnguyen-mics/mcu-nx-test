@@ -11,7 +11,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import {
   withDatamartSelector,
   WithDatamartSelectorProps,
-} from '../../Datamart/WithDatamartSelector';
+} from '@mediarithmics-private/advanced-components';
 import { FormTitle } from '../../../components/Form';
 import { Actionbar, MenuList, Loading } from '@mediarithmics-private/mcs-components-library';
 import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar';
