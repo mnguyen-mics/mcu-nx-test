@@ -224,7 +224,11 @@ class MonitoringActionbar extends React.Component<Props, State> {
               )}
             </InputGroup>
           </Modal>
-          <Button className='mcs-primary' type='primary' onClick={onUserLookupClick}>
+          <Button
+            className='mcs-primary mcs-montioringActionBar_userLookupButton'
+            type='primary'
+            onClick={onUserLookupClick}
+          >
             <McsIcon type='refresh' /> <FormattedMessage {...messages.lookUpUser} />
           </Button>
         </Actionbar>

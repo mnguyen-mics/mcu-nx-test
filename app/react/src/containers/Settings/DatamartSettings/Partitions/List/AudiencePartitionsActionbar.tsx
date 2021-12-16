@@ -38,7 +38,10 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
     const datamartId = defaultDatamart(organisationId).id;
     const addMenu = (
       <Menu className='mcs-menu-antd-customized'>
-        <Menu.Item key='RANDOM_SPLIT'>
+        <Menu.Item
+          className='mcs-audiencePartitionsActionBar_newRandomSplitButton'
+          key='RANDOM_SPLIT'
+        >
           <Link
             to={`/v2/o/${organisationId}/settings/datamart/audience/partitions/create?datamarts=${datamartId}&type=RANDOM_SPLIT`}
           >
@@ -72,7 +75,10 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
-          <Button className='mcs-primary' type='primary'>
+          <Button
+            className='mcs-primary mcs-audiencePartitionsActionBar_newAudiencePartitionsButton'
+            type='primary'
+          >
             <McsIcon type='plus' />{' '}
             <FormattedMessage
               id='audience.partitions.list.actionbar.newPartition'

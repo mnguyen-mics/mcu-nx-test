@@ -29,7 +29,7 @@ class AutomationTemplateSelector extends React.Component<Props> {
     const onClicOnSegmentExit = () => onSelectTemplate('ON_SEGMENT_EXIT');
 
     return (
-      <Row className='mcs-selector_container'>
+      <Row className='mcs-selector_container mcs-automationTemplateSelector'>
         <Row className='menu'>
           <MenuList
             className='mcs-menu-list-reactToEvent'

@@ -707,7 +707,11 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     const breadcrumbPaths =
       cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
         ? [
-            <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/cleaning_rules`}>
+            <Link
+              className='mcs-cleaningRuleEditPage_breadcrumbLink'
+              key='1'
+              to={`/v2/o/${organisationId}/settings/datamart/cleaning_rules`}
+            >
               {formatMessage(messages.userEventBreadcrumbTitle)}
             </Link>,
           ]

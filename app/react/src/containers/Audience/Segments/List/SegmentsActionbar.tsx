@@ -207,7 +207,10 @@ class SegmentsActionbar extends React.Component<Props, State> {
             pathname: `/v2/o/${organisationId}/audience/segments/create`,
           }}
         >
-          <Button className='mcs-primary' type='primary'>
+          <Button
+            className='mcs-primary mcs-segmentsActionBar_createNewSemgmentButton'
+            type='primary'
+          >
             <McsIcon type='plus' /> <FormattedMessage {...messages.newSegment} />
           </Button>
         </Link>

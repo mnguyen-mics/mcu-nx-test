@@ -49,7 +49,7 @@ class SegmentTypeSelector extends React.Component<Props> {
           <Layout>
             <Content className='mcs-content-container mcs-form-container text-center'>
               <FormTitle title={messages.listTitle} subtitle={messages.listSubtitle} />
-              <Row className='mcs-selector_container'>
+              <Row className='mcs-selector_container mcs-segmentTypeSelector'>
                 <Row className='menu'>
                   <div className='presentation'>
                     <MenuPresentational

@@ -241,7 +241,12 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
       history.push(`/v2/o/${organisationId}/settings/datamart/ml_functions/create`);
 
     const buttons = [
-      <Button key='create' type='primary' onClick={onClick}>
+      <Button
+        key='create'
+        type='primary'
+        className='mcs-mlFunctionsContent_newMlFunctionsButton'
+        onClick={onClick}
+      >
         <FormattedMessage {...messages.newMlFunction} />
       </Button>,
     ];

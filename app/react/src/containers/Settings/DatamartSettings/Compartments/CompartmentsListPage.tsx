@@ -223,7 +223,12 @@ class CompartmentsListPage extends React.Component<Props, CompartmentsListPageSt
     }
 
     const button = (
-      <Button key={messages.newCompartment.id} type='primary' onClick={this.onClick}>
+      <Button
+        className='mcs-compartmentsListPage_newCompartmentButton'
+        key={messages.newCompartment.id}
+        type='primary'
+        onClick={this.onClick}
+      >
         <FormattedMessage {...messages.newCompartment} />
       </Button>
     );

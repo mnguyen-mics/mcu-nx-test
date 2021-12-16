@@ -694,6 +694,31 @@ Cypress.Commands.add(
   },
 );
 
+Cypress.Commands.add(
+  'createDatamart',
+  (accessToken: string, organisationId: string, datamartName: string) => {
+    if (Cypress.env('apiDomain') === 'https://api.mediarithmics.local') {
+      cy.exec(
+        `curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST ${Cypress.env(
+          'apiDomain',
+        )}:8493/v1/datamarts?organisation_id=${organisationId} -H "Host: admin-api.mediarithmics.local:8493" -d '{"name":"${datamartName}", "region": "EUROPE", "user_point_system_version":"v201901", "storage_model_version": "v201709", "type": "DATAMART", "datafarm": "DF_EU_DEV" }'`,
+      )
+        .its('stdout')
+        .should('contain', '"status":"ok"');
+    } else if (Cypress.env('userName') !== '') {
+      cy.exec(
+        `ssh -o StrictHostKeyChecking=no -l ${Cypress.env('userName')} ${Cypress.env(
+          'virtualPlatformName',
+        )}.mics-sandbox.com <<eof
+curl -k -H \'Authorization: ${accessToken}\' -H \'content-Type: application/json\' -H "Host: admin-api.mediarithmics.local:8493" "https://10.0.1.3:8493/v1/datamarts" -d \'{"name":"${datamartName}","region": "EUROPE","user_point_system_version": "v201901","organisation_id":"${organisationId}","type":"DATAMART","datafarm":"DF_EU_DEV"}\'
+eof`,
+      )
+        .its('stdout')
+        .should('contain', '"status":"ok"');
+    }
+  },
+);
+
 //
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })

@@ -310,7 +310,11 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     ) : (
       <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Layout className={'mcs-content-container ant-layout-content mcs-form-container'}>
+        <Layout
+          className={
+            'mcs-content-container ant-layout-content mcs-form-container mcs-datamartReplicationEditForm_formContainer'
+          }
+        >
           <FormTitle
             title={messages.datamartReplicationTypeSelectionTitle}
             subtitle={messages.datamartReplicationTypeSelectionSubtitle}
