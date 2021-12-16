@@ -26,10 +26,6 @@ const audienceMenuDefinition: NavigatorMenuDefinition = {
       translation: messages.audienceFeeds,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(audienceDefinition.segmentBuilder),
-      translation: messages.segmentBuilder,
-    },
-    {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.segmentBuilderSelector),
       translation: messages.builders,
       mention: 'BETA',

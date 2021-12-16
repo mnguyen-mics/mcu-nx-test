@@ -25,7 +25,6 @@ import { ITagService, MicsReduxState } from '@mediarithmics-private/advanced-com
 import { Alert } from 'antd';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
-import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { ProcessingSelectionResource } from '../../../models/processing';
 
 export interface QueryBuilderPageRouteParams {
@@ -38,15 +37,10 @@ interface MapStateToProps {
 
 type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
   MapStateToProps &
-  InjectedFeaturesProps &
   InjectedNotificationProps &
   InjectedIntlProps;
 
 const messages = defineMessages({
-  segmentBuilder: {
-    id: 'audience.segmentBuilder.actionbar.title',
-    defaultMessage: 'Segment Builder',
-  },
   advancedSegmentBuilder: {
     id: 'audience.segmentBuilder.actionbar.title.advancedBuilder',
     defaultMessage: 'Advanced Segment Builder',
@@ -69,7 +63,7 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
   private _tagService: ITagService;
 
   render() {
-    const { intl, connectedUser, location, history, match, hasFeature } = this.props;
+    const { intl, connectedUser, location, history, match } = this.props;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       // this.setState({ datamart: selection });
@@ -164,11 +158,7 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
         <SaveQueryAsActionBar
           saveAsUserQuery={saveAsUserQuery}
           convertToOtql={convert2Otql}
-          breadcrumb={[
-            hasFeature('audience-segment_builder_v2')
-              ? intl.formatMessage(messages.advancedSegmentBuilder)
-              : intl.formatMessage(messages.segmentBuilder),
-          ]}
+          breadcrumb={[intl.formatMessage(messages.advancedSegmentBuilder)]}
         />
       );
     };
@@ -181,11 +171,7 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
           <DatamartSelector
             onSelect={handleOnSelectDatamart}
             actionbarProps={{
-              pathItems: [
-                hasFeature('audience-segment_builder_v2')
-                  ? intl.formatMessage(messages.advancedSegmentBuilder)
-                  : intl.formatMessage(messages.segmentBuilder),
-              ],
+              pathItems: [intl.formatMessage(messages.advancedSegmentBuilder)],
             }}
             isMainlayout={true}
           />
@@ -207,7 +193,6 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
 export default compose(
   injectIntl,
   withRouter,
-  injectFeatures,
   injectNotifications,
   connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,

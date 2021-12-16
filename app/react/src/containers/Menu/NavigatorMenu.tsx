@@ -136,8 +136,8 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
             subMenuItem =>
               hasFeature(subMenuItem.requiredFeature, subMenuItem.requireDatamart) &&
               ((subMenuItem.path !== '/audience/segment-builder' &&
-                hasFeature('audience-segment_builder_v2')) ||
-                !hasFeature('audience-segment_builder_v2')),
+                hasFeature('audience-builders')) ||
+                !hasFeature('audience-builders')),
           );
           return [...acc, { ...item, subMenuItems }];
         }

@@ -207,14 +207,14 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/datamart/:datamartId/audience_feature/:audienceFeatureId/edit',
     layout: 'edit',
     editComponent: AudienceFeatureEditPage,
-    requiredFeature: 'audience-segment_builder_v2',
+    requiredFeature: 'audience-builders',
     requireDatamart: true,
   },
   settingsDatamartAudienceFeatureCreation: {
     path: '/settings/datamart/:datamartId/audience_feature/create',
     layout: 'edit',
     editComponent: AudienceFeatureEditPage,
-    requiredFeature: 'audience-segment_builder_v2',
+    requiredFeature: 'audience-builders',
     requireDatamart: true,
   },
 
@@ -222,14 +222,14 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/datamart/:datamartId/standard_segment_builder/:standardSegmentBuilderId/edit',
     layout: 'edit',
     editComponent: StandardSegmentBuilderEditPage,
-    requiredFeature: 'audience-segment_builder_v2',
+    requiredFeature: 'audience-builders',
     requireDatamart: true,
   },
   settingsDatamartStandardSegmentBuilderCreation: {
     path: '/settings/datamart/:datamartId/standard_segment_builder/create',
     layout: 'edit',
     editComponent: StandardSegmentBuilderEditPage,
-    requiredFeature: 'audience-segment_builder_v2',
+    requiredFeature: 'audience-builders',
     requireDatamart: true,
   },
 

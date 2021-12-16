@@ -204,7 +204,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       });
     }
 
-    if (hasFeature('audience-segment_builder_v2')) {
+    if (hasFeature('audience-builders')) {
       items.push({
         className: 'mcs-tabs_tab--audienceFeatures',
         title: intl.formatMessage(messages.audienceFeatures),

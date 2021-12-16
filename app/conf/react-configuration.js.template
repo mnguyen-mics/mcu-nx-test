@@ -3,8 +3,8 @@
 
  const defaultFeatures = [
     'audience-segments',
+    'audience-builders',
     'audience-feeds',
-    'audience-segment_builder',
     'audience-monitoring',
     'audience-segment_uplift',
     'campaigns-display',
@@ -46,12 +46,12 @@
     'datamartSettings-compartments',
     'datamartSettings-datamart_replication',
     'datamartSettings-event_hubs_replication',
-    'audience-segment_builder_v2',
     'audience-feature-search'
   ];
 
  const gravityFeatures = [
     'audience-segments',
+    'audience-builders',
     'campaigns-display',
     'campaigns-display-edition-audience_catalog',
     'creatives-display',
