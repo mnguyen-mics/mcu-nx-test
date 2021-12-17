@@ -125,7 +125,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
             />
           </Menu.Item>
         )}
-        <Menu.Item className='mcs-saveQueryAsActionBar_menu_userQuery' key='TECHNICAL_QUERY'>
+        <Menu.Item className='mcs-saveQueryAsActionBar_menu_technicalQuery' key='TECHNICAL_QUERY'>
           <FormattedMessage
             id='queryTool.query-builder-page-actionbar-saveas-techbical-query'
             defaultMessage='Technical query'
