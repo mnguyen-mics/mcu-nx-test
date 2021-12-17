@@ -103,5 +103,19 @@ declare namespace Cypress {
      * @param objectBody
      */
     createActivity(accessToken: string, datamartId: string, objectBody: object): Chainable<any>;
+
+    /**
+     * Create a new datamart for an organisation
+     * @param accessToken
+     * @param organisationId
+     * @param datamartName
+     * @example
+     * cy.createDatamart('accessToken','1234','datamartName')
+     */
+    createDatamart(
+      accessToken: string,
+      organisationId: string,
+      datamartName: string,
+    ): Chainable<any>;
   }
 }

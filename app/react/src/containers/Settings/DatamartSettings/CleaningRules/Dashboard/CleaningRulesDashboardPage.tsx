@@ -33,6 +33,7 @@ import { getWorkspace } from '../../../../../redux/Session/selectors';
 interface CleaningRuleTypeItem {
   title: string;
   cleaningRuleType: CleaningRuleType;
+  className?: string;
 }
 
 interface MapStateToProps {
@@ -161,10 +162,12 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
       {
         title: intl.formatMessage(messages.EventBasedCleaningRulesTabTitle),
         cleaningRuleType: 'USER_EVENT_CLEANING_RULE',
+        className: 'mcs-cleaningRulesDashboardPage_userEventCleaningRuleTab',
       },
       {
         title: intl.formatMessage(messages.ProfileBasedCleaningRulesTabTitle),
         cleaningRuleType: 'USER_PROFILE_CLEANING_RULE',
+        className: 'mcs-cleaningRulesDashboardPage_userProfileCleaningRuleTab',
       },
     ];
 
@@ -228,6 +231,7 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
     const items = this.getCleaningRuleTypeItems().map((typeItem: CleaningRuleTypeItem) => {
       return {
         title: typeItem.title,
+        className: typeItem.className,
         display: (
           <CleaningRulesContainer
             filter={filter}

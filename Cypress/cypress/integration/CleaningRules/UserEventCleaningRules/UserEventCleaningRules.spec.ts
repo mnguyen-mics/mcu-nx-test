@@ -3,6 +3,10 @@ describe('User Event Cleaning Rules Test', () => {
     cy.login();
   });
 
+  afterEach(() => {
+    cy.clearLocalStorage();
+  });
+
   it('should test the cleaning rules update form', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);

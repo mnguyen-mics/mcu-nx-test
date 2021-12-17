@@ -385,7 +385,11 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     const message = channelType === 'SITE' ? messages.newSite : messages.newMobileApplication;
 
     return (
-      <Link key={message.id} to={url}>
+      <Link
+        key={message.id}
+        to={url}
+        className={`mcs-channelsListPage_${message.defaultMessage?.replace(/\s/g, '')}Button`}
+      >
         <FormattedMessage {...message} />
       </Link>
     );
@@ -497,7 +501,9 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                 <span className='mcs-card-title'>
                   <FormattedMessage {...messages.channels} />
                 </span>
-                <span className='mcs-card-button'>{newButtonsList}</span>
+                <span className='mcs-card-button mcs-channelListPage_newChannelButton'>
+                  {newButtonsList}
+                </span>
               </div>
               <hr className='mcs-separator' />
               <ChannelsTable

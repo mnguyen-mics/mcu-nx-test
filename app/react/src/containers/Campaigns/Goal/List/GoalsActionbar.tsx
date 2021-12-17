@@ -138,7 +138,7 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/goals/create`}>
-          <Button className='mcs-primary' type='primary'>
+          <Button className='mcs-primary mcs-goalsActionBar_newGoalsButton' type='primary'>
             <McsIcon type='plus' />
             <FormattedMessage id='goals.list.actionbar.newGoal' defaultMessage='New Goal' />
           </Button>
