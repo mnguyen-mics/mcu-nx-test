@@ -34,6 +34,7 @@ interface MapStateToProps {
 
 interface QueryToolPageState {
   createdQueryId?: string;
+  selectedDatamart?: DatamartResource;
 }
 
 type Props = RouteComponentProps<QueryToolPageRouteParams> &
@@ -70,29 +71,18 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
     super(props);
     this.state = {
       createdQueryId: undefined,
+      selectedDatamart: undefined,
     };
   }
 
-  getSelectedDatamart = () => {
-    const { connectedUser, location } = this.props;
-    let selectedDatamart: DatamartResource | undefined;
+  getSelectedDatamart = (datamartId: string) => {
+    const { connectedUser } = this.props;
 
     const orgWp = connectedUser.workspaces.find(
       (w: any) => w.organisation_id === this.props.match.params.organisationId,
     );
 
-    const datamartIdQueryString = queryString.parse(location.search).datamartId;
-
-    if (orgWp.datamarts && orgWp.datamarts.length === 1) {
-      selectedDatamart = orgWp.datamarts[0];
-    }
-
-    if (datamartIdQueryString) {
-      selectedDatamart = orgWp.datamarts.find(
-        (d: DatamartResource) => d.id === datamartIdQueryString,
-      );
-    }
-    return selectedDatamart;
+    return orgWp.datamarts.find((d: DatamartResource) => d.id === datamartId);
   };
 
   render() {
@@ -103,9 +93,11 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
         pathname: location.pathname,
         search: queryString.stringify({ datamartId: selection.id }),
       });
+
+      this.setState({ selectedDatamart: this.getSelectedDatamart(selection.id) });
     };
 
-    const selectedDatamart = this.getSelectedDatamart();
+    const selectedDatamart = this.state.selectedDatamart;
 
     const OTQLActionbar = (query: string, datamartId: string) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
