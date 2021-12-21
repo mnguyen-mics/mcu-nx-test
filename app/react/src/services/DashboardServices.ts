@@ -218,7 +218,7 @@ export class DashboardService implements IDashboardService {
               if (!!content) {
                 return {
                   title: apiDashboards[i].title,
-                  dashboardContent: JSON.parse(content.data.content),
+                  dashboardContent: content.data.content,
                 };
               } else {
                 const undefinedContent: DashboardPageContent = {
