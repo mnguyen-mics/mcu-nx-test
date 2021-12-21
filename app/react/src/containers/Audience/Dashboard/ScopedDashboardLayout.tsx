@@ -2,7 +2,6 @@ import * as React from 'react';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { DashboardLayout } from '@mediarithmics-private/advanced-components';
-import { DashboardContentSchema } from '@mediarithmics-private/advanced-components/lib/components/dashboard-layout/DashboardLayout';
 import { isAudienceSegmentShape, isUserQuerySegment } from '../Segments/Edit/domain';
 import { isStandardSegmentBuilderQueryDocument } from '../StandardSegmentBuilder/domain';
 import {
@@ -21,6 +20,7 @@ import { compose } from 'recompose';
 import messages from './messages';
 import { lazyInject } from '../../../config/inversify.config';
 import { QueryResource } from '@mediarithmics-private/advanced-components/lib/models/datamart/DatamartResource';
+import { DashboardContentSchema } from '@mediarithmics-private/advanced-components/lib/models/customDashboards/customDashboards';
 
 interface ScopedDashboardLayoutProps {
   datamartId: string;
