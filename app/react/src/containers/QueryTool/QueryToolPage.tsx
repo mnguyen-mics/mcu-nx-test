@@ -71,16 +71,30 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
     super(props);
     this.state = {
       createdQueryId: undefined,
-      selectedDatamart: undefined,
+      selectedDatamart: this.getDefaultDatamart(),
     };
   }
 
-  getSelectedDatamart = (datamartId: string) => {
+  getWorkspace() {
     const { connectedUser } = this.props;
 
-    const orgWp = connectedUser.workspaces.find(
+    return connectedUser.workspaces.find(
       (w: any) => w.organisation_id === this.props.match.params.organisationId,
     );
+  }
+
+  getDefaultDatamart() {
+    const orgWp = this.getWorkspace();
+
+    if (orgWp.datamarts && orgWp.datamarts.length === 1) {
+      return orgWp.datamarts[0];
+    } else {
+      return undefined;
+    }
+  }
+
+  getSelectedDatamart = (datamartId: string) => {
+    const orgWp = this.getWorkspace();
 
     return orgWp.datamarts.find((d: DatamartResource) => d.id === datamartId);
   };
