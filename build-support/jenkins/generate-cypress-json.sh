@@ -23,6 +23,7 @@ elif [ "$#" -eq 2 ]; then
   VIRTUAL_PLATFORM_NAME="$1"
   USER_NAME="$2"
   RECORD_VIDEO=false
+  ROOT="https://auth."$1".mics-sandbox.com"
 elif [ "$#" -eq 1 ]; then
 # used for CI pipeline -> we don't record videos, and execute the tests against a sandbox.
   NAVIGATOR_URL="https://navigator."$1".mics-sandbox.com"
@@ -30,6 +31,7 @@ elif [ "$#" -eq 1 ]; then
   VIRTUAL_PLATFORM_NAME="$1"
   USER_NAME=""
   RECORD_VIDEO=false
+  ROOT="https://auth."$1".mics-sandbox.com"
 else
 # dev mode, we record videos and use localhost:9000 as base url
   NAVIGATOR_URL="http://localhost:9000"
@@ -37,6 +39,7 @@ else
   VIRTUAL_PLATFORM_NAME=""
   USER_NAME=""
   RECORD_VIDEO=true
+  ROOT="https://auth.mediarithmics.local"
 fi
 
 DEV_MAIL="dev@mediarithmics.com"
@@ -46,9 +49,10 @@ set -u
 cat << EOF
 {
   "baseUrl": "${NAVIGATOR_URL}",
+  "chromeWebSecurity": false,
   
   "testFiles": ["**/*.spec.js", "**/*.spec.ts"],
-  "ignoreTestFiles": ["CreateJobExecution.spec.js", "EditAllReplicationFields.spec.js","Sites.spec.ts","DisplayLiveEventWithoutUserPoint.spec.ts","OnSegmentExit.spec.ts","DisplayCampaignResourceHistory.spec.ts","MobileApplication.spec.ts", "StandardSegmentBuilderLimits.spec.ts"],
+  "ignoreTestFiles": ["CreateJobExecution.spec.js", "EditAllReplicationFields.spec.js","Sites.spec.ts","DisplayLiveEventWithoutUserPoint.spec.ts","OnSegmentExit.spec.ts","DisplayCampaignResourceHistory.spec.ts","MobileApplication.spec.ts", "StandardSegmentBuilderLimits.spec.ts", "Keycloak_errors.spec.ts", "Keycloak_login.spec.ts"],
 
 
   "env": {
@@ -56,7 +60,10 @@ cat << EOF
     "devMail": "${DEV_MAIL}",
     "devPwd": "${DEV_PWD}",
     "virtualPlatformName":"${VIRTUAL_PLATFORM_NAME}",
-    "userName":"${USER_NAME}"
+    "userName":"${USER_NAME}",
+    "root": "${ROOT}",
+    "realm": "mediarithmics",
+    "client_id":"mediarithmics-computing-console"
   },
   "retries": {
     "runMode": 4,

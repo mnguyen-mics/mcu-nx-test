@@ -42,6 +42,34 @@ Cypress.Commands.add(
   },
 );
 
+// Login with keycloak without external identity provider
+// This function will replace the login function when keycloak will be deployed in production
+Cypress.Commands.add(
+  'kcLogin',
+  (email = `${Cypress.env('devMail')}`, password = `${Cypress.env('devPwd')}`) => {
+    cy.visit('/');
+    cy.get('#username').type(email);
+    cy.get('#password').type(password);
+    cy.get('#kc-login').click();
+  },
+);
+
+Cypress.Commands.add(
+  'logout',
+  (
+    root = `${Cypress.env('root')}`,
+    realm = `${Cypress.env('realm')}`,
+    redirect_uri = `${Cypress.config().baseUrl}`,
+    path_prefix = 'auth',
+  ) =>
+    cy.request({
+      qs: { redirect_uri },
+      url: `${root}${
+        path_prefix ? `/${path_prefix}` : ''
+      }/realms/${realm}/protocol/openid-connect/logout`,
+    }),
+);
+
 Cypress.Commands.add('switchOrg', organisationName => {
   cy.get('.mcs-button').first().trigger('mouseover');
   cy.get('.mcs-button').contains('Switch Org.').click();
