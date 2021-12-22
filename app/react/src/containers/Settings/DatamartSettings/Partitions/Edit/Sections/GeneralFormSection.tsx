@@ -81,6 +81,7 @@ class GeneralFormSection extends React.Component<Props, State> {
       fieldValidators: { isRequired, isValidInteger },
       intl: { formatMessage },
       location: { search },
+      initialValues,
     } = this.props;
 
     const query = queryString.parse(search);
@@ -123,8 +124,12 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           options={[
             {
-              title: query.type as string,
-              value: query.type as string,
+              title: initialValues.audience_partition_type
+                ? initialValues.audience_partition_type
+                : (query.type as string),
+              value: initialValues.audience_partition_type
+                ? initialValues.audience_partition_type
+                : (query.type as string),
             },
           ]}
           disabled={true}
