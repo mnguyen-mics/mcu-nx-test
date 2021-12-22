@@ -51,6 +51,10 @@ class PartitionActionBar extends React.Component<JoinedProps, PartitionActionBar
     const partitionName =
       partition && partition.name ? partition.name : intl.formatMessage(messages.partitionOverview);
 
+    const partitionEditUrl = partition
+      ? `/v2/o/${organisationId}/settings/datamart/audience/partitions/${partition.id}/edit`
+      : '';
+
     const breadcrumbPaths = [
       <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/audience/partitions`}>
         {intl.formatMessage(messages.partitions)}
@@ -64,14 +68,8 @@ class PartitionActionBar extends React.Component<JoinedProps, PartitionActionBar
             <McsIcon type='bolt' /> <FormattedMessage {...messages.publish} />
           </Button>
         )}
-        <Link
-          to={
-            partition
-              ? `/v2/o/${organisationId}/settings/datamart/audience/partitions/${partition.id}/edit`
-              : ''
-          }
-        >
-          <Button className='mcs-primary'>
+        <Link to={partitionEditUrl}>
+          <Button className='mcs-primary' disabled={!partition}>
             <McsIcon type='pen' /> <FormattedMessage {...messages.edit} />
           </Button>
         </Link>
