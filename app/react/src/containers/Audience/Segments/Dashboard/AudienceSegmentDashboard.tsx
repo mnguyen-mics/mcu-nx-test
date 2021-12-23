@@ -33,14 +33,17 @@ import {
   DataFileDashboardResource,
 } from '../../../../models/dashboards/dashboards';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
-import { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper, {
+  DatamartUsersAnalyticsWrapperProps,
+} from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import {
   ecommerceEngagementConfig,
   averageSessionDurationConfig,
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { Alert } from 'antd';
-import DashboardPageWrapper from '../../Dashboard/DashboardPageWrapper';
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
+import { DashboardPageWrapper } from '@mediarithmics-private/advanced-components';
+import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 
 interface State {
   loading: boolean;
@@ -389,6 +392,8 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
                 <FeedCardList />
               </div>
             }
+            DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
+            DashboardWrapper={DashboardWrapper}
           />
         )}
       </div>

@@ -11,10 +11,13 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IDashboardService } from '../../../../services/DashboardServices';
 import {
+  DashboardPageWrapper,
   withDatamartSelector,
   WithDatamartSelectorProps,
 } from '@mediarithmics-private/advanced-components';
-import { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper, {
+  DatamartUsersAnalyticsWrapperProps,
+} from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import {
   averageSessionDurationConfig,
@@ -23,7 +26,7 @@ import {
   ecommerceEngagementConfig,
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { MentionTag } from '@mediarithmics-private/mcs-components-library';
-import DashboardPageWrapper from '../../Dashboard/DashboardPageWrapper';
+import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 
 const { Content } = Layout;
 
@@ -210,6 +213,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
               fetchApiDashboards={this.fetchApiDashboards}
               fetchDataFileDashboards={this.fetchDataFileDashboards}
               isFullScreenLoading={false}
+              DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
+              DashboardWrapper={DashboardWrapper}
             />
           </Content>
         </div>

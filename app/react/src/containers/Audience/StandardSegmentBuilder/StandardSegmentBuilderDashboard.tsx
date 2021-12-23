@@ -15,8 +15,10 @@ import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSeg
 import TimelineSelector from '../AdvancedSegmentBuilder/TimelineSelector';
 import { formatMetric } from '../../../utils/MetricHelper';
 import { QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
-import DashboardPageWrapper from '../Dashboard/DashboardPageWrapper';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
+import DatamartUsersAnalyticsWrapper from '../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DashboardWrapper from '../Dashboard/DashboardWrapper';
+import { DashboardPageWrapper } from '@mediarithmics-private/advanced-components';
 
 interface StandardSegmentBuilderDashboardProps {
   organisationId: string;
@@ -116,6 +118,8 @@ class StandardSegmentBuilderDashboard extends React.Component<Props> {
             fetchApiDashboards={fetchApiDashboards}
             fetchDataFileDashboards={fetchDataFileDashboards}
             isFullScreenLoading={true}
+            DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
+            DashboardWrapper={DashboardWrapper}
           />
           <div className='mcs-standardSegmentBuilder_timelineSelector'>
             <TimelineSelector
