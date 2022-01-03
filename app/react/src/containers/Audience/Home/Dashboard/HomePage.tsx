@@ -215,6 +215,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
               isFullScreenLoading={false}
               DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
               DashboardWrapper={DashboardWrapper}
+              className='mcs-homePage_dashboard_page_wrapper'
             />
           </Content>
         </div>
