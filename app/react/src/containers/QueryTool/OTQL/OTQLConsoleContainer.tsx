@@ -303,7 +303,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
     if (rawSchema) {
       const foundType = rawSchema.find(ot => {
-        return !!queryToUse.includes(ot.name);
+        const matchResult = queryToUse.match(/FROM(?:\W*)(\w+)/i);
+        if (!matchResult || matchResult.length === 0) return false;
+        return !!matchResult[1].includes(ot.name);
       });
       if (foundType) {
         startType = foundType.name;
