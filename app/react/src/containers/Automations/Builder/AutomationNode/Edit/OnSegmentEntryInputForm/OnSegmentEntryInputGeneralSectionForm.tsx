@@ -85,7 +85,11 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<Props, State
       }))
       .catch(error => {
         this.props.notifyError(error);
-        throw error;
+        return {
+          key: id,
+          label: <SegmentNameDisplay audienceSegmentId={id} />,
+          value: id,
+        };
       });
   };
 

@@ -7,7 +7,11 @@ import {
   IAudienceSegmentFeedService,
   AudienceFeedType,
 } from './../../../services/AudienceSegmentFeedService';
-import { FeedNodeFormData } from './../Builder/AutomationNode/Edit/domain';
+import {
+  FeedNodeFormData,
+  INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
+  INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA,
+} from './../Builder/AutomationNode/Edit/domain';
 import { IPluginService } from './../../../services/PluginService';
 import {
   AudienceFeed,
@@ -249,7 +253,7 @@ export class AutomationFormService implements IAutomationFormService {
               case 'ADD_TO_SEGMENT_NODE':
                 getPromise = this._audienceSegmentFormService
                   .loadSegmentInitialValue(n.user_list_segment_id)
-                  .then((result: AudienceSegmentFormData) => {
+                  .then((result: AudienceSegmentFormData): AddToSegmentAutomationFormData => {
                     const segment = result.audienceSegment;
 
                     const getTtl = (
@@ -277,11 +281,20 @@ export class AutomationFormService implements IAutomationFormService {
                       };
                     };
 
-                    const initialValues: AddToSegmentAutomationFormData = {
+                    return {
                       audienceSegmentName: segment.name,
                       processingActivities: result.processingActivities,
                       ttl: getTtl(segment.default_ttl),
                     };
+                  })
+                  .catch((err): AddToSegmentAutomationFormData => {
+                    // If the segment has been deleted but not the node, which shouldn't be done
+                    return {
+                      ...INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
+                      audienceSegmentId: n.user_list_segment_id,
+                    };
+                  })
+                  .then((initialValues: AddToSegmentAutomationFormData) => {
                     return {
                       ...n,
                       formData: initialValues,
@@ -292,17 +305,27 @@ export class AutomationFormService implements IAutomationFormService {
               case 'DELETE_FROM_SEGMENT_NODE':
                 getPromise = this._audienceSegmentService
                   .getSegment(n.user_list_segment_id)
-                  .then(({ data: segment }) => {
-                    const initialValues: DeleteFromSegmentAutomationFormData = {
+                  .then(({ data: segment }): DeleteFromSegmentAutomationFormData => {
+                    return {
                       audienceSegmentName: segment.name,
                       segmentId: n.user_list_segment_id,
                     };
+                  })
+                  .catch((err): DeleteFromSegmentAutomationFormData => {
+                    // If the segment has been deleted but not the node, which shouldn't be done
+                    return {
+                      ...INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA,
+                      segmentId: n.user_list_segment_id,
+                    };
+                  })
+                  .then((initialValues: DeleteFromSegmentAutomationFormData) => {
                     return {
                       ...n,
                       formData: initialValues,
                       initialValuesForm: initialValues,
                     };
                   });
+
                 break;
               case 'ABN_NODE':
                 const abnFormData: ABNFormData = {

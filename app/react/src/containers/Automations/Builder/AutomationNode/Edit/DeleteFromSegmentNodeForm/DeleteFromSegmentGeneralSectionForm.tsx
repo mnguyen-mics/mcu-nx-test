@@ -118,11 +118,20 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<Props, State> 
         });
       });
     } else {
-      return this._audienceSegmentService.getSegment(id).then(({ data: segment }) => ({
-        key: segment.id,
-        label: <SegmentNameDisplay audienceSegmentResource={segment} />,
-        value: segment.id,
-      }));
+      return this._audienceSegmentService
+        .getSegment(id)
+        .then(({ data: segment }) => ({
+          key: segment.id,
+          label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+          value: segment.id,
+        }))
+        .catch(err => {
+          return {
+            key: id,
+            label: <SegmentNameDisplay audienceSegmentId={id} />,
+            value: id,
+          };
+        });
     }
   };
 
