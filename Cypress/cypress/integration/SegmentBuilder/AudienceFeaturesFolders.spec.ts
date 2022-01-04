@@ -154,9 +154,18 @@ describe('This test should check that the audience feature folders work properly
         cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
         cy.wait(3000);
         cy.url().then(url => {
-          if (url.match(/.*segment-builder-selector$/g))
+          if (url.match(/.*segment-builder-selector$/g)) {
             cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-          cy.contains(standardSegmentBuilderName).click();
+            // Wait for the dropdown to appear
+            cy.wait(3000);
+            cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+              if ($element.find('.mcs-menu-list').length > 0) {
+                cy.contains(standardSegmentBuilderName).click();
+              } else {
+                cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+              }
+            });
+          }
         });
         cy.get('.mcs-timelineButton_left').click();
         cy.contains(audienceFeaturesFolderName).click();
