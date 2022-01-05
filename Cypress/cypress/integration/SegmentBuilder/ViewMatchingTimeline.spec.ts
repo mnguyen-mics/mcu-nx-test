@@ -74,8 +74,18 @@ describe('This test should check the view matching timeline button', () => {
             cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
             cy.wait(3000);
             cy.url().then(url => {
-              if (url.match(/.*segment-builder-selector$/g))
-                cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+              if (url.match(/.*segment-builder-selector$/g)) {
+                cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+                // Wait for the dropdown to appear
+                cy.wait(3000);
+                cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+                  if ($element.find('.mcs-menu-list').length > 0) {
+                    cy.contains(standardSegmentBuilderName).click();
+                  } else {
+                    cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+                  }
+                });
+              }
             });
             cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.window().then(win => {

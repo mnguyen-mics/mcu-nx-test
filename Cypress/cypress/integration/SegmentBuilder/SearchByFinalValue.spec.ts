@@ -173,8 +173,18 @@ describe('This test should check that the search by final value feature is worki
       cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
       cy.wait(3000);
       cy.url().then(url => {
-        if (url.match(/.*segment-builder-selector$/g))
-          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').should('be.visible').click();
+        if (url.match(/.*segment-builder-selector$/g)) {
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+          // Wait for the dropdown to appear
+          cy.wait(3000);
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+            if ($element.find('.mcs-menu-list').length > 0) {
+              cy.contains(standardSegmentBuilderName).click();
+            } else {
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            }
+          });
+        }
       });
       cy.get('.mcs-timelineButton_left').click();
       cy.get('.mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature').type('fr');
@@ -235,8 +245,18 @@ describe('This test should check that the search by final value feature is worki
       cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
       cy.wait(3000);
       cy.url().then(url => {
-        if (url.match(/.*segment-builder-selector$/g))
-          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').should('be.visible').click();
+        if (url.match(/.*segment-builder-selector$/g)) {
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+          // Wait for the dropdown to appear
+          cy.wait(3000);
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+            if ($element.find('.mcs-menu-list').length > 0) {
+              cy.contains(standardSegmentBuilderName).click();
+            } else {
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            }
+          });
+        }
       });
       //Include audience feature
       cy.get('.mcs-timelineButton_left').click();
@@ -374,8 +394,18 @@ describe('This test should check that the search by final value feature is worki
       cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
       cy.wait(3000);
       cy.url().then(url => {
-        if (url.match(/.*segment-builder-selector$/g))
-          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').should('be.visible').click();
+        if (url.match(/.*segment-builder-selector$/g)) {
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+          // Wait for the dropdown to appear
+          cy.wait(3000);
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+            if ($element.find('.mcs-menu-list').length > 0) {
+              cy.contains(standardSegmentBuilderName).click();
+            } else {
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            }
+          });
+        }
       });
       cy.get('.mcs-timelineButton_left').click();
       cy.get('.mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature').type(
@@ -458,8 +488,18 @@ describe('This test should check that the search by final value feature is worki
       cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
       cy.wait(3000);
       cy.url().then(url => {
-        if (url.match(/.*segment-builder-selector$/g))
-          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').should('be.visible').click();
+        if (url.match(/.*segment-builder-selector$/g)) {
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+          // Wait for the dropdown to appear
+          cy.wait(3000);
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+            if ($element.find('.mcs-menu-list').length > 0) {
+              cy.contains(standardSegmentBuilderName).click();
+            } else {
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            }
+          });
+        }
       });
       cy.get('.mcs-timelineButton_left').click();
       cy.get('.mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature').type(
@@ -523,8 +563,18 @@ describe('This test should check that the search by final value feature is worki
       cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
       cy.wait(3000);
       cy.url().then(url => {
-        if (url.match(/.*segment-builder-selector$/g))
-          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').should('be.visible').click();
+        if (url.match(/.*segment-builder-selector$/g)) {
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+          // Wait for the dropdown to appear
+          cy.wait(3000);
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+            if ($element.find('.mcs-menu-list').length > 0) {
+              cy.contains(standardSegmentBuilderName).click();
+            } else {
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            }
+          });
+        }
       });
       cy.get('.mcs-timelineButton_left').click();
       cy.get('.mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature').type(

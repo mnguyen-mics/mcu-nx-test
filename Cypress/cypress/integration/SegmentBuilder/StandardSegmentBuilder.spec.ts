@@ -55,7 +55,6 @@ describe('This test should check that the audience feature forms are working pro
               cy.wait(3000);
               cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
                 if ($element.find('.mcs-menu-list').length > 0) {
-                  console.log($element.find('.mcs-menu-list').length);
                   cy.contains(standardSegmentBuilderName).click();
                 } else {
                   cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
@@ -108,9 +107,18 @@ describe('This test should check that the audience feature forms are working pro
           cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
           cy.wait(3000);
           cy.url().then(url => {
-            if (url.match(/.*segment-builder-selector$/g))
+            if (url.match(/.*segment-builder-selector$/g)) {
               cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-            cy.contains(standardSegmentBuilderName).click();
+              // Wait for the dropdown to appear
+              cy.wait(3000);
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+                if ($element.find('.mcs-menu-list').length > 0) {
+                  cy.contains(standardSegmentBuilderName).click();
+                } else {
+                  cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+                }
+              });
+            }
           });
           cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
           cy.get('.mcs-timelineButton_left').click();
@@ -170,9 +178,18 @@ describe('This test should check that the audience feature forms are working pro
           cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
           cy.wait(3000);
           cy.url().then(url => {
-            if (url.match(/.*segment-builder-selector$/g))
+            if (url.match(/.*segment-builder-selector$/g)) {
               cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-            cy.contains(standardSegmentBuilderName).click();
+              // Wait for the dropdown to appear
+              cy.wait(3000);
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+                if ($element.find('.mcs-menu-list').length > 0) {
+                  cy.contains(standardSegmentBuilderName).click();
+                } else {
+                  cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+                }
+              });
+            }
           });
 
           cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
@@ -261,9 +278,18 @@ describe('This test should check that the audience feature forms are working pro
             cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
             cy.wait(3000);
             cy.url().then(url => {
-              if (url.match(/.*segment-builder-selector$/g))
+              if (url.match(/.*segment-builder-selector$/g)) {
                 cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-              cy.contains(standardSegmentBuilderName).click();
+                // Wait for the dropdown to appear
+                cy.wait(3000);
+                cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+                  if ($element.find('.mcs-menu-list').length > 0) {
+                    cy.contains(standardSegmentBuilderName).click();
+                  } else {
+                    cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+                  }
+                });
+              }
             });
             cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
@@ -301,8 +327,15 @@ describe('This test should check that the audience feature forms are working pro
       cy.url().then(url => {
         if (url.match(/.*segment-builder-selector$/g)) {
           cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
-          cy.contains(standardSegmentBuilderName).click();
+          // Wait for the dropdown to appear
+          cy.wait(3000);
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+            if ($element.find('.mcs-menu-list').length > 0) {
+              cy.contains(standardSegmentBuilderName).click();
+            } else {
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            }
+          });
         }
         cy.get('.mcs-timelineButton_left').click();
         cy.contains(audienceFeatureName).click();
@@ -361,8 +394,15 @@ describe('This test should check that the audience feature forms are working pro
       cy.url().then(url => {
         if (url.match(/.*segment-builder-selector$/g)) {
           cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
-          cy.contains(standardSegmentBuilderName).click();
+          // Wait for the dropdown to appear
+          cy.wait(3000);
+          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+            if ($element.find('.mcs-menu-list').length > 0) {
+              cy.contains(standardSegmentBuilderName).click();
+            } else {
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            }
+          });
         }
         cy.get('.mcs-standardSegmentBuilderActionBar_saveUserQuerySegmentButton').click();
         cy.get('.mcs-standardSegmentBuilderActionBar_menuItem').click();
