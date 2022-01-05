@@ -4,6 +4,7 @@
   "dependencies": {
     "cuid": "^2.1.8",
     "cypress-file-upload": "^4.1.1",
+    "cypress-plugin-snapshots": "^1.4.4",
     "faker": "^4.1.0",
     "npm": "^6.13.6",
     "ts-loader": "^6.2.1",

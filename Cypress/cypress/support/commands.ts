@@ -14,7 +14,6 @@ import 'cypress-file-upload';
 import LoginPage from '../integration/components/LoginPage';
 
 before(() => {
-  cy.wait(10000);
   cy.initTestContext();
 });
 
