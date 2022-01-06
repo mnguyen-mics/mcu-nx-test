@@ -205,7 +205,7 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
 
     const dataColumnsDefinition: Array<DataColumnDefinition<MlFunction>> = [
       {
-        title: formatMessage(messages.name),
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (text: string, record: MlFunction) => (
