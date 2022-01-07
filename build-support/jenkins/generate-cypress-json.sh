@@ -41,9 +41,10 @@ else
   RECORD_VIDEO=true
   ROOT="https://auth.mediarithmics.local"
 fi
-
+RANDOM=$$
 DEV_MAIL="dev@mediarithmics.com"
 DEV_PWD='AH9zk3ekLzYse6MhCLQSpzoD64aqQdGPsBCLfDxy'
+SNAPSHOTS_PORT=$(( ( RANDOM % 60000 )  + 5000 ))
 
 set -u
 cat << EOF
@@ -56,6 +57,13 @@ cat << EOF
 
 
   "env": {
+    "cypress-plugin-snapshots": {
+      "serverPort": ${SNAPSHOTS_PORT},
+      "imageConfig": {
+      "threshold": 0.1,
+      "thresholdType": "percent"
+      }
+    },
     "apiDomain": "${API_URL}",
     "devMail": "${DEV_MAIL}",
     "devPwd": "${DEV_PWD}",
