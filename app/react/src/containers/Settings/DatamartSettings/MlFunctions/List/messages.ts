@@ -42,4 +42,8 @@ export default defineMessages({
     id: 'settings.mlFunction.list.column.name',
     defaultMessage: 'Name',
   },
+  status: {
+    id: 'settings.mlFunction.list.column.status',
+    defaultMessage: 'Status',
+  },
 });
