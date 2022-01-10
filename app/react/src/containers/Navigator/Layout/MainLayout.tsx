@@ -269,7 +269,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           )}
         </PushMenu>
         {hasFeature('new-navigation-system') ? (
-          <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
+          <LayoutId id='mcs-main-layout' className='mcs-fullscreen mcs-newDesign'>
             <TopBar
               organisationId={organisationId}
               userAccount={accounts}
@@ -279,7 +279,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             />
             <Layout>
               <Sider
-                className='new-mcs-sider'
+                className={'new-mcs-sider'}
                 collapsible={!listOrganizationSwitcher}
                 collapsed={collapsed}
                 trigger={this.renderTrigger()}

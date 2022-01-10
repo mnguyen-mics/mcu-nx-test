@@ -650,7 +650,7 @@ class Funnel extends React.Component<Props, State> {
                 onClick={closeFunnel}
               />
             ) : undefined}
-            <Card className='mcs-funnel' bordered={false}>
+            <Card className='mcs-card mcs-funnel' bordered={false}>
               <div id={`container_${funnelId}`}>
                 {!funnelResult ||
                 funnelResult.global.steps.length === 0 ||
