@@ -85,6 +85,32 @@ Cypress.Commands.add('goToHome', organisationId => {
   );
 });
 
+Cypress.Commands.add(
+  'createDashboard',
+  (
+    accessToken: string,
+    organisationId: string,
+    dashboardTitle: string,
+    scopes: string[],
+    segmentIds?: string[],
+    builderIds?: string[],
+  ) => {
+    return cy.request({
+      url: `${Cypress.env('apiDomain')}/v1/dashboards`,
+      method: 'POST',
+      headers: { Authorization: accessToken },
+      body: {
+        organisation_id: `${organisationId}`,
+        community_id: `${organisationId}`,
+        title: `${dashboardTitle}`,
+        scopes: scopes,
+        segment_ids: segmentIds,
+        builder_ids: builderIds,
+      },
+    });
+  },
+);
+
 Cypress.Commands.add('createSegmentFromUI', (type: string, processingName?: string) => {
   // Click on "new Segment"
   cy.get('.mcs-actionbar').find('.mcs-primary').click();
@@ -697,12 +723,24 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'createChannel',
-  (accessToken: string, datamartId: string, objectBody: object) => {
+  (
+    accessToken: string,
+    datamartId: string,
+    name: string,
+    domain: string,
+    enableAnalytics: boolean,
+    type: string,
+  ) => {
     cy.request({
       url: `${Cypress.env('apiDomain')}/v1/datamarts/${datamartId}/channels`,
       method: 'POST',
       headers: { Authorization: accessToken },
-      body: objectBody,
+      body: {
+        name: name,
+        domain: domain,
+        enable_analytics: enableAnalytics,
+        type: type,
+      },
     });
   },
 );
