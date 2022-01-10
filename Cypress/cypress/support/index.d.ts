@@ -106,14 +106,16 @@ declare namespace Cypress {
      * @param datamartId
      * @param objectBody
      * @example
-     * cy.createChannel(accessToken, '1234', {{
-          name: 'test',
-          domain: 'test.com',
-          enable_analytics: false,
-          type: 'MOBILE_APPLICATION',
-        }})
+     * cy.createChannel(accessToken, '1234','test','test.com',false,'MOBILE_APPLICATION'}})
      */
-    createChannel(accessToken: string, datamartId: string, objectBody: object): Chainable<any>;
+    createChannel(
+      accessToken: string,
+      datamartId: string,
+      name: string,
+      domain: string,
+      enableAnalytics: boolean,
+      type: string,
+    ): Chainable<any>;
 
     /**
      *
@@ -135,6 +137,25 @@ declare namespace Cypress {
       accessToken: string,
       organisationId: string,
       datamartName: string,
+    ): Chainable<any>;
+
+    /**
+     * Create a dashboard
+     * @param accessToken
+     * @param organisationId
+     * @param dashboardTitle
+     * @param scopes
+     * @param segmentIds
+     * @param builderIds
+     */
+
+    createDashboard(
+      accessToken: string,
+      organisationId: string,
+      dashboardTitle: string,
+      scopes: string[],
+      segmentIds?: string[],
+      builderIds?: string[],
     ): Chainable<any>;
   }
 }

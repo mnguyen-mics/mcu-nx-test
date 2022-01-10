@@ -30,12 +30,14 @@ describe('This test should check that the audience feature forms are working pro
         'Test - Standard Segment Builder - Cypress',
         undefined,
       );
-      cy.createChannel(data.accessToken, data.datamartId, {
-        name: 'test',
-        domain: 'test.com',
-        enable_analytics: false,
-        type: 'MOBILE_APPLICATION',
-      }).then(responseChannel => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'test',
+        'test.com',
+        false,
+        'MOBILE_APPLICATION',
+      ).then(responseChannel => {
         cy.createActivity(data.accessToken, data.datamartId, {
           $user_account_id: 'test_percentage_3',
           $type: 'APP_VISIT',
@@ -88,12 +90,14 @@ describe('This test should check that the audience feature forms are working pro
         'Test - Standard Segment Builder - Cypress',
         undefined,
       );
-      cy.createChannel(data.accessToken, data.datamartId, {
-        name: 'test',
-        domain: 'test.com',
-        enable_analytics: false,
-        type: 'MOBILE_APPLICATION',
-      }).then(responseChannel => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'test',
+        'test.com',
+        false,
+        'MOBILE_APPLICATION',
+      ).then(responseChannel => {
         cy.createActivity(data.accessToken, data.datamartId, {
           $user_account_id: 'test_match_standard_segment_builder',
           $type: 'APP_VISIT',
@@ -159,12 +163,14 @@ describe('This test should check that the audience feature forms are working pro
       cy.contains(audienceFeatureName).click();
       cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
       cy.get('.mcs-form_saveButton_standardSegmentBuilderForm').click();
-      cy.createChannel(data.accessToken, data.datamartId, {
-        name: 'test',
-        domain: 'test.com',
-        enable_analytics: false,
-        type: 'MOBILE_APPLICATION',
-      }).then(responseChannel => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'test',
+        'test.com',
+        false,
+        'MOBILE_APPLICATION',
+      ).then(responseChannel => {
         cy.createActivity(data.accessToken, data.datamartId, {
           $user_account_id: 'test_match_standard_segment_builder',
           $type: 'APP_VISIT',
@@ -225,12 +231,14 @@ describe('This test should check that the audience feature forms are working pro
         'Test - Standard Segment Builder - Cypress',
         undefined,
       );
-      cy.createChannel(data.accessToken, data.datamartId, {
-        name: 'test',
-        domain: 'test.com',
-        enable_analytics: false,
-        type: 'MOBILE_APPLICATION',
-      }).then(responseChannel => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'test',
+        'test.com',
+        false,
+        'MOBILE_APPLICATION',
+      ).then(responseChannel => {
         cy.createActivity(data.accessToken, data.datamartId, {
           $user_account_id: 'test_scoreSum',
           $type: 'APP_VISIT',

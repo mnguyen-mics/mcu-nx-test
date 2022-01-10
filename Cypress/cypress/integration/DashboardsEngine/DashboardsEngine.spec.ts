@@ -7,33 +7,10 @@ describe('dashboards engine Tests', () => {
     cy.clearLocalStorage();
   });
 
-  const createDashboard = (
-    accessToken: string,
-    organisationId: string,
-    dashboardTitle: string,
-    scopes: string[],
-    segmentIds?: string[],
-    builderIds?: string[],
-  ) => {
-    return cy.request({
-      url: `${Cypress.env('apiDomain')}/v1/dashboards`,
-      method: 'POST',
-      headers: { Authorization: accessToken },
-      body: {
-        organisation_id: `${organisationId}`,
-        community_id: `${organisationId}`,
-        title: `${dashboardTitle}`,
-        scopes: scopes,
-        segment_ids: segmentIds,
-        builder_ids: builderIds,
-      },
-    });
-  };
-
   it('should test that a dashboard with empty content shouldnt be displayed', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
-      createDashboard(
+      cy.createDashboard(
         data.accessToken,
         data.organisationId,
         'Empty Dashboard',
@@ -50,17 +27,14 @@ describe('dashboards engine Tests', () => {
 
   it('should test the different possible charts on a dashboard', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
-        method: 'POST',
-        headers: { Authorization: data.accessToken },
-        body: {
-          name: 'first channel',
-          domain: 'test.com',
-          enable_analytics: false,
-          type: 'SITE',
-        },
-      }).then(channel => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'first channel',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
         cy.request({
           url: `${Cypress.env('apiDomain')}/v1/datamarts/${
             data.datamartId
@@ -148,7 +122,7 @@ describe('dashboards engine Tests', () => {
                 encoding: 'utf-8',
                 body: 'SELECT {nature @map} FROM ActivityEvent where nature = "test_engines" or nature = "test_engines_2"',
               }).then(() => {
-                createDashboard(
+                cy.createDashboard(
                   data.accessToken,
                   data.organisationId,
                   'Charts types dashboard',
@@ -288,12 +262,181 @@ describe('dashboards engine Tests', () => {
                     cy.switchOrg(data.organisationName);
                     cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
                     cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+                    cy.contains('Charts types dashboard').click();
                     cy.wait(20000);
-                    cy.get('.mcs-chart').eq(0).toMatchImageSnapshot();
-                    cy.get('.mcs-chart').eq(1).toMatchImageSnapshot();
-                    cy.get('.mcs-chart').eq(2).toMatchImageSnapshot();
-                    cy.get('.mcs-chart').eq(3).toMatchImageSnapshot();
-                    cy.get('.mcs-chart').eq(4).toMatchImageSnapshot();
+                    cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
+                    cy.get('.mcs-card_content').eq(1).toMatchImageSnapshot();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it.skip('should test the index transformation', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'first channel',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
+        cy.request({
+          url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+            data.datamartId
+          }/user_activities?processing_pipeline=false`,
+          method: 'POST',
+          headers: { Authorization: data.accessToken },
+          body: {
+            $user_account_id: 'test',
+            $type: 'SITE_VISIT',
+            $site_id: `${channel.body.data.id}`,
+            $session_status: 'NO_SESSION',
+            $ts: new Date().getTime(),
+            $events: [
+              {
+                $event_name: 'test_engines',
+                $ts: new Date().getTime(),
+                $properties: {},
+              },
+              {
+                $event_name: 'test_engines',
+                $ts: new Date().getTime(),
+                $properties: {},
+              },
+              {
+                $event_name: 'test_engines',
+                $ts: new Date().getTime(),
+                $properties: {},
+              },
+            ],
+          },
+        }).then(() => {
+          cy.request({
+            url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+              data.datamartId
+            }/user_activities?processing_pipeline=false`,
+            method: 'POST',
+            headers: { Authorization: data.accessToken },
+            body: {
+              $user_account_id: 'test',
+              $type: 'SITE_VISIT',
+              $site_id: `${channel.body.data.id}`,
+              $session_status: 'NO_SESSION',
+              $ts: new Date().getTime(),
+              $events: [
+                {
+                  $event_name: 'test_engines_2',
+                  $ts: new Date().getTime(),
+                  $site_id: `${channel.body.data.id}`,
+                  $properties: {},
+                },
+                {
+                  $event_name: 'test_engines_2',
+                  $ts: new Date().getTime(),
+                  $site_id: `${channel.body.data.id}`,
+                  $properties: {},
+                },
+                {
+                  $event_name: 'test_engines_2',
+                  $ts: new Date().getTime(),
+                  $site_id: `${channel.body.data.id}`,
+                  $properties: {},
+                },
+              ],
+            },
+          }).then(() => {
+            cy.wait(30000);
+            cy.request({
+              url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/queries`,
+              method: 'POST',
+              headers: { Authorization: data.accessToken },
+              body: {
+                query_text:
+                  'SELECT {nature @map} FROM ActivityEvent where nature = "test_engines" or nature = "test_engines_2"',
+                datamart_id: `${data.datamartId}`,
+                query_language: 'OTQL',
+              },
+            }).then(queryResponse => {
+              const queryId = queryResponse.body.data.id;
+              cy.request({
+                url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+                  data.datamartId
+                }/query_executions/otql?precision=FULL_PRECISION&use_cache=false`,
+                method: 'POST',
+                headers: { Authorization: data.accessToken, 'Content-Type': 'text/plain' },
+                encoding: 'utf-8',
+                body: 'SELECT {nature @map} FROM ActivityEvent where nature = "test_engines" or nature = "test_engines_2"',
+              }).then(() => {
+                cy.createDashboard(
+                  data.accessToken,
+                  data.organisationId,
+                  'Index Transformation',
+                  ['home'],
+                  [],
+                  [],
+                ).then(dashboardResponse => {
+                  cy.request({
+                    url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+                      dashboardResponse.body.data.id
+                    }/content`,
+                    method: 'PUT',
+                    headers: { Authorization: data.accessToken },
+                    body: {
+                      sections: [
+                        {
+                          title: 'First Section',
+                          cards: [
+                            {
+                              x: 0,
+                              y: 0,
+                              w: 12,
+                              h: 3,
+                              layout: 'horizontal',
+                              charts: [
+                                {
+                                  title: 'Index no options',
+                                  type: 'bars',
+                                  dataset: {
+                                    type: 'index',
+                                    sources: [
+                                      {
+                                        type: 'otql',
+                                        series_title: 'datamart',
+                                        query_id: `${queryId}`,
+                                      },
+                                      {
+                                        type: 'otql',
+                                        series_title: 'segment',
+                                        query_id: `${queryId}`,
+                                      },
+                                    ],
+                                    options: {
+                                      minimum_percentage: 0,
+                                    },
+                                  },
+                                  options: {
+                                    format: 'index',
+                                  },
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  }).then(() => {
+                    cy.switchOrg(data.organisationName);
+                    cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+                    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+                    cy.contains('Index Transformation').click();
+                    cy.wait(20000);
+                    cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
                   });
                 });
               });
