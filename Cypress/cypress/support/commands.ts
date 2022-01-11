@@ -305,6 +305,7 @@ Cypress.Commands.add('restoreLocalStorageCache', () => {
 Cypress.Commands.add('initTestContext', () => {
   let accessToken: string;
   let datamartId: number;
+  let datamartToken: string;
   let schemaId: number;
   let organisationId: number;
   const datamartName: string = faker.random.words(3);
@@ -349,6 +350,7 @@ Cypress.Commands.add('initTestContext', () => {
           },
         }).then(datamartResponse => {
           datamartId = datamartResponse.body.data.id;
+          datamartToken = datamartResponse.body.data.token;
           // schema publication
           cy.request({
             url: `${Cypress.env('apiDomain')}/v1/datamarts/${datamartId}/graphdb_runtime_schemas`,
@@ -483,6 +485,7 @@ Cypress.Commands.add('initTestContext', () => {
                                                                       "accessToken":"${accessToken}",
                                                                       "datamartId":${datamartId},
                                                                       "datamartName":"${datamartName}",
+                                                                      "datamartToken":"${datamartToken}",
                                                                       "schemaId":${schemaId},
                                                                       "organisationId":${organisationId},
                                                                       "organisationName":"${organisationName}"
@@ -502,6 +505,7 @@ Cypress.Commands.add('initTestContext', () => {
                                                                       "accessToken":"${accessToken}",
                                                                       "datamartId":${datamartId},
                                                                       "datamartName":"${datamartName}",
+                                                                      "datamartToken":"${datamartToken}",
                                                                       "schemaId":${schemaId},
                                                                       "organisationId":${organisationId},
                                                                       "organisationName":"${organisationName}"

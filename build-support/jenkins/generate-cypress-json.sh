@@ -13,6 +13,7 @@ if [ "$#" -eq 3 ]; then
 # used for running tests locally but using the backend of a vp, for cypress coverage.
   NAVIGATOR_URL="http://localhost:9000"
   API_URL="https://api."$1".mics-sandbox.com"
+  EVENT_URL="https://events."$1".mics-sandbox.com"
   VIRTUAL_PLATFORM_NAME="$1"
   USER_NAME=""
   RECORD_VIDEO=false
@@ -20,6 +21,7 @@ elif [ "$#" -eq 2 ]; then
 # used for CI pipeline -> we don't record videos, and execute the tests against a sandbox.
   NAVIGATOR_URL="https://navigator."$1".mics-sandbox.com"
   API_URL="https://api."$1".mics-sandbox.com"
+  EVENT_URL="https://events."$1".mics-sandbox.com"
   VIRTUAL_PLATFORM_NAME="$1"
   USER_NAME="$2"
   RECORD_VIDEO=false
@@ -28,6 +30,7 @@ elif [ "$#" -eq 1 ]; then
 # used for CI pipeline -> we don't record videos, and execute the tests against a sandbox.
   NAVIGATOR_URL="https://navigator."$1".mics-sandbox.com"
   API_URL="https://api."$1".mics-sandbox.com"
+  EVENT_URL="https://events."$1".mics-sandbox.com"
   VIRTUAL_PLATFORM_NAME="$1"
   USER_NAME=""
   RECORD_VIDEO=false
@@ -36,6 +39,7 @@ else
 # dev mode, we record videos and use localhost:9000 as base url
   NAVIGATOR_URL="http://localhost:9000"
   API_URL="https://api.mediarithmics.local"
+  EVENT_URL="https://events."$1".mics-sandbox.com"
   VIRTUAL_PLATFORM_NAME=""
   USER_NAME=""
   RECORD_VIDEO=true
@@ -65,6 +69,7 @@ cat << EOF
       }
     },
     "apiDomain": "${API_URL}",
+    "eventDomain": "${EVENT_URL}",
     "devMail": "${DEV_MAIL}",
     "devPwd": "${DEV_PWD}",
     "virtualPlatformName":"${VIRTUAL_PLATFORM_NAME}",
