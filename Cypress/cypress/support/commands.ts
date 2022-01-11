@@ -525,6 +525,7 @@ Cypress.Commands.add('initTestContext', () => {
                                                                       "accessToken":"${accessToken}",
                                                                       "datamartId":${datamartId},
                                                                       "datamartName":"${datamartName}",
+                                                                      "datamartToken":"${datamartToken}",
                                                                       "schemaId":${schemaId},
                                                                       "organisationId":${organisationId},
                                                                       "organisationName":"${organisationName}"
