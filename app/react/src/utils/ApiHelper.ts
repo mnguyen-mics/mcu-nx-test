@@ -1,7 +1,9 @@
+import { KeycloakService } from '@mediarithmics-private/advanced-components';
 import {
   DataListResponse,
   DataResponse,
 } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
+import LocalStorage from '../services/LocalStorage';
 export interface PaginatedApiParam {
   first_result?: number;
   max_results?: number;
@@ -90,4 +92,10 @@ export function makeCancelable<T>(promise: Promise<T>): CancelablePromise<T> {
       hasCanceled = true;
     },
   };
+}
+
+export function getApiToken(): string {
+  return KeycloakService.isKeycloakEnabled()
+    ? `Bearer ${KeycloakService.getToken()!}`
+    : LocalStorage.getItem('access_token')!;
 }
