@@ -48,6 +48,7 @@ Cypress.Commands.add(
   (email = `${Cypress.env('devMail')}`, password = `${Cypress.env('devPwd')}`) => {
     cy.visit('/');
     cy.get('#username').type(email);
+    cy.get('#kc-login').click();
     cy.get('#password').type(password);
     cy.get('#kc-login').click();
   },

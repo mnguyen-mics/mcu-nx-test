@@ -1,8 +1,4 @@
 describe('Should test keycloak login', () => {
-  before(() => {
-    window.localStorage.setItem('enable_keycloak', 'true');
-  });
-
   beforeEach(() => {
     cy.logout();
     window.localStorage.setItem('enable_keycloak', 'true');

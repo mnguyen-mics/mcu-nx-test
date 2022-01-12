@@ -1,9 +1,7 @@
 describe('Should not access the platform when using bad credentials', () => {
-  before(() => {
-    window.localStorage.setItem('enable_keycloak', 'true');
-  });
   beforeEach(() => {
     cy.logout();
+    window.localStorage.setItem('enable_keycloak', 'true');
   });
 
   afterEach(() => {
