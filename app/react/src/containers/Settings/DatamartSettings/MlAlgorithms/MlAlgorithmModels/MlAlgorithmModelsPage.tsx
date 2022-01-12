@@ -10,12 +10,11 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IMlAlgorithmModelService } from '../../../../../services/MlAlgorithmModelService';
 import { PAGINATION_SEARCH_SETTINGS, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
+import { getPaginatedApiParam, getApiToken } from '../../../../../utils/ApiHelper';
 import messages from './messages';
 import moment from 'moment';
 import { UploadFile } from 'antd/lib/upload/interface';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
-import LocalStorage from '../../../../../services/LocalStorage';
 import log from '../../../../../utils/Logger';
 import NotebookResultPreviewModal from './NotebookResultPreviewModal';
 import { IDataFileService } from '../../../../../services/DataFileService';
@@ -266,7 +265,7 @@ class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModel
       (window as any).open(
         `${(window as any).MCS_CONSTANTS.API_URL}/v1/data_file/data?uri=${encodeURIComponent(
           uri,
-        )}&access_token=${encodeURIComponent(LocalStorage.getItem('access_token')!)}`,
+        )}&access_token=${encodeURIComponent(getApiToken())}`,
       );
     } catch (err) {
       log.error(err);

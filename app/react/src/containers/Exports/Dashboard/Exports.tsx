@@ -10,7 +10,6 @@ import { Filters } from '../../../components/ItemList';
 import { Export, ExportExecution } from '../../../models/exports/exports';
 import ExportActionbar from './ExportActionbar';
 import log from '../../../utils/Logger';
-import LocalStorage from '../../../services/LocalStorage';
 import {
   PAGINATION_SEARCH_SETTINGS,
   buildDefaultSearch,
@@ -24,7 +23,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IExportService } from '../../../services/Library/ExportService';
 import { Labels } from '../../Labels';
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam, getApiToken } from '../../../utils/ApiHelper';
 import { TableViewWithSelectionNotifyerMessages } from '../../../components/TableView';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
@@ -199,7 +198,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
             ? execution.result.output_files[0] || 'export'
             : 'export'
           : 'export'
-      }?access_token=${encodeURIComponent(LocalStorage.getItem('access_token')!)}`;
+      }?access_token=${encodeURIComponent(getApiToken())}`;
     }
   };
 

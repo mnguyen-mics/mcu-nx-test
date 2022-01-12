@@ -26,11 +26,10 @@ import {
   injectThemeColors,
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
-import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { getPaginatedApiParam, getApiToken } from '../../../utils/ApiHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import LocalStorage from '../../../services/LocalStorage';
 import { getExecutionInfo } from '../../../utils/JobHelpers';
 import { Labels } from '../../Labels';
 import {
@@ -255,7 +254,7 @@ class Imports extends React.Component<JoinedProps, State> {
       (window as any).open(
         `${(window as any).MCS_CONSTANTS.API_URL}/v1/data_file/data?uri=${encodeURIComponent(
           uri,
-        )}&access_token=${encodeURIComponent(LocalStorage.getItem('access_token')!)}`,
+        )}&access_token=${encodeURIComponent(getApiToken())}`,
       );
     } catch (err) {
       log.error(err);

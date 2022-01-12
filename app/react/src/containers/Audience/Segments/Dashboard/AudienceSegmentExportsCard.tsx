@@ -19,11 +19,10 @@ import {
   injectThemeColors,
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
-import LocalStorage from '../../../../services/LocalStorage';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
 import { IDatamartService } from '../../../../services/DatamartService';
 import { Filters } from '../../../../components/ItemList';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { getPaginatedApiParam, getApiToken } from '../../../../utils/ApiHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   DataColumnDefinition,
@@ -262,9 +261,9 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     } else if (execution.status === 'SUCCEEDED') {
       (window as any).location = `${
         (window as any).MCS_CONSTANTS.API_URL
-      }/v1/data_file/data?access_token=${encodeURIComponent(
-        LocalStorage.getItem('access_token')!,
-      )}&uri=${execution.result ? execution.result.export_file_uri : ''}`;
+      }/v1/data_file/data?access_token=${encodeURIComponent(getApiToken())}&uri=${
+        execution.result ? execution.result.export_file_uri : ''
+      }`;
     }
   };
 
