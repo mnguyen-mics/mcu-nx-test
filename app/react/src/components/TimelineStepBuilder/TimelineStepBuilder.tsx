@@ -95,7 +95,11 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
           </div>
           {steps.map((step, index) => {
             return (
-              <Card key={step.id} className={'mcs-timelineStepBuilder_step'} bordered={false}>
+              <Card
+                key={step.id}
+                className={'mcs-card mcs-timelineStepBuilder_step'}
+                bordered={false}
+              >
                 <div className={'mcs-timelineStepBuilder_step_body'}>
                   {steps.length > 1 && (
                     <div className={'mcs-timelineStepBuilder_step_reorderBtn'}>
