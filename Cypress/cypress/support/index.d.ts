@@ -154,8 +154,8 @@ declare namespace Cypress {
       organisationId: string,
       dashboardTitle: string,
       scopes: string[],
-      segmentIds?: string[],
-      builderIds?: string[],
+      segmentIds?: number[],
+      builderIds?: number[],
     ): Chainable<any>;
   }
 }
