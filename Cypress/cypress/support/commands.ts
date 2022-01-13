@@ -93,8 +93,8 @@ Cypress.Commands.add(
     organisationId: string,
     dashboardTitle: string,
     scopes: string[],
-    segmentIds?: string[],
-    builderIds?: string[],
+    segmentIds?: number[],
+    builderIds?: number[],
   ) => {
     return cy.request({
       url: `${Cypress.env('apiDomain')}/v1/dashboards`,
