@@ -276,7 +276,7 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it.skip('should test the index transformation', () => {
+  it('should test the index transformation', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -400,7 +400,7 @@ describe('dashboards engine Tests', () => {
                               layout: 'horizontal',
                               charts: [
                                 {
-                                  title: 'Index no options',
+                                  title: 'Index',
                                   type: 'bars',
                                   dataset: {
                                     type: 'index',
@@ -422,6 +422,112 @@ describe('dashboards engine Tests', () => {
                                   },
                                   options: {
                                     format: 'index',
+                                    legend: {
+                                      position: 'bottom',
+                                      enabled: true,
+                                    },
+                                    bigBars: true,
+                                    stacking: false,
+                                    plotLineValue: 100,
+                                  },
+                                },
+                                {
+                                  title: 'Index Hidden Axis',
+                                  type: 'bars',
+                                  dataset: {
+                                    type: 'index',
+                                    sources: [
+                                      {
+                                        type: 'otql',
+                                        series_title: 'datamart',
+                                        query_id: `${queryId}`,
+                                      },
+                                      {
+                                        type: 'otql',
+                                        series_title: 'segment',
+                                        query_id: `${queryId}`,
+                                      },
+                                    ],
+                                    options: {
+                                      minimum_percentage: 0,
+                                    },
+                                  },
+                                  options: {
+                                    format: 'index',
+                                    hideXAxis: true,
+                                    hideYAxis: true,
+                                  },
+                                },
+                                {
+                                  title: 'Index Min Percentage',
+                                  type: 'bars',
+                                  dataset: {
+                                    type: 'index',
+                                    sources: [
+                                      {
+                                        type: 'otql',
+                                        series_title: 'datamart',
+                                        query_id: `${queryId}`,
+                                      },
+                                      {
+                                        type: 'otql',
+                                        series_title: 'segment',
+                                        query_id: `${queryId}`,
+                                      },
+                                    ],
+                                    options: {
+                                      minimum_percentage: 100,
+                                    },
+                                  },
+                                  options: {
+                                    format: 'index',
+                                  },
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                        {
+                          title: 'Second Section',
+                          cards: [
+                            {
+                              x: 0,
+                              y: 0,
+                              w: 12,
+                              h: 3,
+                              layout: 'horizontal',
+                              charts: [
+                                {
+                                  title: 'Index',
+                                  type: 'bars',
+                                  dataset: {
+                                    type: 'index',
+                                    sources: [
+                                      {
+                                        type: 'otql',
+                                        series_title: 'datamart',
+                                        query_id: `${queryId}`,
+                                      },
+                                      {
+                                        type: 'otql',
+                                        series_title: 'segment',
+                                        query_id: `${queryId}`,
+                                      },
+                                    ],
+                                    options: {
+                                      minimum_percentage: 0,
+                                    },
+                                  },
+                                  options: {
+                                    format: 'index',
+                                    legend: {
+                                      position: 'bottom',
+                                      enabled: true,
+                                    },
+                                    bigBars: true,
+                                    stacking: false,
+                                    plotLineValue: 100,
+                                    type: 'bar',
                                   },
                                 },
                               ],
@@ -437,6 +543,7 @@ describe('dashboards engine Tests', () => {
                     cy.contains('Index Transformation').click();
                     cy.wait(20000);
                     cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
+                    cy.get('.mcs-card_content').eq(1).toMatchImageSnapshot();
                   });
                 });
               });
