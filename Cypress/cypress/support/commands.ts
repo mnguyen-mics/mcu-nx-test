@@ -288,7 +288,7 @@ Cypress.Commands.add('initTestContext', () => {
                   'emails:[UserEmail!]!\n' +
                   'activity_events:[ActivityEvent!]!\n' +
                   'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
-                  'creation_date:Date! @Function(name:"ISODate", params:["creation_ts"])\n' +
+                  'creation_date:Date! @Function(name:"ISODate", params:["creation_ts"]) @TreeIndex(index:"USER_INDEX")\n' +
                   '}\n' +
                   '######\n' +
                   'type UserScenario  @Mirror(object_type:"UserScenario") {\n' +
