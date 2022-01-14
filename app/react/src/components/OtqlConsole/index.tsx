@@ -7,6 +7,7 @@ import { TYPES } from '../../constants/types';
 import { IQueryService } from '../../services/QueryService';
 import CustomOtqlMode from './theme/CustomOtqlMode';
 import { defineAce } from './theme/style/otql.theme.js';
+import { ErrorQueryResource } from '../../models/datamart/DatamartResource';
 
 export interface OtqlConsoleProps extends AceEditorProps {
   datamartId: string;
@@ -36,6 +37,9 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
     defineAce();
     if (this.aceEditor && this.aceEditor.editor) {
       this.aceEditor.editor.completers = [this.buildCustomCompleters()];
+      this.aceEditor.editor.getSession().setUseWrapMode(true);
+      this.aceEditor.editor.setOption('indentedSoftWrap', false);
+      this.aceEditor.editor.completers = [this.buildCustomCompleters()];
       const customMode = new CustomOtqlMode();
       this.aceEditor.editor.getSession().setMode(customMode);
     }
@@ -43,6 +47,31 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
 
   findCompleters = (query: string, row: number, col: number) => {
     return this._queryService.autocompleteOtqlQuery(this.props.datamartId, query, row, col);
+  };
+
+  queryAnnotations = (d: ErrorQueryResource): Annotation[] => {
+    switch (d.type) {
+      case 'VALID':
+        return [];
+      case 'VALIDATION_ERROR':
+        return d.errors.map(error => {
+          return {
+            row: error.position.row - 1,
+            column: error.position.col,
+            text: error.message,
+            type: 'error',
+          };
+        });
+      case 'PARSING_ERROR':
+        return [
+          {
+            row: d.error.position.row - 1,
+            column: d.error.position.col,
+            text: d.error.message,
+            type: 'error',
+          },
+        ];
+    }
   };
 
   onChange = (value: string, event?: any) => {
@@ -63,20 +92,10 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
     this.debouncing = setTimeout(() => {
       this._queryService
         .checkOtqlQuery(this.props.datamartId, value)
-        .then(d => d.data)
         .then(d => {
-          if (d.status === 'error') {
-            const annotation: Annotation = {
-              row: d.error.position.row - 1,
-              column: d.error.position.col - 1,
-              text: d.error.message,
-              type: 'error',
-            };
-            editor.getSession().setAnnotations([annotation]);
-            this.setState({ annotations: [annotation] });
-          } else {
-            this.setState({ annotations: [] });
-          }
+          const annotations = this.queryAnnotations(d.data);
+          editor.getSession().setAnnotations(annotations);
+          this.setState({ annotations: annotations });
         })
         .catch(() => this.setState({ annotations: [] }));
     }, 1000);

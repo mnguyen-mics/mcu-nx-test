@@ -89,7 +89,7 @@ export interface ValidResource extends ErrorResource {
 
 export interface ValidationErrorResource extends ErrorResource {
   type: 'VALIDATION_ERROR';
-  error: ErroTypeResource;
+  errors: [ErroTypeResource];
   status: 'error';
 }
 
