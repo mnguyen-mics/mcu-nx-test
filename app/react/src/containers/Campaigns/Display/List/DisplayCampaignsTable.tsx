@@ -243,14 +243,18 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: any) => renderMetricData(text, '0,0'),
+        render: (text: any) => (
+          <span className='mcs-campaign-Display-view-stats'>{renderMetricData(text, '0,0')}</span>
+        ),
       },
       {
         title: formatMessage(messages.clicks),
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: any) => renderMetricData(text, '0,0'),
+        render: (text: any) => (
+          <span className='mcs-campaign-Display-click-stats'>{renderMetricData(text, '0,0')}</span>
+        ),
       },
       {
         title: formatMessage(messages.impressionCost),
