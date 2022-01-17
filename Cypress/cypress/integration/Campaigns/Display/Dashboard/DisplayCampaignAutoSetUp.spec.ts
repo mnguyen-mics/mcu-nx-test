@@ -101,9 +101,11 @@ describe('Check if Campaign auto set up Statistics are created', () => {
     cy.get('.mcs-sideBar-subMenu_menu\\.campaign\\.title').click();
     cy.get('.mcs-sideBar-subMenuItem_menu\\.campaign\\.display').click();
     cy.get('.mcs-campaigns-link').contains(campaign_technical_name + '_auto_generated');
+
     // Check Click statistics number is equal to 1
-    cy.get('.mcs-campaign-Display-view-stats').should('equal', '1');
+    cy.get('.mcs-campaign-Display-view-stats').should('have.text', '1');
+
     // Check View statistics number is equal to 1
-    cy.get('.mcs-campaign-Display-click-stats').should('equal', '1');
+    cy.get('.mcs-campaign-Display-click-stats').should('have.text', '1');
   });
 });
