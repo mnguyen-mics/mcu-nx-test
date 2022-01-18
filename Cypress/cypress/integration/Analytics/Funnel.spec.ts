@@ -873,4 +873,42 @@ describe('Should test the funnel', () => {
       });
     });
   });
+
+  it('should test the autocompletion dropdown display', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      goToFunnelAndClickOnDimensions(data.organisationName);
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          name: 'test_dropdown',
+          domain: 'test_dropdown.com',
+          enable_analytics: false,
+          type: 'MOBILE_APPLICATION',
+        },
+      }).then(() => {
+        cy.wait(2000);
+        cy.reload();
+        cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
+        cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
+        cy.get('.mcs-funnelQueryBuilder_dimensionValue').click();
+        cy.get('.mcs-resourceByNameSelector_dropdown').then($el => {
+          const top = parseInt($el[0].style.top.substring(0, $el[0].style.top.length - 2));
+          cy.get('.mcs-timelineStepBuilder_addStepBtn').click({ force: true });
+          cy.get('.mcs-funnelQueryBuilder_select--dimensions').eq(1).type('channel');
+          cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').eq(1).click();
+          cy.get('.mcs-funnelQueryBuilder_dimensionValue').eq(1).dblclick();
+          cy.get('.mcs-funnelQueryBuilder_dimensionValue').eq(1).click();
+          cy.wait(3000);
+          cy.get('.mcs-resourceByNameSelector_dropdown').then($secondEl => {
+            const secondTop = parseInt(
+              $secondEl[0].style.top.substring(0, $el[0].style.top.length - 2),
+            );
+            expect(secondTop).to.be.greaterThan(top);
+          });
+        });
+      });
+    });
+  });
 });
