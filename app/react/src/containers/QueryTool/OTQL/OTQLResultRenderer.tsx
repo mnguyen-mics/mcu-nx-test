@@ -7,7 +7,7 @@ import {
   isCountResult,
   isAggregateResult,
 } from '../../../models/datamart/graphdb/OTQLResult';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import AggregationRenderer from './AggregationRenderer';
 import { compose } from 'recompose';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
@@ -15,6 +15,7 @@ import {
   injectThemeColors,
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
+import { BorderlessTableOutlined } from '@ant-design/icons';
 
 export interface OTQLResultRendererProps {
   result: OTQLResult | null;
@@ -47,11 +48,26 @@ class OTQLResultRenderer extends React.Component<Props> {
       );
     } else if (result && isCountResult(result.rows)) {
       const count = result.rows[0].count;
-      content = (
-        <div className='text-center mcs-OTQLResultRenderer_count_up' style={{ fontSize: '5em' }}>
-          <CountUp start={0} end={count} separator=',' decimal='.' duration={0.5} />
-        </div>
-      );
+
+      const tabs = [
+        {
+          title: <BorderlessTableOutlined className='mcs-otqlChart_icons' />,
+          key: 'pie',
+          display: (
+            <Card>
+              <CountUp
+                className={'mcs-otqlChart_resultMetrics'}
+                start={0}
+                end={count}
+                separator=','
+                decimal='.'
+                duration={0.5}
+              />
+            </Card>
+          ),
+        },
+      ];
+      content = <McsTabs items={tabs} animated={false} className='mcs-otqlChart_tabs' />;
     } else if (result && isAggregateResult(result.rows)) {
       const aggregations = result.rows[0].aggregations;
       content = (
@@ -77,37 +93,28 @@ class OTQLResultRenderer extends React.Component<Props> {
     }
 
     return !hasFeature('query-tool-graphs') || !(result && isAggregateResult(result.rows)) ? (
-      <Card
-        title={
-          <FormattedMessage
-            id='queryTool.otql-result-renderer-card-title'
-            defaultMessage='Result'
-          />
-        }
-        buttons={
-          result ? (
-            <React.Fragment>
-              <Tag color={colors['mcs-info']}>
+      <div className='mcs-otqlQuery_result'>
+        {result && (
+          <React.Fragment>
+            <Tag className='mcs-otqlQuery_result_tag'>
+              <FormattedMessage
+                id='otql-result-renderer-card-subtitle-duration'
+                defaultMessage='Took {duration}ms'
+                values={{ duration: result.took }}
+              />
+            </Tag>
+            {result.cache_hit && (
+              <Tag color={colors['mcs-success']}>
                 <FormattedMessage
-                  id='otql-result-renderer-card-subtitle-duration'
-                  defaultMessage='Took {duration}ms'
-                  values={{ duration: result.took }}
+                  id='otql-result-renderer-card-subtitle-cache'
+                  defaultMessage='From Cache'
                 />
               </Tag>
-              {result.cache_hit && (
-                <Tag color={colors['mcs-success']}>
-                  <FormattedMessage
-                    id='otql-result-renderer-card-subtitle-cache'
-                    defaultMessage='From Cache'
-                  />
-                </Tag>
-              )}
-            </React.Fragment>
-          ) : undefined
-        }
-      >
+            )}
+          </React.Fragment>
+        )}
         {content}
-      </Card>
+      </div>
     ) : (
       <div className='mcs-otqlQuery_result'>
         {result ? (

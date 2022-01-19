@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   BarChartOutlined,
   HomeOutlined,
+  PieChartOutlined,
   RadarChartOutlined,
   TableOutlined,
 } from '@ant-design/icons';
@@ -19,6 +20,7 @@ import {
   McsTabs,
   RadarChart,
   BarChart,
+  PieChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
@@ -28,6 +30,7 @@ import {
   Format,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { RadarChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/radar-chart';
+import { PieChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/pie-chart';
 const MAX_ELEMENTS = 999;
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
@@ -187,7 +190,9 @@ class AggregationRenderer extends React.Component<Props, State> {
       const radarChartDataset = currentBuckets.map(bucket => {
         return { xKey: bucket.key, value: bucket.count };
       });
-
+      const pieChartDataset = currentBuckets.map(bucket => {
+        return { key: bucket.key, value: bucket.count };
+      });
       const optionsForBarChart = {
         xKey: 'key',
         yKeys: [
@@ -222,6 +227,15 @@ class AggregationRenderer extends React.Component<Props, State> {
         },
       };
 
+      const pieChartProps: PieChartProps = {
+        dataset: pieChartDataset,
+        height: BASE_CHART_HEIGHT,
+        innerRadius: false,
+        dataLabels: {
+          enabled: true,
+        },
+      };
+
       const renderShowTop = () => {
         return (
           <div className={'mcs-otqlChart_items'}>
@@ -243,49 +257,47 @@ class AggregationRenderer extends React.Component<Props, State> {
           key: 'table',
           display: (
             <Card bordered={false}>
-              <div className='mcs-table-container'>
-                <Table<OTQLBucket>
-                  columns={[
-                    {
-                      title: 'Key',
-                      dataIndex: 'key',
-                      sorter: (a, b) =>
-                        typeof a.key === 'string' &&
-                        typeof b.key === 'string' &&
-                        !isNaN(Date.parse(a.key)) &&
-                        !isNaN(Date.parse(b.key))
-                          ? Date.parse(a.key) - Date.parse(b.key)
-                          : a.key.length - b.key.length,
+              <Table<OTQLBucket>
+                columns={[
+                  {
+                    title: 'Key',
+                    dataIndex: 'key',
+                    sorter: (a, b) =>
+                      typeof a.key === 'string' &&
+                      typeof b.key === 'string' &&
+                      !isNaN(Date.parse(a.key)) &&
+                      !isNaN(Date.parse(b.key))
+                        ? Date.parse(a.key) - Date.parse(b.key)
+                        : a.key.length - b.key.length,
+                  },
+                  {
+                    title: 'Count',
+                    dataIndex: 'count',
+                    sorter: (a, b) => a.count - b.count,
+                  },
+                  {
+                    render: (text, record) => {
+                      if (bucketHasData(record)) {
+                        return (
+                          <div className='float-right'>
+                            <McsIcon type='chevron-right' />
+                          </div>
+                        );
+                      }
+                      return null;
                     },
-                    {
-                      title: 'Count',
-                      dataIndex: 'count',
-                      sorter: (a, b) => a.count - b.count,
-                    },
-                    {
-                      render: (text, record) => {
-                        if (bucketHasData(record)) {
-                          return (
-                            <div className='float-right'>
-                              <McsIcon type='chevron-right' />
-                            </div>
-                          );
-                        }
-                        return null;
-                      },
-                    },
-                  ]}
-                  className='mcs-aggregationRendered_table'
-                  onRow={handleOnRow}
-                  rowClassName={getRowClassName}
-                  dataSource={buckets.buckets}
-                  pagination={{
-                    size: 'small',
-                    showSizeChanger: true,
-                    hideOnSinglePage: true,
-                  }}
-                />
-              </div>
+                  },
+                ]}
+                className='mcs-aggregationRendered_table'
+                onRow={handleOnRow}
+                rowClassName={getRowClassName}
+                dataSource={buckets.buckets}
+                pagination={{
+                  size: 'small',
+                  showSizeChanger: true,
+                  hideOnSinglePage: true,
+                }}
+              />
             </Card>
           ),
         },
@@ -309,6 +321,15 @@ class AggregationRenderer extends React.Component<Props, State> {
           display: (
             <Card bordered={false}>
               <RadarChart {...radarChartProps} />
+            </Card>
+          ),
+        },
+        {
+          title: <PieChartOutlined className='mcs-otqlChart_icons' />,
+          key: 'pie',
+          display: (
+            <Card bordered={false}>
+              <PieChart {...pieChartProps} />
             </Card>
           ),
         },
