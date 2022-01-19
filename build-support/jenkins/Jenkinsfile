@@ -109,21 +109,19 @@ pipeline {
                 build job: 'sandbox-metal-delete', parameters: [[$class: 'StringParameterValue', name: 'id', value: "${params.GIVEN_VIRTUAL_PLATFORM_ID}"]]
             }
         }
-        stage('Kill Created Virtual Platform') {
-          when {
-              // Only run end to end scenarios is END_TO_END_CHECK == true
-              expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
-          }
-            steps {
-                echo 'Kill virtual platform used for end-to-end tests'
-                build job: 'sandbox-metal-delete', parameters: [[$class: 'StringParameterValue', name: 'id', value: "${VIRTUAL_PLATFORM_ID}"]]
-            }
-        }
     }
     post {
         failure {
             echo 'The staging build failed.'
             sh './build-support/jenkins/notify-im.sh'
+        }
+        always {
+            script {
+                if (params.RUN_E2E_TESTS == true && params.GIVEN_VIRTUAL_PLATFORM_ID == '') {
+                    echo 'Kill virtual platform used for end-to-end tests'
+                    build job: 'sandbox-metal-delete', parameters: [[$class: 'StringParameterValue', name: 'id', value: "${VIRTUAL_PLATFORM_ID}"]]
+                }
+            }
         }
     }
 }
