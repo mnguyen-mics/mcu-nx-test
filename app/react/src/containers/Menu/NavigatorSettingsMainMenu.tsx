@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Menu } from 'antd';
+import { Breadcrumb, Menu } from 'antd';
 import { settingsDefinitions } from '../../routes/settingsDefinition';
 import { FormattedMessage } from 'react-intl';
 import { matchPath, RouteComponentProps, withRouter } from 'react-router';
@@ -11,13 +11,20 @@ import { getOrgFeatures } from '../../redux/Features/selectors';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition } from '../../routes/domain';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
+import { PopupContainer } from '@mediarithmics-private/mcs-components-library';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
+const { Dropdown } = PopupContainer;
 interface NavigatorSettingsMainMenuStoreProps {
   organisationHasDatamarts: (organisationId: string) => boolean;
   orgFeatures: string[];
 }
 
-type Props = RouteComponentProps<{ organisationId: string }> &
+interface NavigatorSettingsMainMenuProps {
+  menu?: React.ReactElement;
+}
+type Props = NavigatorSettingsMainMenuProps &
+  RouteComponentProps<{ organisationId: string }> &
   NavigatorSettingsMainMenuStoreProps &
   InjectedFeaturesProps;
 
@@ -118,6 +125,23 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
     }, []);
   };
 
+  generateBreadcrumb = () => {
+    const {
+      location: { pathname },
+    } = this.props;
+    const settingsIndex = pathname.indexOf('settings');
+    const pathnameSlided = pathname.slice(settingsIndex);
+    const breadcrumbItems = pathnameSlided.split('/');
+
+    return (
+      <Breadcrumb separator='>' className='mcs-homePage_breadcrumb'>
+        {breadcrumbItems.map(item => (
+          <Breadcrumb.Item>{item}</Breadcrumb.Item>
+        ))}
+      </Breadcrumb>
+    );
+  };
+
   generateMenuItems = () => {
     const {
       match: {
@@ -144,12 +168,42 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
   };
 
   render() {
-    return (
+    const { menu, hasFeature } = this.props;
+    return hasFeature('new-navigation-system') ? (
+      <div className='mcs-settingsMainMenu_container'>
+        {menu && (
+          <Dropdown
+            overlay={menu}
+            trigger={['click']}
+            className='mcs-settingsMainMenu_container_arrowMenu'
+          >
+            <a>
+              <ArrowLeftOutlined />
+            </a>
+          </Dropdown>
+        )}
+
+        <div className='mcs-settingsMainMenu_container_item'>Settings</div>
+
+        <Menu
+          onClick={this.handleClick}
+          selectedKeys={[this.state.current]}
+          mode='horizontal'
+          style={{ padding: '0 40px' }}
+          className={'mcs-settingsMainMenu--newDesign'}
+        >
+          {this.generateMenuItems()}
+        </Menu>
+      </div>
+    ) : (
       <Menu
         onClick={this.handleClick}
         selectedKeys={[this.state.current]}
         mode='horizontal'
         style={{ padding: '0 40px' }}
+        className={`mcs-settingsMainMenu${
+          hasFeature('new-navigation-system1') ? '--newDesign' : ''
+        }`}
       >
         {this.generateMenuItems()}
       </Menu>
@@ -164,7 +218,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 
 const mapDispatchToProps = {};
 
-export default compose<Props, {}>(
+export default compose<Props, NavigatorSettingsMainMenuProps>(
   withRouter,
   injectFeatures,
   connect(mapStateToProps, mapDispatchToProps),

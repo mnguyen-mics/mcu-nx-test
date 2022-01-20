@@ -115,3 +115,54 @@
     color: @info-color;
   }
 }
+
+.mcs-settingsMainMenu--newDesign {
+  border-bottom: none;
+  &.ant-menu-horizontal:not(.ant-menu-dark)
+    > .ant-menu-item:not(.mcs-settingsMainMenu_staticItem):hover,
+  &.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected {
+    &::after,
+    &:hover ::after {
+      border-bottom: 2px solid @info-color;
+    }
+
+    color: @info-color;
+  }
+
+  .mcs-settingsMainMenu_staticItem,
+  .mcs-settingsMainMenu_staticItem a {
+    &:hover {
+      color: rgba(0, 0, 0, 0.65);
+    }
+    &::after {
+      display: none;
+    }
+  }
+
+  &.ant-menu-horizontal > .ant-menu-item a:hover {
+    color: @info-color;
+  }
+
+  &.ant-menu-horizontal > .ant-menu-item-selected a {
+    color: #00a1df;
+    color: @info-color;
+    font-weight: bold;
+  }
+}
+
+.mcs-settingsMainMenu_container {
+  display: flex;
+  border-bottom: 1px solid #d3dbe1;
+}
+
+.mcs-settingsMainMenu_container_item {
+  padding: 14px 0;
+  margin: 0 37px 0 17px;
+}
+
+.mcs-settingsMainMenu_container_arrowMenu {
+  display: block;
+  padding: 13px 0;
+  font-size: 14px;
+  margin-left: 26px;
+}
