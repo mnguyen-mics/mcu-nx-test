@@ -6,19 +6,23 @@ export class CustomHighlightRules extends window.ace.acequire('ace/mode/text_hig
   .TextHighlightRules {
   constructor() {
     super();
-    var keywords = 'select|from|where|and|or';
+    var keywords = 'select|from|where|and|or|not|limit|in';
 
     var builtinConstants = 'true|false';
 
-    var builtinFunctions =
-      '@count|@avg|@min|@max|@stats|@cardinality|@map|@histogram|@range|@geo|@missing|@filter';
+    var builtinDirectives =
+      '@count|@avg|@min|@max|@stats|@cardinality|@map|@histogram|@range|@geo|@missing|' +
+      '@filter|@date_histogram|@scoresum|@scoremax|@scoreavg|@scorefield|@scoreboost';
 
     var dataTypes =
       'int|numeric|decimal|date|varchar|char|bigint|float|double|bit|binary|text|set|timestamp|' +
       'money|real|number|integer';
 
+    var builtinFunctions = 'is_defined|match|starts_with';
+
     var keywordMapper = this.createKeywordMapper(
       {
+        'support.directive': builtinDirectives,
         'support.function': builtinFunctions,
         keyword: keywords,
         'constant.language': builtinConstants,
@@ -32,7 +36,7 @@ export class CustomHighlightRules extends window.ace.acequire('ace/mode/text_hig
       start: [
         {
           token: 'comment',
-          regex: '--.*$',
+          regex: '#.*$',
         },
         {
           token: 'comment',
