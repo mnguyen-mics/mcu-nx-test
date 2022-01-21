@@ -63,6 +63,8 @@
   ]
 
  var MCS_CONSTANTS = {
+    'NAVIGATOR_URL' : 'https://navigator.mediarithmics.local',
+    'COMPUTING_CONSOLE_URL' : 'https://computing-console.mediarithmics.local',
     'API_URL' : 'https://api.mediarithmics.local',
     'ASSETS_URL' : 'https://assets.mediarithmics.local',
     'FEATURES' : defaultFeatures,
