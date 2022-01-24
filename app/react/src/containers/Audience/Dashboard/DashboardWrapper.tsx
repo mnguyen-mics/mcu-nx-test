@@ -2,17 +2,7 @@ import * as React from 'react';
 import DashboardContent from './DashboardContent';
 import { Layout, Layouts } from 'react-grid-layout';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
-import { ComponentLayout } from '../../../models/dashboards/dashboards';
-import { AudienceSegmentShape } from '../../../models/audiencesegment';
-import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-
-interface DashboardWrapperProps {
-  key?: any;
-  layout: ComponentLayout[];
-  title?: string;
-  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
-  datamartId: string;
-}
+import { DashboardWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 interface State {
   layout: Layout[];

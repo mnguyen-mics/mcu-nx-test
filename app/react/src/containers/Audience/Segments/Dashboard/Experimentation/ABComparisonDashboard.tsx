@@ -17,7 +17,6 @@ import {
   abTestingDashboardConfig,
 } from '../../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import DatamartUsersAnalyticsWrapper, {
-  DatamartUsersAnalyticsWrapperProps,
   FILTERS,
 } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import {
@@ -41,6 +40,7 @@ import {
   mcsDateRangePickerMessages,
 } from '../../../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import { DatamartUsersAnalyticsWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];

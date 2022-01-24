@@ -218,11 +218,3 @@ export interface ComponentLayout {
   layout: Layout;
   component: Component;
 }
-
-export interface DataFileDashboardResource {
-  id: string;
-  type: DashboardType;
-  datamart_id: string;
-  name: string;
-  components: ComponentLayout[];
-}

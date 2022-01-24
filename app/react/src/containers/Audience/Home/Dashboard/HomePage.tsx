@@ -15,9 +15,7 @@ import {
   withDatamartSelector,
   WithDatamartSelectorProps,
 } from '@mediarithmics-private/advanced-components';
-import DatamartUsersAnalyticsWrapper, {
-  DatamartUsersAnalyticsWrapperProps,
-} from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import {
   averageSessionDurationConfig,
@@ -27,6 +25,7 @@ import {
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { MentionTag } from '@mediarithmics-private/mcs-components-library';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
+import { DatamartUsersAnalyticsWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 const { Content } = Layout;
 
