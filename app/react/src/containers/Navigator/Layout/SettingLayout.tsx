@@ -12,7 +12,9 @@ import * as MenuActions from '../../../redux/Menu/actions';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import { MenuMode } from 'rc-menu/lib/interface';
-import { MicsReduxState } from '@mediarithmics-private/advanced-components';
+import { MicsReduxState, TopBar } from '@mediarithmics-private/advanced-components';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import { buildAccountsMenu, buildSettingsButton } from './LayoutHelper';
 
 const { Sider } = Layout;
 
@@ -52,6 +54,7 @@ interface SettingLayoutState {
 }
 
 type Props = SettingLayoutProps &
+  InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }> &
   SettingLayoutStoreProps;
 
@@ -215,10 +218,17 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
       collapsed,
       mode,
       orgSelectorSize,
+      hasFeature,
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     const onStateChange = (state: State) => this.setState({ isOpen: state.isOpen });
     const onClick = () => this.setState({ isOpen: false });
+    const accounts = buildAccountsMenu(organisationId);
+    const settings = buildSettingsButton(organisationId);
+
     const menu = (
       <NavigatorMenu
         mode={'vertical'}
@@ -238,31 +248,63 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
         >
           <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} />
         </PushMenu>
-
-        <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
-          <NavigatorHeader menu={menu} isInSettings={true} />
-          <Layout>
-            <NavigatorSettingsMainMenu />
+        {hasFeature('new-navigation-system') ? (
+          <LayoutId id='mcs-main-layout' className='mcs-fullscreen mcs-newDesign'>
+            <TopBar
+              organisationId={organisationId}
+              userAccount={accounts}
+              headerSettings={settings}
+              linkPath={`/v2/o/${organisationId}/campaigns/display`}
+              prodEnv={process.env.API_ENV === 'prod'}
+            />
             <Layout>
-              <Sider
-                className='mcs-sider'
-                collapsible={true}
-                collapsed={false}
-                trigger={this.renderSettingsTrigger()}
-              >
-                <NavigatorSettingsSideMenu
-                  mode={mode}
-                  collapsed={collapsed}
-                  onMenuItemClick={this.onMenuItemClick}
-                />
-              </Sider>
-
+              <NavigatorSettingsMainMenu menu={menu} />
               <Layout>
-                <ContentComponent />
+                <Sider
+                  className={'new-mcs-sider'}
+                  collapsible={!hasFeature('new-navigation-system')}
+                  collapsed={collapsed}
+                  trigger={this.renderTrigger()}
+                >
+                  <NavigatorSettingsSideMenu
+                    mode={mode}
+                    collapsed={collapsed}
+                    onMenuItemClick={this.onMenuItemClick}
+                  />
+                </Sider>
+
+                <Layout>
+                  <ContentComponent />
+                </Layout>
               </Layout>
             </Layout>
-          </Layout>
-        </LayoutId>
+          </LayoutId>
+        ) : (
+          <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
+            <NavigatorHeader menu={menu} isInSettings={true} />
+            <Layout>
+              <NavigatorSettingsMainMenu />
+              <Layout>
+                <Sider
+                  className='mcs-sider'
+                  collapsible={true}
+                  collapsed={false}
+                  trigger={this.renderSettingsTrigger()}
+                >
+                  <NavigatorSettingsSideMenu
+                    mode={mode}
+                    collapsed={collapsed}
+                    onMenuItemClick={this.onMenuItemClick}
+                  />
+                </Sider>
+
+                <Layout>
+                  <ContentComponent />
+                </Layout>
+              </Layout>
+            </Layout>
+          </LayoutId>
+        )}
       </div>
     );
   }
@@ -279,5 +321,6 @@ const mapDispatchToProps = {
 
 export default compose<Props, SettingLayoutProps>(
   withRouter,
+  injectFeatures,
   connect(mapStateToProps, mapDispatchToProps),
 )(SettingLayout);
