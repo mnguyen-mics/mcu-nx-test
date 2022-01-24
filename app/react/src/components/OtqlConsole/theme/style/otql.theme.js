@@ -22,6 +22,7 @@ export function defineAce() {
   const keywordColor = infoColor;
   const operatorColor = warningColor;
   const commentColor = '#998';
+  const supportDirectiveColor = highlightColor;
   const supportFunctionColor = highlightColor;
   const variableLanguage = infoColor;
   const variableInstance = successColor;
@@ -78,6 +79,11 @@ export function defineAce() {
         .ace-otql .ace_support.ace_function {\
         color: ' +
         supportFunctionColor +
+        ';\
+        }\
+        .ace-otql .ace_support.ace_directive {\
+        color: ' +
+        supportDirectiveColor +
         ';\
         }\
         .ace-otql .ace_comment {\
