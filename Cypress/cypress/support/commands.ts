@@ -70,6 +70,101 @@ Cypress.Commands.add(
     }),
 );
 
+Cypress.Commands.add('createQuery', (accessToken, datamartId, queryText) => {
+  return cy.request({
+    url: `${Cypress.env('apiDomain')}/v1/datamarts/${datamartId}/queries`,
+    method: 'POST',
+    headers: { Authorization: accessToken },
+    body: {
+      query_text: queryText,
+      datamart_id: `${datamartId}`,
+      query_language: 'OTQL',
+    },
+  });
+});
+
+Cypress.Commands.add('executeQuery', (accessToken, datamartId, queryText) => {
+  return cy.request({
+    url: `${Cypress.env(
+      'apiDomain',
+    )}/v1/datamarts/${datamartId}/query_executions/otql?precision=FULL_PRECISION&use_cache=false`,
+    method: 'POST',
+    headers: { Authorization: accessToken, 'Content-Type': 'text/plain' },
+    encoding: 'utf-8',
+    body: queryText,
+  });
+});
+
+Cypress.Commands.add(
+  'prepareActivitiesForDashboards',
+  (accessToken, datamartId, channelId, eventName, secondEventName) => {
+    return cy
+      .request({
+        url: `${Cypress.env(
+          'apiDomain',
+        )}/v1/datamarts/${datamartId}/user_activities?processing_pipeline=false`,
+        method: 'POST',
+        headers: { Authorization: accessToken },
+        body: {
+          $user_account_id: 'test',
+          $type: 'SITE_VISIT',
+          $site_id: `${channelId}`,
+          $session_status: 'NO_SESSION',
+          $ts: new Date().getTime(),
+          $events: [
+            {
+              $event_name: eventName,
+              $ts: new Date().getTime(),
+              $properties: {},
+            },
+            {
+              $event_name: eventName,
+              $ts: new Date().getTime(),
+              $properties: {},
+            },
+            {
+              $event_name: eventName,
+              $ts: new Date().getTime(),
+              $properties: {},
+            },
+          ],
+        },
+      })
+      .then(() => {
+        cy.request({
+          url: `${Cypress.env(
+            'apiDomain',
+          )}/v1/datamarts/${datamartId}/user_activities?processing_pipeline=false`,
+          method: 'POST',
+          headers: { Authorization: accessToken },
+          body: {
+            $user_account_id: 'test',
+            $type: 'SITE_VISIT',
+            $site_id: `${channelId}`,
+            $session_status: 'NO_SESSION',
+            $ts: new Date().getTime(),
+            $events: [
+              {
+                $event_name: secondEventName,
+                $ts: new Date().getTime(),
+                $properties: {},
+              },
+              {
+                $event_name: secondEventName,
+                $ts: new Date().getTime(),
+                $properties: {},
+              },
+              {
+                $event_name: secondEventName,
+                $ts: new Date().getTime(),
+                $properties: {},
+              },
+            ],
+          },
+        });
+      });
+  },
+);
 Cypress.Commands.add('switchOrg', organisationName => {
   cy.get('.mcs-button').first().trigger('mouseover');
   cy.get('.mcs-button').contains('Switch Org.').click();
