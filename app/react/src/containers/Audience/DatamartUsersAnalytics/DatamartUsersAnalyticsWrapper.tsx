@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout } from 'react-grid-layout';
-import DatamartUsersAnalyticsContent, { DashboardConfig } from './DatamartUsersAnalyticsContent';
+import DatamartUsersAnalyticsContent from './DatamartUsersAnalyticsContent';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -16,7 +16,6 @@ import {
 } from '../../../utils/LocationSearchHelper';
 import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
-import { LabeledValue } from 'antd/lib/select';
 import { ContentHeader, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import McsMoment from '../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
@@ -26,26 +25,12 @@ import {
 } from '../../../IntlMessages';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import { DatamartUsersAnalyticsWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 interface State {
   layout: Layout[];
   refresh: boolean;
   isLoading: boolean;
-}
-
-export interface DatamartUsersAnalyticsWrapperProps {
-  pageTitle?: string;
-  title?: string;
-  subTitle?: string;
-  datamartId: string;
-  organisationId: string;
-  config: DashboardConfig[];
-  showFilter?: boolean;
-  showDateRangePicker?: boolean;
-  comparisonStartDate?: number;
-  disableAllUserFilter?: boolean;
-  defaultSegment?: LabeledValue;
-  segmentToAggregate?: boolean;
 }
 
 export type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;

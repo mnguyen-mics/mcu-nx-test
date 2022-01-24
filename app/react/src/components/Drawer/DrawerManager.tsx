@@ -123,7 +123,7 @@ class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerSta
     const drawersWithOverlay: JSX.Element[] = [];
 
     drawableContents.forEach(
-      ({ component: WrappedComponent, additionalProps, size, ...others }, index) => {
+      ({ component: WrappedComponent, className, additionalProps, size, ...others }, index) => {
         // can be undefined when booting from store
         if (WrappedComponent) {
           const lastElement = index === drawableContents.length - 1;
@@ -133,13 +133,14 @@ class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerSta
             <div className={'drawer-overlay'} onClick={this.handleClickOnBackground} />,
           );
 
+          const _className = className ? `drawer ${className}` : `drawer`;
           drawersWithOverlay.push(
             <div
               ref={div => {
                 this.drawerDiv = div;
               }}
               tabIndex={0}
-              className={'drawer'}
+              className={_className}
               style={displayInForeground ? drawerStyles.foreground : drawerStyles.background}
             >
               <WrappedComponent {...additionalProps} {...others} />

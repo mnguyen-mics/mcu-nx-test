@@ -18,10 +18,10 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/config/AnalyticsConfigJson';
-import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import DatamartReplicationTab from './DatamartReplicationTab';
 import SegmentBuildersTab from './SegmentBuildersTab';
 import AudienceFeatureListPage from '../../StandardSegmentBuilder/List/AudienceFeatureListPage';
+import { DashboardConfig } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 interface McsTabsItem {
   className?: string;

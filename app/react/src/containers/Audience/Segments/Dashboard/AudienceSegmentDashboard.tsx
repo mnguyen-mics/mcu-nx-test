@@ -28,14 +28,9 @@ import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IDashboardService } from '../../../../services/DashboardServices';
-import {
-  DashboardPageContent,
-  DataFileDashboardResource,
-} from '../../../../models/dashboards/dashboards';
+import { DashboardPageContent } from '../../../../models/dashboards/dashboards';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
-import DatamartUsersAnalyticsWrapper, {
-  DatamartUsersAnalyticsWrapperProps,
-} from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import {
   ecommerceEngagementConfig,
   averageSessionDurationConfig,
@@ -44,6 +39,10 @@ import { Alert } from 'antd';
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { DashboardPageWrapper } from '@mediarithmics-private/advanced-components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
+import {
+  DataFileDashboardResource,
+  DatamartUsersAnalyticsWrapperProps,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 interface State {
   loading: boolean;

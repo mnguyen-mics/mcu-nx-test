@@ -17,13 +17,13 @@ import {
   DashboardResource,
   DashboardsOptions,
   DashboardType,
-  DataFileDashboardResource,
   DashboardPageContent,
   DashoboardScope,
 } from '../models/dashboards/dashboards';
 import { TYPES } from '../constants/types';
 import { IDataFileService } from './DataFileService';
 import cuid from 'cuid';
+import { DataFileDashboardResource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 export interface GetDashboardsOptions extends PaginatedApiParam {
   organisation_id?: string;
   datamartId?: string;
