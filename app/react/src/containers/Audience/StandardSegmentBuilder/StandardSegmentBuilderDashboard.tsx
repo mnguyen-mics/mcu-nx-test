@@ -113,6 +113,7 @@ class StandardSegmentBuilderDashboard extends React.Component<Props> {
           <DashboardPageWrapper
             className='mcs-dashboardPage_content'
             datamartId={datamartId}
+            organisationId={organisationId}
             source={queryDocument}
             tabsClassname='m-t-30'
             fetchApiDashboards={fetchApiDashboards}

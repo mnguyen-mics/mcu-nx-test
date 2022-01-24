@@ -184,7 +184,14 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   };
 
   render() {
-    const { hasFeature, intl, selectedDatamartId } = this.props;
+    const {
+      hasFeature,
+      intl,
+      selectedDatamartId,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const { datamartAnalyticsDashboardConfig } = this.state;
 
@@ -208,6 +215,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
             </Breadcrumb>
             <DashboardPageWrapper
               datamartId={selectedDatamartId}
+              organisationId={organisationId}
               datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
               fetchApiDashboards={this.fetchApiDashboards}
               fetchDataFileDashboards={this.fetchDataFileDashboards}
