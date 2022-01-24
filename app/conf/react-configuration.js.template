@@ -46,7 +46,8 @@
     'datamartSettings-compartments',
     'datamartSettings-datamart_replication',
     'datamartSettings-event_hubs_replication',
-    'audience-feature-search'
+    'audience-feature-search',
+    'new-navigation-system'
   ];
 
  const gravityFeatures = [
