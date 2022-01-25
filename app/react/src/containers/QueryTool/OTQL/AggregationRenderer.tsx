@@ -253,7 +253,7 @@ class AggregationRenderer extends React.Component<Props, State> {
 
       const tabs = [
         {
-          title: <TableOutlined className='mcs-otqlChart_icons' />,
+          title: <TableOutlined className='mcs-otqlChart_icons mcs-otqlChart_icons_table' />,
           key: 'table',
           display: (
             <Card bordered={false}>
@@ -302,10 +302,10 @@ class AggregationRenderer extends React.Component<Props, State> {
           ),
         },
         {
-          title: <BarChartOutlined className='mcs-otqlChart_icons' />,
+          title: <BarChartOutlined className='mcs-otqlChart_icons mcs-otqlChart_icons_bar' />,
           key: 'bar',
           display: (
-            <Card bordered={false}>
+            <Card bordered={false} className='mcs-otqlChart_content_bar'>
               <BarChart
                 {...optionsForBarChart}
                 dataset={stackedBarChartDataset ? stackedBarChartDataset : []}
@@ -316,19 +316,19 @@ class AggregationRenderer extends React.Component<Props, State> {
           ),
         },
         {
-          title: <RadarChartOutlined className='mcs-otqlChart_icons' />,
+          title: <RadarChartOutlined className='mcs-otqlChart_icons mcs-otqlChart_icons_radar' />,
           key: 'radar',
           display: (
-            <Card bordered={false}>
+            <Card bordered={false} className='mcs-otqlChart_content_radar'>
               <RadarChart {...radarChartProps} />
             </Card>
           ),
         },
         {
-          title: <PieChartOutlined className='mcs-otqlChart_icons' />,
+          title: <PieChartOutlined className='mcs-otqlChart_icons mcs-otqlChart_icons_pie' />,
           key: 'pie',
           display: (
-            <Card bordered={false}>
+            <Card bordered={false} className='mcs-otqlChart_content_pie'>
               <PieChart {...pieChartProps} />
             </Card>
           ),

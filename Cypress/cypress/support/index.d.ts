@@ -157,5 +157,17 @@ declare namespace Cypress {
       segmentIds?: number[],
       builderIds?: number[],
     ): Chainable<any>;
+
+    prepareActivitiesForDashboards(
+      accessToken: string,
+      datamartId: string,
+      channelId: string,
+      eventName: string,
+      secondEventName: string,
+    ): Chainable<any>;
+
+    createQuery(accessToken: string, datamartId: string, queryText: string): Chainable<any>;
+
+    executeQuery(accessToken: string, datamartId: string, queryText: string): Chainable<any>;
   }
 }
