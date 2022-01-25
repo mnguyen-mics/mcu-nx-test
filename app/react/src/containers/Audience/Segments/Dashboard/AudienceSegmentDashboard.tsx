@@ -375,6 +375,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
             fetchApiDashboards={fetchApiDashboards}
             fetchDataFileDashboards={fetchDataFileDashboards}
             datamartId={segment?.datamart_id}
+            organisationId={organisationId}
             datamartAnalyticsConfig={
               shouldDisplayAnalyticsFeature ? datamartAnalyticsDashboardConfig : []
             }
