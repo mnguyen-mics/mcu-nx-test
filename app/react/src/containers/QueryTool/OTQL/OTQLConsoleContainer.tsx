@@ -12,13 +12,13 @@ import { DataResponse } from '@mediarithmics-private/advanced-components/lib/ser
 import SchemaVizualizer from '../../Audience/AdvancedSegmentBuilder/SchemaVisualizer/SchemaVizualizer';
 import { computeFinalSchemaItem } from '../../Audience/AdvancedSegmentBuilder/domain';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
-import { Loading } from '../../../components';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import OTQLRequest from './OTQLRequest';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 const messages = defineMessages({
   queryToSave: {
@@ -286,10 +286,6 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     const { datamartId, intl, editionMode, createdQueryId } = this.props;
     const { schemaLoading, rawSchema, activeKey, panes, tabQueries, query } = this.state;
 
-    if (schemaLoading) {
-      return <Loading isFullScreen={true} />;
-    }
-
     const currentQuery =
       tabQueries.length > 0
         ? tabQueries.find((tabQ: TabQuery) => tabQ.id === activeKey)
@@ -316,47 +312,51 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         {this.state.query && this.props.renderActionBar(queryToUse, datamartId)}
         <Layout>
           <Content className='mcs-content-container'>
-            <Tabs
-              className={'mcs-OTQLConsoleContainer_tabs'}
-              type='editable-card'
-              onChange={this.onChange}
-              activeKey={activeKey}
-              onEdit={this.onEdit}
-            >
-              {panes.map((pane, i) => (
-                <TabPane
-                  className={'mcs-OTQLConsoleContainer_tabs_tab'}
-                  tab={
-                    i === 0 && editionMode ? intl.formatMessage(messages.queryToSave) : pane.title
-                  }
-                  key={pane.key}
-                  closable={pane.closable}
-                >
-                  {createdQueryId && (
-                    <Alert
-                      className={'mcs-OTQLConsoleContainer_tabs_createdQueryMessage'}
-                      message={`Query ${createdQueryId} created.`}
-                      type='success'
-                      closable={true}
-                      showIcon={true}
-                    />
-                  )}
-                  <div className={'mcs-OTQLConsoleContainer_tab_content'}>
-                    {pane.content}
-                    <div className='schema-visualizer'>
-                      <SchemaVizualizer
-                        schema={
-                          rawSchema && rawSchema.length > 0
-                            ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
-                            : undefined
-                        }
-                        disableDragAndDrop={true}
+            {schemaLoading ? (
+              <Loading isFullScreen={false} className={'mcs-otqlConsoleContainer_loader'} />
+            ) : (
+              <Tabs
+                className={'mcs-OTQLConsoleContainer_tabs'}
+                type='editable-card'
+                onChange={this.onChange}
+                activeKey={activeKey}
+                onEdit={this.onEdit}
+              >
+                {panes.map((pane, i) => (
+                  <TabPane
+                    className={'mcs-OTQLConsoleContainer_tabs_tab'}
+                    tab={
+                      i === 0 && editionMode ? intl.formatMessage(messages.queryToSave) : pane.title
+                    }
+                    key={pane.key}
+                    closable={pane.closable}
+                  >
+                    {createdQueryId && (
+                      <Alert
+                        className={'mcs-OTQLConsoleContainer_tabs_createdQueryMessage'}
+                        message={`Query ${createdQueryId} created.`}
+                        type='success'
+                        closable={true}
+                        showIcon={true}
                       />
+                    )}
+                    <div className={'mcs-OTQLConsoleContainer_tab_content'}>
+                      {pane.content}
+                      <div className='schema-visualizer'>
+                        <SchemaVizualizer
+                          schema={
+                            rawSchema && rawSchema.length > 0
+                              ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
+                              : undefined
+                          }
+                          disableDragAndDrop={true}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </TabPane>
-              ))}
-            </Tabs>
+                  </TabPane>
+                ))}
+              </Tabs>
+            )}
           </Content>
         </Layout>
       </Layout>
