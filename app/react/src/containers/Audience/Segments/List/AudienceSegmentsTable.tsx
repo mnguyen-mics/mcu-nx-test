@@ -728,7 +728,11 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         key: 'user_points_count',
         isVisibleByDefault: columnsVisibility.get('user_points_count'),
         isHideable: true,
-        render: (text: string) => this.renderMetricData(text, '0,0'),
+        render: (text: string) => (
+          <span className='mcs-audienceSegments_user_points'>
+            {this.renderMetricData(text, '0,0')}
+          </span>
+        ),
       },
       {
         title: () => this.getColumnButton('user_accounts_count'),

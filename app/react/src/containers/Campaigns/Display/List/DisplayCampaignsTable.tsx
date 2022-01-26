@@ -244,7 +244,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => (
-          <span className='mcs-campaign-Display-view-stats'>{renderMetricData(text, '0,0')}</span>
+          <span className='mcs-campaignDisplay_stat_views'>{renderMetricData(text, '0,0')}</span>
         ),
       },
       {
@@ -253,7 +253,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => (
-          <span className='mcs-campaign-Display-click-stats'>{renderMetricData(text, '0,0')}</span>
+          <span className='mcs-campaignDisplay_stat_clicks'>{renderMetricData(text, '0,0')}</span>
         ),
       },
       {
