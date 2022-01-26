@@ -5,7 +5,9 @@ import { InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
-import { InjectedNotificationProps } from '../../containers/Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../containers/Notifications/injectNotifications';
 import {
   FunnelFilter,
   FunnelTimeRange,
@@ -343,6 +345,7 @@ class FunnelDataFetcher extends React.Component<Props, State> {
   }
 }
 
-export default compose<FunnelDataFetcherProps, FunnelDataFetcherProps>(withRouter)(
-  FunnelDataFetcher,
-);
+export default compose<FunnelDataFetcherProps, FunnelDataFetcherProps>(
+  withRouter,
+  injectNotifications,
+)(FunnelDataFetcher);
