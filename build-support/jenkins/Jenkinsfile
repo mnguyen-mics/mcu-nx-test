@@ -113,7 +113,7 @@ pipeline {
         }
         failure {
             echo 'The staging build failed.'
-            sh './build-support/notify-im.sh'
+            sh './build-support/jenkins/notify-im.sh'
         }
     }
 }
