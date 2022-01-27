@@ -331,6 +331,7 @@ Cypress.Commands.add('initTestContext', () => {
             Math.random().toString(36).substring(2, 10)
           }`,
           market_id: '1',
+          type: 'TEST_SANDBOX',
         },
       }).then(orgResponse => {
         organisationId = orgResponse.body.data.id;
