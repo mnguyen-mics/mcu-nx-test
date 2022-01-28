@@ -104,7 +104,7 @@ pipeline {
     post {
         always {
             script {
-                if (params.RUN_E2E_TESTS == true && params.GIVEN_VIRTUAL_PLATFORM_ID == '') {
+                if (params.END_TO_END_CHECK == true && params.GIVEN_VIRTUAL_PLATFORM_ID == '') {
                     echo 'Kill virtual platform used for end-to-end tests'
                     build job: 'sandbox-metal-delete', parameters: [[$class: 'StringParameterValue', name: 'id', value: "${VIRTUAL_PLATFORM_ID}"]]
                 }
