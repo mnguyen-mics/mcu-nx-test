@@ -6,7 +6,7 @@ import {
   RadarChartOutlined,
   TableOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Table, Select, Input, Card } from 'antd';
+import { Breadcrumb, Table, Select, Input, Card, Button as AntButton } from 'antd';
 import {
   OTQLMetric,
   OTQLAggregations,
@@ -22,16 +22,39 @@ import {
   BarChart,
   PieChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
+import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import {
-  Dataset,
-  Format,
-} from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
-import { RadarChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/radar-chart';
-import { PieChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/pie-chart';
+  BarChartOptions,
+  PieChartOptions,
+  RadarChartOptions,
+} from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
+import {
+  chartType,
+  getBaseChartProps,
+  getOption,
+  getQuickOptionsForChartType,
+  renderQuickOptions,
+} from './utils/ChartOptionsUtils';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
+
+const messages = defineMessages({
+  copiedToClipboard: {
+    id: 'queryTool.AggregationRenderer.copiedToClipboard',
+    defaultMessage: 'Copied chart configuration to clipboard',
+  },
+  share: {
+    id: 'queryTool.AggregationRenderer.share',
+    defaultMessage: 'Generate chart json',
+  },
+});
+
 const MAX_ELEMENTS = 999;
+
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
   bucket: OTQLBucket;
@@ -41,9 +64,10 @@ export interface AggregationRendererProps {
   rootAggregations: OTQLAggregations;
   query?: string;
 }
-type Props = AggregationRendererProps & InjectedFeaturesProps;
-
-type chartType = 'RADAR' | 'BAR';
+type Props = AggregationRendererProps &
+  InjectedFeaturesProps &
+  InjectedNotificationProps &
+  InjectedIntlProps;
 
 interface State {
   aggregationsPath: BucketPath[];
@@ -51,6 +75,7 @@ interface State {
   selectedView: string;
   numberItems: number;
   selectedChart: chartType;
+  selectedQuickOptions: { [key: string]: string };
 }
 
 class AggregationRenderer extends React.Component<Props, State> {
@@ -67,7 +92,8 @@ class AggregationRenderer extends React.Component<Props, State> {
         props.rootAggregations.buckets[0].buckets.length <= 6
           ? props.rootAggregations.buckets[0].buckets.length
           : 6,
-      selectedChart: 'RADAR',
+      selectedChart: 'table',
+      selectedQuickOptions: {},
     };
   }
 
@@ -81,6 +107,22 @@ class AggregationRenderer extends React.Component<Props, State> {
     } else {
       return 'metrics';
     }
+  };
+
+  getChartPropsMap(_chartType: chartType): any[] {
+    const { selectedQuickOptions } = this.state;
+    return Object.keys(selectedQuickOptions).map(selectedOptionKey => {
+      return getOption(_chartType, selectedOptionKey, selectedQuickOptions[selectedOptionKey]);
+    });
+  }
+
+  getChartProps = (_chartType: chartType) => {
+    const chartPropsMap = this.getChartPropsMap(_chartType);
+    const baseProps = getBaseChartProps(_chartType);
+    const newChartProps = chartPropsMap.reduce((acc, property) => {
+      return { ...acc, ...property };
+    }, baseProps);
+    return newChartProps;
   };
 
   getMetrics = (metrics: OTQLMetric[] = []) => {
@@ -121,8 +163,12 @@ class AggregationRenderer extends React.Component<Props, State> {
   };
 
   handleChartTypeChange = (value: chartType) => {
+    const defaultSelectedOptions = getQuickOptionsForChartType(value).reduce((acc, option) => {
+      return { ...acc, [option.title]: option.options[0].value };
+    }, {});
     this.setState({
       selectedChart: value,
+      selectedQuickOptions: defaultSelectedOptions,
     });
   };
 
@@ -144,8 +190,8 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 
   getBuckets = (buckets: OTQLBuckets) => {
-    const { hasFeature } = this.props;
-    const { numberItems } = this.state;
+    const { hasFeature, intl } = this.props;
+    const { numberItems, selectedChart } = this.state;
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
@@ -193,48 +239,6 @@ class AggregationRenderer extends React.Component<Props, State> {
       const pieChartDataset = currentBuckets.map(bucket => {
         return { key: bucket.key, value: bucket.count };
       });
-      const optionsForBarChart = {
-        xKey: 'key',
-        yKeys: [
-          {
-            key: 'count',
-            message: 'count',
-          },
-        ],
-        xAxis: { title: { text: '' } },
-        chartOptions: {
-          yAxis: { title: { text: '' } },
-        },
-        colors: ['#00a1df'],
-        legend: {
-          enabled: true,
-        },
-        format: 'count' as Format,
-      };
-
-      const radarChartProps: RadarChartProps = {
-        dataset: radarChartDataset,
-        height: BASE_CHART_HEIGHT,
-        xKey: 'xKey',
-        yKeys: [
-          {
-            key: 'value',
-            message: 'count',
-          },
-        ],
-        dataLabels: {
-          enabled: false,
-        },
-      };
-
-      const pieChartProps: PieChartProps = {
-        dataset: pieChartDataset,
-        height: BASE_CHART_HEIGHT,
-        innerRadius: false,
-        dataLabels: {
-          enabled: true,
-        },
-      };
 
       const renderShowTop = () => {
         return (
@@ -307,10 +311,9 @@ class AggregationRenderer extends React.Component<Props, State> {
           display: (
             <Card bordered={false} className='mcs-otqlChart_content_bar'>
               <BarChart
-                {...optionsForBarChart}
+                {...(this.getChartProps('bar') as BarChartOptions)}
                 dataset={stackedBarChartDataset ? stackedBarChartDataset : []}
                 drilldown={true}
-                bigBars={true}
               />
             </Card>
           ),
@@ -320,7 +323,10 @@ class AggregationRenderer extends React.Component<Props, State> {
           key: 'radar',
           display: (
             <Card bordered={false} className='mcs-otqlChart_content_radar'>
-              <RadarChart {...radarChartProps} />
+              <RadarChart
+                {...(this.getChartProps('radar') as RadarChartOptions)}
+                dataset={radarChartDataset}
+              />
             </Card>
           ),
         },
@@ -329,20 +335,38 @@ class AggregationRenderer extends React.Component<Props, State> {
           key: 'pie',
           display: (
             <Card bordered={false} className='mcs-otqlChart_content_pie'>
-              <PieChart {...pieChartProps} />
+              <PieChart
+                {...(this.getChartProps('pie') as PieChartOptions)}
+                dataset={pieChartDataset}
+              />
             </Card>
           ),
         },
       ];
+      const onChangeQuickOption = this.onSelectQuickOption.bind(this);
       return (
         <div>
           <McsTabs
             items={tabs}
             animated={false}
             className='mcs-otqlChart_tabs'
+            onChange={this.handleChartTypeChange}
             defaultActiveKey={this.hasDateHistogram() ? 'bar' : 'table'}
           />
-          {renderShowTop()}
+          <div className={'mcs-otqlChart_items_container'}>
+            {renderQuickOptions(this.state.selectedChart, onChangeQuickOption)}
+            {renderShowTop()}
+          </div>
+          <div className={'mcs-otqlChart_chartConfig_clipboard_container'}>
+            <CopyToClipboard
+              text={JSON.stringify(this.getChartProps(selectedChart), null, 2)}
+              onCopy={this.handleAfterChartConfigCopy}
+            >
+              <AntButton type='ghost' className={'mcs-otqlChart_items_share_button'}>
+                {intl.formatMessage(messages.share)}
+              </AntButton>
+            </CopyToClipboard>
+          </div>
         </div>
       );
     }
@@ -386,6 +410,24 @@ class AggregationRenderer extends React.Component<Props, State> {
       </div>
     );
   };
+
+  handleAfterChartConfigCopy = () => {
+    this.props.notifySuccess({
+      message: messages.copiedToClipboard.defaultMessage,
+      description: '',
+    });
+  };
+
+  onSelectQuickOption(title: string, value: string) {
+    const { selectedQuickOptions } = this.state;
+    const newState = {
+      selectedQuickOptions: {
+        ...selectedQuickOptions,
+        [title]: value,
+      },
+    };
+    this.setState(newState);
+  }
 
   findAggregations = (
     aggregations: OTQLAggregations,
@@ -501,4 +543,8 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 }
 
-export default compose<{}, AggregationRendererProps>(injectFeatures)(AggregationRenderer);
+export default compose<{}, AggregationRendererProps>(
+  injectFeatures,
+  injectNotifications,
+  injectIntl,
+)(AggregationRenderer);

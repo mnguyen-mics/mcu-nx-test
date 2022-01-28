@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { Spin, Tag } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import CountUp from 'react-countup';
 import {
   OTQLResult,
   isCountResult,
   isAggregateResult,
 } from '../../../models/datamart/graphdb/OTQLResult';
-import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import AggregationRenderer from './AggregationRenderer';
 import { compose } from 'recompose';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
@@ -15,7 +13,7 @@ import {
   injectThemeColors,
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
-import { BorderlessTableOutlined } from '@ant-design/icons';
+import { CountRenderer } from './CountRenderer';
 
 export interface OTQLResultRendererProps {
   result: OTQLResult | null;
@@ -48,26 +46,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       );
     } else if (result && isCountResult(result.rows)) {
       const count = result.rows[0].count;
-
-      const tabs = [
-        {
-          title: <BorderlessTableOutlined className='mcs-otqlChart_icons' />,
-          key: 'pie',
-          display: (
-            <Card>
-              <CountUp
-                className={'mcs-otqlChart_resultMetrics'}
-                start={0}
-                end={count}
-                separator=','
-                decimal='.'
-                duration={0.5}
-              />
-            </Card>
-          ),
-        },
-      ];
-      content = <McsTabs items={tabs} animated={false} className='mcs-otqlChart_tabs' />;
+      content = <CountRenderer count={count} />;
     } else if (result && isAggregateResult(result.rows)) {
       const aggregations = result.rows[0].aggregations;
       content = (
