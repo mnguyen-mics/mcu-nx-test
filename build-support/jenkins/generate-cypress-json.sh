@@ -16,6 +16,7 @@ if [ "$#" -eq 3 ]; then
   VIRTUAL_PLATFORM_NAME="$1"
   USER_NAME=""
   RECORD_VIDEO=false
+  ROOT="https://auth."$1".mics-sandbox.com"
 elif [ "$#" -eq 2 ]; then
 # used for CI pipeline -> we don't record videos, and execute the tests against a sandbox.
   NAVIGATOR_URL="https://navigator."$1".mics-sandbox.com"
