@@ -206,6 +206,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
           suffixIcon={<McsIcon type='magnifier' />}
           getPopupContainer={getPopupContainer}
           filterOption={alwaysTrue}
+          dropdownClassName='mcs-resourceByNameSelector_dropdown'
         >
           {resourcesList.length > 1 && displaySelectAll && (
             <Select.Option value={selectAllOptionValue} key={selectAllOptionValue}>
