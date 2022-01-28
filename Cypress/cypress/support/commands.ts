@@ -97,7 +97,7 @@ Cypress.Commands.add('executeQuery', (accessToken, datamartId, queryText) => {
 
 Cypress.Commands.add(
   'prepareActivitiesForDashboards',
-  (accessToken, datamartId, channelId, eventName, secondEventName) => {
+  (accessToken, datamartId, channelId, eventName, secondEventName, secondChannelId?) => {
     return cy
       .request({
         url: `${Cypress.env(
@@ -140,7 +140,7 @@ Cypress.Commands.add(
           body: {
             $user_account_id: 'test',
             $type: 'SITE_VISIT',
-            $site_id: `${channelId}`,
+            $site_id: `${secondChannelId ? secondChannelId : channelId}`,
             $session_status: 'NO_SESSION',
             $ts: new Date().getTime(),
             $events: [
@@ -382,6 +382,7 @@ Cypress.Commands.add('initTestContext', () => {
                   'agents:[UserAgent!]!\n' +
                   'accounts:[UserAccount!]!\n' +
                   'emails:[UserEmail!]!\n' +
+                  'activities:[UserActivity!]!\n' +
                   'activity_events:[ActivityEvent!]!\n' +
                   'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
                   'creation_date:Date! @Function(name:"ISODate", params:["creation_ts"]) @TreeIndex(index:"USER_INDEX")\n' +
@@ -417,6 +418,14 @@ Cypress.Commands.add('initTestContext', () => {
                   'form_factor:FormFactor @TreeIndex(index:"USER_INDEX")\n' +
                   '}\n' +
                   '######\n' +
+                  'type UserActivity  {\n' +
+                  'id:ID!\n' +
+                  'channel_id:String @Property(paths:["$site_id", "$app_id"]) @ReferenceTable(type:"CORE_OBJECT", model_type:"CHANNELS") @TreeIndex(index:"USER_INDEX")\n' +
+                  'session_duration:Int @Property(path:"$session_duration")\n' +
+                  'ts:Timestamp!\n' +
+                  'events:[ActivityEvent!]!\n' +
+                  '}\n' +
+                  '#########################\n' +
                   'type UserAccount  {\n' +
                   'creation_ts:Timestamp!\n' +
                   'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
