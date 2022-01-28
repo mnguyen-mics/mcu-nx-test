@@ -1,6 +1,8 @@
 import faker from 'faker';
 import {
   differentChartsContent,
+  drawerChartDetails,
+  getDecoratosTransformationContent,
   indexTransformationContent,
   standardSegmentDashboardContent,
 } from './DashboardContents';
@@ -228,10 +230,6 @@ describe('dashboards engine Tests', () => {
                         }
                       });
                     }
-                    cy.get('.mcs-dashboardPage_content').should(
-                      'not.contain',
-                      'Standard Segment Builder First Dashboard',
-                    );
                     cy.createDashboard(
                       data.accessToken,
                       data.organisationId,
@@ -356,6 +354,236 @@ describe('dashboards engine Tests', () => {
               );
             cy.get('.mcs-otqlInputEditor_run_button').click();
             cy.get('.mcs-otqlChart_resultMetrics').should('contain', '6');
+          });
+        });
+      });
+    });
+  });
+
+  it('should test the raw data and query drawer for a chart', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'first channel',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
+        cy.prepareActivitiesForDashboards(
+          data.accessToken,
+          data.datamartId,
+          channel.body.data.id,
+          'test_drawer',
+          'test_drawer_2',
+        ).then(() => {
+          cy.wait(30000);
+          cy.createQuery(
+            data.accessToken,
+            data.datamartId,
+            'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
+          ).then(queryResponse => {
+            const queryId = queryResponse.body.data.id;
+            cy.executeQuery(
+              data.accessToken,
+              data.datamartId,
+              'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
+            ).then(() => {
+              cy.createDashboard(
+                data.accessToken,
+                data.organisationId,
+                'Drawer Charts Details',
+                ['home'],
+                [],
+                [],
+              ).then(dashboardResponse => {
+                cy.request({
+                  url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+                    dashboardResponse.body.data.id
+                  }/content`,
+                  method: 'PUT',
+                  headers: { Authorization: data.accessToken },
+                  body: drawerChartDetails(queryId),
+                }).then(() => {
+                  cy.switchOrg(data.organisationName);
+                  cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+                  cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+                  cy.contains('Drawer Charts Details').click();
+                  cy.wait(3000);
+                  cy.contains('Bars').click();
+                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Bars');
+                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                    .should('have.length', 1)
+                    .find('input')
+                    .invoke('val')
+                    .then(value => {
+                      expect(value).to.contain(
+                        'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
+                      );
+                    });
+                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                    .should('contain', 'test_drawer')
+                    .and('contain', 'test_drawer_2')
+                    .and('contain', '3');
+                  cy.get('.mcs-close').click();
+                  cy.contains('Metric').click();
+                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Metric');
+                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                    .should('contain', 'count')
+                    .and('contain', '1');
+                  cy.get('.mcs-close').click();
+                  cy.contains('Pie').click();
+                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Pie');
+                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                    .should('have.length', 1)
+                    .find('input')
+                    .invoke('val')
+                    .then(value => {
+                      expect(value).to.contain(
+                        'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
+                      );
+                    });
+                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                    .should('contain', 'test_drawer')
+                    .and('contain', 'test_drawer_2')
+                    .and('contain', '3');
+                  cy.get('.mcs-close').click();
+                  cy.contains('Index First').click();
+                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Index First');
+                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                    .should('have.length', 2)
+                    .find('input')
+                    .eq(0)
+                    .invoke('val')
+                    .then(value => {
+                      expect(value).to.contain(
+                        'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
+                      );
+                    });
+                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                    .should('have.length', 2)
+                    .find('input')
+                    .eq(1)
+                    .invoke('val')
+                    .then(value => {
+                      expect(value).to.contain(
+                        'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
+                      );
+                    });
+                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                    .should('contain', 'test_drawer')
+                    .and('contain', 'test_drawer_2')
+                    .and('contain', '3')
+                    .and('contain', 'datamart-percentage')
+                    .and('contain', 'datamart-count')
+                    .and('contain', '100')
+                    .and('contain', '50');
+                  cy.get('.mcs-close').click();
+                  cy.contains('Index Hidden Axis').click();
+                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Index Hidden Axis');
+                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                    .should('have.length', 2)
+                    .find('input')
+                    .eq(0)
+                    .invoke('val')
+                    .then(value => {
+                      expect(value).to.contain(
+                        'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
+                      );
+                    });
+                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                    .should('have.length', 2)
+                    .find('input')
+                    .eq(1)
+                    .invoke('val')
+                    .then(value => {
+                      expect(value).to.contain(
+                        'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
+                      );
+                    });
+                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                    .should('contain', 'test_drawer')
+                    .and('contain', 'test_drawer_2')
+                    .and('contain', '3')
+                    .and('contain', 'datamart-percentage')
+                    .and('contain', 'datamart-count')
+                    .and('contain', '100')
+                    .and('contain', '50');
+                  cy.get('.mcs-close').click();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it('should test the get-decorators transformation', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'first channel',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
+        cy.createChannel(
+          data.accessToken,
+          data.datamartId,
+          'second channel',
+          'test.com',
+          false,
+          'SITE',
+        ).then(secondChannel => {
+          cy.prepareActivitiesForDashboards(
+            data.accessToken,
+            data.datamartId,
+            channel.body.data.id,
+            'test_get_decorators',
+            'test_get_decorators_2',
+            secondChannel.body.data.id,
+          ).then(() => {
+            cy.wait(30000);
+            cy.createQuery(
+              data.accessToken,
+              data.datamartId,
+              `SELECT {channel_id @map} FROM UserActivity where channel_id = "${channel.body.data.id}" or channel_id = "${secondChannel.body.data.id}"`,
+            ).then(queryResponse => {
+              const queryId = queryResponse.body.data.id;
+              cy.executeQuery(
+                data.accessToken,
+                data.datamartId,
+                `SELECT {channel_id @map} FROM UserActivity where channel_id = "${channel.body.data.id}" or channel_id = "${secondChannel.body.data.id}"`,
+              ).then(() => {
+                cy.createDashboard(
+                  data.accessToken,
+                  data.organisationId,
+                  'Get-Decorators Transformation',
+                  ['home'],
+                  [],
+                  [],
+                ).then(dashboardResponse => {
+                  cy.request({
+                    url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+                      dashboardResponse.body.data.id
+                    }/content`,
+                    method: 'PUT',
+                    headers: { Authorization: data.accessToken },
+                    body: getDecoratosTransformationContent(queryId),
+                  }).then(() => {
+                    cy.switchOrg(data.organisationName);
+                    cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+                    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+                    cy.contains('Get-Decorators Transformation').click();
+                    cy.get('.mcs-card_content')
+                      .should('contain', 'first channel')
+                      .and('contain', 'second channel');
+                  });
+                });
+              });
+            });
           });
         });
       });
