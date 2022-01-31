@@ -306,7 +306,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         />
         <div className='ant-layout'>
           <Content className='mcs-content-container'>
-            <ExportHeader object={exportObject.item && exportObject.item} />
+            <ExportHeader object={exportObject && exportObject.item} />
             {exportObject.item && (
               <Labels
                 labellableId={exportObject.item.id}
