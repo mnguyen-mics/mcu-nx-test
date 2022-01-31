@@ -43,8 +43,6 @@ type JoinedProps = AudiencePartitionFormProps &
 
 class AudiencePartitionForm extends React.Component<JoinedProps, AudiencePartitionFormState> {
   buildFormSections = () => {
-    const {} = this.props;
-
     const sections: McsFormSection[] = [];
 
     const general = {
