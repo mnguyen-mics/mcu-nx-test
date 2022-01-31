@@ -99,7 +99,6 @@ class Funnel extends React.Component<Props, State> {
   };
 
   drawSteps = (funnelData: FunnelData, startIndex: number) => {
-    const {} = this.props;
     if (!!funnelData) {
       const funnelResult = funnelData.groupedFunnel;
       const stepsDelta = funnelData.stepsDelta;

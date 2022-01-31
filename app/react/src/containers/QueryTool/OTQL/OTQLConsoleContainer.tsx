@@ -262,7 +262,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
     const newPanes = panes.filter(pane => pane.key !== targetKey);
 
-    newTabQueries.filter((tabQuery: TabQuery) => tabQuery.id !== targetKey);
+    const filteredNewTabQueries = newTabQueries.filter(
+      (tabQuery: TabQuery) => tabQuery.id !== targetKey,
+    );
 
     if (newPanes.length && newActiveKey === targetKey) {
       if (lastIndex && lastIndex >= 0) {
@@ -278,7 +280,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     this.setState({
       panes: newPanes,
       activeKey: newActiveKey,
-      tabQueries: newTabQueries,
+      tabQueries: filteredNewTabQueries,
     });
   };
 
