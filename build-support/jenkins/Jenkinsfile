@@ -41,7 +41,7 @@ pipeline {
         stage('Building and Publishing Navigator Staging Artifacts'){
             when {
                 // Only publish staging if END_TO_END_CHECK == true
-                expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == '' }
+                expression { params.END_TO_END_CHECK == true && params.GIVEN_VIRTUAL_PLATFORM_NAME == '' }
             }
             steps {
                 echo 'Running mediarithmics-navigator-publish-zip'
@@ -51,7 +51,7 @@ pipeline {
             stage('Virtual Platform Creation') {
                     when {
                         // Only create sandbox if END_TO_END_CHECK == true
-                        expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
+                        expression { params.END_TO_END_CHECK == true && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
                     }
                     steps {
                         script {
@@ -83,7 +83,7 @@ pipeline {
         stage('Cypress Parallel Tests On Created Virtual Platform'){
             when {
                 // Only run end to end scenarios is END_TO_END_CHECK == true
-                expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
+                expression { params.END_TO_END_CHECK == true && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
             }
             steps {
                 echo 'Running Cypress end-to-end front-end scenarios'
