@@ -300,7 +300,7 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it('test the charts on the query tool', () => {
+  it.skip('test the charts on the query tool', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -425,12 +425,14 @@ describe('dashboards engine Tests', () => {
                     .should('contain', 'test_drawer')
                     .and('contain', 'test_drawer_2')
                     .and('contain', '3');
+                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
                   cy.get('.mcs-close').click();
                   cy.contains('Metric').click();
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Metric');
                   cy.get('.mcs-chartMetaDataInfo_section_title')
                     .should('contain', 'count')
                     .and('contain', '1');
+                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
                   cy.get('.mcs-close').click();
                   cy.contains('Pie').click();
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Pie');
@@ -447,6 +449,7 @@ describe('dashboards engine Tests', () => {
                     .should('contain', 'test_drawer')
                     .and('contain', 'test_drawer_2')
                     .and('contain', '3');
+                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
                   cy.get('.mcs-close').click();
                   cy.contains('Index First').click();
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Index First');
@@ -478,6 +481,7 @@ describe('dashboards engine Tests', () => {
                     .and('contain', 'datamart-count')
                     .and('contain', '100')
                     .and('contain', '50');
+                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
                   cy.get('.mcs-close').click();
                   cy.contains('Index Hidden Axis').click();
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Index Hidden Axis');
@@ -509,6 +513,7 @@ describe('dashboards engine Tests', () => {
                     .and('contain', 'datamart-count')
                     .and('contain', '100')
                     .and('contain', '50');
+                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
                   cy.get('.mcs-close').click();
                 });
               });
@@ -585,6 +590,38 @@ describe('dashboards engine Tests', () => {
               });
             });
           });
+        });
+      });
+    });
+  });
+
+  it('should test that when we change the org the home page refreshes', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createDashboard(
+        data.accessToken,
+        data.organisationId,
+        'Change organisation',
+        ['home'],
+        [],
+        [],
+      ).then(dashboardResponse => {
+        cy.request({
+          url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+            dashboardResponse.body.data.id
+          }/content`,
+          method: 'PUT',
+          headers: { Authorization: data.accessToken },
+          body: getDecoratosTransformationContent('00'),
+        }).then(() => {
+          cy.switchOrg(data.organisationName);
+          cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+          cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+          cy.get('.mcs-homePage_dashboard_page_wrapper').should('contain', 'Change organisation');
+          cy.switchOrg('dogfooding');
+          cy.get('.mcs-homePage_dashboard_page_wrapper').should(
+            'not.contain',
+            'Change organisation',
+          );
         });
       });
     });
