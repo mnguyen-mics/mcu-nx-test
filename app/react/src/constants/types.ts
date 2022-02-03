@@ -36,7 +36,6 @@ const TYPES = {
   ISettingsService: Symbol.for('settingsService'),
   IDashboardService: Symbol.for('dashboardService'),
   ICatalogService: Symbol.for('catalogService'),
-  ILibraryCatalogService: Symbol.for('libraryCatalogService'),
   IServiceOfferPageService: Symbol.for('serviceOfferPageService'),
   IFeedsStatsService: Symbol.for('feedsStatsService'),
   IAssetFileService: Symbol.for('assetFileService'),
