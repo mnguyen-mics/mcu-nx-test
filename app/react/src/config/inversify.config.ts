@@ -123,10 +123,6 @@ import {
   AttributionModelService,
 } from '../services/AttributionModelService';
 import {
-  ILibraryCatalogService,
-  LibraryCatalogService,
-} from '../services/Library/LibraryCatalogService';
-import {
   IServiceUsageReportService,
   ServiceUsageReportService,
 } from '../services/ServiceUsageReportService';
@@ -235,7 +231,6 @@ container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
-container.bind<ILibraryCatalogService>(TYPES.ILibraryCatalogService).to(LibraryCatalogService);
 container
   .bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService)
   .to(ServiceOfferPageService);
