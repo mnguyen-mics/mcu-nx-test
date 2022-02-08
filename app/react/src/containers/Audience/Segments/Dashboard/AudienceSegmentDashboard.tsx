@@ -43,6 +43,7 @@ import {
   DataFileDashboardResource,
   DatamartUsersAnalyticsWrapperProps,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import ContextualTargetingTab from './ContextualTargeting/ContextualTargetingTab';
 
 interface State {
   loading: boolean;
@@ -394,6 +395,11 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
             }
             DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
             DashboardWrapper={DashboardWrapper}
+            contextualTargetingTab={
+              hasFeature('segments-contextual-targeting') ? (
+                <ContextualTargetingTab datamartId={segment.datamart_id} segmentId={segment.id} />
+              ) : undefined
+            }
           />
         )}
       </div>
@@ -410,27 +416,31 @@ export default compose<Props, AudienceSegmentDashboardProps>(
 
 const messages = defineMessages({
   overview: {
-    id: 'audience-segment-dashboard-tab-title-overview',
+    id: 'audience.segment.dashboard.tab-title.overview',
     defaultMessage: 'Overview',
   },
   additionDeletion: {
-    id: 'audience-segment-dashboard-tab-title-addition-deletion',
+    id: 'audience.segment.dashboard.tab-title.addition-deletion',
     defaultMessage: 'Addition Deletion',
   },
   overlap: {
-    id: 'audience-segment-dashboard-tab-title-overlap',
+    id: 'audience.segment.dashboard.tab-title.overlap',
     defaultMessage: 'Overlap',
   },
   imports: {
-    id: 'audience-segment-dashboard-tab-title-user-list-imports',
+    id: 'audience.segment.dashboard.tab-title.user-list-imports',
     defaultMessage: 'Imports Status',
   },
   exports: {
-    id: 'audience-segment-dashboard-tab-title-exports',
+    id: 'audience.segment.dashboard.tab-title.exports',
     defaultMessage: 'Exports',
   },
+  contextualTargeting: {
+    id: 'audience.segment.dashboard.tab-title.contextualTargeting',
+    defaultMessage: 'Contextual Targeting',
+  },
   pausedSegment: {
-    id: 'audience-segment-dashboard-warning-paused-segment',
+    id: 'audience.segment.dashboard.warning-paused-segment',
     defaultMessage:
       "Warning: This segment has been paused and is no longer refreshed (statistics, user insertions and deletions won't be computed).",
   },
