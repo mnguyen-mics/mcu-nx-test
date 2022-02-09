@@ -107,6 +107,20 @@ class AdvancedSegmentBuilderContainer extends React.Component<Props, State> {
         : Promise.resolve(null),
     ])
       .then(([objectTypes, eventualQuery]) => {
+        const queryJsonOTQlObject: QueryDocument = eventualQuery
+          ? JSON.parse(eventualQuery.query_text)
+          : null;
+
+        if (eventualQuery && eventualQuery?.query_language !== 'JSON_OTQL') {
+          this.props.notifyInfo({
+            duration: 7000,
+            message:
+              "Sorry, you can't select this segment as it was not created with this builder. We are working to remove non compatible segments from the list.",
+          });
+
+          this.setState({ fetchingObjectTypes: false });
+        }
+
         this.setState(
           prevState => ({
             fetchingObjectTypes: false,
@@ -120,7 +134,11 @@ class AdvancedSegmentBuilderContainer extends React.Component<Props, State> {
               .sort((otypeA, oTypeB) => otypeA.name.localeCompare(oTypeB.name)),
             queryHistory: {
               past: [],
-              present: this.props.queryDocument ? this.props.queryDocument.where : undefined,
+              present: this.props.queryDocument
+                ? this.props.queryDocument.where
+                : queryJsonOTQlObject
+                ? queryJsonOTQlObject.where
+                : undefined,
               future: [],
             },
           }),

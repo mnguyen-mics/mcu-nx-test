@@ -13,6 +13,8 @@ import { QueryTranslationResource } from '../../../models/datamart/DatamartResou
 import Convert2Otql from './Convet2Otql';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import { SegmentSelector } from '@mediarithmics-private/advanced-components';
+import { AudienceSegmentShape } from '../../../models/audiencesegment';
 
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
@@ -21,6 +23,9 @@ export interface SaveQueryAsActionBarProps {
   convertToOtql?: () => Promise<DataResponse<QueryTranslationResource>>;
   breadcrumb: React.ReactNode[];
   csvExportDisabled?: boolean;
+  organisationId?: string;
+  datamartId?: string;
+  handleSelectExistingSegment?: (segment: AudienceSegmentShape) => void;
 }
 
 interface State {
@@ -57,6 +62,9 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
       csvExportDisabled,
       hasFeature,
       saveAsTechnicalQuery,
+      datamartId,
+      organisationId,
+      handleSelectExistingSegment,
     } = this.props;
     const handleMenuClick = (e: any) => {
       if (e.key === 'USER_QUERY') {
@@ -136,6 +144,14 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
 
     return (
       <Actionbar pathItems={breadcrumb}>
+        {organisationId && datamartId && handleSelectExistingSegment && (
+          <SegmentSelector
+            organisationId={organisationId}
+            datamartId={datamartId}
+            onSelectSegment={handleSelectExistingSegment}
+            segmentType={['USER_QUERY']}
+          />
+        )}
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button
             className={`mcs-saveQueryAsActionBar_button ${

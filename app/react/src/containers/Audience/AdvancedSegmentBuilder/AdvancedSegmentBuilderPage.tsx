@@ -35,6 +35,10 @@ interface MapStateToProps {
   connectedUser: UserProfileResource;
 }
 
+interface AdvancedSegmentBuilderPageState {
+  queryId?: string;
+}
+
 type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
   MapStateToProps &
   InjectedNotificationProps &
@@ -52,7 +56,7 @@ const messages = defineMessages({
   },
 });
 
-class AdvancedSegmentBuilderPage extends React.Component<Props> {
+class AdvancedSegmentBuilderPage extends React.Component<Props, AdvancedSegmentBuilderPageState> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
@@ -62,8 +66,23 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
   @lazyInject(TYPES.ITagService)
   private _tagService: ITagService;
 
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      queryId: undefined,
+    };
+  }
+
+  handleOnSelectExistingSegment = (segment: UserQuerySegment) => {
+    this.setState({
+      queryId: segment.query_id,
+    });
+  };
+
   render() {
     const { intl, connectedUser, location, history, match } = this.props;
+
+    const { queryId } = this.state;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       // this.setState({ datamart: selection });
@@ -159,6 +178,9 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
           saveAsUserQuery={saveAsUserQuery}
           convertToOtql={convert2Otql}
           breadcrumb={[intl.formatMessage(messages.advancedSegmentBuilder)]}
+          datamartId={datamartId}
+          organisationId={this.props.match.params.organisationId}
+          handleSelectExistingSegment={this.handleOnSelectExistingSegment}
         />
       );
     };
@@ -178,6 +200,7 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
         )}
         {selectedDatamart && selectedDatamart.storage_model_version === 'v201709' && (
           <JSONQLBuilderContainer
+            queryId={queryId}
             datamartId={selectedDatamart.id}
             renderActionBar={jsonQLActionbar}
           />
