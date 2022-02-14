@@ -58,7 +58,7 @@ cat << EOF
   "chromeWebSecurity": false,
   
   "testFiles": ["**/*.spec.js", "**/*.spec.ts"],
-  "ignoreTestFiles": ["CreateJobExecution.spec.js", "EditAllReplicationFields.spec.js","Sites.spec.ts","DisplayLiveEventWithoutUserPoint.spec.ts","OnSegmentExit.spec.ts","DisplayCampaignResourceHistory.spec.ts","MobileApplication.spec.ts", "StandardSegmentBuilderLimits.spec.ts", "Keycloak_errors.spec.ts", "Keycloak_login.spec.ts","**/__snapshots__/*","**/__image_snapshots__/*"],
+  "ignoreTestFiles": ["CreateJobExecution.spec.js", "EditAllReplicationFields.spec.js","Sites.spec.ts","DisplayLiveEventWithoutUserPoint.spec.ts","OnSegmentExit.spec.ts","DisplayCampaignResourceHistory.spec.ts","MobileApplication.spec.ts", "StandardSegmentBuilderLimits.spec.ts", "**/__snapshots__/*","**/__image_snapshots__/*"],
 
 
   "env": {
