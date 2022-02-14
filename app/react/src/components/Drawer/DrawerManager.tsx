@@ -11,7 +11,9 @@ import {
   DrawerSize,
 } from '@mediarithmics-private/advanced-components/lib/components/drawer';
 
-const viewportDrawerRatio = {
+const viewportDrawerRatio: {
+  [key: string]: number;
+} = {
   large: 0.85,
   medium: 0.6,
   small: 0.4,
