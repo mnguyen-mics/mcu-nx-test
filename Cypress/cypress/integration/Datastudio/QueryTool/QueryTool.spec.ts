@@ -24,16 +24,16 @@ describe('Should test the query tool', () => {
         { force: true },
       );
       cy.get('.mcs-otqlInputEditor_run_button').click();
-      cy.get('.mcs-OTQLResultRenderer_count_up').should('be.visible');
+      cy.get('.mcs-otqlChart_resultMetrics').should('be.visible');
       cy.get('.mcs-schemaVizualize_content').should('not.contain', 'activity_events');
       cy.get('.mcs-OTQLConsoleContainer_tabs')
         .find('.ant-tabs-nav-add')
         .eq(1)
         .click({ force: true });
-      cy.get('.mcs-OTQLResultRenderer_count_up').should('not.be.visible');
+      cy.get('.mcs-otqlChart_resultMetrics').should('not.be.visible');
       cy.get('.mcs-schemaVizualize_content').eq(1).should('contain', 'activity_events');
       cy.get('.mcs-OTQLConsoleContainer_tabs').find('.ant-tabs-tab-remove').eq(1).click();
-      cy.get('.mcs-OTQLResultRenderer_count_up').should('be.visible');
+      cy.get('.mcs-otqlChart_resultMetrics').should('be.visible');
       cy.get('.mcs-schemaVizualize_content').should('not.contain', 'activity_events');
     });
   });
