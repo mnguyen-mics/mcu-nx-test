@@ -447,12 +447,12 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     } = this.props;
     const { displayFolderInput, inputValue } = this.state;
     const addNewFeature = () => {
-      history.push({
-        pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/create`,
-        state: {
+      history.push(
+        `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/create`,
+        {
           datamartId: datamartId,
         },
-      });
+      );
     };
 
     const addFolder = () => {

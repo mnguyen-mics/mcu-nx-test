@@ -140,11 +140,13 @@ class VisitAnalyzersList extends Component<
               ...filter,
               currentPage: filter.currentPage - 1,
             };
-            history.replace({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state,
-            });
+            history.replace(
+              {
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+              },
+              state,
+            );
             return Promise.resolve();
           }
           return this.fetchVisitAnalyzer(organisationId, filter);

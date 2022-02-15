@@ -220,11 +220,13 @@ class ImportsContentContainer extends React.Component<Props, State> {
               ...filter,
               currentPage: filter.currentPage ? filter.currentPage - 1 : 1,
             };
-            history.replace({
-              pathname: pathname,
-              search: updateSearch(search, newFilter),
-              state: state,
-            });
+            history.replace(
+              {
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+              },
+              state,
+            );
             return Promise.resolve();
           }
           return this.fetchImport(datamartId, filter);
@@ -245,10 +247,10 @@ class ImportsContentContainer extends React.Component<Props, State> {
       },
     } = this.props;
 
-    history.push({
-      pathname: `/v2/o/${organisationId}/datastudio/datamart/${imp.datamart_id}/imports/${imp.id}/edit`,
-      state: { from: `${location.pathname}${location.search}` },
-    });
+    history.push(
+      `/v2/o/${organisationId}/datastudio/datamart/${imp.datamart_id}/imports/${imp.id}/edit`,
+      { from: `${location.pathname}${location.search}` },
+    );
   };
 
   getSearchSetting(): SearchSetting[] {

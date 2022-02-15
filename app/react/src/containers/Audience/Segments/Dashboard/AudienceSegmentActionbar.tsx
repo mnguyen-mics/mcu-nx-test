@@ -204,10 +204,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       history,
     } = this.props;
     const editUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}/edit`;
-    history.push({
-      pathname: editUrl,
-      state: { from: `${location.pathname}${location.search}` },
-    });
+    history.push(editUrl, { from: `${location.pathname}${location.search}` });
   };
 
   handleCreateNewFeed = () => {
@@ -219,10 +216,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       history,
     } = this.props;
     const editUrl = `/v2/o/${organisationId}/audience/segments/${segmentId}/feeds/create`;
-    history.push({
-      pathname: editUrl,
-      state: { from: `${location.pathname}${location.search}` },
-    });
+    history.push(editUrl, { from: `${location.pathname}${location.search}` });
   };
 
   onCreateExperimentationClick = () => {

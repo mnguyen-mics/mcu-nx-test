@@ -126,10 +126,7 @@ class AudienceFeedPage extends React.Component<JoinedProps, AudienceFeedPageStat
       history,
     } = this.props;
 
-    history.push({
-      pathname: `/v2/o/${organisationId}/audience/segments/${segmentId}`,
-      state: { scrollToFeed: true },
-    });
+    history.push(`/v2/o/${organisationId}/audience/segments/${segmentId}`, { scrollToFeed: true });
   };
 
   onPresetSave = (feedType: AudienceFeedType) => {

@@ -111,11 +111,8 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
     promise
       .then(() => {
         hideSaveInProgress();
-        history.push({
-          pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-          state: {
-            activeTab: 'segment_builder',
-          },
+        history.push(`/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`, {
+          activeTab: 'segment_builder',
         });
       })
       .catch(err => {
@@ -134,11 +131,8 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
         params: { organisationId, datamartId },
       },
     } = this.props;
-    return history.push({
-      pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-      state: {
-        activeTab: 'segment_builder',
-      },
+    return history.push(`/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`, {
+      activeTab: 'segment_builder',
     });
   };
 

@@ -84,10 +84,7 @@ class AdServingActionBar extends React.Component<Props, AdServingActionBarState>
       message.info(intl.formatMessage(messages.editionNotAllowed));
     } else {
       const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/edit`;
-      history.push({
-        pathname: editUrl,
-        state: { from: `${location.pathname}${location.search}` },
-      });
+      history.push(editUrl, { from: `${location.pathname}${location.search}` });
     }
   };
 
@@ -189,12 +186,9 @@ class AdServingActionBar extends React.Component<Props, AdServingActionBarState>
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/create`;
-    history.push({
-      pathname: editUrl,
-      state: {
-        from: `${location.pathname}${location.search}`,
-        campaignId: campaignId,
-      },
+    history.push(editUrl, {
+      from: `${location.pathname}${location.search}`,
+      campaignId: campaignId,
     });
   };
 

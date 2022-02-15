@@ -106,11 +106,13 @@ class GoalsTable extends React.Component<Props, State> {
     } = this.props;
 
     if (!isSearchValid(search, GOAL_SEARCH_SETTINGS)) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, GOAL_SEARCH_SETTINGS),
-        state: { reloadDataSource: true },
-      });
+      history.replace(
+        {
+          pathname: pathname,
+          search: buildDefaultSearch(search, GOAL_SEARCH_SETTINGS),
+        },
+        { reloadDataSource: true },
+      );
     } else {
       const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
       this.loadGoalsDataSource(organisationId, filter, true);
@@ -137,13 +139,15 @@ class GoalsTable extends React.Component<Props, State> {
 
     if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, GOAL_SEARCH_SETTINGS)) {
-        history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, GOAL_SEARCH_SETTINGS),
-          state: {
+        history.replace(
+          {
+            pathname: pathname,
+            search: buildDefaultSearch(search, GOAL_SEARCH_SETTINGS),
+          },
+          {
             reloadDataSource: organisationId !== previousOrganisationId,
           },
-        });
+        );
       } else {
         const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
         this.loadGoalsDataSource(organisationId, filter, checkEmptyDataSource);
@@ -241,11 +245,13 @@ class GoalsTable extends React.Component<Props, State> {
                 currentPage: filter.currentPage - 1,
               };
               fetchGoals(organisationId, filter);
-              history.replace({
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-                state: state,
-              });
+              history.replace(
+                {
+                  pathname: pathname,
+                  search: updateSearch(search, newFilter),
+                },
+                state,
+              );
             } else {
               fetchGoals(organisationId, filter);
             }

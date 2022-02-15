@@ -66,10 +66,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/datastudio/exports/${exportId}/edit`;
-    history.push({
-      pathname: editUrl,
-      state: { from: `${location.pathname}${location.search}` },
-    });
+    history.push(editUrl, { from: `${location.pathname}${location.search}` });
   };
 
   runExecution = () => {
