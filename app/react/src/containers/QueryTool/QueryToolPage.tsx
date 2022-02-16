@@ -205,7 +205,7 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
       return (
         <SaveQueryAsActionBar
           saveAsUserQuery={saveAsUserQuery}
-          saveAsExort={saveAsExport}
+          saveAsExport={saveAsExport}
           saveAsTechnicalQuery={saveAsTechnicalQuery}
           csvExportDisabled={true}
           breadcrumb={[intl.formatMessage(messages.queryBuilder)]}

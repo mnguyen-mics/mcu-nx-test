@@ -27,8 +27,13 @@ import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import {
   BarChartOptions,
+  ChartConfig,
+  ChartOptions,
+  ChartType,
+  OTQLSource,
   PieChartOptions,
   RadarChartOptions,
+  SourceType,
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import {
   chartType,
@@ -37,10 +42,12 @@ import {
   getQuickOptionsForChartType,
   renderQuickOptions,
 } from './utils/ChartOptionsUtils';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IQueryService } from '../../../services/QueryService';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -62,6 +69,7 @@ interface BucketPath {
 
 export interface AggregationRendererProps {
   rootAggregations: OTQLAggregations;
+  datamartId: string;
   query?: string;
 }
 type Props = AggregationRendererProps &
@@ -79,6 +87,9 @@ interface State {
 }
 
 class AggregationRenderer extends React.Component<Props, State> {
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -118,7 +129,7 @@ class AggregationRenderer extends React.Component<Props, State> {
 
   getChartProps = (_chartType: chartType) => {
     const chartPropsMap = this.getChartPropsMap(_chartType);
-    const baseProps = getBaseChartProps(_chartType);
+    const baseProps: ChartOptions = getBaseChartProps(_chartType);
     const newChartProps = chartPropsMap.reduce((acc, property) => {
       return { ...acc, ...property };
     }, baseProps);
@@ -189,9 +200,66 @@ class AggregationRenderer extends React.Component<Props, State> {
     }
   }
 
+  async copyTextToClipboard(text: string) {
+    if ('clipboard' in navigator) {
+      return navigator.clipboard.writeText(text);
+    } else {
+      return document.execCommand('copy', true, text);
+    }
+  }
+
+  private adaptChartType(selectedChart: chartType): ChartType {
+    switch (selectedChart.toLowerCase()) {
+      case 'bar':
+        return 'bars';
+      default:
+        return selectedChart as ChartType;
+    }
+  }
+
+  async handleCopyToClipboard() {
+    const { query, datamartId } = this.props;
+    const { selectedChart } = this.state;
+    const chartOptions = this.getChartProps(selectedChart);
+    const queryResponse = await this._queryService
+      .createQuery(datamartId, {
+        query_language: 'OTQL',
+        query_text: query,
+      })
+      .catch(e => {
+        return undefined;
+      });
+
+    if (!queryResponse) {
+      this.props.notifyError('Could not save query, please retry later');
+      return;
+    }
+
+    const queryResource = queryResponse.data;
+    const dataset: OTQLSource = {
+      query_id: queryResource?.id,
+      type: 'OTQL' as SourceType,
+    };
+
+    const chart: ChartConfig = {
+      title: '',
+      type: this.adaptChartType(selectedChart),
+      options: chartOptions,
+      dataset: dataset,
+    };
+    const jsonToCopy = JSON.stringify(chart, null, 2);
+    await this.copyTextToClipboard(jsonToCopy);
+    return this.handleAfterChartConfigCopy();
+  }
+
+  private isSelectedTypeExportable(): boolean {
+    const { selectedChart } = this.state;
+    return selectedChart !== 'table';
+  }
+
   getBuckets = (buckets: OTQLBuckets) => {
     const { hasFeature, intl } = this.props;
-    const { numberItems, selectedChart } = this.state;
+    const { numberItems } = this.state;
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
@@ -344,6 +412,7 @@ class AggregationRenderer extends React.Component<Props, State> {
         },
       ];
       const onChangeQuickOption = this.onSelectQuickOption.bind(this);
+      const handleCopyToClipboard = this.handleCopyToClipboard.bind(this);
       return (
         <div>
           <McsTabs
@@ -357,16 +426,17 @@ class AggregationRenderer extends React.Component<Props, State> {
             {renderQuickOptions(this.state.selectedChart, onChangeQuickOption)}
             {renderShowTop()}
           </div>
-          <div className={'mcs-otqlChart_chartConfig_clipboard_container'}>
-            <CopyToClipboard
-              text={JSON.stringify(this.getChartProps(selectedChart), null, 2)}
-              onCopy={this.handleAfterChartConfigCopy}
-            >
-              <AntButton type='ghost' className={'mcs-otqlChart_items_share_button'}>
+          {this.isSelectedTypeExportable() ? (
+            <div className={'mcs-otqlChart_chartConfig_clipboard_container'}>
+              <AntButton
+                type='ghost'
+                className={'mcs-otqlChart_items_share_button'}
+                onClick={handleCopyToClipboard}
+              >
                 {intl.formatMessage(messages.share)}
               </AntButton>
-            </CopyToClipboard>
-          </div>
+            </div>
+          ) : undefined}
         </div>
       );
     }
@@ -411,7 +481,7 @@ class AggregationRenderer extends React.Component<Props, State> {
     );
   };
 
-  handleAfterChartConfigCopy = () => {
+  handleAfterChartConfigCopy = async () => {
     this.props.notifySuccess({
       message: messages.copiedToClipboard.defaultMessage,
       description: '',

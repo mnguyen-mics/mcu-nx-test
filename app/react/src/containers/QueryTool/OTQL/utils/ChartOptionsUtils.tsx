@@ -75,10 +75,6 @@ export function getBaseChartProps(_chartType: chartType) {
             message: 'count',
           },
         ],
-        xAxis: { title: { text: '' } },
-        chartOptions: {
-          yAxis: { title: { text: '' } },
-        },
         colors: ['#00a1df'],
         legend: {
           enabled: true,
