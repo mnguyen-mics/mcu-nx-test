@@ -77,7 +77,11 @@ cat << EOF
     "userName":"${USER_NAME}",
     "root": "${ROOT}",
     "realm": "mediarithmics",
-    "client_id":"mediarithmics-computing-console"
+    "client_id":"mediarithmics-computing-console",
+    "allure":true,
+    "allureResultsPath":"allure-results",
+    "allureAttachRequests":true,
+    "allureOmitPreviousAttemptScreenshots":true
   },
   "retries": {
     "runMode": 4,

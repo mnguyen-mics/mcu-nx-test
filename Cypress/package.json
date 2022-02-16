@@ -15,8 +15,10 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.4",
     "@cypress/webpack-preprocessor": "^4.1.2",
+    "@shelex/cypress-allure-plugin": "^2.26.3",
     "@types/faker": "^4.1.10",
     "@types/fs-extra": "^9.0.2",
+    "allure-commandline": "^2.17.2",
     "cypress": "^6.1.0",
     "cypress-file-upload": "^4.1.1",
     "elliptic": "6.5.4",
@@ -29,6 +31,9 @@
     "yargs-parser": "13.1.2"
   },
   "scripts": {
+    "generate:allure": "node_modules/.bin/allure generate allure-results --clean",
+    "open:allure": "node_modules/.bin/allure open",
+    "allure": "npm run generate:allure && npm run open:allure",
     "cypress": "node_modules/.bin/cypress open",
     "build": "node_modules/.bin/webpack --output-filename out.js --entry ./cypress/integration/*.ts",
     "cy:run": "node_modules/.bin/cypress run",
