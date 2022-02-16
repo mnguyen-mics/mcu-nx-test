@@ -114,12 +114,9 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`;
-    history.push({
-      pathname: editUrl,
-      state: {
-        from: `${location.pathname}${location.search}`,
-        adGroupId: adGroupId,
-      },
+    history.push(editUrl, {
+      from: `${location.pathname}${location.search}`,
+      adGroupId: adGroupId,
     });
   };
 

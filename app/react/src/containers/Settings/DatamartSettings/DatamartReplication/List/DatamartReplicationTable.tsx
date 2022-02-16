@@ -57,10 +57,10 @@ class DatamartReplicationTable extends React.Component<Props> {
       },
       history,
     } = this.props;
-    history.push({
-      pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`,
-      state: { from: `${location.pathname}${location.search}` },
-    });
+    history.push(
+      `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`,
+      { from: `${location.pathname}${location.search}` },
+    );
   };
 
   onDeleteDatamartReplication = (replication: DatamartReplicationResourceShape) => {

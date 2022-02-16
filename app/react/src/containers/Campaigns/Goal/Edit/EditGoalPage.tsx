@@ -138,10 +138,7 @@ class EditGoalPage extends React.Component<Props, State> {
         } else {
           this.fetchData(goalResource.id).then(() => hideSaveInProgress());
         }
-        history.push({
-          pathname: goalUrl,
-          state: { from: `${location.pathname}` },
-        });
+        history.push(goalUrl, { from: `${location.pathname}` });
       })
       .catch(err => {
         hideSaveInProgress();

@@ -164,10 +164,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         })
         .then(() => {
           hideSaveInProgress();
-          history.push({
-            pathname: this.getPreviousUrl(),
-            state: { activeTab: 'replications' },
-          });
+          history.push(this.getPreviousUrl(), { activeTab: 'replications' });
         })
         .catch(err => {
           notifyError(err);
@@ -195,11 +192,8 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
   onClose = () => {
     const { history } = this.props;
-    return history.push({
-      pathname: this.getPreviousUrl(),
-      state: {
-        activeTab: 'replications',
-      },
+    return history.push(this.getPreviousUrl(), {
+      activeTab: 'replications',
     });
   };
 

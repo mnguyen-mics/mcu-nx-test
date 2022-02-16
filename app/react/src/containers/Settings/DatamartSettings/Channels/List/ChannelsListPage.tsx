@@ -328,10 +328,10 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     const channelTypeInUrl = this.getChannelTypeInUrl(channel.type);
 
-    history.push({
-      pathname: `/v2/o/${organisationId}/settings/datamart/${channel.datamart_id}/${channelTypeInUrl}/${channel.id}/edit`,
-      state: { from: `${location.pathname}${location.search}` },
-    });
+    history.push(
+      `/v2/o/${organisationId}/settings/datamart/${channel.datamart_id}/${channelTypeInUrl}/${channel.id}/edit`,
+      { from: `${location.pathname}${location.search}` },
+    );
   };
 
   handleDeleteChannel = (channel: ChannelResourceShape) => {
@@ -358,9 +358,8 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
         deletePromise
           .then((dataResponseChannel: DataResponse<ChannelResourceShape>) => {
-            history.push({
-              pathname: `/v2/o/${organisationId}/settings/datamart/channels`,
-              state: { from: `${location.pathname}${location.search}` },
+            history.push(`/v2/o/${organisationId}/settings/datamart/channels`, {
+              from: `${location.pathname}${location.search}`,
             });
           })
           .catch(err => {

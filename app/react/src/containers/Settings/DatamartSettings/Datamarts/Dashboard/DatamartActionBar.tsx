@@ -22,11 +22,8 @@ class DatamartActionBar extends React.Component<Props> {
 
     const editUrl = `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}/edit`;
 
-    history.push({
-      pathname: editUrl,
-      state: {
-        from: `${pathname}${search}`,
-      },
+    history.push(editUrl, {
+      from: `${pathname}${search}`,
     });
   };
 

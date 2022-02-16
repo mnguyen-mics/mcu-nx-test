@@ -86,11 +86,13 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
     } = this.props;
 
     if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-        state: { reloadDataSource: true },
-      });
+      history.replace(
+        {
+          pathname: pathname,
+          search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
+        },
+        { reloadDataSource: true },
+      );
     } else {
       this.fetchGoal(goalId);
     }
@@ -114,11 +116,13 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
 
     if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
-        history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== organisationId },
-        });
+        history.replace(
+          {
+            pathname: pathname,
+            search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
+          },
+          { reloadDataSource: organisationId !== organisationId },
+        );
       } else {
         this.fetchGoal(goalId);
       }

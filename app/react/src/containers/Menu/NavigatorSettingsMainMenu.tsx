@@ -135,7 +135,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
 
     return (
       <Breadcrumb separator='>' className='mcs-homePage_breadcrumb'>
-        {breadcrumbItems.map(item => (
+        {breadcrumbItems.map((item: any) => (
           <Breadcrumb.Item>{item}</Breadcrumb.Item>
         ))}
       </Breadcrumb>

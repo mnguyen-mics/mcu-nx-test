@@ -304,11 +304,13 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     const datamartId = filter.datamartId;
 
     if (!isSearchValid(search, this.getSearchSetting())) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(realSearch, this.getSearchSetting()),
-        state: { reloadDataSource: true },
-      });
+      history.replace(
+        {
+          pathname: pathname,
+          search: buildDefaultSearch(realSearch, this.getSearchSetting()),
+        },
+        { reloadDataSource: true },
+      );
     } else if (
       // Changing the sort field : new API call with current
       !compareSearches(prevSearch, realSearch) ||
@@ -349,11 +351,13 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       }));
     }
     if (!isSearchValid(search, this.getSearchSetting())) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(realSearch, this.getSearchSetting()),
-        state: { reloadDataSource: true },
-      });
+      history.replace(
+        {
+          pathname: pathname,
+          search: buildDefaultSearch(realSearch, this.getSearchSetting()),
+        },
+        { reloadDataSource: true },
+      );
     } else {
       const filter = parseSearch(realSearch, this.getSearchSetting());
       const datamartId = filter.datamartId;

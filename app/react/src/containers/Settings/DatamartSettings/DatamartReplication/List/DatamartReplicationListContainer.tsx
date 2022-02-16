@@ -61,11 +61,8 @@ class DatamartReplicationListContainer extends React.Component<Props> {
           params: { datamartId, organisationId },
         },
       } = this.props;
-      history.push({
-        pathname: `/v2/o/${organisationId}/settings/datamart/datamart_replication/create`,
-        state: {
-          datamartId: datamartId,
-        },
+      history.push(`/v2/o/${organisationId}/settings/datamart/datamart_replication/create`, {
+        datamartId: datamartId,
       });
     };
     return (
