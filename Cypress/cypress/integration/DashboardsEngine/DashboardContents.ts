@@ -553,3 +553,62 @@ export const getDecoratosTransformationContent = (queryId: string) => {
     ],
   };
 };
+
+export const compartmentFilterContent = (queryId: string) => {
+  return {
+    sections: [
+      {
+        title: 'First Section',
+        cards: [
+          {
+            x: 0,
+            y: 0,
+            w: 12,
+            h: 3,
+            layout: 'horizontal',
+            charts: [
+              {
+                title: 'Pie',
+                type: 'pie',
+                dataset: {
+                  type: 'otql',
+                  query_id: `${queryId}`,
+                },
+                options: {
+                  legend: {
+                    enabled: true,
+                    position: 'right',
+                  },
+                  xKey: 'key',
+                  format: 'count',
+                  yKeys: [
+                    {
+                      key: 'value',
+                      message: 'count',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    available_filters: [
+      {
+        technical_name: 'channels',
+        title: 'Channel',
+        values_retrieve_method: 'query',
+        values_query: 'SELECT {channel_id @map} FROM UserActivity',
+        multi_select: true,
+        query_fragments: [
+          {
+            type: 'OTQL',
+            starting_object_type: 'UserActivity',
+            fragment: 'channel_id IN $values',
+          },
+        ],
+      },
+    ],
+  };
+};

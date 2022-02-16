@@ -1,5 +1,8 @@
 import faker from 'faker';
+import DashboardFilter from '../components/DashboardFilter';
+import LeftMenu from '../components/LeftMenu';
 import {
+  compartmentFilterContent,
   differentChartsContent,
   drawerChartDetails,
   getDecoratosTransformationContent,
@@ -83,7 +86,7 @@ describe('dashboards engine Tests', () => {
                   cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
                   cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
                   cy.contains('Charts types dashboard').click();
-                  cy.wait(20000);
+                  cy.wait(10000);
                   cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
                   cy.get('.mcs-card_content').eq(1).toMatchImageSnapshot();
                 });
@@ -95,7 +98,7 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it('should test the index transformation', () => {
+  it.skip('should test the index transformation', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -144,7 +147,7 @@ describe('dashboards engine Tests', () => {
                   cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
                   cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
                   cy.contains('Index Transformation').click();
-                  cy.wait(20000);
+                  cy.wait(10000);
                   cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
                   cy.get('.mcs-card_content').eq(1).toMatchImageSnapshot();
                 });
@@ -618,10 +621,85 @@ describe('dashboards engine Tests', () => {
           cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
           cy.get('.mcs-homePage_dashboard_page_wrapper').should('contain', 'Change organisation');
           cy.switchOrg('dogfooding');
-          cy.get('.mcs-homePage_dashboard_page_wrapper').should(
-            'not.contain',
-            'Change organisation',
-          );
+          cy.get('.mcs-content-container').should('not.contain', 'Change organisation');
+        });
+      });
+    });
+  });
+
+  it('should test the dashboard filter', () => {
+    const leftMenu = new LeftMenu();
+    const dashboardFilter = new DashboardFilter();
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'Channel 1',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
+        cy.createChannel(
+          data.accessToken,
+          data.datamartId,
+          'Second Filter channel',
+          'test.com',
+          false,
+          'SITE',
+        ).then(secondChannel => {
+          cy.prepareActivitiesForDashboards(
+            data.accessToken,
+            data.datamartId,
+            channel.body.data.id,
+            'test_filter',
+            'test_filter_2',
+            secondChannel.body.data.id,
+          ).then(() => {
+            cy.wait(30000);
+            cy.createQuery(
+              data.accessToken,
+              data.datamartId,
+              `SELECT {channel_id @map} FROM UserActivity where channel_id = "${channel.body.data.id}" or channel_id = "${secondChannel.body.data.id}"`,
+            ).then(queryResponse => {
+              const queryId = queryResponse.body.data.id;
+              cy.executeQuery(
+                data.accessToken,
+                data.datamartId,
+                `SELECT {channel_id @map} FROM UserActivity where channel_id = "${channel.body.data.id}" or channel_id = "${secondChannel.body.data.id}"`,
+              ).then(() => {
+                cy.createDashboard(
+                  data.accessToken,
+                  data.organisationId,
+                  'Dashboard Filter',
+                  ['home'],
+                  [],
+                  [],
+                ).then(dashboardResponse => {
+                  cy.request({
+                    url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+                      dashboardResponse.body.data.id
+                    }/content`,
+                    method: 'PUT',
+                    headers: { Authorization: data.accessToken },
+                    body: compartmentFilterContent(queryId),
+                  }).then(() => {
+                    cy.switchOrg(data.organisationName);
+                    leftMenu.goToHomePage();
+                    cy.contains('Dashboard Filter').click();
+                    cy.get('.mcs-chart_content_container')
+                      .first()
+                      .should('contain', channel.body.data.id)
+                      .and('contain', secondChannel.body.data.id);
+                    dashboardFilter.applyFilters(['Channel 1']);
+                    cy.get('.mcs-chart_content_container')
+                      .first()
+                      .should('contain', channel.body.data.id)
+                      .and('not.contain', secondChannel.body.data.id);
+                  });
+                });
+              });
+            });
+          });
         });
       });
     });
