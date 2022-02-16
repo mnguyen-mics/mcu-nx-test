@@ -65,7 +65,7 @@ cat << EOF
     "cypress-plugin-snapshots": {
       "serverPort": ${SNAPSHOTS_PORT},
       "imageConfig": {
-      "threshold": 0.01,
+      "threshold": 0.05,
       "thresholdType": "percent"
       }
     },
