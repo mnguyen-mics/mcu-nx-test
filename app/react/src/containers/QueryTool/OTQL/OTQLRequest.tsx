@@ -154,6 +154,7 @@ class OTQLRequest extends React.Component<Props, State> {
         result={queryResult}
         aborted={queryAborted}
         query={query}
+        datamartId={datamartId}
       />
     );
 

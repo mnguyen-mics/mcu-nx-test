@@ -20,13 +20,14 @@ export interface OTQLResultRendererProps {
   loading?: boolean;
   aborted?: boolean;
   query?: string;
+  datamartId: string;
 }
 
 type Props = OTQLResultRendererProps & InjectedThemeColorsProps & InjectedFeaturesProps;
 
 class OTQLResultRenderer extends React.Component<Props> {
   render() {
-    const { result, loading, aborted, colors, hasFeature, query } = this.props;
+    const { result, loading, aborted, colors, hasFeature, query, datamartId } = this.props;
 
     let content: React.ReactNode;
     if (loading) {
@@ -51,7 +52,11 @@ class OTQLResultRenderer extends React.Component<Props> {
       const aggregations = result.rows[0].aggregations;
       content = (
         <div>
-          <AggregationRenderer rootAggregations={aggregations} query={query} />
+          <AggregationRenderer
+            rootAggregations={aggregations}
+            query={query}
+            datamartId={datamartId}
+          />
         </div>
       );
     } else if (result) {

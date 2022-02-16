@@ -18,7 +18,7 @@ import { AudienceSegmentShape } from '../../../models/audiencesegment';
 
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
-  saveAsExort?: (formData: NewExportSimpleFormData) => Promise<any>;
+  saveAsExport?: (formData: NewExportSimpleFormData) => Promise<any>;
   saveAsTechnicalQuery?: () => Promise<any>;
   convertToOtql?: () => Promise<DataResponse<QueryTranslationResource>>;
   breadcrumb: React.ReactNode[];
@@ -55,7 +55,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
 
   render() {
     const {
-      saveAsExort,
+      saveAsExport,
       saveAsUserQuery,
       convertToOtql,
       breadcrumb,
@@ -104,7 +104,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
 
     const handleSaveAsExport = (formData: NewExportSimpleFormData) => {
       this.setState({ exportModalLoading: true });
-      saveAsExort!(formData).catch(err => {
+      saveAsExport!(formData).catch(err => {
         this.props.notifyError(err);
         this.setState({
           exportModalVisible: false,
@@ -125,7 +125,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
             defaultMessage='User Query Segment'
           />
         </Menu.Item>
-        {saveAsExort && (
+        {saveAsExport && (
           <Menu.Item key='EXPORT'>
             <FormattedMessage
               id='queryTool.query-builder-page-actionbar-saveas-export'
