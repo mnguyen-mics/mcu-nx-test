@@ -52,7 +52,7 @@ describe('Should test the visit analyzers', () => {
     });
   });
 
-  it.skip('should test the visit analyzer section on channels section', () => {
+  it('should test the visit analyzer section on channels section', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
       cy.get('.mcs-navigator-header-actions-settings').click();
@@ -104,15 +104,15 @@ describe('Should test the visit analyzers', () => {
       cy.wait(5000);
       cy.get('.mcs-VisitAnalyzerFormSection_timeline_errorRecoveryStrategy')
         .eq(0)
-        .should('contain', 'STORE_WITH_ERROR_ID');
+        .should('contain', 'DROP');
       cy.get('.mcs-VisitAnalyzerFormSection_timeline_errorRecoveryStrategy')
         .eq(1)
         .should('contain', 'STORE_WITH_ERROR_ID');
       cy.get('.mcs-VisitAnalyzerFormSection_timeline_errorRecoveryStrategy')
         .eq(2)
-        .should('contain', 'STORE_WITH_ERROR_ID');
+        .should('contain', 'STORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS');
       cy.get('.mcs-timelineStepBuilder_sortBtn').eq(1).click();
-      cy.get('.mcs-timelineStepBuilder_sortBtn').eq(3).click();
+      cy.get('.mcs-timelineStepBuilder_sortBtn').eq(3).click({ force: true });
       cy.get('.mcs-form_saveButton_siteForm').click();
       cy.get('.mcs-channelsTable_search_bar').type(siteToken);
       cy.contains(siteName).click();
@@ -122,10 +122,10 @@ describe('Should test the visit analyzers', () => {
         .should('contain', 'STORE_WITH_ERROR_ID');
       cy.get('.mcs-VisitAnalyzerFormSection_timeline_errorRecoveryStrategy')
         .eq(1)
-        .should('contain', 'STORE_WITH_ERROR_ID');
+        .should('contain', 'STORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS');
       cy.get('.mcs-VisitAnalyzerFormSection_timeline_errorRecoveryStrategy')
         .eq(2)
-        .should('contain', 'STORE_WITH_ERROR_ID');
+        .should('contain', 'DROP');
     });
   });
 });
