@@ -7,6 +7,7 @@ import {
   drawerChartDetails,
   getDecoratosTransformationContent,
   indexTransformationContent,
+  otqlResponseStub,
   standardSegmentDashboardContent,
 } from './DashboardContents';
 
@@ -699,6 +700,49 @@ describe('dashboards engine Tests', () => {
                 });
               });
             });
+          });
+        });
+      });
+    });
+  });
+
+  it('should test the loading dashboard experience', () => {
+    cy.intercept({ pathname: /.*\/otql.*/, method: 'POST' }, req => {
+      req.reply({
+        statusCode: 200,
+        body: otqlResponseStub.body,
+        headers: otqlResponseStub.headers,
+        delayMs: 20000,
+      });
+    });
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createQuery(
+        data.accessToken,
+        data.datamartId,
+        `SELECT {channel_id @map} FROM UserActivity`,
+      ).then(queryResponse => {
+        cy.createDashboard(
+          data.accessToken,
+          data.organisationId,
+          'Loading Experience',
+          ['home'],
+          [],
+          [],
+        ).then(dashboardResponse => {
+          cy.request({
+            url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+              dashboardResponse.body.data.id
+            }/content`,
+            method: 'PUT',
+            headers: { Authorization: data.accessToken },
+            body: compartmentFilterContent(queryResponse.body.data.id),
+          }).then(() => {
+            cy.switchOrg(data.organisationName);
+            cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+            cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+            cy.contains('Loading Experience').click();
+            cy.wait(10000);
+            cy.get('.mcs-chart_content_container').should('contain', 'Still loading');
           });
         });
       });
