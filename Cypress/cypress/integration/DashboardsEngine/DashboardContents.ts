@@ -612,3 +612,61 @@ export const compartmentFilterContent = (queryId: string) => {
     ],
   };
 };
+
+export const otqlResponseStub = {
+  headers: {
+    'content-type': 'application/json',
+    'content-encoding': 'UTF-8',
+    'access-control-max-age': '600',
+    'access-control-allow-origin': '*',
+    'access-control-allow-headers':
+      'Accept, Content-Type, Origin, Authorization, X-Requested-With, X-Requested-By',
+    'access-control-allow-methods': 'POST, GET, PUT, DELETE',
+    'content-length': '97',
+    'strict-transport-security': 'max-age=63072000;includeSubDomains;preload',
+  },
+  body: {
+    status: 'ok',
+    data: {
+      took: 5,
+      timed_out: false,
+      offset: null,
+      limit: null,
+      result_type: 'AGGREGATION',
+      precision: 'FULL_PRECISION',
+      sampling_ratio: null,
+      rows: [
+        {
+          aggregations: {
+            bucket_aggregations: [
+              {
+                name: 'map_channel_id',
+                field_name: 'channel_id',
+                path: 'activities',
+                type: 'map',
+                buckets: [
+                  { key: '4312', count: 1 },
+                  { key: '4313', count: 1 },
+                ],
+              },
+            ],
+            buckets: [
+              {
+                name: 'map_channel_id',
+                field_name: 'channel_id',
+                path: 'activities',
+                type: 'map',
+                buckets: [
+                  { key: '4312', count: 1 },
+                  { key: '4313', count: 1 },
+                ],
+              },
+            ],
+            metrics: [],
+          },
+        },
+      ],
+      cache_hit: true,
+    },
+  },
+};
