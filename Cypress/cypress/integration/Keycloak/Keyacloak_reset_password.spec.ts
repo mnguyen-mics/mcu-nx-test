@@ -1,7 +1,10 @@
+import loginPageKeycloak from '../../pageobjects/loginPageKeycloak';
+
 describe('Should test keycloak update password', () => {
   beforeEach(() => {
     cy.logout();
     window.localStorage.setItem('enable_keycloak', 'true');
+    cy.visit('/');
   });
 
   afterEach(() => {
@@ -10,53 +13,41 @@ describe('Should test keycloak update password', () => {
 
   it('Should check password rotation', () => {
     const email = 'mckongkong@mediarithmics.com';
-    cy.visit('/');
-    cy.get('#username').type(email);
-    cy.get('#kc-login').click();
-    cy.get('#password').type(Cypress.env('devPwd'));
-    cy.get('#kc-login').click();
+    loginPageKeycloak.login(email);
 
     // Should check the password rotation of one year
-    cy.get('#kc-content').should(
+    loginPageKeycloak.alertWarning.should(
       'contain',
       'You need to change your password to activate your account',
     );
     // Insert not matching passwords
-    cy.get('#password-new').type('12234');
-    cy.get('#password-confirm').type('1234');
-    cy.get('#kc-form-buttons').click();
-    cy.get('#input-error-password-confirm').should('contain', "Passwords don't match");
+    loginPageKeycloak.typeNewPassword('12234');
+    loginPageKeycloak.typeConfirmPassword('1234');
+    loginPageKeycloak.clickBtnSubmitPassword();
+    loginPageKeycloak.errorPasswordConfirm.should('contain', "Passwords don't match");
 
     // Should not accept short and obvious password
-    cy.get('#password-new').type('{selectall}{backspace}1234');
-    cy.get('#password-confirm').type('{selectall}{backspace}1234');
-    cy.get('#kc-form-buttons').click();
-    cy.get('#kc-content-wrapper')
+    loginPageKeycloak.updatePassword('1234');
+    loginPageKeycloak.alertError
       .should('contain', 'Password must be at least 8 characters long')
       .and('contain', 'Password is too obvious');
 
     // Should not accept password without 1 special character
-    cy.get('#password-new').type('{selectall}{backspace}qsdfjdsqN7kfeu');
-    cy.get('#password-confirm').type('{selectall}{backspace}qsdfjdsqN7kfeu');
-    cy.get('#kc-form-buttons').click();
-    cy.get('#kc-content-wrapper').should(
+    loginPageKeycloak.updatePassword('qsdfjdsqN7kfeu');
+    loginPageKeycloak.alertError.should(
       'contain',
       'Password must contain at least 1 special character',
     );
 
     // Should not accept password without both upper case and lower case
-    cy.get('#password-new').type('{selectall}{backspace}qsdfjdsqn@7kfeu');
-    cy.get('#password-confirm').type('{selectall}{backspace}qsdfjdsqn@7kfeu');
-    cy.get('#kc-form-buttons').click();
-    cy.get('#kc-content-wrapper').should(
+    loginPageKeycloak.updatePassword('qsdfjdsqn@7kfeu');
+    loginPageKeycloak.alertError.should(
       'contain',
       'Password must contain both upper and lower case characters',
     );
 
     // Should not accept password without numbers
-    cy.get('#password-new').type('{selectall}{backspace}qsdfjdsqN@kfeu');
-    cy.get('#password-confirm').type('{selectall}{backspace}qsdfjdsqN@kfeu');
-    cy.get('#kc-form-buttons').click();
+    loginPageKeycloak.updatePassword('qsdfjdsqN@kfeu');
     cy.get('#kc-content-wrapper').should('contain', 'Password must contain at least 1 digit');
 
     // Should not accept the same password
@@ -74,24 +65,19 @@ describe('Should test keycloak update password', () => {
 
     // Insert a valid password
     const password = 'qsdfjdsqN7@kfeu';
-    cy.get('#password-new').type('{selectall}{backspace}' + password);
-    cy.get('#password-confirm').type('{selectall}{backspace}' + password);
-    cy.get('#kc-form-buttons').click();
+    loginPageKeycloak.updatePassword(password);
     cy.url().should('contains', Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display');
 
     // Logout
     cy.logout();
 
     // Login with old password
-    cy.get('#username').type(email);
-    cy.get('#kc-login').click();
-    cy.get('#password').type(Cypress.env('devPwd'));
-    cy.get('#kc-login').click();
-    cy.get('.input-error').should('be.visible').and('contain', 'Invalid password');
+    loginPageKeycloak.login(email);
+    loginPageKeycloak.errorPassword.should('be.visible').and('contain', 'Invalid password');
 
     // Login with the new password
-    cy.get('#password').type('{selectall}{backspace}' + password);
-    cy.get('#kc-login').click();
+    loginPageKeycloak.typePassword(password);
+    loginPageKeycloak.clickBtnSignIn();
     cy.url().should('contains', Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display');
   });
 });
