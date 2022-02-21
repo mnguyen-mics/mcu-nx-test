@@ -6,7 +6,7 @@ import menuMessages from '../../Menu/messages';
 import { Button, Menu, Dropdown } from 'antd';
 import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
-import { Actionbar, MentionTag } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderResource } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -48,19 +48,7 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
   };
 
   renderNameWithTag(name: string) {
-    const { intl } = this.props;
-
-    return (
-      <div className='mcs-breadcrumb_div'>
-        {name}
-        <MentionTag
-          mention={'BETA'}
-          customContent={'dashboards-new-engine'}
-          tooltip={intl.formatMessage(messages.mentionTagTooltip)}
-          className='mcs-homePage_mentionTag'
-        />
-      </div>
-    );
+    return <div className='mcs-breadcrumb_div'>{name}</div>;
   }
 
   render() {

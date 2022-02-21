@@ -27,7 +27,7 @@ import { IAutomationFormService } from '../Edit/AutomationFormService';
 import AutomationTemplateSelector from './AutomationTemplateSelector';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Loading } from '../../../components';
-import { Actionbar, MentionTag } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import {
   wizardValidObjectTypes,
@@ -317,7 +317,6 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       pathItems: [
         <span className='mcs-pathItem' key='1'>
           {intl.formatMessage(messages.automationBuilder)}
-          <MentionTag className='mcs-pathItem_mentionTag' mention='BETA' />
         </span>,
       ],
     };

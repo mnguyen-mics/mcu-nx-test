@@ -17,7 +17,6 @@ import {
   Actionbar,
   McsDateRangePicker,
   McsIcon,
-  MentionTag,
 } from '@mediarithmics-private/mcs-components-library';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
@@ -368,7 +367,6 @@ class AutomationDashboardPage extends React.Component<Props, State> {
             ? automationFormData.automation.name.substring(0, 55) + '...'
             : automationFormData.automation.name
           : ''}
-        <MentionTag className='mcs-pathItem_mentionTag' mention='BETA' />
       </span>,
     ];
 
