@@ -49,6 +49,8 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 
+import snakeCaseKeys from 'snakecase-keys';
+
 const messages = defineMessages({
   copiedToClipboard: {
     id: 'queryTool.AggregationRenderer.copiedToClipboard',
@@ -217,6 +219,20 @@ class AggregationRenderer extends React.Component<Props, State> {
     }
   }
 
+  private cleanUnusedKeysForExport(chartConfig: ChartConfig) {
+    switch (chartConfig.type) {
+      case 'bars':
+        const barChartOptions = chartConfig.options as any;
+        delete barChartOptions.xKey;
+        delete barChartOptions.yKeys;
+        break;
+      case 'pie':
+        const pieChartOptions = chartConfig.options as any;
+        delete pieChartOptions.height;
+        break;
+    }
+  }
+
   async handleCopyToClipboard() {
     const { query, datamartId } = this.props;
     const { selectedChart } = this.state;
@@ -247,8 +263,10 @@ class AggregationRenderer extends React.Component<Props, State> {
       options: chartOptions,
       dataset: dataset,
     };
-    const jsonToCopy = JSON.stringify(chart, null, 2);
-    await this.copyTextToClipboard(jsonToCopy);
+    const chartConfigCopy: ChartConfig = JSON.parse(JSON.stringify(chart));
+    this.cleanUnusedKeysForExport(chartConfigCopy);
+    const prettyJson = JSON.stringify(snakeCaseKeys(chartConfigCopy), undefined, 2);
+    await this.copyTextToClipboard(prettyJson);
     return this.handleAfterChartConfigCopy();
   }
 

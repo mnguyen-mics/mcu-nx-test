@@ -72,6 +72,7 @@
     "reflect-metadata": "^0.1.12",
     "regenerator-runtime": "^0.13.9",
     "reselect": "^4.0.0",
+    "snakecase-keys": "^5.1.2",
     "storm-react-diagrams": "^5.2.1",
     "whatwg-fetch": "^3.5.0",
     "xlsx": "^0.17.0",
