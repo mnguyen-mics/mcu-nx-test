@@ -852,7 +852,7 @@ describe('Should test the funnel', () => {
               ],
             },
           }).then(() => {
-            cy.wait(20000);
+            cy.wait(30000);
             cy.reload();
             cy.get('.mcs-funnelQueryBuilder_select--dimensions').type('channel');
             cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
@@ -860,12 +860,14 @@ describe('Should test the funnel', () => {
             cy.contains(`${complementaryChannel.body.data.id} - test_complementary`).click({
               force: true,
             });
+            cy.get('.mcs-funnelQueryBuilder_executeQueryBtn').click();
             cy.get('.mcs-timelineStepBuilder_addStepBtn').click({ force: true });
             cy.get('.mcs-funnelQueryBuilder_select--dimensions').eq(1).type('conversion');
             cy.get('.mcs-funnelQueryBuilder_select--dimensions--HAS_CONVERSION').click();
             cy.get('.mcs-funnelQueryBuilder_dimensionValue').eq(1).dblclick();
             cy.contains('true').click({ force: true });
             cy.get('.mcs-funnelQueryBuilder_executeQueryBtn').click();
+            cy.wait(5000);
             cy.get('.mcs-funnel_complementaryButton').eq(1).find('button').click();
             cy.get('.mcs-funnel_chart').its('length').should('be.gte', 3);
           });
@@ -893,6 +895,7 @@ describe('Should test the funnel', () => {
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
         cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
         cy.get('.mcs-funnelQueryBuilder_dimensionValue').click();
+        cy.wait(3000);
         cy.get('.mcs-resourceByNameSelector_dropdown').then($el => {
           const top = parseInt($el[0].style.top.substring(0, $el[0].style.top.length - 2));
           cy.get('.mcs-timelineStepBuilder_addStepBtn').click({ force: true });
@@ -901,12 +904,14 @@ describe('Should test the funnel', () => {
           cy.get('.mcs-funnelQueryBuilder_dimensionValue').eq(1).dblclick();
           cy.get('.mcs-funnelQueryBuilder_dimensionValue').eq(1).click();
           cy.wait(3000);
-          cy.get('.mcs-resourceByNameSelector_dropdown').then($secondEl => {
-            const secondTop = parseInt(
-              $secondEl[0].style.top.substring(0, $el[0].style.top.length - 2),
-            );
-            expect(secondTop).to.be.greaterThan(top);
-          });
+          cy.get('.mcs-resourceByNameSelector_dropdown')
+            .eq(1)
+            .then($secondEl => {
+              const secondTop = parseInt(
+                $secondEl[0].style.top.substring(0, $secondEl[0].style.top.length - 2),
+              );
+              expect(secondTop).to.be.greaterThan(top);
+            });
         });
       });
     });

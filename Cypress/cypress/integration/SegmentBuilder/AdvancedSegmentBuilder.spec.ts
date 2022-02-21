@@ -89,10 +89,10 @@ describe('The purpose of this test is to check the creation of a segment with th
       cy.get('.mcs-advancedSegmentBuilder').click();
       cy.get('.mcs-segmentSelector_button').click();
       cy.get('.mcs-chartMetaDataInfo_container').should('contain', segmentName);
-      cy.get('.mcs-segmentSelector_dropdown').find('input').clear().type(segmentName);
+      cy.get('.mcs-segmentSelector_segmentNameInput').find('input').clear().type(segmentName);
       cy.wait(5000);
       cy.get('.mcs-chartMetaDataInfo_container').should('contain', segmentName);
-      cy.get('.mcs-segmentSelector_dropdown').find('input').clear().type(`${segmentId}`);
+      cy.get('.mcs-segmentSelector_segmentNameInput').find('input').clear().type(`${segmentId}`);
       cy.wait(5000);
       cy.get('.mcs-chartMetaDataInfo_container').should('contain', segmentName);
       cy.contains(segmentName).click();
