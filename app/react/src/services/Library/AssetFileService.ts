@@ -25,7 +25,7 @@ export class AssetFileService implements IAssetFileService {
     organisationId: string,
     options: object = {},
   ): Promise<DataListResponse<AssetFileResource>> {
-    const endpoint = 'asset_files';
+    const endpoint = 'assets';
     const params = {
       organisation_id: organisationId,
       ...options,
@@ -33,7 +33,7 @@ export class AssetFileService implements IAssetFileService {
     return ApiService.getRequest(endpoint, params);
   }
   getAssetFile(id: string): Promise<AssetFileResource | null> {
-    const endpoint = `asset_files/${id}`;
+    const endpoint = `assets/${id}`;
     return ApiService.getRequest<DataResponse<AssetFileResource>>(endpoint)
       .then(res => {
         return res.data;
@@ -44,7 +44,7 @@ export class AssetFileService implements IAssetFileService {
       });
   }
   deleteAssetsFile(id: string, options: object = {}): Promise<DataResponse<AssetFileResource>> {
-    const endpoint = `asset_files/${id}`;
+    const endpoint = `assets/${id}`;
     const params = {
       ...options,
     };
@@ -54,7 +54,7 @@ export class AssetFileService implements IAssetFileService {
     organisationId: string,
     file: FormData,
   ): Promise<DataResponse<AssetFileResource>> {
-    const endpoint = `asset_files?organisation_id=${organisationId}`;
+    const endpoint = `assets?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, file);
   }
 }
