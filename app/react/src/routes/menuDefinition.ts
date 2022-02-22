@@ -28,7 +28,6 @@ const audienceMenuDefinition: NavigatorMenuDefinition = {
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.segmentBuilderSelector),
       translation: messages.builders,
-      mention: 'BETA',
     },
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceTimelineHome),
@@ -61,7 +60,6 @@ const automationsMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'automation',
   translation: messages.automationTitle,
   type: 'multi',
-  mention: 'BETA',
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(automationDefinition.automationsList),
