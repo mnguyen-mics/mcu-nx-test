@@ -294,7 +294,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         actionbarProps={{
           pathItems: [
             <Link key='1' to={this.getPreviousUrl()}>
-              formatMessage(messages.datamartReplications)
+              {formatMessage(messages.datamartReplications)}
             </Link>,
           ],
         }}
