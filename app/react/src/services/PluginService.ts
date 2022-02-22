@@ -266,7 +266,7 @@ export class PluginService implements IPluginService {
       params.property_type === 'ASSET_FILE' ||
       params.property_type === 'ASSET_FOLDER'
     ) {
-      let uploadEndpoint = `asset_files?organisation_id=${organisationId}`;
+      let uploadEndpoint = `assets?organisation_id=${organisationId}`;
 
       if (params.property_type === 'ASSET_FOLDER') {
         uploadEndpoint = `assets?organisation_id=${organisationId}&asset_type=FOLDER`;
