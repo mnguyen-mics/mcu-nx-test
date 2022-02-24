@@ -45,4 +45,4 @@ echo "Full message: $message"
 slack chat send \
   --title ":rotating_light: <${BUILD_URL:-}|The staging build failed>" \
   --text "$message" \
-  --channel 'tribe-front' > /dev/null
+  --channel 'build-front' > /dev/null
