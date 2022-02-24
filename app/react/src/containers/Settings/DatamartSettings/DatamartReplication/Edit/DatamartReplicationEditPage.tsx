@@ -128,52 +128,55 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
     const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
-    const datamartId = datamartReplicationFormData.datamart_id || (state && state.datamartId);
+    const datamartId =
+      datamartReplicationFormData.datamart_id ||
+      (state && state.datamartId) ||
+      this.state.datamartId;
+    const newFormDataPromise = datamartId
+      ? Promise.resolve({
+          ...formDataWithoutCredentialsUri,
+          datamart_id: datamartId,
+          type: selectedType,
+        })
+      : Promise.reject(new Error('No datamart found'));
 
-    if (datamartId) {
-      const newFormData = {
-        ...formDataWithoutCredentialsUri,
-        datamart_id: datamartId,
-        type: selectedType,
-      };
-
-      const promise = datamartReplicationId
-        ? this._datamartReplicationService.updateDatamartReplication(
-            datamartId,
-            datamartReplicationId,
-            newFormData,
-          )
-        : this._datamartReplicationService.createDatamartReplication(datamartId, newFormData);
-
-      promise
-        .then(response => {
-          if (datamartReplicationFormData.credentials_uri) {
-            this._datamartReplicationService
-              .uploadDatamartReplicationCredentials(
-                datamartId,
-                response.data.id,
-                datamartReplicationFormData.credentials_uri,
-              )
-              .catch(error => {
-                if (error) notifyError(error);
-                this.setState({
-                  isLoading: false,
-                });
+    newFormDataPromise
+      .then(newFormData => {
+        return datamartReplicationId
+          ? this._datamartReplicationService.updateDatamartReplication(
+              datamartId,
+              datamartReplicationId,
+              newFormData,
+            )
+          : this._datamartReplicationService.createDatamartReplication(datamartId, newFormData);
+      })
+      .then(response => {
+        if (datamartReplicationFormData.credentials_uri) {
+          this._datamartReplicationService
+            .uploadDatamartReplicationCredentials(
+              datamartId,
+              response.data.id,
+              datamartReplicationFormData.credentials_uri,
+            )
+            .catch(error => {
+              if (error) notifyError(error);
+              this.setState({
+                isLoading: false,
               });
-          }
-        })
-        .then(() => {
-          hideSaveInProgress();
-          history.push(this.getPreviousUrl(), { activeTab: 'replications' });
-        })
-        .catch(err => {
-          notifyError(err);
-          hideSaveInProgress();
-          this.setState({
-            isLoading: false,
-          });
+            });
+        }
+      })
+      .then(() => {
+        hideSaveInProgress();
+        history.push(this.getPreviousUrl(), { activeTab: 'replications' });
+      })
+      .catch(err => {
+        notifyError(err);
+        hideSaveInProgress();
+        this.setState({
+          isLoading: false,
         });
-    }
+      });
   };
 
   getPreviousUrl = () => {
