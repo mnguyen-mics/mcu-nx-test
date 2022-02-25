@@ -112,7 +112,8 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
               case 'max_budget_per_period':
                 validates = [isRequired, isValidFloat, isNotZero];
                 break;
-              case 'start_date' || 'end_date':
+              case 'start_date':
+              case 'end_date':
                 validates = [isRequired];
             }
             return (

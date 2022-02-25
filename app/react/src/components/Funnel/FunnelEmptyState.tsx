@@ -7,11 +7,7 @@ import { compose } from 'recompose';
 import { updateSearch } from '../../utils/LocationSearchHelper';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 
-interface FunnelEmptyStateProps {}
-
-type Props = FunnelEmptyStateProps &
-  InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+type Props = InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 class FunnelEmptyState extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
@@ -53,4 +49,4 @@ class FunnelEmptyState extends React.Component<Props> {
   }
 }
 
-export default compose<Props, FunnelEmptyStateProps>(injectIntl, withRouter)(FunnelEmptyState);
+export default compose<Props, {}>(injectIntl, withRouter)(FunnelEmptyState);

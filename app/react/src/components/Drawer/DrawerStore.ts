@@ -81,7 +81,8 @@ const drawableContents = (state: DrawableContent[] = [], action: Action<any>) =>
       return [...state, { component, ...extendedOptions }];
     case CLOSE_NEXT_DRAWER:
       return [...lodash.initial(state)];
-    case DRAWER_CLICK_ON_BACKGROUND || DRAWER_ESCAPE_KEY_DOWN:
+    case DRAWER_CLICK_ON_BACKGROUND:
+    case DRAWER_ESCAPE_KEY_DOWN:
       const foregroundDrawer = lodash.last(state);
 
       if (foregroundDrawer && !foregroundDrawer.isModal) {

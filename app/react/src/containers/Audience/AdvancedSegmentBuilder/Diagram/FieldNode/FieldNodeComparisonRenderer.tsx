@@ -249,7 +249,6 @@ export default class FieldNodeComparisonRenderer extends React.Component<Props, 
           </span>
         );
     }
-    return '';
   };
 
   render() {
