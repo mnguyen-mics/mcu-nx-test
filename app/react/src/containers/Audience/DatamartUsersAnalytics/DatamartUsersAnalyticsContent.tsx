@@ -125,6 +125,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
       const currentFormattedConfig = formattedConfig.slice();
       const tmpDashboardConfig: DashboardConfig[] = [];
       const newGeneratedDom: JSX.Element[] = [];
+      let currentGeneratedDom: JSX.Element[] = [];
       let newDashboardConfig: DashboardConfig[] = [];
 
       if (segmentsFilters.length < filter.segments.length) {
@@ -176,7 +177,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
             !item.segments || (item.segments && item.segments.baseSegmentId !== thedifference[0]),
         );
         const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
-        newGeneratedDom.concat(
+        currentGeneratedDom = newGeneratedDom.concat(
           generatedDom.filter((item: JSX.Element) =>
             newDashboardConfigKeys.includes(item.key as string),
           ),
@@ -187,8 +188,8 @@ class DatamartUsersAnalyticsContent extends React.Component<
         formattedConfig: newDashboardConfig,
         segmentsFilters: filter.segments,
         generatedDom:
-          newGeneratedDom.length > 0
-            ? newGeneratedDom
+          currentGeneratedDom.length > 0
+            ? currentGeneratedDom
             : this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange),
       });
     }
