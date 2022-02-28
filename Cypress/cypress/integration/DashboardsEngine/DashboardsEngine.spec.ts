@@ -99,7 +99,7 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it.skip('should test the index transformation', () => {
+  it('should test the index transformation', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -304,7 +304,7 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it.skip('test the charts on the query tool', () => {
+  it('test the charts on the query tool', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -418,7 +418,7 @@ describe('dashboards engine Tests', () => {
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Bars');
                   cy.get('.mcs-chartMetaDataInfo_query_item')
                     .should('have.length', 1)
-                    .find('input')
+                    .find('textarea')
                     .invoke('val')
                     .then(value => {
                       expect(value).to.contain(
@@ -433,6 +433,13 @@ describe('dashboards engine Tests', () => {
                   cy.get('.mcs-close').click();
                   cy.contains('Metric').click();
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Metric');
+                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                    .should('have.length', 1)
+                    .find('textarea')
+                    .invoke('val')
+                    .then(value => {
+                      expect(value).to.contain('"expression": "users"');
+                    });
                   cy.get('.mcs-chartMetaDataInfo_section_title')
                     .should('contain', 'count')
                     .and('contain', '1');
@@ -442,7 +449,7 @@ describe('dashboards engine Tests', () => {
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Pie');
                   cy.get('.mcs-chartMetaDataInfo_query_item')
                     .should('have.length', 1)
-                    .find('input')
+                    .find('textarea')
                     .invoke('val')
                     .then(value => {
                       expect(value).to.contain(
@@ -459,7 +466,7 @@ describe('dashboards engine Tests', () => {
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Index First');
                   cy.get('.mcs-chartMetaDataInfo_query_item')
                     .should('have.length', 2)
-                    .find('input')
+                    .find('textarea')
                     .eq(0)
                     .invoke('val')
                     .then(value => {
@@ -469,7 +476,7 @@ describe('dashboards engine Tests', () => {
                     });
                   cy.get('.mcs-chartMetaDataInfo_query_item')
                     .should('have.length', 2)
-                    .find('input')
+                    .find('textarea')
                     .eq(1)
                     .invoke('val')
                     .then(value => {
@@ -491,7 +498,7 @@ describe('dashboards engine Tests', () => {
                   cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Index Hidden Axis');
                   cy.get('.mcs-chartMetaDataInfo_query_item')
                     .should('have.length', 2)
-                    .find('input')
+                    .find('textarea')
                     .eq(0)
                     .invoke('val')
                     .then(value => {
@@ -501,7 +508,7 @@ describe('dashboards engine Tests', () => {
                     });
                   cy.get('.mcs-chartMetaDataInfo_query_item')
                     .should('have.length', 2)
-                    .find('input')
+                    .find('textarea')
                     .eq(1)
                     .invoke('val')
                     .then(value => {
@@ -706,13 +713,14 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it('should test the loading dashboard experience', () => {
+  it.skip('should test the loading dashboard experience', () => {
     cy.intercept({ pathname: /.*\/otql.*/, method: 'POST' }, req => {
       req.reply({
         statusCode: 200,
         body: otqlResponseStub.body,
         headers: otqlResponseStub.headers,
         delayMs: 20000,
+        throttleKbps: 0,
       });
     });
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
