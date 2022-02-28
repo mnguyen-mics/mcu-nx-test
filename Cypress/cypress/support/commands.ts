@@ -891,6 +891,16 @@ eof`,
       )
         .its('stdout')
         .should('contain', '"status":"ok"');
+    } else {
+      cy.exec(
+        `ssh -o StrictHostKeyChecking=no ${Cypress.env(
+          'virtualPlatformName',
+        )}.mics-sandbox.com <<eof
+curl -k -H \'Authorization: ${accessToken}\' -H \'content-Type: application/json\' -H "Host: admin-api.mediarithmics.local:8493" "https://10.0.1.3:8493/v1/datamarts" -d \'{"name":"${datamartName}","region": "EUROPE","user_point_system_version": "v201901","organisation_id":"${organisationId}","type":"DATAMART","datafarm":"DF_EU_DEV"}\'
+eof`,
+      )
+        .its('stdout')
+        .should('contain', '"status":"ok"');
     }
   },
 );
