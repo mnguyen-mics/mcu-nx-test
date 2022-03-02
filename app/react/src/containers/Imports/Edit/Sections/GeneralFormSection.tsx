@@ -111,6 +111,10 @@ class GeneralFormSection extends React.Component<Props, State> {
           value: 'USER_PROFILE',
         },
         {
+          title: 'User Choice',
+          value: 'USER_CHOICE',
+        },
+        {
           title: 'User Identifiers Association',
           value: 'USER_IDENTIFIERS_ASSOCIATION_DECLARATIONS',
         },
