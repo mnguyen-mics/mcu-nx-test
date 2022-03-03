@@ -3,6 +3,8 @@ import DashboardFilter from '../components/DashboardFilter';
 import LeftMenu from '../components/LeftMenu';
 import {
   compartmentFilterContent,
+  dataFileContent,
+  dataFileSourceContent,
   differentChartsContent,
   drawerChartDetails,
   getDecoratosTransformationContent,
@@ -751,6 +753,43 @@ describe('dashboards engine Tests', () => {
             cy.contains('Loading Experience').click();
             cy.wait(10000);
             cy.get('.mcs-chart_content_container').should('contain', 'Still loading');
+          });
+        });
+      });
+    });
+  });
+
+  it('should test the data file data source', () => {
+    const leftMenu = new LeftMenu();
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createDashboard(
+        data.accessToken,
+        data.organisationId,
+        'Data File Source Dashboard',
+        ['home'],
+        [],
+        [],
+      ).then(dashboardResponse => {
+        cy.putDataFile(data.accessToken, data.organisationId, dataFileContent).then(() => {
+          cy.request({
+            url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+              dashboardResponse.body.data.id
+            }/content`,
+            method: 'PUT',
+            headers: { Authorization: data.accessToken },
+            body: dataFileSourceContent(data.organisationId),
+          }).then(() => {
+            cy.switchOrg(data.organisationName);
+            leftMenu.goToHomePage();
+            cy.contains('Data File Source Dashboard').click();
+            cy.get('.mcs-chart_content_container')
+              .first()
+              .should('contain', '200')
+              .and('contain', '100')
+              .and('contain', '300')
+              .and('contain', 'Dimension 1')
+              .and('contain', 'Dimension 2')
+              .and('contain', 'Dimension 3');
           });
         });
       });

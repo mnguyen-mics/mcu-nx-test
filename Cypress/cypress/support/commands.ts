@@ -95,6 +95,18 @@ Cypress.Commands.add('executeQuery', (accessToken, datamartId, queryText) => {
   });
 });
 
+Cypress.Commands.add('putDataFile', (accessToken, organisationId, fileContent) => {
+  return cy.request({
+    url: `${Cypress.env(
+      'apiDomain',
+    )}/v1/data_file/data?uri=mics://data_file/tenants/${organisationId}/dashboard-1.json`,
+    method: 'PUT',
+    headers: { Authorization: accessToken, 'Content-Type': 'multipart/form-data' },
+    encoding: 'utf-8',
+    body: fileContent,
+  });
+});
+
 Cypress.Commands.add(
   'prepareActivitiesForDashboards',
   (accessToken, datamartId, channelId, eventName, secondEventName, secondChannelId?) => {
