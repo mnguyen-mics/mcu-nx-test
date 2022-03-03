@@ -5,9 +5,12 @@ import { CloseOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import {
   FunnelFilter,
-  Steps,
+  Step,
   GroupedByFunnel,
   FunnelIdByDimension,
+  isFieldValueFunnelResource,
+  isFieldValueFunnelMultipleGroupByResource,
+  FieldValuesFunnelResource,
 } from '../../models/datamart/UserActivitiesFunnel';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -105,7 +108,7 @@ class Funnel extends React.Component<Props, State> {
       const steps = funnelResult.global.steps.slice(startIndex);
       const total = funnelResult.global.total;
 
-      steps.forEach((step: Steps, index: number) => {
+      steps.forEach((step: Step, index: number) => {
         const start =
           index === 0 && startIndex === 0
             ? total
@@ -241,41 +244,65 @@ class Funnel extends React.Component<Props, State> {
     }
   };
 
+  computeDimensionMetricsHelper(
+    fieldValueResource: FieldValuesFunnelResource,
+    i: number,
+    j: number,
+    step: Step,
+  ) {
+    return {
+      userPoints: {
+        value: fieldValueResource.funnel.steps[i].count,
+        pourcentage: getPercentage(fieldValueResource.funnel.steps[i].count, step.count),
+        color: colors[j][0],
+      },
+      conversions:
+        fieldValueResource.funnel.steps[i].conversion ||
+        fieldValueResource.funnel.steps[i].conversion === 0
+          ? {
+              value: fieldValueResource.funnel.steps[i].conversion as number,
+              pourcentage: getPercentage(
+                fieldValueResource.funnel.steps[i].conversion as number,
+                step.conversion as number,
+              ),
+              color: colors[j][0],
+            }
+          : undefined,
+      amounts:
+        fieldValueResource.funnel.steps[i].amount || fieldValueResource.funnel.steps[i].amount === 0
+          ? {
+              value: fieldValueResource.funnel.steps[i].amount as number,
+              pourcentage: getPercentage(
+                fieldValueResource.funnel.steps[i].amount as number,
+                step.amount as number,
+              ),
+              color: colors[j][0],
+            }
+          : undefined,
+    };
+  }
+
   computeDimensionMetrics = (funnelData: GroupedByFunnel, index: number) => {
     const dimensionMetrics: DimensionMetrics[][] = [];
-    funnelData.global.steps.forEach((steps, i) => {
+    funnelData.global.steps.forEach((step, i) => {
       dimensionMetrics.push([]);
-      funnelData.grouped_by?.forEach((dimension, j) => {
-        if (dimension.dimension_value !== null && dimension.funnel.steps[i]) {
-          dimensionMetrics[i].push({
-            userPoints: {
-              value: dimension.funnel.steps[i].count,
-              pourcentage: getPercentage(dimension.funnel.steps[i].count, steps.count),
-              color: colors[j][0],
-            },
-            conversions:
-              dimension.funnel.steps[i].conversion || dimension.funnel.steps[i].conversion === 0
-                ? {
-                    value: dimension.funnel.steps[i].conversion as number,
-                    pourcentage: getPercentage(
-                      dimension.funnel.steps[i].conversion as number,
-                      steps.conversion as number,
-                    ),
-                    color: colors[j][0],
-                  }
-                : undefined,
-            amounts:
-              dimension.funnel.steps[i].amount || dimension.funnel.steps[i].amount === 0
-                ? {
-                    value: dimension.funnel.steps[i].amount as number,
-                    pourcentage: getPercentage(
-                      dimension.funnel.steps[i].amount as number,
-                      steps.amount as number,
-                    ),
-                    color: colors[j][0],
-                  }
-                : undefined,
-          });
+      funnelData.grouped_by?.forEach((fieldValueResource, j) => {
+        if (
+          isFieldValueFunnelResource(fieldValueResource) &&
+          fieldValueResource.dimension_value !== null &&
+          fieldValueResource.funnel.steps[i]
+        ) {
+          dimensionMetrics[i].push(
+            this.computeDimensionMetricsHelper(fieldValueResource, i, j, step),
+          );
+        } else if (
+          isFieldValueFunnelMultipleGroupByResource(fieldValueResource) &&
+          fieldValueResource.dimension_values[0] !== null &&
+          fieldValueResource.funnel.steps[i]
+        ) {
+          dimensionMetrics[i].push(
+            this.computeDimensionMetricsHelper(fieldValueResource, i, j, step),
+          );
         }
       });
     });
@@ -307,6 +334,7 @@ class Funnel extends React.Component<Props, State> {
       (dimensionValue === 'CHANNEL_ID' ||
         dimensionValue === 'DEVICE_FORM_FACTOR' ||
         dimensionValue === 'BRAND' ||
+        dimensionValue === 'ORIGIN_CREATIVE_ID' ||
         dimensionValue === 'PRODUCT_ID') && (
         <Select.Option
           className='mcs-funnelSplitBy_option'
@@ -333,10 +361,17 @@ class Funnel extends React.Component<Props, State> {
 
     const idByDimension: FunnelIdByDimension[] = [];
     funnelData.grouped_by?.forEach((dimension, i) => {
-      if (dimension.dimension_value !== null) {
+      if (isFieldValueFunnelResource(dimension)) {
         idByDimension.push({
           name: dimension.dimension_name,
           id: dimension.dimension_value,
+          colors: colors[i],
+          decorator: dimension.dimension_decorator,
+        });
+      } else {
+        idByDimension.push({
+          name: dimension.dimension_names[0],
+          id: dimension.dimension_values[0],
           colors: colors[i],
           decorator: dimension.dimension_decorator,
         });
@@ -398,13 +433,14 @@ class Funnel extends React.Component<Props, State> {
     );
   };
 
-  displaySplitByDropdown = (filter: FunnelFilter) => {
+  shouldDisplaySplitByDropdown = (filter: FunnelFilter) => {
     return filter.filter_clause.filters.find(
       f =>
         f.dimension_name === 'CHANNEL_ID' ||
         f.dimension_name === 'DEVICE_FORM_FACTOR' ||
         f.dimension_name === 'BRAND' ||
-        f.dimension_name === 'PRODUCT_ID',
+        f.dimension_name === 'PRODUCT_ID' ||
+        f.dimension_name === 'ORIGIN_CREATIVE_ID',
     );
   };
 
@@ -430,13 +466,13 @@ class Funnel extends React.Component<Props, State> {
   };
 
   private splitIndex(filter: FunnelFilter[]): number {
-    return filter.findIndex(x => !!x.group_by_dimension);
+    return filter.findIndex(x => !!x.group_by_dimension || !!x.group_by_dimensions?.length);
   }
 
   renderStep(
     funnelData: GroupedByFunnel,
     index: number,
-    steps: Steps[],
+    steps: Step[],
     stepsDelta: StepDelta[],
     dimensionMetrics: any,
   ) {
@@ -480,14 +516,17 @@ class Funnel extends React.Component<Props, State> {
             steps[index - 1] &&
             steps[index - 1].count > 0 &&
             filter[index - 1] &&
-            this.displaySplitByDropdown(filter[index - 1]) &&
+            this.shouldDisplaySplitByDropdown(filter[index - 1]) &&
             enableSplitBy ? (
               <Select
                 key={this._cuid()}
                 disabled={splitIndex === index && isStepLoading}
                 loading={splitIndex === index && isStepLoading}
                 className='mcs-funnel_splitBy_select'
-                value={filter[index - 1].group_by_dimension}
+                value={
+                  filter[index - 1].group_by_dimension ||
+                  filter[index - 1].group_by_dimensions?.at(0)
+                }
                 placeholder='Split by'
                 onChange={this.handleSplitByDimension.bind(this, index)}
                 getPopupContainer={getPopupContainer}

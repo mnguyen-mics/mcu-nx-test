@@ -5,7 +5,7 @@ import FunnelQueryBuilder from './FunnelQueryBuilder';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
-import { FunnelFilter, GroupedByFunnel, Steps } from '../../models/datamart/UserActivitiesFunnel';
+import { FunnelFilter, GroupedByFunnel, Step } from '../../models/datamart/UserActivitiesFunnel';
 import { extractFilters, getDefaultStep } from './Utils';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import FunnelDataFetcher from './FunnelDataFetcher';
@@ -116,7 +116,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
       index === 1
         ? previousFunnelData.global.total
         : previousFunnelData.global.steps[index - 2].count;
-    const step: Steps = {
+    const step: Step = {
       count: referenceCount,
       interaction_duration: 0,
       name: `Step ${index}`,
@@ -181,6 +181,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
         : extractFilters([getDefaultStep()]);
     const filterWithoutGroupBy: FunnelFilter[] = deepCopy(funnelFilter);
     filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
+    filterWithoutGroupBy.forEach(x => delete x.group_by_dimensions);
 
     // Make copies for display in Funnel
     const funnelFilterCopy = deepCopy(funnelFilter);

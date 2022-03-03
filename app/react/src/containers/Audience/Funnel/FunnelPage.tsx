@@ -22,15 +22,17 @@ import {
   withDatamartSelector,
   WithDatamartSelectorProps,
 } from '@mediarithmics-private/advanced-components';
-import ExportService from '../../../services/ExportService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { extractDatesFromProps } from '../../../components/Funnel/Utils';
 import {
+  FieldValuesFunnelResource,
   FunnelFilter,
   FunnelResponse,
   GroupedByFunnel,
+  isFieldValueFunnelMultipleGroupByResource,
+  isFieldValueFunnelResource,
 } from '../../../models/datamart/UserActivitiesFunnel';
 import McsMoment from '../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
@@ -43,6 +45,7 @@ import {
   mcsDateRangePickerMessages,
 } from '../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import { exportFunnel } from '../../../services/Export';
 
 const { Content } = Layout;
 
@@ -55,7 +58,7 @@ interface State {
   selectedTemplate?: FunnelTemplate;
 }
 
-interface FunnelSheetDescription {
+export interface FunnelSheetDescription {
   title: string;
   splitIndex?: number;
   funnelData: GroupedByFunnel;
@@ -101,8 +104,19 @@ class FunnelPage extends React.Component<JoinedProps, State> {
   }
 
   private splitIndex(funnelFilter: FunnelFilter[]): number {
-    return funnelFilter.findIndex(x => !!x.group_by_dimension);
+    return funnelFilter.findIndex(x => !!x.group_by_dimension || !!x.group_by_dimensions?.length);
   }
+
+  compareFieldValueResources = (a: FieldValuesFunnelResource, b: FieldValuesFunnelResource) => {
+    if (isFieldValueFunnelResource(a) && isFieldValueFunnelResource(b))
+      return a.dimension_value > b.dimension_value ? 1 : -1;
+    else if (
+      isFieldValueFunnelMultipleGroupByResource(a) &&
+      isFieldValueFunnelMultipleGroupByResource(b)
+    )
+      return a.dimension_values.join(',') > b.dimension_values.join(',') ? 1 : -1;
+    else return 0;
+  };
 
   handleRunExport = () => {
     this.setState({ exportIsRunning: true });
@@ -117,7 +131,9 @@ class FunnelPage extends React.Component<JoinedProps, State> {
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const detectGroupBy = (funnelFilters: FunnelFilter[]) => {
-      return funnelFilters.some(filter => filter.group_by_dimension);
+      return funnelFilters.some(
+        filter => filter.group_by_dimension || filter.group_by_dimensions?.length,
+      );
     };
     const funnelFilter: FunnelFilter[] =
       routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [];
@@ -128,8 +144,11 @@ class FunnelPage extends React.Component<JoinedProps, State> {
       this.splitIndex(funnelFilter) === -1
         ? funnelFilter.length - 1
         : this.splitIndex(funnelFilter);
+
     if (!detectGroupBy(funnelFilter)) {
       funnelFilter[funnelFilter.length - 1].group_by_dimension = 'DATE_YYYY_MM_DD';
+      funnelFilter[funnelFilter.length - 1].group_by_dimensions = ['DATE_YYYY_MM_DD'];
+
       this._userActivitiesFunnelService
         .getUserActivitiesFunnel(selectedDatamartId, funnelFilter, funnelTimeRange)
         .then(funnelResponse => {
@@ -148,13 +167,11 @@ class FunnelPage extends React.Component<JoinedProps, State> {
             splitIndex: splitIndex,
             funnelData: {
               ...funnelResponse.data,
-              grouped_by: funnelResponse.data.grouped_by?.sort((a, b) =>
-                a.dimension_value > b.dimension_value ? 1 : -1,
-              ),
+              grouped_by: funnelResponse.data.grouped_by?.sort(this.compareFieldValueResources),
             },
           };
           const sheets = [globalSheet, byDaySheet];
-          ExportService.exportFunnel(sheets, selectedDatamartId, organisationId, formatMessage);
+          exportFunnel(sheets, selectedDatamartId, organisationId, formatMessage);
         })
         .catch(e => {
           this.props.notifyError(e);
@@ -171,9 +188,17 @@ class FunnelPage extends React.Component<JoinedProps, State> {
           funnelTimeRange,
         ),
       );
-      const secondCallFilter: FunnelFilter[] = funnelFilter.map((filter, index) => {
-        if (funnelFilter.length === index + 1) filter.group_by_dimension = 'DATE_YYYY_MM_DD';
-        else filter.group_by_dimension = undefined;
+
+      const secondCallFilter: FunnelFilter[] = (
+        JSON.parse(JSON.stringify(funnelFilter)) as FunnelFilter[]
+      ).map((filter, index) => {
+        if (index === funnelFilter.length - 1) {
+          filter.group_by_dimension = 'DATE_YYYY_MM_DD';
+          filter.group_by_dimensions = (filter.group_by_dimensions || []).concat('DATE_YYYY_MM_DD');
+        } else {
+          filter.group_by_dimension = undefined;
+          filter.group_by_dimensions = undefined;
+        }
         return filter;
       });
       promises.push(
@@ -196,13 +221,11 @@ class FunnelPage extends React.Component<JoinedProps, State> {
             splitIndex: funnelFilter.length - 1,
             funnelData: {
               ...res[1].data,
-              grouped_by: res[1].data.grouped_by?.sort((a, b) =>
-                a.dimension_value > b.dimension_value ? 1 : -1,
-              ),
+              grouped_by: res[1].data.grouped_by?.sort(this.compareFieldValueResources),
             },
           };
           const sheets = [globalSheet, byDaySheet];
-          ExportService.exportFunnel(sheets, selectedDatamartId, organisationId, formatMessage);
+          exportFunnel(sheets, selectedDatamartId, organisationId, formatMessage);
         })
         .catch(e => {
           this.props.notifyError(e);
