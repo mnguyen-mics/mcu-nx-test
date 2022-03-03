@@ -207,6 +207,18 @@ const messageMap: {
     id: 'audience.segments.list.column.mobileId',
     defaultMessage: 'Mobile IDs',
   },
+  is_persisted: {
+    id: 'audience.segments.list.is_persisted',
+    defaultMessage: 'Is persisted',
+  },
+  persisted: {
+    id: 'audience.segments.list.persisted',
+    defaultMessage: 'Persisted',
+  },
+  not_persisted: {
+    id: 'audience.segments.list.not_persisted',
+    defaultMessage: 'Not persisted',
+  },
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -472,6 +484,13 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       formattedFilters = {
         ...formattedFilters,
         label_id: filter.label_id,
+      };
+    }
+
+    if (filter.persisted) {
+      formattedFilters = {
+        ...formattedFilters,
+        persisted: filter.persisted,
       };
     }
 
@@ -968,6 +987,38 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       };
       filtersOptions.push(datamartFilter);
     }
+
+    const persistedLabel = (persisted: boolean) => {
+      return persisted
+        ? intl.formatMessage(messageMap.persisted)
+        : intl.formatMessage(messageMap.not_persisted);
+    };
+
+    const persistedFilter = {
+      displayElement: (
+        <div>
+          <span>{intl.formatMessage(messageMap.is_persisted)}</span> <DownOutlined />
+        </div>
+      ),
+      selectedItems: filter.persisted === undefined ? [] : [filter.persisted],
+      items: [true, false],
+      singleSelectOnly: true,
+      getKey: (item: any) => item.toString(),
+      display: (item: any) => (item !== undefined ? persistedLabel(item) : ''),
+      handleItemClick: (persistedItem: boolean) => {
+        const newPersisted =
+          filter.persisted !== undefined
+            ? JSON.parse(filter.persisted) !== persistedItem
+              ? persistedItem
+              : undefined
+            : persistedItem;
+        this.updateLocationSearch({
+          persisted: newPersisted,
+          currentPage: 1,
+        });
+      },
+    };
+    filtersOptions.push(persistedFilter);
 
     const labelsOptions = {
       labels: this.props.labels,

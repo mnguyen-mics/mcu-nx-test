@@ -36,6 +36,16 @@ const feedTypeSearchSetting = {
   isValid: (query: Index<string>) => !query.feed_type || query.feed_type.split(',').length > 0,
 };
 
+export const persistedSearchSetting = {
+  paramName: 'persisted',
+  defaultValue: '',
+  deserialize: (query: Index<string>) => {
+    return query.persisted;
+  },
+  serialize: (value: any) => value,
+  isValid: () => true,
+};
+
 export interface SegmentTypeSearchSettings {
   type: AudienceSegmentType[];
 }
@@ -48,6 +58,7 @@ export const SEGMENTS_SEARCH_SETTINGS: SearchSetting[] = [
   ...SORT_SEARCH_SETTINGS,
   typeSearchSetting,
   feedTypeSearchSetting,
+  persistedSearchSetting,
 ];
 
 export const SEGMENT_SETTINGS: SearchSetting[] = [...DATE_SEARCH_SETTINGS];
