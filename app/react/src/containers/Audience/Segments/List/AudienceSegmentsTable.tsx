@@ -996,7 +996,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
 
     const persistedFilter = {
       displayElement: (
-        <div>
+        <div className='mcs-audienceSegmentsTable_is_persisted'>
           <span>{intl.formatMessage(messageMap.is_persisted)}</span> <DownOutlined />
         </div>
       ),
