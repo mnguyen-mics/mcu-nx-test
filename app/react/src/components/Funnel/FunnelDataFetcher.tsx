@@ -287,6 +287,7 @@ class FunnelDataFetcher extends React.Component<Props, State> {
     const close = () => {
       filter.forEach((element: FunnelFilter) => {
         element.group_by_dimension = undefined;
+        element.group_by_dimensions = undefined;
       });
       this.updateLocationSearch({
         filter: [JSON.stringify(filter)],
@@ -310,8 +311,10 @@ class FunnelDataFetcher extends React.Component<Props, State> {
     const open = (index: number, dimensionName: string) => {
       filter.forEach((element: FunnelFilter) => {
         element.group_by_dimension = undefined;
+        element.group_by_dimensions = undefined;
       });
       filter[index - 1].group_by_dimension = dimensionName.toLocaleLowerCase();
+      filter[index - 1].group_by_dimensions = [dimensionName.toLocaleLowerCase()];
       this.setState({
         isStepLoading: true,
       });

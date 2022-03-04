@@ -6,6 +6,7 @@ export interface FunnelFilter {
   name: string;
   filter_clause: DimensionFilterClause;
   group_by_dimension?: string;
+  group_by_dimensions?: string[];
   max_days_after_previous_step?: number;
 }
 
@@ -34,20 +35,51 @@ export type FunnelResponse = DataResponse<GroupedByFunnel>;
 
 export interface FunnelResource {
   total: number;
-  steps: Steps[];
+  steps: Step[];
 }
 
 export interface GroupedByFunnel {
   global: FunnelResource;
-  grouped_by?: FieldValueFunnelResource[];
+  grouped_by?: FieldValuesFunnelResource[];
 }
+
 export interface FieldValueFunnelResource {
   dimension_name: string;
   dimension_value: string;
   funnel: FunnelResource;
   dimension_decorator?: string;
 }
-export interface Steps {
+
+export interface FieldValueFunnelMultipleDimensionResource {
+  dimension_names: string[];
+  dimension_values: string[];
+  funnel: FunnelResource;
+  dimension_decorator?: string;
+}
+
+export type FieldValuesFunnelResource =
+  | FieldValueFunnelResource
+  | FieldValueFunnelMultipleDimensionResource;
+
+export function isFieldValueFunnelResource(
+  f: FieldValuesFunnelResource,
+): f is FieldValueFunnelResource {
+  return (
+    (f as FieldValueFunnelResource).dimension_name !== undefined &&
+    (f as FieldValueFunnelResource).dimension_value !== undefined
+  );
+}
+
+export function isFieldValueFunnelMultipleGroupByResource(
+  f: FieldValuesFunnelResource,
+): f is FieldValueFunnelMultipleDimensionResource {
+  return (
+    (f as FieldValueFunnelMultipleDimensionResource).dimension_names !== undefined &&
+    (f as FieldValueFunnelMultipleDimensionResource).dimension_values !== undefined
+  );
+}
+
+export interface Step {
   name: string;
   count: number;
   conversion?: number;
