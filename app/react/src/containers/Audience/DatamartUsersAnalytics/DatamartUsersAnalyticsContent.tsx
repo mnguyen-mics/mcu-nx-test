@@ -124,7 +124,6 @@ class DatamartUsersAnalyticsContent extends React.Component<
     if (!isEqual(filter.segments, segmentsFilters)) {
       const currentFormattedConfig = formattedConfig.slice();
       const tmpDashboardConfig: DashboardConfig[] = [];
-      const newGeneratedDom: JSX.Element[] = [];
       let currentGeneratedDom: JSX.Element[] = [];
       let newDashboardConfig: DashboardConfig[] = [];
 
@@ -177,10 +176,8 @@ class DatamartUsersAnalyticsContent extends React.Component<
             !item.segments || (item.segments && item.segments.baseSegmentId !== thedifference[0]),
         );
         const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
-        currentGeneratedDom = newGeneratedDom.concat(
-          generatedDom.filter((item: JSX.Element) =>
-            newDashboardConfigKeys.includes(item.key as string),
-          ),
+        currentGeneratedDom = generatedDom.filter((item: JSX.Element) =>
+          newDashboardConfigKeys.includes(item.key as string),
         );
       }
 
