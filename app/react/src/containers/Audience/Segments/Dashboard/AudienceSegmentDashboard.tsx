@@ -28,7 +28,6 @@ import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IDashboardService } from '../../../../services/DashboardServices';
-import { DashboardPageContent } from '../../../../models/dashboards/dashboards';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import {
@@ -37,9 +36,10 @@ import {
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { Alert } from 'antd';
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
-import { DashboardPageWrapper } from '@mediarithmics-private/advanced-components';
+import { DashboardPageWrapper, ITagService } from '@mediarithmics-private/advanced-components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import {
+  DashboardPageContent,
   DataFileDashboardResource,
   DatamartUsersAnalyticsWrapperProps,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
@@ -70,6 +70,9 @@ type Props = AudienceSegmentDashboardProps &
 class AudienceSegmentDashboard extends React.Component<Props, State> {
   @lazyInject(TYPES.IDashboardService)
   private _dashboardService: IDashboardService;
+
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
 
   constructor(props: Props) {
     super(props);
@@ -361,6 +364,22 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       isUserQuerySegment(segment) &&
       segment.subtype !== 'AB_TESTING_EXPERIMENT';
 
+    const handleOnShowDashboard = (dashboard: DashboardPageContent) => {
+      if (dashboard.dashboardRegistrationId) {
+        const stats = this._dashboardService.countDashboardsStats(dashboard);
+        this._tagService.pushDashboardView(
+          'home',
+          dashboard.dashboardRegistrationId,
+          dashboard.title,
+          stats.numberCharts,
+          stats.otqlQueries,
+          stats.activitiesAnalyticsQueries,
+          stats.collectionVolumesQueries,
+          stats.datafileQueries,
+        );
+      }
+    };
+
     return (
       <div>
         {segment && segment.paused && (
@@ -400,6 +419,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
                 <ContextualTargetingTab datamartId={segment.datamart_id} segmentId={segment.id} />
               ) : undefined
             }
+            onShowDashboard={handleOnShowDashboard}
           />
         )}
       </div>

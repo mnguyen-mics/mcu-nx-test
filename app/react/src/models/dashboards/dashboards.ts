@@ -2,7 +2,7 @@ import { ChartConfig } from '@mediarithmics-private/advanced-components/lib/serv
 import { Layout } from 'react-grid-layout';
 import { OTQLResult, QueryPrecisionMode } from '../datamart/graphdb/OTQLResult';
 
-export type DashoboardScope = 'home' | 'segments' | 'builders';
+export type DashboardScope = 'home' | 'segments' | 'builders';
 export type DashboardType = 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER';
 export type ChartDatasetType = 'otql';
 export type DashboardContentChartType = 'PIE' | 'BARS' | 'RADAR' | 'METRIC';
@@ -24,7 +24,7 @@ export type ComponentType =
 export interface DashboardResource {
   id: string;
   title: string;
-  scopes: DashoboardScope[];
+  scopes: DashboardScope[];
   segment_ids: string[];
   builder_ids: string[];
   archived: boolean;
@@ -57,6 +57,8 @@ export interface DashboardContentSections {
 }
 
 export interface DashboardPageContent {
+  dashboardRegistrationId?: string;
+  scopes?: DashboardScope[];
   title: string;
   dashboardContent?: DashboardContentSections;
 }
@@ -217,4 +219,12 @@ export type Component =
 export interface ComponentLayout {
   layout: Layout;
   component: Component;
+}
+
+export interface DashboardContentStats {
+  numberCharts: number; // Total number of charts in the dashboard
+  otqlQueries: number; // Total number of OTQL queries in the dashboard
+  activitiesAnalyticsQueries: number; // Total number of activities analytics queries in the dashboard
+  collectionVolumesQueries: number; // Total number of collection volumes queries in the dashboard
+  datafileQueries: number; // Total number of datafile data sources in the dashboard
 }

@@ -12,6 +12,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { IDashboardService } from '../../../../services/DashboardServices';
 import {
   DashboardPageWrapper,
+  ITagService,
   withDatamartSelector,
   WithDatamartSelectorProps,
 } from '@mediarithmics-private/advanced-components';
@@ -25,7 +26,10 @@ import {
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { MentionTag } from '@mediarithmics-private/mcs-components-library';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
-import { DatamartUsersAnalyticsWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import {
+  DashboardPageContent,
+  DatamartUsersAnalyticsWrapperProps,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 const { Content } = Layout;
 
@@ -72,6 +76,9 @@ type JoinedProps = InjectedWorkspaceProps &
 class Partition extends React.Component<JoinedProps, HomeState> {
   @lazyInject(TYPES.IDashboardService)
   private _dashboardService: IDashboardService;
+
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -195,6 +202,22 @@ class Partition extends React.Component<JoinedProps, HomeState> {
 
     const { datamartAnalyticsDashboardConfig } = this.state;
 
+    const handleOnShowDashboard = (dashboard: DashboardPageContent) => {
+      if (dashboard.dashboardRegistrationId) {
+        const stats = this._dashboardService.countDashboardsStats(dashboard);
+        this._tagService.pushDashboardView(
+          'home',
+          dashboard.dashboardRegistrationId,
+          dashboard.title,
+          stats.numberCharts,
+          stats.otqlQueries,
+          stats.activitiesAnalyticsQueries,
+          stats.collectionVolumesQueries,
+          stats.datafileQueries,
+        );
+      }
+    };
+
     return (
       <div className='ant-layout'>
         <div className='ant-layout'>
@@ -223,6 +246,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
               DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
               DashboardWrapper={DashboardWrapper}
               className='mcs-homePage_dashboard_page_wrapper'
+              onShowDashboard={handleOnShowDashboard}
             />
           </Content>
         </div>
