@@ -3,6 +3,7 @@ import { BaseExecutionResource } from '../Job';
 export type DocumentType =
   | 'USER_ACTIVITY'
   | 'USER_PROFILE'
+  | 'USER_CHOICE'
   | 'USER_SEGMENT'
   | 'USER_IDENTIFIERS_ASSOCIATION_DECLARATIONS'
   | 'USER_IDENTIFIERS_DISSOCIATION_DECLARATIONS'
