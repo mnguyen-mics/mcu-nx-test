@@ -18,7 +18,8 @@ import { QueryTranslationRequest } from '../../../models/datamart/DatamartResour
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import DatamartUsersAnalyticsWrapper from '../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import DashboardWrapper from '../Dashboard/DashboardWrapper';
-import { DashboardPageWrapper } from '@mediarithmics-private/advanced-components';
+import { DashboardPageWrapper, ITagService } from '@mediarithmics-private/advanced-components';
+import { DashboardPageContent } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 interface StandardSegmentBuilderDashboardProps {
   organisationId: string;
@@ -38,6 +39,8 @@ class StandardSegmentBuilderDashboard extends React.Component<Props> {
   private _dashboardService: IDashboardService;
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
 
   constructor(props: Props) {
     super(props);
@@ -90,6 +93,22 @@ class StandardSegmentBuilderDashboard extends React.Component<Props> {
       );
     };
 
+    const handleOnShowDashboard = (dashboard: DashboardPageContent) => {
+      if (dashboard.dashboardRegistrationId) {
+        const stats = this._dashboardService.countDashboardsStats(dashboard);
+        this._tagService.pushDashboardView(
+          'home',
+          dashboard.dashboardRegistrationId,
+          dashboard.title,
+          stats.numberCharts,
+          stats.otqlQueries,
+          stats.activitiesAnalyticsQueries,
+          stats.collectionVolumesQueries,
+          stats.datafileQueries,
+        );
+      }
+    };
+
     return (
       <div className='mcs-standardSegmentBuilder_liveDashboard'>
         <React.Fragment>
@@ -121,6 +140,7 @@ class StandardSegmentBuilderDashboard extends React.Component<Props> {
             isFullScreenLoading={true}
             DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
             DashboardWrapper={DashboardWrapper}
+            onShowDashboard={handleOnShowDashboard}
           />
           <div className='mcs-standardSegmentBuilder_timelineSelector'>
             <TimelineSelector
