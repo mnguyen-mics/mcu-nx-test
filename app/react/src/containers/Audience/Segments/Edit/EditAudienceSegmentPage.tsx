@@ -206,14 +206,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     const {
       history,
       match: {
-        params: { organisationId },
+        params: { organisationId, segmentId },
       },
-      location,
     } = this.props;
     const defaultRedirectUrl = `/v2/o/${organisationId}/audience/segments`;
 
-    return location.state && location.state.from
-      ? history.push(location.state.from)
+    return segmentId
+      ? history.push(`${defaultRedirectUrl}/${segmentId}`)
       : history.push(defaultRedirectUrl);
   };
 
