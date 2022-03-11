@@ -1,4 +1,4 @@
-import { DashboardContentSections } from '../../../../models/dashboards/dashboards';
+import { DashboardContentSections } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 export const defaultDashboardContent: DashboardContentSections = {
   sections: [

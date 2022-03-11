@@ -4,7 +4,6 @@ import { messages } from './constants';
 import { compose } from 'recompose';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
-import { IDashboardService } from '../../../services/DashboardServices';
 import { IQueryService } from '../../../services/QueryService';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -18,7 +17,13 @@ import { QueryTranslationRequest } from '../../../models/datamart/DatamartResour
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import DatamartUsersAnalyticsWrapper from '../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import DashboardWrapper from '../Dashboard/DashboardWrapper';
-import { DashboardPageWrapper, ITagService } from '@mediarithmics-private/advanced-components';
+import {
+  DashboardPageWrapper,
+  ICustomDashboardService,
+  ITagService,
+  TYPES as TYPESA,
+  lazyInject as lazyInjectA,
+} from '@mediarithmics-private/advanced-components';
 import { DashboardPageContent } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 interface StandardSegmentBuilderDashboardProps {
@@ -35,8 +40,8 @@ type Props = InjectedIntlProps &
   StandardSegmentBuilderDashboardProps &
   InjectedFeaturesProps;
 class StandardSegmentBuilderDashboard extends React.Component<Props> {
-  @lazyInject(TYPES.IDashboardService)
-  private _dashboardService: IDashboardService;
+  @lazyInjectA(TYPESA.ICustomDashboardService)
+  private _dashboardService: ICustomDashboardService;
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
   @lazyInject(TYPES.ITagService)

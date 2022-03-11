@@ -20,7 +20,6 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
-import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
 import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import {
@@ -29,6 +28,10 @@ import {
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { getFormattedQuery } from '../domain';
 import { chartColors } from '../../../../components/Funnel/Utils';
+import {
+  DataLabel,
+  TooltipChart,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 export interface MapIndexChartProps {
   title?: string;
