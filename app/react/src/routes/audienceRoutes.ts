@@ -5,7 +5,6 @@ import AudienceFeedPage from '../containers/Audience/Segments/Edit/AudienceFeedF
 import TimelinePage from '../containers/Audience/Timeline/TimelinePage';
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 import { StandardSegmentBuilderPage } from '../containers/Audience/StandardSegmentBuilder';
-import HomePage from '../containers/Audience/Home/Dashboard/HomePage';
 import AudienceFeedsActionBar from '../containers/Audience/Feeds/List/AudienceFeedsActionBar';
 import { AudienceFeedsTable } from '../containers/Audience/Feeds/List';
 import FeedsOverviewActionbar from '../containers/Audience/Feeds/Overview/FeedsOverviewActionbar';
@@ -14,13 +13,6 @@ import SegmentBuilderSelector from '../containers/Audience/StandardSegmentBuilde
 import { AdvancedSegmentBuilderPage } from '../containers/Audience/AdvancedSegmentBuilder';
 
 export const audienceDefinition: NavigatorDefinition = {
-  audienceHome: {
-    path: '/audience/home',
-    layout: 'main',
-    contentComponent: HomePage,
-    requiredFeature: 'audience-dashboards',
-    requireDatamart: true,
-  },
   audienceSegmentList: {
     path: '/audience/segments',
     layout: 'main',

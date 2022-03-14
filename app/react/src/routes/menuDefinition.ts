@@ -1,6 +1,7 @@
 import { campaignsDefinition } from './campaignRoutes';
 import { automationDefinition } from './automationRoutes';
 import { audienceDefinition } from './audienceRoutes';
+import { homeDefinition } from './homeRoutes';
 import { creativesDefinition } from './creativeRoutes';
 import { libraryDefinition } from './libraryRoutes';
 import { datastudioDefinition } from './datastudioRoutes';
@@ -8,15 +9,18 @@ import { NavigatorMenuDefinition, generateMissingdefinitionItemFromRoute } from 
 import messages from '../containers/Menu/messages';
 import { marketplaceDefinition } from './marketplaceRoutes';
 
+const homeMenuDefinition: NavigatorMenuDefinition = {
+  iconType: 'home',
+  translation: messages.audienceHome,
+  type: 'simple',
+  ...generateMissingdefinitionItemFromRoute(homeDefinition.mainHome),
+};
+
 const audienceMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'users',
   translation: messages.audienceTitle,
   type: 'multi',
   subMenuItems: [
-    {
-      ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceHome),
-      translation: messages.audienceHome,
-    },
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceSegmentList),
       translation: messages.audienceSegment,
@@ -153,6 +157,7 @@ const marketplaceMenuDefinition: NavigatorMenuDefinition = {
 };
 
 export const menuDefinitions: NavigatorMenuDefinition[] = [
+  homeMenuDefinition,
   audienceMenuDefinition,
   campaignsMenuDefinition,
   automationsMenuDefinition,

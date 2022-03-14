@@ -10,6 +10,7 @@ import { NavigatorRoute } from './domain';
 import { featureFlagRoutes } from './featuresFlagRoutes';
 import { createBrowserHistory } from 'history';
 import { Modal } from 'antd';
+import { homeRoutes } from './homeRoutes';
 
 const browserHistory = createBrowserHistory();
 
@@ -36,6 +37,7 @@ const routes: NavigatorRoute[] = [
   ...automationRoutes,
   ...audienceRoutes,
   ...creativeRoutes,
+  ...homeRoutes,
   ...libraryRoutes,
   ...settingsRoutes,
   ...datastudioRoutes,

@@ -42,7 +42,7 @@ import { isUserQuerySegment } from '../Edit/domain';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 import { Actionbar, McsIcon, MentionTag } from '@mediarithmics-private/mcs-components-library';
-import { messages } from '../../Home/Dashboard/HomePage';
+import { messages } from '../../../Home/Dashboard/HomePage';
 
 export interface AudienceSegmentActionbarProps {
   segment?: AudienceSegmentShape;

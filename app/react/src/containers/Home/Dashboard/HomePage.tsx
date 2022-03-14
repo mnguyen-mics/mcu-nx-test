@@ -3,66 +3,74 @@ import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { InjectedWorkspaceProps, injectWorkspace } from '../../../Datamart/index';
+import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart/index';
 import injectNotifications, {
   InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
+} from '../../Notifications/injectNotifications';
 import {
   TYPES,
   ICustomDashboardService,
   DashboardPageWrapper,
+  DashboardLayout,
   ITagService,
   withDatamartSelector,
   WithDatamartSelectorProps,
   lazyInject,
 } from '@mediarithmics-private/advanced-components';
-import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
-import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
+import DatamartUsersAnalyticsWrapper from '../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import {
   averageSessionDurationConfig,
   channelEngagementConfig,
   acquisitionEngagementConfig,
   ecommerceEngagementConfig,
-} from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+} from '../../Audience/DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { MentionTag } from '@mediarithmics-private/mcs-components-library';
-import DashboardWrapper from '../../Dashboard/DashboardWrapper';
+import DashboardWrapper from '../../Audience/Dashboard/DashboardWrapper';
 import {
   DashboardPageContent,
   DatamartUsersAnalyticsWrapperProps,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import { defaultDashboard } from './DefaultDashboard';
+import { DashboardContentSchema } from '@mediarithmics-private/advanced-components/lib/models/customDashboards/customDashboards';
 
 const { Content } = Layout;
 
 export const messages = defineMessages({
   homeTitle: {
-    id: 'audience.home.homeTitle',
+    id: 'home.homeTitle',
     defaultMessage: 'Home',
   },
   channelEngagementsAnalyticsTitle: {
-    id: 'audience.home.channelEngagementsAnalyticsTitle',
+    id: 'home.channelEngagementsAnalyticsTitle',
     defaultMessage: 'Channel Engagement',
   },
   ecommerceEngagementTitle: {
-    id: 'audience.home.ecommerceEngagementTitle',
+    id: 'home.ecommerceEngagementTitle',
     defaultMessage: 'E-commerce Engagement',
   },
-  comingSoon: {
-    id: 'audience.home.dashboard',
-    defaultMessage: 'Coming Soon...',
-  },
   acquisitionEngagementTitle: {
-    id: 'audience.home.acquisitionEngagementTitle',
+    id: 'home.acquisitionEngagementTitle',
     defaultMessage: 'Acquisition Engagement',
   },
   mentionTagTooltip: {
-    id: 'audience.home.mentionTagTooltip',
+    id: 'home.mentionTagTooltip',
     defaultMessage:
       'You can see new engine dashboards and old dashboards in tabs. All users don’t have access to this feature yet.',
+  },
+  setupYourHomePageTitle: {
+    id: 'home.setupYourHomePageTitle',
+    defaultMessage: 'Setup your home page with dashboards',
+  },
+  feelFreeToAsk: {
+    id: 'home.feelFreeToAsk',
+    defaultMessage: 'Feel free to ask your support',
   },
 });
 
 interface HomeState {
   isLoading: boolean;
+  hasDashboards: boolean;
   datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
 }
 
@@ -85,6 +93,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
 
     this.state = {
       isLoading: true,
+      hasDashboards: false,
       datamartAnalyticsDashboardConfig: [],
     };
   }
@@ -119,6 +128,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
 
     if (selectedDatamartId !== prevSelectedDatamart) {
       this.setState({
+        isLoading: true,
+        hasDashboards: false,
         datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(
           organisationId,
           selectedDatamartId,
@@ -162,6 +173,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       },
     ];
   };
+
   fetchApiDashboards = () => {
     const {
       match: {
@@ -190,6 +202,13 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     );
   };
 
+  handleFinishLoading = (hasDashboards: boolean) => {
+    this.setState({
+      isLoading: false,
+      hasDashboards: hasDashboards,
+    });
+  };
+
   render() {
     const {
       hasFeature,
@@ -199,8 +218,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         params: { organisationId },
       },
     } = this.props;
-
-    const { datamartAnalyticsDashboardConfig } = this.state;
+    const { isLoading, hasDashboards, datamartAnalyticsDashboardConfig } = this.state;
 
     const handleOnShowDashboard = (dashboard: DashboardPageContent) => {
       if (dashboard.dashboardRegistrationId) {
@@ -222,37 +240,83 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       <div className='ant-layout'>
         <div className='ant-layout'>
           <Content className='mcs-content-container'>
-            <Breadcrumb separator='>' className='mcs-homePage_breadcrumb'>
-              <Breadcrumb.Item>Audience</Breadcrumb.Item>
-              <Breadcrumb.Item>
-                Home
-                {hasFeature('dashboards-new-engine') && (
-                  <MentionTag
-                    mention={'BETA'}
-                    customContent={'dashboards-new-engine'}
-                    tooltip={intl.formatMessage(messages.mentionTagTooltip)}
-                    className='mcs-homePage_mentionTag'
-                  />
-                )}
-              </Breadcrumb.Item>
-            </Breadcrumb>
-            <DashboardPageWrapper
-              datamartId={selectedDatamartId}
-              organisationId={organisationId}
-              datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
-              fetchApiDashboards={this.fetchApiDashboards}
-              fetchDataFileDashboards={this.fetchDataFileDashboards}
-              isFullScreenLoading={false}
-              DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
-              DashboardWrapper={DashboardWrapper}
-              className='mcs-homePage_dashboard_page_wrapper'
-              onShowDashboard={handleOnShowDashboard}
-            />
+            {!isLoading && hasDashboards && (
+              <Breadcrumb separator='>' className='mcs-homePage_breadcrumb'>
+                <Breadcrumb.Item>
+                  Home
+                  {hasFeature('dashboards-new-engine') && (
+                    <MentionTag
+                      mention={'BETA'}
+                      customContent={'dashboards-new-engine'}
+                      tooltip={intl.formatMessage(messages.mentionTagTooltip)}
+                      className='mcs-homePage_mentionTag'
+                    />
+                  )}
+                </Breadcrumb.Item>
+              </Breadcrumb>
+            )}
+            {(isLoading || (!isLoading && hasDashboards)) && (
+              <DashboardPageWrapper
+                datamartId={selectedDatamartId}
+                organisationId={organisationId}
+                datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
+                fetchApiDashboards={this.fetchApiDashboards}
+                fetchDataFileDashboards={this.fetchDataFileDashboards}
+                isFullScreenLoading={false}
+                DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
+                DashboardWrapper={DashboardWrapper}
+                className='mcs-homePage_dashboard_page_wrapper'
+                onShowDashboard={handleOnShowDashboard}
+                onFinishLoading={this.handleFinishLoading}
+              />
+            )}
+            {!isLoading && !hasDashboards && this.renderPlaceholder()}
           </Content>
         </div>
       </div>
     );
   }
+
+  renderPlaceholder = () => {
+    const {
+      intl,
+      selectedDatamartId,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const emptyFunction = () => void 0;
+
+    return (
+      <div className='ant-layout'>
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
+            <div className='mcs-content-container_homeContent'>
+              <div className='mcs-homeContent_title'>
+                {intl.formatMessage(messages.setupYourHomePageTitle)}
+              </div>
+              <div className='mcs-homeContent_subtitle'>
+                {intl.formatMessage(messages.feelFreeToAsk)}
+              </div>
+
+              <div className='mcs-homeContent_dashboard'>
+                <DashboardLayout
+                  intl={intl}
+                  editable={false}
+                  datamart_id={selectedDatamartId}
+                  organisationId={organisationId}
+                  schema={defaultDashboard as DashboardContentSchema}
+                  openNextDrawer={emptyFunction}
+                  closeNextDrawer={emptyFunction}
+                />
+              </div>
+            </div>
+          </Content>
+        </div>
+      </div>
+    );
+  };
 }
 
 export default compose(
