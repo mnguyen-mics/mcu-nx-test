@@ -107,7 +107,7 @@ import { IMlFunctionService, MlFunctionService } from '../services/MlFunctionSer
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
-import { IDashboardService, DashboardService } from '../services/DashboardServices';
+
 import { ILabelService, LabelService } from '../services/LabelsService';
 import OrganisationService, { IOrganisationService } from '../services/OrganisationService';
 import { IDatamartService, DatamartService } from '../services/DatamartService';
@@ -229,7 +229,6 @@ container.bind<ICommunityService>(TYPES.ICommunityService).to(CommunityService);
 container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
 container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
-container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
 container
   .bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService)

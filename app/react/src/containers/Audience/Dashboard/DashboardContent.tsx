@@ -10,13 +10,16 @@ import GaugePieChart from './Vizualisation/GaugePieChart';
 import WorldMapChart from './Vizualisation/WorldMapChart';
 import { AudienceSegmentShape } from '../../../models/audiencesegment/AudienceSegmentResource';
 import CountBarChart from './Vizualisation/CountBarChart';
-import { ComponentLayout, Component } from '../../../models/dashboards/dashboards';
 import Percentage from './Vizualisation/Percentage';
 import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';
 import MapRadarChart from './Vizualisation/MapRadarChart';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { McsLazyLoad } from '@mediarithmics-private/advanced-components';
+import {
+  Component,
+  ComponentLayout,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 const BASE_FRAMEWORK_HEIGHT = 96;
 const BASE_PADDING = 5;

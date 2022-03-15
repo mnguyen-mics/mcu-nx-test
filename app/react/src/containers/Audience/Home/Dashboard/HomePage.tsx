@@ -7,14 +7,14 @@ import { InjectedWorkspaceProps, injectWorkspace } from '../../../Datamart/index
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { TYPES } from '../../../../constants/types';
-import { lazyInject } from '../../../../config/inversify.config';
-import { IDashboardService } from '../../../../services/DashboardServices';
 import {
+  TYPES,
+  ICustomDashboardService,
   DashboardPageWrapper,
   ITagService,
   withDatamartSelector,
   WithDatamartSelectorProps,
+  lazyInject,
 } from '@mediarithmics-private/advanced-components';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
@@ -74,8 +74,8 @@ type JoinedProps = InjectedWorkspaceProps &
   InjectedFeaturesProps;
 
 class Partition extends React.Component<JoinedProps, HomeState> {
-  @lazyInject(TYPES.IDashboardService)
-  private _dashboardService: IDashboardService;
+  @lazyInject(TYPES.ICustomDashboardService)
+  private _dashboardService: ICustomDashboardService;
 
   @lazyInject(TYPES.ITagService)
   private _tagService: ITagService;

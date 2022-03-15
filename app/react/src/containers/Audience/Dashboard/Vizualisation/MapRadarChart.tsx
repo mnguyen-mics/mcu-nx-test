@@ -22,7 +22,6 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
-import { TooltipChart, DataLabel } from '../../../../models/dashboards/dashboards';
 import {
   EmptyChart,
   LoadingChart,
@@ -32,6 +31,10 @@ import { BASE_CHART_HEIGHT, SerieSortType } from '../../../../components/Charts/
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { RadarChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/radar-chart';
 import { chartColors } from '../../../../components/Funnel/Utils';
+import {
+  TooltipChart,
+  DataLabel,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 export interface MapBarChartProps {
   title?: string;

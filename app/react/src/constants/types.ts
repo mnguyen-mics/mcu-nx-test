@@ -34,7 +34,6 @@ const TYPES = {
   IConsentService: Symbol.for('consentService'),
   IGeonameService: Symbol.for('geonameService'),
   ISettingsService: Symbol.for('settingsService'),
-  IDashboardService: Symbol.for('dashboardService'),
   ICatalogService: Symbol.for('catalogService'),
   IServiceOfferPageService: Symbol.for('serviceOfferPageService'),
   IFeedsStatsService: Symbol.for('feedsStatsService'),

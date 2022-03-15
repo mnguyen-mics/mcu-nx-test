@@ -25,9 +25,6 @@ import { SEGMENT_QUERY_SETTINGS, AudienceReport, AudienceReportData } from './co
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
-import { IDashboardService } from '../../../../services/DashboardServices';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import {
@@ -36,7 +33,13 @@ import {
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { Alert } from 'antd';
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
-import { DashboardPageWrapper, ITagService } from '@mediarithmics-private/advanced-components';
+import {
+  DashboardPageWrapper,
+  ICustomDashboardService,
+  ITagService,
+  lazyInject,
+  TYPES,
+} from '@mediarithmics-private/advanced-components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import {
   DashboardPageContent,
@@ -68,8 +71,8 @@ type Props = AudienceSegmentDashboardProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class AudienceSegmentDashboard extends React.Component<Props, State> {
-  @lazyInject(TYPES.IDashboardService)
-  private _dashboardService: IDashboardService;
+  @lazyInject(TYPES.ICustomDashboardService)
+  private _dashboardService: ICustomDashboardService;
 
   @lazyInject(TYPES.ITagService)
   private _tagService: ITagService;

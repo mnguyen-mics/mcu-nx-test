@@ -22,13 +22,16 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
-import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
 import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import {
   Dataset,
   Format,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import {
+  DataLabel,
+  TooltipChart,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 
 export interface MapBarChartProps {
   title?: string;
