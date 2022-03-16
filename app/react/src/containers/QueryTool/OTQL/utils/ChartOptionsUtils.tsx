@@ -1,6 +1,7 @@
 import React from 'react';
 import { BASE_CHART_HEIGHT } from '../../../../components/Charts/domain';
 import { Select } from 'antd';
+import moment from 'moment';
 
 export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie';
 
@@ -42,7 +43,7 @@ export function getLegend(_chartType: chartType, value: string) {
   return {};
 }
 
-export function getOption(_chartType: chartType, key: string, value: string) {
+export function getChartOption(_chartType: chartType, key: string, value: string) {
   switch (key) {
     case 'legend':
       return getLegend(_chartType, value);
@@ -60,10 +61,40 @@ export function getOption(_chartType: chartType, key: string, value: string) {
             type: value,
           }
         : {};
+    case 'date_format':
+      return {
+        date_options: {
+          format: value,
+        },
+      };
   }
   return {};
 }
 
+export function formatDate(str: string, format?: string, toUtc?: boolean) {
+  if (!!format) {
+    let formatted = !!toUtc ? moment.utc(str).utc().format(format) : moment(str).format(format);
+    if (formatted === 'Invalid date') {
+      const STRICT = true;
+      formatted = moment.utc(str, 'x', STRICT).format(format);
+      if (formatted === 'Invalid date') {
+        throw Error(`Date ${str} is not formatted correctly`);
+      } else {
+        return formatted;
+      }
+    } else {
+      return formatted;
+    }
+  } else {
+    return str;
+  }
+}
+
+/**
+ * Fixed chart props
+ * @param _chartType
+ * @returns
+ */
 export function getBaseChartProps(_chartType: chartType) {
   switch (_chartType) {
     case 'bar':
@@ -106,7 +137,7 @@ export function getBaseChartProps(_chartType: chartType) {
   return {};
 }
 
-export function getQuickOptionsForChartType(_chartType: chartType) {
+export function getQuickOptionsForChartType(_chartType: chartType, hasDateHistogram: boolean) {
   const legendOptions: QuickOptionsSelector = {
     title: 'legend',
     options: [
@@ -181,15 +212,29 @@ export function getQuickOptionsForChartType(_chartType: chartType) {
     ],
   };
 
+  const formatDateOptions: QuickOptionsSelector = {
+    title: 'date_format',
+    options: [
+      { key: 'YYYY-MM-DD hh:mm', value: 'YYYY-MM-DD hh:mm', label: 'YYYY-MM-DD hh:mm' },
+      { key: 'YYYY-MM-DD', value: 'YYYY-MM-DD', label: 'YYYY-MM-DD' },
+      { key: 'YYYY-MM', value: 'YYYY-MM', label: 'YYYY-MM' },
+    ],
+  };
+
+  const result = [];
+  if (hasDateHistogram) {
+    result.push(formatDateOptions);
+  }
+
   switch (_chartType) {
     case 'bar':
-      return [legendOptions, formatOptions, barOptions];
+      return result.concat([legendOptions, formatOptions, barOptions]);
     case 'pie':
-      return [legendOptions, pieOptions];
+      return result.concat([legendOptions, pieOptions]);
     case 'radar':
-      return [legendOptions, formatOptions];
+      return result.concat([legendOptions, formatOptions]);
     case 'metric':
-      return [formatOptions];
+      return result.concat([formatOptions]);
   }
   return [];
 }
@@ -221,8 +266,9 @@ function renderQuickOptionsSelector(
 export const renderQuickOptions = (
   selectedChart: chartType,
   onChangeQuickOption: (title: string, value: string) => void,
+  hasDateHistogram: boolean,
 ) => {
-  const quickOptions = getQuickOptionsForChartType(selectedChart);
+  const quickOptions = getQuickOptionsForChartType(selectedChart, hasDateHistogram);
   return (
     <div>
       {quickOptions.map(quickOptionSelector => {

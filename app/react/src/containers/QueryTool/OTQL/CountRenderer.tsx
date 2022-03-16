@@ -58,7 +58,7 @@ export class CountRenderer extends React.Component<CountRendererProps, State> {
     const onChangeQuickOption = this.onSelectQuickOption.bind(this);
     return (
       <McsTabs items={tabs} animated={false} className='mcs-otqlChart_tabs'>
-        {renderQuickOptions(this.state.selectedChart, onChangeQuickOption)}
+        {renderQuickOptions(this.state.selectedChart, onChangeQuickOption, false)}
       </McsTabs>
     );
   }
