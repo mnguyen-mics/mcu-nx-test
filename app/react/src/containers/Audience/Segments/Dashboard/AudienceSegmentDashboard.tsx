@@ -371,7 +371,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       if (dashboard.dashboardRegistrationId) {
         const stats = this._dashboardService.countDashboardsStats(dashboard);
         this._tagService.pushDashboardView(
-          'home',
+          'segments',
           dashboard.dashboardRegistrationId,
           dashboard.title,
           stats.numberCharts,
