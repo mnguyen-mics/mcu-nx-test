@@ -152,9 +152,9 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
       }
     }
     return (
-      <div className={className} title={audienceSegmentResource.name}>
+      <span className={className} title={audienceSegmentResource.name}>
         {showId && this.displayId()} {audienceSegmentName}
-      </div>
+      </span>
     );
   }
 }
