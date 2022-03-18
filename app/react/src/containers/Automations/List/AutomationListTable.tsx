@@ -124,13 +124,11 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     } = this.props;
 
     if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, SCENARIOS_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, SCENARIOS_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
       this.fetchAutomationList(organisationId, filter);
@@ -161,15 +159,13 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       (isUpdatingStatuses !== previousIsUpdatingStatuses && isUpdatingStatuses === false)
     ) {
       if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, SCENARIOS_SEARCH_SETTINGS),
-          },
-          {
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, SCENARIOS_SEARCH_SETTINGS),
+          state: {
             reloadDataSource: organisationId !== previousOrganisationId,
           },
-        );
+        });
       } else {
         const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
         this.fetchAutomationList(organisationId, filter);
@@ -244,13 +240,11 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
           currentPage: filter.currentPage - 1,
         };
         this.fetchAutomationList(organisationId, filter);
-        history.replace(
-          {
-            pathname: pathname,
-            search: updateSearch(search, newFilter),
-          },
-          state,
-        );
+        history.replace({
+          pathname: pathname,
+          search: updateSearch(search, newFilter),
+          state: state,
+        });
       }
       this.fetchAutomationList(organisationId, filter);
     };

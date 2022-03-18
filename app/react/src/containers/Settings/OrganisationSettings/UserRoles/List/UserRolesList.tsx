@@ -98,10 +98,10 @@ class UserRolesList extends React.Component<Props, UserListState> {
       },
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/organisation/user_roles/${user.role.id}/user/${user.id}/edit`,
-      { userOrganisationId: user.organisation_id },
-    );
+    history.push({
+      pathname: `/v2/o/${organisationId}/settings/organisation/user_roles/${user.role.id}/user/${user.id}/edit`,
+      state: { userOrganisationId: user.organisation_id },
+    });
   };
 
   redirect = () => {

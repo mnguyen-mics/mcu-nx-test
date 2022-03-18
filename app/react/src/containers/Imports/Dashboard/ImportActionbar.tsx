@@ -75,7 +75,10 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/datastudio/datamart/${datamartId}/imports/${importId}/edit`;
-    history.push(editUrl, { from: `${location.pathname}${location.search}` });
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   };
 
   checkIfFileOK = (file: UploadFile) => {

@@ -62,7 +62,10 @@ class DisplayCampaignAdTable extends React.Component<JoinedProps, DisplayCampaig
 
     const editUrl = `/v2/o/${organisationId}/creatives/display/edit/${ad.creative_id}`;
 
-    history.push(editUrl, { from: `${location.pathname}${location.search}` });
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   };
 
   archiveAd = (ad: AdResource) => {
@@ -243,8 +246,9 @@ class DisplayCampaignAdTable extends React.Component<JoinedProps, DisplayCampaig
         isHideable: false,
         render: (text: string, record: AdResource) => {
           const editCreative = () => {
-            history.push(`/v2/o/${organisationId}/creatives/display/edit/${record.creative_id}`, {
-              from: `${location.pathname}${location.search}`,
+            history.push({
+              pathname: `/v2/o/${organisationId}/creatives/display/edit/${record.creative_id}`,
+              state: { from: `${location.pathname}${location.search}` },
             });
           };
           return (

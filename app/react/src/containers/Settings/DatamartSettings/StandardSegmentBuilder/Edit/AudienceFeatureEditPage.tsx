@@ -163,8 +163,9 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       promise
         .then(() => {
           hideSaveInProgress();
-          history.push(`/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`, {
-            activeTab: 'audience_features',
+          history.push({
+            pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+            state: { activeTab: 'audience_features' },
           });
         })
         .catch(err => {
@@ -192,10 +193,10 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
             if (segmentsIds.length >= 1) {
               const redirect = () => {
                 Modal.destroyAll();
-                history.push(
-                  `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/create`,
-                  { from: `${location.pathname}${location.search}` },
-                );
+                history.push({
+                  pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/create`,
+                  state: { from: `${location.pathname}${location.search}` },
+                });
               };
               Modal.confirm({
                 className: 'mcs-modal--confirmDialog',
@@ -272,8 +273,11 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
         params: { organisationId, datamartId },
       },
     } = this.props;
-    return history.push(`/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`, {
-      activeTab: 'audience_features',
+    return history.push({
+      pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+      state: {
+        activeTab: 'audience_features',
+      },
     });
   };
 

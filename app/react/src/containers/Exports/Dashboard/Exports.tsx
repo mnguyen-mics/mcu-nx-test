@@ -97,13 +97,11 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     } = this.props;
 
     if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       this.fetchExportExecution(exportId);
     }
@@ -127,13 +125,11 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
 
     if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
-          },
-          { reloadDataSource: organisationId !== organisationId },
-        );
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== organisationId },
+        });
       } else {
         this.fetchExportExecution(exportId);
       }

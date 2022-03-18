@@ -107,13 +107,11 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
 
     this._isMounted = true;
     if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
       this.loadDisplayCampaignsDataSource(organisationId, filter, true);
@@ -138,13 +136,11 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
 
     if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
-          },
-          { reloadDataSource: organisationId !== previousOrganisationId },
-        );
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, DISPLAY_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
+        });
       } else {
         const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
         this.loadDisplayCampaignsDataSource(organisationId, filter);
@@ -275,13 +271,11 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
         currentPage: filter.currentPage - 1,
       };
       this.loadDisplayCampaignsDataSource(organisationId, filter);
-      history.replace(
-        {
-          pathname: pathname,
-          search: updateSearch(search, newFilter),
-        },
-        state,
-      );
+      history.replace({
+        pathname: pathname,
+        search: updateSearch(search, newFilter),
+        state: state,
+      });
     } else {
       this.loadDisplayCampaignsDataSource(organisationId, filter);
     }
@@ -357,13 +351,11 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
               currentPage: filter.currentPage - 1,
             };
             fetchDataSource();
-            history.replace(
-              {
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-              },
-              state,
-            );
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
           } else {
             fetchDataSource();
           }

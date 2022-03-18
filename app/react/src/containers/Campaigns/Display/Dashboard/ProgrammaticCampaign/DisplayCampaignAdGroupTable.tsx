@@ -70,10 +70,10 @@ class DisplayCampaignAdGroupTable extends React.Component<
       location,
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adgroup.id}`,
-      { from: `${location.pathname}${location.search}` },
-    );
+    history.push({
+      pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adgroup.id}`,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   };
 
   duplicateCampaign = (adGroup: AdGroupResource) => {
@@ -85,9 +85,12 @@ class DisplayCampaignAdGroupTable extends React.Component<
       location,
     } = this.props;
 
-    history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`, {
-      from: `${location.pathname}${location.search}`,
-      adGroupId: adGroup.id,
+    history.push({
+      pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
+      state: {
+        from: `${location.pathname}${location.search}`,
+        adGroupId: adGroup.id,
+      },
     });
   };
 
@@ -188,8 +191,9 @@ class DisplayCampaignAdGroupTable extends React.Component<
         isHideable: false,
         render: (text: any, record: AdGroupResource) => {
           const toAdGroupDashboard = () => {
-            history.push(`${campaignId}/adgroups/${record.id}`, {
-              from: `${location.pathname}${location.search}`,
+            history.push({
+              pathname: `${campaignId}/adgroups/${record.id}`,
+              state: { from: `${location.pathname}${location.search}` },
             });
           };
           return (

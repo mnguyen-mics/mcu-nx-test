@@ -111,13 +111,11 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     } = this.props;
 
     if (!isSearchValid(search, FEEDS_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, FEEDS_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, FEEDS_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
       this.fetchFeeds(organisationId, filter);

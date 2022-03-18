@@ -84,13 +84,11 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       history,
     } = this.props;
     if (!isSearchValid(search, PARTITIONS_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, PARTITIONS_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, PARTITIONS_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch<PartitionFilterParams>(search, PARTITIONS_SEARCH_SETTINGS);
       this.fetchPartitions(params.organisationId, filter, true);
@@ -114,13 +112,11 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       params.organisationId !== previousParams.organisationId
     ) {
       if (!isSearchValid(search, PARTITIONS_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, PARTITIONS_SEARCH_SETTINGS),
-          },
-          { reloadDataSource: true },
-        );
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, PARTITIONS_SEARCH_SETTINGS),
+          state: { reloadDataSource: true },
+        });
       } else {
         const filter = parseSearch<PartitionFilterParams>(search, PARTITIONS_SEARCH_SETTINGS);
         this.fetchPartitions(
@@ -143,7 +139,10 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
 
     const editUrl = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${partition.id}/edit`;
 
-    history.push(editUrl, { from: `${location.pathname}${location.search}` });
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   };
 
   updateLocationSearch = (params: Partial<PartitionFilterParams>) => {

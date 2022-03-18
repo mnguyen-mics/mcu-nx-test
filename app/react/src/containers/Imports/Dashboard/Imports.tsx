@@ -116,13 +116,11 @@ class Imports extends React.Component<JoinedProps, State> {
     } = this.props;
 
     if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
@@ -148,15 +146,13 @@ class Imports extends React.Component<JoinedProps, State> {
 
     if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
-          },
-          {
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, PAGINATION_SEARCH_SETTINGS),
+          state: {
             reloadDataSource: organisationId !== previousOrganisationId,
           },
-        );
+        });
       } else {
         const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
         this.fetchImportAndExecutions(datamartId, importId, filter);

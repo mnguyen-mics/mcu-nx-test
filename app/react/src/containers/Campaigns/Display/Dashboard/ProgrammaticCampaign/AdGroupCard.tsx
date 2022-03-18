@@ -347,8 +347,9 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     };
 
     const onClick = () => {
-      history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`, {
-        from: `${location.pathname}${location.search}`,
+      history.push({
+        pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/create`,
+        state: { from: `${location.pathname}${location.search}` },
       });
     };
     const adGroupButtons: JSX.Element = (

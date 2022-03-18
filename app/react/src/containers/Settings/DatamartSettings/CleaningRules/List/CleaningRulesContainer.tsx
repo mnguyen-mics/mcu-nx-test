@@ -131,10 +131,10 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     const cleaningRuleType =
       filter.type === 'USER_EVENT_CLEANING_RULE' ? 'user_event' : 'user_profile';
 
-    history.push(
-      `/v2/o/${organisationId}/settings/datamart/${cleaningRule.datamart_id}/cleaning_rules/${cleaningRuleType}/${cleaningRule.id}/edit`,
-      { from: `${location.pathname}${location.search}` },
-    );
+    history.push({
+      pathname: `/v2/o/${organisationId}/settings/datamart/${cleaningRule.datamart_id}/cleaning_rules/${cleaningRuleType}/${cleaningRule.id}/edit`,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   };
 
   onDeleteCleaningRule = (cleaningRule: ExtendedCleaningRuleResource) => {

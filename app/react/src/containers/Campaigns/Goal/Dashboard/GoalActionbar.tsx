@@ -190,7 +190,10 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/campaigns/goals/${goalId}/edit`;
-    history.push(editUrl, { from: `${location.pathname}${location.search}` });
+    history.push({
+      pathname: editUrl,
+      state: { from: `${location.pathname}${location.search}` },
+    });
   };
 
   changeCampaignStatus = () => {
@@ -297,7 +300,10 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
             return updateGoal()
               .then(() => {
                 const editUrl = `/v2/o/${organisationId}/campaigns/goals`;
-                history.push(editUrl, { from: `${location.pathname}${location.search}` });
+                history.push({
+                  pathname: editUrl,
+                  state: { from: `${location.pathname}${location.search}` },
+                });
               })
               .catch(err => {
                 notifyError(err);

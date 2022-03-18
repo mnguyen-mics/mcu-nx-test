@@ -112,8 +112,9 @@ class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState>
       location,
       history,
     } = this.props;
-    history.push(`/v2/o/${organisationId}/settings/datamart/ml_algorithms/${mlAlgorithm.id}/edit`, {
-      from: `${location.pathname}${location.search}`,
+    history.push({
+      pathname: `/v2/o/${organisationId}/settings/datamart/ml_algorithms/${mlAlgorithm.id}/edit`,
+      state: { from: `${location.pathname}${location.search}` },
     });
   };
 

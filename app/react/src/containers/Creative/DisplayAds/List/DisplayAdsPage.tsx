@@ -81,13 +81,11 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
     } = this.props;
 
     if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
       this.fetchDisplayAds(organisationId, filter, true);
@@ -114,13 +112,11 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
 
     if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
-          },
-          { reloadDataSource: organisationId !== previousOrganisationId },
-        );
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
+        });
       } else {
         const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
         this.fetchDisplayAds(organisationId, filter, checkEmptyDataSource);
@@ -287,13 +283,11 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
         currentPage: filter.currentPage - 1,
       };
       this.fetchDisplayAds(organisationId, filter, true);
-      history.push(
-        {
-          pathname: pathname,
-          search: updateSearch(search, newFilter),
-        },
-        state,
-      );
+      history.push({
+        pathname: pathname,
+        search: updateSearch(search, newFilter),
+        state: state,
+      });
     }
     this.fetchDisplayAds(organisationId, filter, true);
   };
@@ -380,13 +374,11 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
                 currentPage: filter.currentPage - 1,
               };
               fetchDataSource();
-              history.replace(
-                {
-                  pathname: pathname,
-                  search: updateSearch(search, newFilter),
-                },
-                state,
-              );
+              history.replace({
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+                state: state,
+              });
             }
             fetchDataSource();
           });

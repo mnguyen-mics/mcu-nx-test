@@ -88,7 +88,10 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
     } else {
       const editUrl = `/v2/o/${organisationId}/campaigns/display/${campaign.id}/edit`;
 
-      history.push(editUrl, { from: `${location.pathname}${location.search}` });
+      history.push({
+        pathname: editUrl,
+        state: { from: `${location.pathname}${location.search}` },
+      });
     }
   };
 
@@ -105,7 +108,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
     if (campaign.model_version === 'V2014_06') {
       message.info(intl.formatMessage(messages.editionNotAllowed));
     } else {
-      history.push(editUrl, { campaignId: campaign.id });
+      history.push({ pathname: editUrl, state: { campaignId: campaign.id } });
     }
   };
 

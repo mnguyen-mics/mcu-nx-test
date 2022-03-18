@@ -128,15 +128,13 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
       goalId !== previousGoalId
     ) {
       if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-          },
-          {
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
+          state: {
             reloadDataSource: organisationId !== previousOrganisationId,
           },
-        );
+        });
       } else {
         const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
         this.fetchStats(organisationId, goalId, filter.from, filter.to);
