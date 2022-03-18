@@ -33,14 +33,13 @@ describe('dashboards engine Tests', () => {
         [],
         [],
       ).then(() => {
-        cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-        cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+        LeftMenu.goToHomePage();
         cy.get('.mcs-homePage_dashboard_page_wrapper').should('not.contain', 'Empty Dashboard');
       });
     });
   });
 
-  it('should test the different possible charts on a dashboard', () => {
+  it.skip('should test the different possible charts on a dashboard', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -86,8 +85,7 @@ describe('dashboards engine Tests', () => {
                   body: differentChartsContent(queryId),
                 }).then(() => {
                   cy.switchOrg(data.organisationName);
-                  cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-                  cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+                  LeftMenu.goToHomePage();
                   cy.contains('Charts types dashboard').click();
                   cy.wait(10000);
                   cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
@@ -101,7 +99,7 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it('should test the index transformation', () => {
+  it.skip('should test the index transformation', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -147,8 +145,7 @@ describe('dashboards engine Tests', () => {
                   body: indexTransformationContent(queryId),
                 }).then(() => {
                   cy.switchOrg(data.organisationName);
-                  cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-                  cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+                  LeftMenu.goToHomePage();
                   cy.contains('Index Transformation').click();
                   cy.wait(10000);
                   cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
@@ -306,7 +303,7 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it('test the charts on the query tool', () => {
+  it.skip('test the charts on the query tool', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -412,8 +409,7 @@ describe('dashboards engine Tests', () => {
                   body: drawerChartDetails(queryId),
                 }).then(() => {
                   cy.switchOrg(data.organisationName);
-                  cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-                  cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+                  LeftMenu.goToHomePage();
                   cy.contains('Drawer Charts Details').click();
                   cy.wait(3000);
                   cy.contains('Bars').click();
@@ -592,8 +588,7 @@ describe('dashboards engine Tests', () => {
                     body: getDecoratosTransformationContent(queryId),
                   }).then(() => {
                     cy.switchOrg(data.organisationName);
-                    cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-                    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+                    LeftMenu.goToHomePage();
                     cy.contains('Get-Decorators Transformation').click();
                     cy.get('.mcs-card_content')
                       .should('contain', 'first channel')
@@ -627,8 +622,7 @@ describe('dashboards engine Tests', () => {
           body: getDecoratosTransformationContent('00'),
         }).then(() => {
           cy.switchOrg(data.organisationName);
-          cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-          cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+          LeftMenu.goToHomePage();
           cy.get('.mcs-homePage_dashboard_page_wrapper').should('contain', 'Change organisation');
           cy.switchOrg('dogfooding');
           cy.get('.mcs-content-container').should('not.contain', 'Change organisation');
@@ -638,7 +632,6 @@ describe('dashboards engine Tests', () => {
   });
 
   it('should test the dashboard filter', () => {
-    const leftMenu = new LeftMenu();
     const dashboardFilter = new DashboardFilter();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
@@ -694,7 +687,7 @@ describe('dashboards engine Tests', () => {
                     body: compartmentFilterContent(queryId),
                   }).then(() => {
                     cy.switchOrg(data.organisationName);
-                    leftMenu.goToHomePage();
+                    LeftMenu.goToHomePage();
                     cy.contains('Dashboard Filter').click();
                     cy.get('.mcs-chart_content_container')
                       .first()
@@ -748,8 +741,7 @@ describe('dashboards engine Tests', () => {
             body: compartmentFilterContent(queryResponse.body.data.id),
           }).then(() => {
             cy.switchOrg(data.organisationName);
-            cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-            cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+            LeftMenu.goToHomePage();
             cy.contains('Loading Experience').click();
             cy.wait(10000);
             cy.get('.mcs-chart_content_container').should('contain', 'Still loading');
@@ -760,7 +752,6 @@ describe('dashboards engine Tests', () => {
   });
 
   it('should test the data file data source', () => {
-    const leftMenu = new LeftMenu();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createDashboard(
         data.accessToken,
@@ -780,7 +771,7 @@ describe('dashboards engine Tests', () => {
             body: dataFileSourceContent(data.organisationId),
           }).then(() => {
             cy.switchOrg(data.organisationName);
-            leftMenu.goToHomePage();
+            LeftMenu.goToHomePage();
             cy.contains('Data File Source Dashboard').click();
             cy.get('.mcs-chart_content_container')
               .first()
