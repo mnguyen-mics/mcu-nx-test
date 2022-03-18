@@ -17,7 +17,7 @@ describe('Datamart Replication Feature Tests', () => {
       cy.contains(data.datamartName).click();
       cy.get('.mcs-tabs_tab--replications').click();
       cy.get('.mcs-replicationNew_button').click();
-      cy.get('.mcs-card.replication-card').first().click();
+      cy.get('.mcs-card.replication-card', { timeout: 5000 }).first().click();
       cy.get('.mcs-replications_nameField').type(faker.random.word());
       const fileName = '03-credentialsTestFile.txt';
       cy.get('.mcs-dataFileForm--selectDataFile').click();
@@ -46,7 +46,7 @@ describe('Datamart Replication Feature Tests', () => {
       cy.contains(data.datamartName).click();
       cy.get('.mcs-tabs_tab--replications').click();
       cy.get('.mcs-replicationNew_button').click();
-      cy.get('.mcs-card.replication-card').first().click();
+      cy.get('.mcs-card.replication-card', { timeout: 5000 }).first().click();
       cy.get('.mcs-replications_nameField').type(faker.random.word());
       const fileName = '03-credentialsTestFile.txt';
       cy.get('.mcs-dataFileForm--selectDataFile').click();
@@ -73,7 +73,7 @@ describe('Datamart Replication Feature Tests', () => {
       cy.contains(data.datamartName).click();
       cy.get('.mcs-tabs_tab--replications').click();
       cy.get('.mcs-replicationNew_button').click();
-      cy.get('.mcs-card.replication-card').first().click();
+      cy.get('.mcs-card.replication-card', { timeout: 5000 }).first().click();
       cy.get('.mcs-replications_nameField').type(faker.random.word());
       const fileName = '03-credentialsTestFile.txt';
       cy.get('.mcs-dataFileForm--selectDataFile').click();
