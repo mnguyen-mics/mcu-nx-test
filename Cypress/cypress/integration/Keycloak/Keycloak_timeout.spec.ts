@@ -1,4 +1,4 @@
-import loginPageKeycloak from '../../pageobjects/loginPageKeycloak';
+import loginPageKeycloak from '../../pageobjects/LoginPageKeycloak';
 import faker from 'faker';
 
 describe('Should get timeout after 5 login attempts', () => {

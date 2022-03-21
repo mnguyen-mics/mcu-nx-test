@@ -1,4 +1,4 @@
-import loginPageKeycloak from '../../pageobjects/loginPageKeycloak';
+import loginPageKeycloak from '../../pageobjects/LoginPageKeycloak';
 import faker from 'faker';
 
 describe('Should not access the platform when using bad credentials', () => {
