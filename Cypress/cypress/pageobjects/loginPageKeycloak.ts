@@ -49,6 +49,18 @@ class LoginPageKeycloak extends Page {
     return cy.get('.mcs-keycloak_formLogin_submitButton');
   }
 
+  get btnViewPassword() {
+    return cy.get('.mcs-keycloak_formLogin_password_eye');
+  }
+
+  get btnViewPasswordNew() {
+    return cy.get('.mcs-keycloak_formLogin_passwordNew_eye');
+  }
+
+  get btnViewPasswordConfirm() {
+    return cy.get('.mcs-keycloak_formLogin_passwordConfirm_eye');
+  }
+
   typeEmail(email: string) {
     this.emailField.clear().type(email);
   }
@@ -75,6 +87,18 @@ class LoginPageKeycloak extends Page {
 
   clickBtnSubmitPassword() {
     this.btnSubmitPassword.click();
+  }
+
+  clickBtnViewPassword() {
+    this.btnViewPassword.click();
+  }
+
+  clickBtnViewPasswordNew() {
+    this.btnViewPasswordNew.click();
+  }
+
+  clickBtnViewPasswordConfirm() {
+    this.btnViewPasswordConfirm.click();
   }
 
   login(email: string = Cypress.env('devMail'), password: string = Cypress.env('devPwd')) {
