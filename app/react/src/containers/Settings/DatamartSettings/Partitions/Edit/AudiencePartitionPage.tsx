@@ -128,7 +128,10 @@ class AudiencePartitionPage extends React.Component<JoinedProps, AudiencePartiti
         .then(newAudiencePartition => {
           const url = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${newAudiencePartition.data.id}`;
           location.pathname
-            ? history.push(url, { from: `${location.pathname}` })
+            ? history.push({
+                pathname: url,
+                state: { from: `${location.pathname}` },
+              })
             : history.push(url);
           message.success(intl.formatMessage(messages.partitionSaved));
           this.setState({

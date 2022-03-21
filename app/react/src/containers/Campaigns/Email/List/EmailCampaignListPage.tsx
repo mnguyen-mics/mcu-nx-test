@@ -96,13 +96,11 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     } = this.props;
 
     if (!isSearchValid(search, EMAIL_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, EMAIL_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, EMAIL_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
       this.fetchCampaignAndStats(organisationId, filter, true);
@@ -128,13 +126,11 @@ class EmailCampaignListPage extends React.Component<Props, State> {
 
     if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, EMAIL_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, EMAIL_SEARCH_SETTINGS),
-          },
-          { reloadDataSource: organisationId !== previousOrganisationId },
-        );
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, EMAIL_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
+        });
       } else {
         const filter = parseSearch(search, EMAIL_SEARCH_SETTINGS);
         this.fetchCampaignAndStats(organisationId, filter);
@@ -179,13 +175,11 @@ class EmailCampaignListPage extends React.Component<Props, State> {
               automated: true,
             };
             reloadEmailCampaign();
-            history.replace(
-              {
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-              },
-              state,
-            );
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
           }
           reloadEmailCampaign();
         });

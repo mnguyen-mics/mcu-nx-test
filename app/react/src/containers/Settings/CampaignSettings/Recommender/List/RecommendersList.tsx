@@ -124,13 +124,11 @@ class RecommendersList extends React.Component<
               ...filter,
               currentPage: filter.currentPage - 1,
             };
-            history.replace(
-              {
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-              },
-              state,
-            );
+            history.replace({
+              pathname: pathname,
+              search: updateSearch(search, newFilter),
+              state: state,
+            });
             return Promise.resolve();
           }
           return this.fetchRecommender(organisationId, filter);

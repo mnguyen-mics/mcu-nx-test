@@ -163,12 +163,12 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
           params: { datamartId, organisationId },
         },
       } = this.props;
-      history.push(
-        `/v2/o/${organisationId}/settings/datamart/${datamartId}/standard_segment_builder/create`,
-        {
+      history.push({
+        pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/standard_segment_builder/create`,
+        state: {
           datamartId: datamartId,
         },
-      );
+      });
     };
     return (
       <Button

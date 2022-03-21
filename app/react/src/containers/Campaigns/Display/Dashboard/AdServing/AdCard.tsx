@@ -87,13 +87,11 @@ class AdCard extends React.Component<Props, State> {
     if (dateRange) {
       this.fetchData(organisationId, campaignId, adGroupId, ad.id, dateRange.from, dateRange.to);
     } else if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
       this.fetchData(organisationId, campaignId, adGroupId, ad.id, filter.from, filter.to);

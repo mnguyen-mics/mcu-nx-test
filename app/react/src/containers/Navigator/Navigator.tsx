@@ -103,7 +103,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           'unauthorizedEvent',
           e => {
             this._authService.deleteCredentials();
-            this.props.history.push('/', this.props.location.state);
+            this.props.history.push({ pathname: '/', state: this.props.location.state });
           },
           false,
         );

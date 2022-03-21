@@ -61,13 +61,11 @@ class ItemList<T> extends React.Component<Props<T>> {
     } = this.props;
 
     if (!isSearchValid(search, pageSettings)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, pageSettings),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, pageSettings),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filters = parseSearch(search, pageSettings);
 
@@ -95,13 +93,11 @@ class ItemList<T> extends React.Component<Props<T>> {
 
     if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, pageSettings)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, pageSettings),
-          },
-          { reloadDataSource: organisationId !== previousOrganisationId },
-        );
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, pageSettings),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
+        });
       } else {
         const filters = parseSearch(search, pageSettings);
         fetchList(organisationId, filters, false);

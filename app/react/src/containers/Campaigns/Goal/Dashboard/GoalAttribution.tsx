@@ -135,13 +135,11 @@ class GoalAttribution extends React.Component<JoinedProps, GoalAttributionState>
     } = this.props;
 
     if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
-      history.replace(
-        {
-          pathname: pathname,
-          search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-        },
-        { reloadDataSource: true },
-      );
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
     } else {
       const filter = parseSearch<Filters>(search, DATE_SEARCH_SETTINGS);
 
@@ -175,15 +173,13 @@ class GoalAttribution extends React.Component<JoinedProps, GoalAttributionState>
       attributionModelId !== previousAttributionModelId
     ) {
       if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
-        history.replace(
-          {
-            pathname: pathname,
-            search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-          },
-          {
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
+          state: {
             reloadDataSource: organisationId !== previousOrganisationId,
           },
-        );
+        });
       } else {
         const filter = parseSearch<Filters>(search, DATE_SEARCH_SETTINGS);
         this.fetchOverall(organisationId, goalId, attributionModelId, filter);
