@@ -1,4 +1,5 @@
 def branch = env.BRANCH_NAME
+def build_id = env.BUILD_ID
 
 def checkoutCommit(commit) {
     checkout([
@@ -56,10 +57,14 @@ pipeline {
                     steps {
                         script {
                             echo 'Running Virtual Platform Creation Job'
+                            def user_id = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')?.userId[0]
                             sandbox_build = build job: 'sandbox-creation-from-template', parameters: [
                                 [$class: 'StringParameterValue', name: 'template', value: "master"],
                                 [$class: 'StringParameterValue', name: 'lifetime', value: "1"],
-                                [$class: 'StringParameterValue', name: 'custom_navigator_build', value: "staging-1+"]
+                                [$class: 'StringParameterValue', name: 'custom_navigator_build', value: "staging-1+"],
+                                [$class: 'StringParameterValue',  name: 'parent_job_name', value: "mediarithmics-navigator-pipeline"],
+                                [$class: 'StringParameterValue',  name: 'parent_job_id', value: build_id],
+                                [$class: 'StringParameterValue',  name: 'user_id', value: user_id],
                             ]
                         copyArtifacts projectName: 'sandbox-creation-from-template', selector: specific("${sandbox_build.number}"), filter: 'output.json'
                         props = readJSON file: 'output.json'
