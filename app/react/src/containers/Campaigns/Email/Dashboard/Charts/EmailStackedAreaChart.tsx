@@ -13,11 +13,11 @@ import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
-  StackedAreaChart,
+  AreaChart,
   LegendChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
+import { AreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart';
 import {
   convertMessageDescriptorToString,
   mcsDateRangePickerMessages,
@@ -42,31 +42,30 @@ class EmailStackedAreaChart extends React.Component<Props> {
       intl: { formatMessage },
     } = this.props;
 
-    const stackedAreaPlotProps: StackedAreaChartProps = {
+    const stackedAreaPlotProps: AreaChartProps = {
       dataset: emailReport,
-      options: {
-        xKey: { key: 'day', mode: 'DAY' },
-        yKeys: [
-          { key: 'email_sent', message: formatMessage(messages.emailSent) },
-          { key: 'clicks', message: formatMessage(messages.emailClicks) },
-          {
-            key: 'impressions',
-            message: formatMessage(messages.emailImpressions),
-          },
-          {
-            key: 'email_hard_bounced',
-            message: formatMessage(messages.emailHardBounce),
-          },
-        ],
-        colors: [
-          colors['mcs-chart-2'],
-          colors['mcs-chart-1'],
-          colors['mcs-chart-3'],
-          colors['mcs-chart-5'],
-        ],
-      },
+      xKey: { key: 'day', mode: 'DAY' },
+      format: 'count',
+      yKeys: [
+        { key: 'email_sent', message: formatMessage(messages.emailSent) },
+        { key: 'clicks', message: formatMessage(messages.emailClicks) },
+        {
+          key: 'impressions',
+          message: formatMessage(messages.emailImpressions),
+        },
+        {
+          key: 'email_hard_bounced',
+          message: formatMessage(messages.emailHardBounce),
+        },
+      ],
+      colors: [
+        colors['mcs-chart-2'],
+        colors['mcs-chart-1'],
+        colors['mcs-chart-3'],
+        colors['mcs-chart-5'],
+      ],
     };
-    return !isLoading ? <StackedAreaChart {...stackedAreaPlotProps} /> : <LoadingChart />;
+    return !isLoading ? <AreaChart {...stackedAreaPlotProps} /> : <LoadingChart />;
   }
 
   render() {

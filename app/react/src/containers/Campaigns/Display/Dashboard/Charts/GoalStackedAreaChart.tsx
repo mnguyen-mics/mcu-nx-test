@@ -28,11 +28,11 @@ import {
   LegendChart,
   LoadingChart,
   McsDateRangePicker,
-  StackedAreaChart,
+  AreaChart,
   PopupContainer,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
+import { AreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart';
 import {
   convertMessageDescriptorToString,
   mcsDateRangePickerMessages,
@@ -277,23 +277,25 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
 
     const { performance, isFetchingPerformance } = this.state;
 
-    const stackedAreaPlotProps: StackedAreaChartProps = {
+    const stackedAreaPlotProps: AreaChartProps = {
       dataset: performance as any,
-      options: {
-        xKey: { key: 'day', mode: 'DAY' },
-        yKeys: [
-          {
-            key: 'weighted_conversions',
-            message: formatMessage(messages.weightedConversion),
-          },
-        ],
-        colors: [colors['mcs-chart-3']],
-        isDraggable: false,
-      },
+      format: 'count',
+      xKey: { key: 'day', mode: 'DAY' },
+      yKeys: [
+        {
+          key: 'weighted_conversions',
+          message: formatMessage(messages.weightedConversion),
+        },
+      ],
+      colors: [colors['mcs-chart-3']],
+      isDraggable: false,
+      legend: {
+        enabled: true
+      }
     };
 
     return !isFetchingPerformance && performance.length !== 0 ? (
-      <StackedAreaChart {...stackedAreaPlotProps} />
+      <AreaChart {...stackedAreaPlotProps} />
     ) : (
       <LoadingChart />
     );

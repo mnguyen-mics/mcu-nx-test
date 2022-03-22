@@ -1,4 +1,4 @@
-import { Loading, StackedAreaChart, Card } from '@mediarithmics-private/mcs-components-library';
+import { Loading, AreaChart, Card } from '@mediarithmics-private/mcs-components-library';
 import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -24,7 +24,7 @@ import { getAllDates } from '../../../../../../utils/DateHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
-import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
+import { AreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart';
 
 const messages = defineMessages({
   users: {
@@ -194,21 +194,26 @@ class UserPointsLineChart extends React.Component<Props, State> {
     } = this.props;
     const { data, mode } = this.state;
 
-    const stackedAreaPlotProps: StackedAreaChartProps = {
+    const stackedAreaPlotProps: AreaChartProps = {
       dataset: data,
-      options: {
-        xKey: { key: 'day', mode: mode },
-        yKeys: [
-          {
-            key: 'user_points_count',
-            message: formatMessage(messages.users),
-          },
-        ],
-        colors: [colors['mcs-warning']],
+      format: 'count',
+      type: 'line',
+      xKey: { key: 'day', mode: mode },
+      legend: {
+        enabled: true,
+        position: 'bottom',
+        layout: 'horizontal'
       },
+      yKeys: [
+        {
+          key: 'user_points_count',
+          message: formatMessage(messages.users),
+        },
+      ],
+      colors: [colors['mcs-warning']],
     };
 
-    return <StackedAreaChart {...stackedAreaPlotProps} />;
+    return <AreaChart {...stackedAreaPlotProps} />;
   };
 
   render() {

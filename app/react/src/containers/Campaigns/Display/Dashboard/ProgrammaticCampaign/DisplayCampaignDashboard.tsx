@@ -2,10 +2,8 @@ import React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
 import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { DisplayStackedAreaChart, MediaPerformanceTable, GoalStackedAreaChart } from '../Charts';
-
 import messages from '../messages';
 import { GoalsCampaignRessource } from './domain';
 import { MediaPerformance } from '../Charts/MediaPerformanceTable';
