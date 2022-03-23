@@ -4,7 +4,7 @@ import {
   Card,
   EmptyChart,
   LoadingChart,
-  DoubleStackedAreaChart,
+  AreaChart,
   McsDateRangePicker,
   LegendChart,
 } from '@mediarithmics-private/mcs-components-library';
@@ -37,6 +37,7 @@ import {
   mcsDateRangePickerMessages,
 } from '../../../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import { AreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart';
 
 const LegendChartTS = LegendChart as any;
 
@@ -237,12 +238,15 @@ class AdCard extends React.Component<Props, State> {
     const { colors } = this.props;
     const { dataSource } = this.state;
 
-    const optionsForChart = {
+    const optionsForChart: AreaChartProps = {
+      dataset: dataSource as any,
       xKey: 'day',
       yKeys: [
         { key: 'clicks', message: messages.clicks.defaultMessage || '' },
         { key: 'impressions', message: messages.impressions.defaultMessage || '' },
       ],
+      format: 'count',
+      doubleYaxis: true,
       colors: [colors['mcs-warning'], colors['mcs-info']],
       isDraggable: true,
       onDragEnd: (values: string[]) => {
@@ -255,10 +259,8 @@ class AdCard extends React.Component<Props, State> {
 
     return (
       <div style={{ display: 'flex' }}>
-        <DoubleStackedAreaChart
-          dataset={dataSource as any}
-          options={optionsForChart}
-          style={{ flex: '1' }}
+        <AreaChart
+          {...optionsForChart}
         />
       </div>
     );
