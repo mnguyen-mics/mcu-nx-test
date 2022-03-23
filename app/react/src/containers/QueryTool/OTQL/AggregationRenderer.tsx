@@ -189,13 +189,15 @@ class AggregationRenderer extends React.Component<Props, State> {
     if (!buckets || buckets.length === 0) return undefined;
     else {
       const dataset: any = buckets.map(buck => {
+        const children = buck.aggregations?.buckets[0]?.buckets.slice(0, limit) || [];
+        const childBuckets = this.formatDataset(children, limit);
+        const value = buck.aggregations?.metrics[0]
+          ? buck.aggregations.metrics[0].value
+          : buck.count;
         return {
           key: buck.key,
-          count: buck.count,
-          buckets: this.formatDataset(
-            buck.aggregations?.buckets[0].buckets.slice(0, limit) || [],
-            limit,
-          ),
+          count: value,
+          buckets: childBuckets,
         };
       });
       return dataset;
