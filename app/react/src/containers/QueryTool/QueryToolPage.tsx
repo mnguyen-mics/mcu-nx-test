@@ -76,6 +76,24 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
     };
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+    const {
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
+    } = prevProps;
+    if (organisationId !== prevOrganisationId) {
+      this.setState({
+        selectedDatamart: this.getDefaultDatamart(),
+      });
+    }
+  }
+
   getWorkspace = () => {
     const { connectedUser } = this.props;
 

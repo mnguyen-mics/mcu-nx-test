@@ -3,7 +3,6 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { withRouter, Link } from 'react-router-dom';
 import { Button, Layout, Alert } from 'antd';
 import { compose } from 'recompose';
-
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
 import AdCard from '../ProgrammaticCampaign/AdCard';
 import AdGroupsDashboard from './AdGroupsDashboard';

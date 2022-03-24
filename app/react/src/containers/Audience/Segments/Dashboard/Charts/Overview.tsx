@@ -148,7 +148,7 @@ class Overview extends React.Component<Props> {
       legend: {
         enabled: true,
         position: 'bottom',
-        layout: 'horizontal'
+        layout: 'horizontal',
       },
     };
     return !isFetching ? <AreaChart {...stackedAreaPlotProps} /> : <LoadingChart />;

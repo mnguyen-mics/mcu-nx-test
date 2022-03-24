@@ -202,7 +202,7 @@ class UserPointsLineChart extends React.Component<Props, State> {
       legend: {
         enabled: true,
         position: 'bottom',
-        layout: 'horizontal'
+        layout: 'horizontal',
       },
       yKeys: [
         {

@@ -290,8 +290,8 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
       colors: [colors['mcs-chart-3']],
       isDraggable: false,
       legend: {
-        enabled: true
-      }
+        enabled: true,
+      },
     };
 
     return !isFetchingPerformance && performance.length !== 0 ? (

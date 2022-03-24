@@ -259,9 +259,7 @@ class AdCard extends React.Component<Props, State> {
 
     return (
       <div style={{ display: 'flex' }}>
-        <AreaChart
-          {...optionsForChart}
-        />
+        <AreaChart {...optionsForChart} />
       </div>
     );
   }
