@@ -23,13 +23,14 @@ import { ProcessingSelectionResource } from '../../models/processing';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../Notifications/injectNotifications';
+import { UserProfileResource } from '../../models/directory/UserProfileResource';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
 }
 
 interface MapStateToProps {
-  connectedUser: any;
+  connectedUser: UserProfileResource;
 }
 
 interface QueryToolPageState {
@@ -75,28 +76,24 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
     };
   }
 
-  getWorkspace() {
+  getWorkspace = () => {
     const { connectedUser } = this.props;
 
-    return connectedUser.workspaces.find(
-      (w: any) => w.organisation_id === this.props.match.params.organisationId,
+    return (connectedUser as UserProfileResource).workspaces.find(
+      w => w.organisation_id === this.props.match.params.organisationId,
     );
-  }
+  };
 
-  getDefaultDatamart() {
+  getDefaultDatamart = () => {
     const orgWp = this.getWorkspace();
 
-    if (orgWp.datamarts && orgWp.datamarts.length === 1) {
-      return orgWp.datamarts[0];
-    } else {
-      return undefined;
-    }
-  }
+    return orgWp?.datamarts?.length === 1 ? orgWp.datamarts[0] : undefined;
+  };
 
   getSelectedDatamart = (datamartId: string) => {
     const orgWp = this.getWorkspace();
 
-    return orgWp.datamarts.find((d: DatamartResource) => d.id === datamartId);
+    return orgWp?.datamarts.find((d: DatamartResource) => d.id === datamartId);
   };
 
   render() {
@@ -240,9 +237,9 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
 }
 
 export default compose(
+  withRouter,
   injectIntl,
   injectNotifications,
-  withRouter,
   connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,
   })),

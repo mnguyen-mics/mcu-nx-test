@@ -147,7 +147,7 @@ class GoalFormContainer extends React.Component<Props, State> {
 }
 
 export default compose<Props, GoalFormContainerProps>(
-  injectNotifications,
   withRouter,
+  injectNotifications,
   injectWorkspace,
 )(GoalFormContainer);

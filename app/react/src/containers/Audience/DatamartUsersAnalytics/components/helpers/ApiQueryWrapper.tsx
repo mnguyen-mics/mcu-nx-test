@@ -309,6 +309,6 @@ class ApiQueryWrapper extends React.Component<Props, State> {
 }
 
 export default compose<ApiQueryWrapperProps, ApiQueryWrapperProps>(
-  injectNotifications,
   withRouter,
+  injectNotifications,
 )(ApiQueryWrapper);

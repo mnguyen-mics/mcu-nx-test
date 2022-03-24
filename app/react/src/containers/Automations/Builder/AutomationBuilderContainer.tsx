@@ -129,8 +129,8 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
 }
 
 export default compose<Props, AutomationBuilderContainerProps>(
-  injectNotifications,
   withRouter,
+  injectNotifications,
   connect(state => ({
     getWorkspace: SessionHelper.getWorkspace,
   })),
