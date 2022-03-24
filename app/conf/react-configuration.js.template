@@ -50,18 +50,6 @@
     'new-navigation-system'
   ];
 
- const gravityFeatures = [
-    'audience-segments',
-    'audience-builders',
-    'campaigns-display',
-    'campaigns-display-edition-audience_catalog',
-    'creatives-display',
-    'organisationSettings-labels',
-    'organisationSettings-users',
-    'organisationSettings-user_roles',
-    'organisationSettings-settings',
-    'accountSettings-profile',
-  ]
 
  var MCS_CONSTANTS = {
     'NAVIGATOR_URL' : 'https://navigator.mediarithmics.local',

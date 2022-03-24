@@ -9,9 +9,7 @@ module.exports = merge(common, {
   mode: 'production',
 
   entry: {
-    'plateforme.alliancegravity.com/style-less': paths.appGravityStyleLess,
     'converged-ww2.havas.com/style-less': paths.appConvergedStyleLess,
-    'app.teamjoin.fr/style-less': paths.appTeamjoinStyleLess,
     'console.valiuz.com/style-less': paths.appValiuzStyleLess,
   },
 
@@ -45,12 +43,7 @@ module.exports = merge(common, {
       inject: true,
       template: paths.appHtml,
       filename: '../index.html',
-      excludeChunks: [
-        'plateforme.alliancegravity.com/style-less',
-        'converged-ww2.havas.com/style-less',
-        'app.teamjoin.fr/style-less',
-        'console.valiuz.com/style-less',
-      ],
+      excludeChunks: ['converged-ww2.havas.com/style-less', 'console.valiuz.com/style-less'],
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
