@@ -25,7 +25,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import {
   EmptyChart,
-  DoubleStackedAreaChart,
+  AreaChart,
   LoadingChart,
   MetricsColumn,
   McsDateRangePicker,
@@ -37,6 +37,7 @@ import {
   mcsDateRangePickerMessages,
 } from '../../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import { AreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart';
 
 interface OverallStats {
   value: string;
@@ -264,12 +265,15 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
       data: { isLoading, items, overall },
     } = this.state;
 
-    const optionsForChart = {
+    const optionsForChart: AreaChartProps = {
+      dataset: items as any,
       xKey: 'day',
       yKeys: [
         { key: key1, message: messages[key1].defaultMessage || '' },
         { key: key2, message: messages[key2].defaultMessage || '' },
       ],
+      doubleYaxis: true,
+      format: 'count',
       colors: [colors['mcs-chart-2'], colors['mcs-chart-1']],
       isDraggable: true,
       onDragEnd: (values: string[]) => {
@@ -304,11 +308,9 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
         <div style={{ float: 'left' }}>
           <MetricsColumn metrics={metrics} isLoading={isLoading} />
         </div>
-        <DoubleStackedAreaChart
-          dataset={items as any}
-          options={optionsForChart}
-          style={{ flex: '1' }}
-        />
+        <div style={{ flex: '1' }}>
+          <AreaChart {...optionsForChart} />
+        </div>
       </div>
     ) : (
       <LoadingChart />

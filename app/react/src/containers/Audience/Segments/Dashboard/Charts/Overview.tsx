@@ -16,11 +16,11 @@ import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
-  StackedAreaChart,
+  AreaChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import chroma from 'chroma-js';
-import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
+import { AreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart';
 import {
   convertMessageDescriptorToString,
   mcsDateRangePickerMessages,
@@ -133,21 +133,25 @@ class Overview extends React.Component<Props> {
       }
     }
 
-    const stackedAreaPlotProps: StackedAreaChartProps = {
+    const stackedAreaPlotProps: AreaChartProps = {
       dataset: dataSource as any,
-      options: {
-        xKey: { key: 'day', mode: 'DAY' },
-        yKeys: metrics.map(metric => {
-          return {
-            key: metric,
-            message:
-              this.getMetricsDisplayName(metric, datamart) || formatMessage(messagesMap[metric]),
-          };
-        }),
-        colors: chartColors,
+      xKey: { key: 'day', mode: 'DAY' },
+      format: 'count',
+      yKeys: metrics.map(metric => {
+        return {
+          key: metric,
+          message:
+            this.getMetricsDisplayName(metric, datamart) || formatMessage(messagesMap[metric]),
+        };
+      }),
+      colors: chartColors,
+      legend: {
+        enabled: true,
+        position: 'bottom',
+        layout: 'horizontal',
       },
     };
-    return !isFetching ? <StackedAreaChart {...stackedAreaPlotProps} /> : <LoadingChart />;
+    return !isFetching ? <AreaChart {...stackedAreaPlotProps} /> : <LoadingChart />;
   }
 
   getMetricsDisplayName = (metric: string, datamart?: DatamartWithMetricResource) => {

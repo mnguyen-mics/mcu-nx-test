@@ -14,7 +14,7 @@ import {
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
 import {
-  DoubleStackedAreaChart,
+  AreaChart,
   EmptyChart,
   LoadingChart,
   MetricsColumn,
@@ -27,6 +27,7 @@ import {
   mcsDateRangePickerMessages,
 } from '../../../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import { AreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart';
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
 
@@ -161,8 +162,11 @@ class DisplayStackedAreaChart<T> extends React.Component<
       this.props;
     const { key1, key2 } = this.state;
 
-    const optionsForChart = {
+    const optionsForChart: AreaChartProps = {
+      dataset: dataSource as any,
       xKey: 'day',
+      format: 'count',
+      doubleYaxis: true,
       yKeys: [
         { key: key1, message: messages[key1].defaultMessage || '' },
         { key: key2, message: messages[key2].defaultMessage || '' },
@@ -224,11 +228,9 @@ class DisplayStackedAreaChart<T> extends React.Component<
           />
         </div>
         {dataSource && (
-          <DoubleStackedAreaChart
-            dataset={dataSource as any}
-            options={optionsForChart}
-            style={{ flex: '1' }}
-          />
+          <div style={{ flex: '1' }}>
+            <AreaChart {...optionsForChart} />
+          </div>
         )}
       </div>
     ) : (
