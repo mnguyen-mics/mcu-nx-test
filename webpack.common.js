@@ -9,7 +9,6 @@ module.exports = {
   entry: {
     app: path.join(paths.reactAppSrc, '/index.tsx'),
     'style-less': paths.appStyleLess,
-    'react-vendors': Object.keys(pkg.dependencies),
   },
   target: 'web',
   module: {
@@ -90,6 +89,18 @@ module.exports = {
         use: 'url-loader',
       },
     ],
+  },
+
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'react-vendors',
+          chunks: 'all',
+        },
+      },
+    },
   },
 
   resolve: {
