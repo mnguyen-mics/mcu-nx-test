@@ -229,9 +229,9 @@ const mapDispatchToProps = {
 };
 
 export default compose(
-  injectIntl,
-  injectNotifications,
   withRouter,
+  injectNotifications,
+  injectIntl,
   connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'userAccountEdit',

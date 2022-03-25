@@ -125,11 +125,11 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<Props, State>
 }
 
 export default compose<Props, OnSegmentExitInputGeneralSectionFormProps>(
+  withRouter,
   injectIntl,
   injectNotifications,
   withValidators,
   withNormalizer,
-  withRouter,
 )(OnSegmentExitInputGeneralSectionForm);
 
 export const messages = defineMessages({

@@ -148,8 +148,8 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
 }
 
 export default compose<Props, AudienceFeatureQueryFormSectionProps>(
+  withRouter,
   injectIntl,
   injectDrawer,
   injectNotifications,
-  withRouter,
 )(AudienceFeatureQueryFormSection);

@@ -241,8 +241,8 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
 }
 
 export default compose<JoinedProps, CreateAudienceFeedProps>(
+  withRouter,
   injectIntl,
   injectNotifications,
-  withRouter,
   connect(undefined, { notifyError: actions.notifyError }),
 )(CreateAudienceFeed);

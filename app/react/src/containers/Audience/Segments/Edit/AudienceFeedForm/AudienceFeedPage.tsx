@@ -246,7 +246,7 @@ class AudienceFeedPage extends React.Component<JoinedProps, AudienceFeedPageStat
 }
 
 export default compose<JoinedProps, {}>(
+  withRouter,
   injectIntl,
   injectNotifications,
-  withRouter,
 )(AudienceFeedPage);

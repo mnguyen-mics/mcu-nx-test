@@ -138,9 +138,9 @@ const mapStateToProps = (state: MicsReduxState) => ({
 });
 
 export default compose<Props, AutomationActionBarProps>(
+  withRouter,
   injectIntl,
   injectNotifications,
-  withRouter,
   connect(mapStateToProps),
   connect(undefined, { submit: rxfSubmit }),
 )(AutomationActionBar);

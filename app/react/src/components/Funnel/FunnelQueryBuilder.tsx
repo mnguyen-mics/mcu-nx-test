@@ -663,7 +663,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 }
 
 export default compose<FunnelQueryBuilderProps, FunnelQueryBuilderProps>(
+  withRouter,
   injectNotifications,
   injectIntl,
-  withRouter,
 )(FunnelQueryBuilder);
