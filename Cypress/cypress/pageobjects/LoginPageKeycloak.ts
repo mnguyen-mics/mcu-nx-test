@@ -1,4 +1,4 @@
-import Page from './page';
+import Page from './Page';
 
 class LoginPageKeycloak extends Page {
   get emailField() {
@@ -37,6 +37,10 @@ class LoginPageKeycloak extends Page {
     return cy.get('.mcs-keycloak_formLogin--alertwarning');
   }
 
+  get alertSuccess() {
+    return cy.get('.mcs-keycloak_formLogin--alertsuccess');
+  }
+
   get newPasswordField() {
     return cy.get('.mcs-keycloak_formLogin_passwordNewField');
   }
@@ -59,6 +63,18 @@ class LoginPageKeycloak extends Page {
 
   get btnViewPasswordConfirm() {
     return cy.get('.mcs-keycloak_formLogin_passwordConfirm_eye');
+  }
+
+  get passwordRequirements() {
+    return cy.get('#password-requirements');
+  }
+
+  get validPasswordRequirements() {
+    return this.passwordRequirements.find('.valid');
+  }
+
+  get invalidPasswordRequirements() {
+    return this.passwordRequirements.find('.invalid');
   }
 
   typeEmail(email: string) {
@@ -112,6 +128,20 @@ class LoginPageKeycloak extends Page {
     this.typeNewPassword(password);
     this.typeConfirmPassword(password);
     this.clickBtnSubmitPassword();
+  }
+
+  getPasswordRequirements(isValid?: boolean) {
+    switch (isValid) {
+      case true:
+        return this.validPasswordRequirements;
+        break;
+      case false:
+        return this.invalidPasswordRequirements;
+        break;
+      default:
+        return this.passwordRequirements;
+        break;
+    }
   }
 }
 

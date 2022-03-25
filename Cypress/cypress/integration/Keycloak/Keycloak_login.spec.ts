@@ -1,4 +1,4 @@
-import loginPageKeycloak from '../../pageobjects/loginPageKeycloak';
+import loginPageKeycloak from '../../pageobjects/LoginPageKeycloak';
 
 describe('Should test keycloak login', () => {
   beforeEach(() => {
