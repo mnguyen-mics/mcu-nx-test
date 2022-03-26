@@ -46,6 +46,7 @@ import {
 } from '../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 import { exportFunnel } from '../../../services/Export';
+import omitDeep from 'omit-deep-lodash';
 
 const { Content } = Layout;
 
@@ -104,7 +105,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
   }
 
   private splitIndex(funnelFilter: FunnelFilter[]): number {
-    return funnelFilter.findIndex(x => !!x.group_by_dimension || !!x.group_by_dimensions?.length);
+    return funnelFilter.findIndex(x => !!x.group_by_dimensions?.length);
   }
 
   compareFieldValueResources = (a: FieldValuesFunnelResource, b: FieldValuesFunnelResource) => {
@@ -131,12 +132,14 @@ class FunnelPage extends React.Component<JoinedProps, State> {
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const detectGroupBy = (funnelFilters: FunnelFilter[]) => {
-      return funnelFilters.some(
-        filter => filter.group_by_dimension || filter.group_by_dimensions?.length,
-      );
+      return funnelFilters.some(filter => filter.group_by_dimensions?.length);
     };
-    const funnelFilter: FunnelFilter[] =
-      routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [];
+
+    const parsedRouteFilter = JSON.parse(
+      JSON.stringify(omitDeep(JSON.parse(routeParams.filter), 'group_by_dimension')),
+    );
+
+    const funnelFilter: FunnelFilter[] = routeParams.filter.length > 0 ? parsedRouteFilter : [];
 
     const funnelTimeRange = extractDatesFromProps(search);
 
@@ -146,7 +149,6 @@ class FunnelPage extends React.Component<JoinedProps, State> {
         : this.splitIndex(funnelFilter);
 
     if (!detectGroupBy(funnelFilter)) {
-      funnelFilter[funnelFilter.length - 1].group_by_dimension = 'DATE_YYYY_MM_DD';
       funnelFilter[funnelFilter.length - 1].group_by_dimensions = ['DATE_YYYY_MM_DD'];
 
       this._userActivitiesFunnelService
@@ -193,10 +195,8 @@ class FunnelPage extends React.Component<JoinedProps, State> {
         JSON.parse(JSON.stringify(funnelFilter)) as FunnelFilter[]
       ).map((filter, index) => {
         if (index === funnelFilter.length - 1) {
-          filter.group_by_dimension = 'DATE_YYYY_MM_DD';
           filter.group_by_dimensions = (filter.group_by_dimensions || []).concat('DATE_YYYY_MM_DD');
         } else {
-          filter.group_by_dimension = undefined;
           filter.group_by_dimensions = undefined;
         }
         return filter;

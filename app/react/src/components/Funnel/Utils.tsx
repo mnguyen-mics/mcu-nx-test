@@ -30,7 +30,6 @@ export const shouldUpdateFunnelQueryBuilder = (
 ): boolean => {
   const nextFilterPruned: FunnelFilter[] = JSON.parse(JSON.stringify(nextFunnelFilter));
   nextFilterPruned.forEach(filter => {
-    delete filter.group_by_dimension;
     delete filter.group_by_dimensions;
     delete filter.id;
     filter.filter_clause.filters.forEach(f => delete f.id);
@@ -38,7 +37,6 @@ export const shouldUpdateFunnelQueryBuilder = (
 
   const previousFilterPruned: FunnelFilter[] = JSON.parse(JSON.stringify(previousFunnelFilter));
   previousFilterPruned.forEach(filter => {
-    delete filter.group_by_dimension;
     delete filter.group_by_dimensions;
     delete filter.id;
     filter.filter_clause.filters.forEach(f => delete f.id);
@@ -62,7 +60,6 @@ export const shouldRefetchFunnelData = (
     nextRouteParams.filter.length > 0 ? JSON.parse(nextRouteParams.filter) : [];
   // We don't want to refetch data if the user has only deselected split by
   previousFunnelFilter.forEach(x => {
-    delete x.group_by_dimension;
     delete x.group_by_dimensions;
   });
   previousRouteParams.filter = previousFunnelFilter;

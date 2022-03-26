@@ -5,7 +5,6 @@ export interface FunnelFilter {
   id?: string;
   name: string;
   filter_clause: DimensionFilterClause;
-  group_by_dimension?: string;
   group_by_dimensions?: string[];
   max_days_after_previous_step?: number;
 }
