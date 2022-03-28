@@ -85,13 +85,17 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
   };
 
   render() {
-    const { filter, onFilterChange } = this.props;
+    const {
+      filter,
+      onFilterChange,
+      intl: { formatMessage },
+    } = this.props;
 
     const { data, loading } = this.state;
 
     const dataColumns = [
       {
-        intlMessage: messages.compartment_id,
+        title: formatMessage(messages.compartment_id),
         key: 'compartment_id',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
@@ -99,7 +103,7 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
         ),
       },
       {
-        intlMessage: messages.default,
+        title: formatMessage(messages.default),
         key: 'default',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
@@ -107,7 +111,7 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
         ),
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
@@ -115,7 +119,7 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
         ),
       },
       {
-        intlMessage: messages.token,
+        title: formatMessage(messages.token),
         key: 'token',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
