@@ -180,7 +180,6 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
         ? JSON.parse(routeParams.filter)
         : extractFilters([getDefaultStep()]);
     const filterWithoutGroupBy: FunnelFilter[] = deepCopy(funnelFilter);
-    filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
     filterWithoutGroupBy.forEach(x => delete x.group_by_dimensions);
 
     // Make copies for display in Funnel
