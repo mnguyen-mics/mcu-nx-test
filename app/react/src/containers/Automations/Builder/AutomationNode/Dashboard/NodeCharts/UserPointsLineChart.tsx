@@ -196,6 +196,7 @@ class UserPointsLineChart extends React.Component<Props, State> {
 
     const stackedAreaPlotProps: AreaChartProps = {
       dataset: data,
+      height: 400,
       format: 'count',
       type: 'line',
       xKey: { key: 'day', mode: mode },
