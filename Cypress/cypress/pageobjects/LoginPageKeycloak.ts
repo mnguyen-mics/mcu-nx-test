@@ -134,13 +134,10 @@ class LoginPageKeycloak extends Page {
     switch (isValid) {
       case true:
         return this.validPasswordRequirements;
-        break;
       case false:
         return this.invalidPasswordRequirements;
-        break;
       default:
         return this.passwordRequirements;
-        break;
     }
   }
 }
