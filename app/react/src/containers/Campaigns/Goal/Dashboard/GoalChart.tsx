@@ -272,7 +272,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
         { key: key1, message: messages[key1].defaultMessage || '' },
         { key: key2, message: messages[key2].defaultMessage || '' },
       ],
-      doubleYaxis: true,
+      doubleYAxis: true,
       format: 'count',
       colors: [colors['mcs-chart-2'], colors['mcs-chart-1']],
       isDraggable: true,

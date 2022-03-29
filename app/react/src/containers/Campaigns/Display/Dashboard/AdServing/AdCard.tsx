@@ -246,7 +246,7 @@ class AdCard extends React.Component<Props, State> {
         { key: 'impressions', message: messages.impressions.defaultMessage || '' },
       ],
       format: 'count',
-      doubleYaxis: true,
+      doubleYAxis: true,
       colors: [colors['mcs-warning'], colors['mcs-info']],
       isDraggable: true,
       onDragEnd: (values: string[]) => {

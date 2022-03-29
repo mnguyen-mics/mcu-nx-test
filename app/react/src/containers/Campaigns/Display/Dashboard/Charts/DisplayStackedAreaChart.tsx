@@ -166,7 +166,7 @@ class DisplayStackedAreaChart<T> extends React.Component<
       dataset: dataSource as any,
       xKey: 'day',
       format: 'count',
-      doubleYaxis: true,
+      doubleYAxis: true,
       yKeys: [
         { key: key1, message: messages[key1].defaultMessage || '' },
         { key: key2, message: messages[key2].defaultMessage || '' },
