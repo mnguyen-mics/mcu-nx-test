@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Button, Layout, message } from 'antd';
+import { Button, Layout, message, Spin } from 'antd';
 import { compose } from 'recompose';
 import moment from 'moment';
 import ExportHeader from './ExportHeader';
@@ -26,6 +26,10 @@ import { Labels } from '../../Labels';
 import { getPaginatedApiParam, getApiToken } from '../../../utils/ApiHelper';
 import { TableViewWithSelectionNotifyerMessages } from '../../../components/TableView';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
+import FileSaver from 'file-saver';
 
 const { Content } = Layout;
 
@@ -43,6 +47,7 @@ interface ExportExecutionItems {
 interface ExportsState {
   exportObject: ExportItem;
   exportExecutions: ExportExecutionItems;
+  dataExportState: Record<string, number>;
 }
 
 interface ExportRouteParams {
@@ -50,7 +55,9 @@ interface ExportRouteParams {
   exportId: string;
 }
 
-type JoinedProps = RouteComponentProps<ExportRouteParams> & InjectedIntlProps;
+type JoinedProps = RouteComponentProps<ExportRouteParams> &
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class Exports extends React.Component<JoinedProps, ExportsState> {
   fetchLoop = window.setInterval(() => {
@@ -84,6 +91,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         isLoading: true,
         total: 0,
       },
+      dataExportState: {},
     };
   }
 
@@ -180,17 +188,47 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     history.push(nextLocation);
   };
 
+  private startDownload = (recordId: string) => {
+    const { dataExportState } = this.state;
+
+    this.props.notifyInfo({
+      message:
+        'Your download request is processing. Do not refresh your page to avoid canceling it.',
+    });
+    if (!dataExportState.hasOwnProperty(recordId)) {
+      this.setState(prevState => {
+        const newState = prevState;
+        newState.dataExportState[recordId] = 0;
+        return newState;
+      });
+    }
+  };
+
+  private finaliseDownload = (recordId: string) => {
+    const { dataExportState } = this.state;
+
+    if (dataExportState.hasOwnProperty(recordId)) {
+      this.setState(prevState => {
+        const newState = prevState;
+        delete newState.dataExportState[recordId];
+        return newState;
+      });
+    }
+  };
+
   downloadFile = (execution: ExportExecution) => (e: any) => {
     const {
       intl: { formatMessage },
     } = this.props;
+    const { exportObject } = this.state;
 
     if (execution.status === 'RUNNING' || execution.status === 'PENDING') {
       message.error(formatMessage(messages.exportRunning));
     } else if (execution.status === 'FAILED') {
       message.error(formatMessage(messages.exportFailed));
     } else if (execution.status === 'SUCCEEDED') {
-      (window as any).location = `${(window as any).MCS_CONSTANTS.API_URL}/v1/exports/${
+      this.startDownload(execution.id);
+      const url = `${(window as any).MCS_CONSTANTS.API_URL}/v1/exports/${
         this.props.match.params.exportId
       }/executions/${execution.id}/files/technical_name=${
         execution.result
@@ -198,7 +236,41 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
             ? execution.result.output_files[0] || 'export'
             : 'export'
           : 'export'
-      }?access_token=${encodeURIComponent(getApiToken())}`;
+      }`;
+
+      const transferFailed = () => {
+        this.props.notifyInfo({ message: 'Your download has failed.' });
+        this.finaliseDownload(execution.id);
+      };
+      const transferCanceled = () => {
+        this.props.notifyInfo({ message: 'Your download as been canceled.' });
+        this.finaliseDownload(execution.id);
+      };
+      const oReq = new XMLHttpRequest();
+      oReq.responseType = 'blob';
+      oReq.onload = () => {
+        if (oReq.status >= 200 && oReq.status < 400) {
+          FileSaver.saveAs(oReq.response, `export-${exportObject.item?.name}-${execution.id}.json`);
+        } else {
+          const responsePromise: Promise<any> = oReq.response.text();
+          responsePromise.then(responseAsText => {
+            const response = JSON.parse(responseAsText);
+            const notification = { message: `${response.error} (error id: ${response.error_id})` };
+            if (oReq.status < 500) {
+              this.props.notifyWarning(notification);
+            } else {
+              this.props.notifyError(notification);
+            }
+          });
+        }
+        this.finaliseDownload(execution.id);
+      };
+      oReq.open('get', url, true);
+      oReq.addEventListener('error', transferFailed, false);
+      oReq.addEventListener('abort', transferCanceled, false);
+
+      oReq.setRequestHeader('Authorization', getApiToken());
+      oReq.send();
     }
   };
 
@@ -206,6 +278,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     const {
       intl: { formatMessage },
     } = this.props;
+    const { dataExportState } = this.state;
 
     const dataColumns: Array<DataColumnDefinition<ExportExecution>> = [
       {
@@ -231,12 +304,15 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         key: 'action',
         render: (text: string, record: ExportExecution, index: number) => {
           return (
-            record.status === 'SUCCEEDED' && (
+            (record.status === 'SUCCEEDED' && !dataExportState.hasOwnProperty(record.id) && (
               <Button type='primary' onClick={this.downloadFile(record)}>
-                {' '}
-                {formatMessage(messages.download)}
+                <span className='mcs-export-button-download-message'>
+                  {' '}
+                  {formatMessage(messages.download)}
+                </span>
               </Button>
-            )
+            )) ||
+            (dataExportState.hasOwnProperty(record.id) && <Spin size='small' />)
           );
         },
       },
@@ -333,4 +409,4 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
   }
 }
 
-export default compose<JoinedProps, {}>(injectIntl, withRouter)(Exports);
+export default compose<JoinedProps, {}>(injectIntl, withRouter, injectNotifications)(Exports);
