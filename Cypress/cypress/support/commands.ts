@@ -178,13 +178,10 @@ Cypress.Commands.add(
   },
 );
 Cypress.Commands.add('switchOrg', organisationName => {
-  cy.get('.mcs-button').first().trigger('mouseover');
-  cy.get('.mcs-button').contains('Switch Org.').click();
-  cy.get('[placeholder="Search Organisation"]').type(organisationName);
-  // cy.get('[placeholder="Search Organisation"]').invoke('val', 'yellow velve').trigger('change')
-  // cy.get('[placeholder="Search Organisation"]').type('t')
-  cy.get('.mcs-org-card').should('have.length', 1).click();
-  cy.get('.mcs-button').first().trigger('mouseout');
+  cy.get('.mcs-organisationListSwitcher_component').click();
+  cy.get('.mcs-organisationListSwitcher_searchInput').eq(0).find('input').type(organisationName);
+  cy.wait(500);
+  cy.get('.mcs-organisationListSwitcher_orgId_searchView').click({ force: true });
 });
 
 Cypress.Commands.add('goToHome', organisationId => {
