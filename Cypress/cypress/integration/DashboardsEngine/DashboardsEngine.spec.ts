@@ -206,7 +206,7 @@ describe('dashboards engine Tests', () => {
                 }).then(() => {
                   cy.switchOrg(data.organisationName);
                   const standardSegmentBuilderName = faker.random.words(2);
-                  cy.get('.mcs-navigator-header-actions-settings').click();
+                  cy.get('.mcs-header_actions_settings').click();
                   cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
                   cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
                   cy.contains(data.datamartName).click();

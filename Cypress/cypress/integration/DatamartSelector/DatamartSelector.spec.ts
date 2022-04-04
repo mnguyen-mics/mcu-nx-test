@@ -144,7 +144,7 @@ describe('Should test the datamart selector', () => {
 
   it('Should have datamartSelector on CleaningRuleEditPage', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.cleaningRules').click();
       cy.get('.mcs-cleaningRules_creation_button').click();
@@ -162,7 +162,7 @@ describe('Should test the datamart selector', () => {
 
   it('Should have datamartSelector on CompartmentEditPage', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
       cy.get('.mcs-compartmentsListPage_newCompartmentButton').click();
@@ -183,7 +183,7 @@ describe('Should test the datamart selector', () => {
 
   it('Should have datamartSelector on AudiencePartitionPage', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.partitions').click();
       cy.get('.mcs-audiencePartitionsActionBar_newAudiencePartitionsButton').click();
@@ -196,7 +196,7 @@ describe('Should test the datamart selector', () => {
 
   it('Should have datamartSelector on EditMlFunctionPage', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.ml_functions').click();
       cy.get('.mcs-mlFunctionsContent_newMlFunctionsButton').click();
@@ -208,7 +208,7 @@ describe('Should test the datamart selector', () => {
 
   it('Should have datamartSelector on MobileApplicationEditPage', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.channels').click();
       cy.get('.mcs-channelListPage_newChannelButton').click();
@@ -221,7 +221,7 @@ describe('Should test the datamart selector', () => {
 
   it('Should have datamartSelector on SiteEditPage', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.channels').click();
       cy.get('.mcs-channelListPage_newChannelButton').click();

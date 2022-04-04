@@ -31,7 +31,7 @@ describe('User role test', () => {
       cy.goToHome(data.organisationId);
 
       // Click on Setting Menu
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
 
       // Click on User Role Menu
       cy.get('.mcs-settingsSideMenu_menu\\.organisation\\.userRoles').click();
@@ -61,7 +61,7 @@ describe('User role test', () => {
       cy.goToHome(data.organisationId);
 
       // Click on Setting Menu
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
 
       // Click on User Role Menu
       cy.get('.mcs-settingsSideMenu_menu\\.organisation\\.userRoles').click();

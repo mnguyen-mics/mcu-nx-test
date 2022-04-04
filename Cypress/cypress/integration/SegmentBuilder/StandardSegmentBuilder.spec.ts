@@ -16,7 +16,7 @@ describe('This test should check that the audience feature forms are working pro
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const standardSegmentBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();
@@ -153,7 +153,7 @@ describe('This test should check that the audience feature forms are working pro
         'Test - Standard Segment Builder - Cypress',
         undefined,
       );
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();
@@ -353,7 +353,7 @@ describe('This test should check that the audience feature forms are working pro
         cy.get('.mcs-newUserQuerySegmentSimpleForm_name_input').type('UserQuery Segment');
         cy.get('.mcs-saveAsUserQuerySegmentModal_ok_button').click();
       });
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();

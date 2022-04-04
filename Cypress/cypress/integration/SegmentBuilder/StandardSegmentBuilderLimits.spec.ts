@@ -16,7 +16,7 @@ describe('This test should check the creation limit of standard segment builders
     datamartName: string,
     standardSegmentBuilderName: string,
   ) => {
-    cy.get('.mcs-navigator-header-actions-settings').click();
+    cy.get('.mcs-header_actions_settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();
@@ -44,7 +44,7 @@ describe('This test should check the creation limit of standard segment builders
   it('Should test the creation limit of 100 audience features folders', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       let audienceFeaturesFolderName = '';
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();

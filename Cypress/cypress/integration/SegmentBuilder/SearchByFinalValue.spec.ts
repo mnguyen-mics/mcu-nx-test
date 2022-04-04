@@ -22,7 +22,7 @@ describe('This test should check that the search by final value feature is worki
   });
 
   const deleteAudienceFeatures = (datamartName: string) => {
-    cy.get('.mcs-navigator-header-actions-settings').click();
+    cy.get('.mcs-header_actions_settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();
@@ -43,7 +43,7 @@ describe('This test should check that the search by final value feature is worki
   };
 
   const deleteStandardSegmentBuilder = (datamartName: string) => {
-    cy.get('.mcs-navigator-header-actions-settings').click();
+    cy.get('.mcs-header_actions_settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();
@@ -65,7 +65,7 @@ describe('This test should check that the search by final value feature is worki
     datamartName: string,
     standardSegmentBuilderName: string,
   ) => {
-    cy.get('.mcs-navigator-header-actions-settings').click();
+    cy.get('.mcs-header_actions_settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();
@@ -81,7 +81,7 @@ describe('This test should check that the search by final value feature is worki
     audienceFeatureDescription: string,
     object_tree_expression: string,
   ) => {
-    cy.get('.mcs-navigator-header-actions-settings').click();
+    cy.get('.mcs-header_actions_settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();

@@ -52,7 +52,7 @@ describe('This test should check that the audience segments forms are working pr
     processingPurpose: string,
     processingTechnicalName: string,
   ) => {
-    cy.get('.mcs-navigator-header-actions-settings').click();
+    cy.get('.mcs-header_actions_settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.organisation\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.organisation\\.processings').click();
     cy.contains('New Data Processing').click();
