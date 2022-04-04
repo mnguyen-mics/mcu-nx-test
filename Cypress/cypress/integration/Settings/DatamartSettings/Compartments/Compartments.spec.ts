@@ -19,7 +19,7 @@ describe('Compartments test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
 
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
 
@@ -40,7 +40,7 @@ describe('Compartments test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
 
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
 
@@ -57,7 +57,7 @@ describe('Compartments test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
 
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
 
@@ -84,7 +84,7 @@ describe('Compartments test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
 
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
 

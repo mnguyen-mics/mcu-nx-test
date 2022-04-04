@@ -11,7 +11,7 @@ describe('Should test the visit analyzers', () => {
   it('should test the visit analyzers form', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.visit_analyzer').click();
       cy.get('.mcs-VisitAnalyzersList_creation_button').click();
@@ -40,7 +40,7 @@ describe('Should test the visit analyzers', () => {
   it('we cant save visit analyzer with missing fields', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.visit_analyzer').click();
       cy.get('.mcs-VisitAnalyzersList_creation_button').click();
@@ -55,7 +55,7 @@ describe('Should test the visit analyzers', () => {
   it('should test the visit analyzer section on channels section', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
-      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.visit_analyzer').click();
       cy.get('.mcs-VisitAnalyzersList_creation_button').click();
