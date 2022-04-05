@@ -70,6 +70,7 @@ const TYPES = {
   ICustomActionService: Symbol.for('customActionService'),
   IScenarioAnalyticsService: Symbol.for('scenarioAnalyticsService'),
   IStandardSegmentBuilderQueryService: Symbol.for('StandardSegmentBuilderQueryService'),
+  IChartDatasetService: Symbol.for('chartDatasetService'),
 };
 
 export { TYPES };

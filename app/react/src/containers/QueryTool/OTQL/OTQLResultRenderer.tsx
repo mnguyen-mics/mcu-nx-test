@@ -5,6 +5,8 @@ import {
   OTQLResult,
   isCountResult,
   isAggregateResult,
+  isAggregateDataset,
+  isOTQLResult,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import AggregationRenderer from './AggregationRenderer';
 import { compose } from 'recompose';
@@ -15,13 +17,17 @@ import {
 } from '@mediarithmics-private/advanced-components';
 import { CountRenderer } from './CountRenderer';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+import { SerieQueryModel } from './OTQLRequest';
 
 export interface OTQLResultRendererProps {
-  result: OTQLResult | null;
+  result: OTQLResult | AggregateDataset | null;
   loading?: boolean;
   aborted?: boolean;
   query?: string;
   datamartId: string;
+  showChartLegend?: boolean;
+  serieQueries: SerieQueryModel[];
 }
 
 type Props = OTQLResultRendererProps &
@@ -42,6 +48,8 @@ class OTQLResultRenderer extends React.Component<Props> {
       match: {
         params: { organisationId },
       },
+      showChartLegend,
+      serieQueries,
     } = this.props;
 
     let content: React.ReactNode;
@@ -60,10 +68,10 @@ class OTQLResultRenderer extends React.Component<Props> {
           />
         </div>
       );
-    } else if (result && isCountResult(result.rows)) {
+    } else if (result && isOTQLResult(result) && isCountResult(result.rows)) {
       const count = result.rows[0].count;
       content = <CountRenderer count={count} />;
-    } else if (result && isAggregateResult(result.rows)) {
+    } else if (result && isOTQLResult(result) && isAggregateResult(result.rows)) {
       const aggregations = result.rows[0].aggregations;
       content = (
         <div>
@@ -72,6 +80,20 @@ class OTQLResultRenderer extends React.Component<Props> {
             query={query}
             datamartId={datamartId}
             organisationId={organisationId}
+            showChartLegend={showChartLegend}
+          />
+        </div>
+      );
+    } else if (result && isAggregateDataset(result)) {
+      content = (
+        <div>
+          <AggregationRenderer
+            rootAggregations={result}
+            query={query}
+            datamartId={datamartId}
+            organisationId={organisationId}
+            showChartLegend={showChartLegend}
+            serieQueries={serieQueries}
           />
         </div>
       );
@@ -92,7 +114,8 @@ class OTQLResultRenderer extends React.Component<Props> {
       );
     }
 
-    return !hasFeature('query-tool-graphs') || !(result && isAggregateResult(result.rows)) ? (
+    return !hasFeature('query-tool-graphs') ||
+      !(result && isOTQLResult(result) && isAggregateResult(result.rows)) ? (
       <div className='mcs-otqlQuery_result'>
         {result && (
           <React.Fragment>
@@ -100,10 +123,10 @@ class OTQLResultRenderer extends React.Component<Props> {
               <FormattedMessage
                 id='otql-result-renderer-card-subtitle-duration'
                 defaultMessage='Took {duration}ms'
-                values={{ duration: result.took }}
+                values={{ duration: (result as OTQLResult).took }}
               />
             </Tag>
-            {result.cache_hit && (
+            {(result as OTQLResult).cache_hit && (
               <Tag color={colors['mcs-success']}>
                 <FormattedMessage
                   id='otql-result-renderer-card-subtitle-cache'

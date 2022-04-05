@@ -161,6 +161,8 @@ import {
   AuthService,
   ITagService,
   TagService,
+  ChartDatasetService,
+  IChartDatasetService,
 } from '@mediarithmics-private/advanced-components';
 
 export const container = new Container();
@@ -316,6 +318,7 @@ container
   .bind<IStandardSegmentBuilderQueryService>(TYPES.IStandardSegmentBuilderQueryService)
   .to(StandardSegmentBuilderQueryService);
 container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
+container.bind<IChartDatasetService>(TYPES.IChartDatasetService).to(ChartDatasetService);
 
 export const { lazyInject } = getDecorators(container, false);
 

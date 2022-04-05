@@ -605,6 +605,58 @@
   }
 }
 
+.mcs-otqlInputEditor_serieQuery {
+  .mcs-otqlInputEditor_deleteSerie,
+  .mcs-otqlInputEditor_settings_button {
+    float: right;
+    font-size: 20px;
+  }
+  .mcs-otqlInputEditor_deleteSerie {
+    margin-top: 20px;
+  }
+  .mcs-otqlInputEditor_settings_button {
+    margin-top: 10px;
+  }
+  .mcs-otqlInputEditor_serieButtons {
+    padding: 0px 20px;
+    .mcs-otqlInputEditor_newSerieButton,
+    .mcs-otqlInputEditor_newSerieButton:hover,
+    .mcs-otqlInputEditor_newSerieButton:active,
+    .mcs-otqlInputEditor_newSerieButton:focus,
+    .mcs-otqlInputEditor_run_button,
+    .mcs-otqlInputEditor_abort_button {
+      font-family: @font-family-medium;
+      font-size: 12px;
+      font-weight: 500;
+      color: @info-color;
+      background: none;
+      padding: 10px 236px;
+      border-radius: 3px;
+      border: solid 1px #d3dbe1;
+      width: 100%;
+      margin-bottom: 15px;
+      box-shadow: 0;
+    }
+    .mcs-otqlInputEditor_run_button,
+    .mcs-otqlInputEditor_abort_button {
+      color: white;
+      background-color: @info-color;
+      margin-left: 0px;
+      margin-top: 30px;
+    }
+    .mcs-otqlInputEditor_run_button {
+      background-color: @info-color;
+    }
+    .mcs-otqlInputEditor_abort_button {
+      background-color: @primary-color;
+    }
+  }
+  .mcs-card {
+    background-color: #f0f3f5;
+    margin-bottom: 0px;
+  }
+}
+
 .mcs-otqlChart_radar {
   position: absolute;
   top: 1px;
@@ -760,7 +812,4 @@
   justify-content: flex-end;
   width: auto;
   margin-top: 20px;
-}
-
-.mcs-otqlChart_items_share_button {
 }
