@@ -17,7 +17,11 @@ import { lazyInject } from '../../config/inversify.config';
 import { IQueryService } from '../../services/QueryService';
 import { IExportService } from '../../services/Library/ExportService';
 import QueryToolSelector from '../QueryTool/QueryToolSelector';
-import { ITagService, MicsReduxState } from '@mediarithmics-private/advanced-components';
+import {
+  ITagService,
+  MicsReduxState,
+  UserWorkspaceResource,
+} from '@mediarithmics-private/advanced-components';
 import { Alert } from 'antd';
 import { ProcessingSelectionResource } from '../../models/processing';
 import injectNotifications, {
@@ -35,7 +39,6 @@ interface MapStateToProps {
 
 interface QueryToolPageState {
   createdQueryId?: string;
-  selectedDatamart?: DatamartResource;
 }
 
 type Props = RouteComponentProps<QueryToolPageRouteParams> &
@@ -72,46 +75,31 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
     super(props);
     this.state = {
       createdQueryId: undefined,
-      selectedDatamart: this.getDefaultDatamart(),
     };
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-    const {
-      match: {
-        params: { organisationId: prevOrganisationId },
-      },
-    } = prevProps;
-    if (organisationId !== prevOrganisationId) {
-      this.setState({
-        selectedDatamart: this.getDefaultDatamart(),
-      });
-    }
-  }
+  getSelectedDatamart = (): DatamartResource | undefined => {
+    const { location, connectedUser } = this.props;
 
-  getWorkspace = () => {
-    const { connectedUser } = this.props;
+    let selectedDatamart: DatamartResource | undefined;
 
-    return (connectedUser as UserProfileResource).workspaces.find(
-      w => w.organisation_id === this.props.match.params.organisationId,
+    const orgWp = connectedUser.workspaces.find(
+      (w: UserWorkspaceResource) => w.organisation_id === this.props.match.params.organisationId,
     );
-  };
 
-  getDefaultDatamart = () => {
-    const orgWp = this.getWorkspace();
+    const datamartIdQueryString = queryString.parse(location.search).datamartId;
 
-    return orgWp?.datamarts?.length === 1 ? orgWp.datamarts[0] : undefined;
-  };
+    if (orgWp?.datamarts?.length === 1) {
+      selectedDatamart = orgWp.datamarts[0];
+    }
 
-  getSelectedDatamart = (datamartId: string) => {
-    const orgWp = this.getWorkspace();
+    if (datamartIdQueryString && orgWp !== undefined) {
+      selectedDatamart = orgWp.datamarts.find(
+        (d: DatamartResource) => d.id === datamartIdQueryString,
+      );
+    }
 
-    return orgWp?.datamarts.find((d: DatamartResource) => d.id === datamartId);
+    return selectedDatamart;
   };
 
   render() {
@@ -122,11 +110,9 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
         pathname: location.pathname,
         search: queryString.stringify({ datamartId: selection.id }),
       });
-
-      this.setState({ selectedDatamart: this.getSelectedDatamart(selection.id) });
     };
 
-    const selectedDatamart = this.state.selectedDatamart;
+    const selectedDatamart = this.getSelectedDatamart();
 
     const OTQLActionbar = (query: string, datamartId: string) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
