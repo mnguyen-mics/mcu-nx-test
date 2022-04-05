@@ -127,11 +127,11 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
     funnelData.global.steps = newSteps.map((newStep, i) => {
       if (i >= index - 1) {
         const newConversion =
-          newStep.conversion && previousFunnelData.global.steps[i]?.conversion
+          newStep.conversion && previousFunnelData.global.steps[i]?.conversion !== undefined
             ? newStep.conversion - (previousFunnelData.global.steps[i].conversion || 0)
             : undefined;
         const newAmount =
-          newStep.amount && previousFunnelData.global.steps[i]?.amount
+          newStep.amount && previousFunnelData.global.steps[i]?.amount !== undefined
             ? newStep.amount - (previousFunnelData.global.steps[i].amount || 0)
             : undefined;
         return {
