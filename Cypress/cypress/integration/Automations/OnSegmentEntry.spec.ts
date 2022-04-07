@@ -11,16 +11,22 @@ describe('OnSegmentEntry test', () => {
   it('Should test the creation of an automation with On Segment Entry', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       cy.switchOrg(data.organisationName);
-      const query = await createQuery(data.datamartId, {
-        datamart_id: data.datamartId,
-        query_language: 'OTQL',
-        query_text: 'select { id } from UserPoint',
-      });
+
+      const query = await createQuery(
+        data.datamartId,
+        {
+          datamart_id: data.datamartId,
+          query_language: 'OTQL',
+          query_text: 'select { id } from UserPoint',
+        },
+        data.accessToken,
+      );
       const userQuery = await createUserQuery(
         data.datamartId,
         data.organisationId,
         query.id,
         'UserQuery for On Segment Entry',
+        data.accessToken,
       );
 
       // Automation Creation

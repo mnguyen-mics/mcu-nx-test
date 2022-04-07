@@ -17,6 +17,10 @@ describe('User Profile Import Test', () => {
     });
   };
 
+  beforeEach(() => {
+    loginAndInitiateDocImportCreation();
+  });
+
   // After each test, local storage is saved
   afterEach(() => {
     cy.clearLocalStorage();
@@ -43,7 +47,6 @@ describe('User Profile Import Test', () => {
   };
 
   it('should succeed if import profile input file is valid', () => {
-    loginAndInitiateDocImportCreation();
     importTypeFunc('User Profile');
     uploadFile('00-testProfiles.ndjson');
     // Wait between the click of the Ok button and the upload of the file so that the interface can catch up
@@ -54,7 +57,6 @@ describe('User Profile Import Test', () => {
   });
 
   it('should succeed if import activites input file is valid', () => {
-    loginAndInitiateDocImportCreation();
     importTypeFunc('User Activity');
     uploadFile('01-testActivities.ndjson');
     // Wait between the click of the Ok button and the upload of the file so that the interface can catch up
@@ -65,7 +67,6 @@ describe('User Profile Import Test', () => {
   });
 
   it('should fail if import profile input file does not match user profile resource', () => {
-    loginAndInitiateDocImportCreation();
     importTypeFunc('User Profile');
     uploadFile('02-wrongData.ndjson');
     // Wait between the click of the Ok button and the upload of the file so that the interface can catch up

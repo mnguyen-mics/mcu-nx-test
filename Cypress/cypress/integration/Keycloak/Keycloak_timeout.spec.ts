@@ -4,7 +4,6 @@ import faker from 'faker';
 describe('Should get timeout after 5 login attempts', () => {
   beforeEach(() => {
     cy.logout();
-    window.localStorage.setItem('enable_keycloak', 'true');
     cy.visit('/');
   });
 

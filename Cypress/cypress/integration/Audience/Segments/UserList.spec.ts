@@ -1,14 +1,11 @@
 import faker from 'faker';
 describe('UserList segment test', () => {
-  before(() => {
-    cy.login();
-  });
   beforeEach(() => {
-    cy.restoreLocalStorageCache();
+    cy.login();
   });
 
   afterEach(() => {
-    cy.saveLocalStorageCache();
+    cy.clearLocalStorage();
   });
 
   it('Should test the UserList Forms', () => {

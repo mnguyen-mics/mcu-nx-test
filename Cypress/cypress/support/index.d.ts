@@ -10,15 +10,6 @@ declare namespace Cypress {
     login(email?: string, password?: string): Chainable<any>;
 
     /**
-     * Log in navigator. Default values are 'dev@mediarithmics.com' and 'aoc', so remember to change this if you are doing calls on prod° environment..
-     * @param email
-     * @param password
-     * @example
-     * cy.login('toto**at**mediarithmics.com', '1234')
-     */
-    kcLogin(email?: string, password?: string): Chainable<any>;
-
-    /**
      * Logout from computing-console
      * @param root
      * @param realm

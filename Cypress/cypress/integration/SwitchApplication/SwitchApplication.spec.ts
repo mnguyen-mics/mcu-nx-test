@@ -1,10 +1,8 @@
 describe('This test should test the switch application button in the new topBar', () => {
   beforeEach(() => {
-    window.localStorage.setItem('enable_keycloak', 'true');
-    window.localStorage.setItem('features', '["new-navigation-system"]');
     cy.logout();
     cy.visit(`${Cypress.config().baseUrl}`);
-    cy.kcLogin();
+    cy.login();
     cy.fixture('init_infos').then(data => {
       cy.get('.mcs-organisationListSwitcher_component').click();
       cy.get('.mcs-organisationListSwitcher_searchInput').first().type(data.organisationName);

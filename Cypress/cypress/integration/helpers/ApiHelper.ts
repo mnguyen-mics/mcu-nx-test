@@ -8,10 +8,7 @@ export interface DataResponse<T> extends ApiResponse {
   data: T;
 }
 
-const request = (method: string, endpoint: string, body?: any) => {
-  const access_token = localStorage.getItem('access_token');
-  if (!access_token) throw Error('Could not find access_token in local storage !');
-
+const request = (method: string, endpoint: string, access_token: string, body?: any) => {
   const request: RequestInit = {
     method,
     headers: {
@@ -27,7 +24,11 @@ const request = (method: string, endpoint: string, body?: any) => {
   );
 };
 
-export const getRequest = (endpoint: string, body?: any) => request('GET', endpoint);
-export const postRequest = (endpoint: string, body?: any) => request('POST', endpoint, body);
-export const putRequest = (endpoint: string, body?: any) => request('PUT', endpoint, body);
-export const deleteRequest = (endpoint: string, body?: any) => request('delete', endpoint);
+export const getRequest = (endpoint: string, access_token: string, body?: any) =>
+  request('GET', endpoint, access_token);
+export const postRequest = (endpoint: string, access_token: string, body?: any) =>
+  request('POST', endpoint, access_token, body);
+export const putRequest = (endpoint: string, access_token: string, body?: any) =>
+  request('PUT', endpoint, access_token, body);
+export const deleteRequest = (endpoint: string, access_token: string, body?: any) =>
+  request('delete', endpoint, access_token);
