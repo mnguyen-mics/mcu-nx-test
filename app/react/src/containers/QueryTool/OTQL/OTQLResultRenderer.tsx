@@ -14,6 +14,7 @@ import {
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
 import { CountRenderer } from './CountRenderer';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 export interface OTQLResultRendererProps {
   result: OTQLResult | null;
@@ -23,11 +24,25 @@ export interface OTQLResultRendererProps {
   datamartId: string;
 }
 
-type Props = OTQLResultRendererProps & InjectedThemeColorsProps & InjectedFeaturesProps;
+type Props = OTQLResultRendererProps &
+  InjectedThemeColorsProps &
+  InjectedFeaturesProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class OTQLResultRenderer extends React.Component<Props> {
   render() {
-    const { result, loading, aborted, colors, hasFeature, query, datamartId } = this.props;
+    const {
+      result,
+      loading,
+      aborted,
+      colors,
+      hasFeature,
+      query,
+      datamartId,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     let content: React.ReactNode;
     if (loading) {
@@ -56,6 +71,7 @@ class OTQLResultRenderer extends React.Component<Props> {
             rootAggregations={aggregations}
             query={query}
             datamartId={datamartId}
+            organisationId={organisationId}
           />
         </div>
       );
@@ -129,4 +145,5 @@ class OTQLResultRenderer extends React.Component<Props> {
 export default compose<Props, OTQLResultRendererProps>(
   injectThemeColors,
   injectFeatures,
+  withRouter,
 )(OTQLResultRenderer);
