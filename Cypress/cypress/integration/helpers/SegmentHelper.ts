@@ -53,6 +53,7 @@ export async function createUserQuery(
   organisationId: number,
   queryId: string,
   segmentName: string,
+  access_token: string,
 ): Promise<UserQuerySegment> {
   const endpoint = `audience_segments?organisation_id=${organisationId}`;
   const body = {
@@ -63,7 +64,7 @@ export async function createUserQuery(
     name: segmentName,
     persisted: true,
   };
-  return postRequest(endpoint, body).then(({ data: segment }) => {
+  return postRequest(endpoint, access_token, body).then(({ data: segment }) => {
     return segment;
   });
 }

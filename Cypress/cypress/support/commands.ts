@@ -11,46 +11,21 @@
 //
 import faker from 'faker';
 import 'cypress-file-upload';
-import LoginPage from '../integration/components/LoginPage';
+import loginPageKeycloak from '../pageobjects/LoginPageKeycloak';
 
 before(() => {
   cy.initTestContext();
 });
 
 // -- This is a parent command --
-Cypress.Commands.add(
-  'login',
-  (email = `${Cypress.env('devMail')}`, password = `${Cypress.env('devPwd')}`) => {
-    const loginPage = new LoginPage();
-    const baseUrl = Cypress.config().baseUrl;
-    // cy.server()
-    loginPage.visit();
-    cy.url().should('eq', baseUrl + '/#/login');
-
-    loginPage.fillEmail(email);
-    loginPage.fillPassword(password);
-
-    loginPage.submit();
-
-    const waitForAccessTokenInLocalStorage = () => {
-      cy.wait(50).then(() => {
-        if (!localStorage.getItem('access_token')) waitForAccessTokenInLocalStorage();
-      });
-    };
-    waitForAccessTokenInLocalStorage();
-  },
-);
-
 // Login with keycloak without external identity provider
 // This function will replace the login function when keycloak will be deployed in production
 Cypress.Commands.add(
-  'kcLogin',
+  'login',
   (email = `${Cypress.env('devMail')}`, password = `${Cypress.env('devPwd')}`) => {
+    cy.logout();
     cy.visit('/');
-    cy.get('#username').type(email);
-    cy.get('#kc-login').click();
-    cy.get('#password').type(password);
-    cy.get('#kc-login').click();
+    loginPageKeycloak.login(email, password);
   },
 );
 

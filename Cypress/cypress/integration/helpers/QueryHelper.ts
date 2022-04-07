@@ -15,9 +15,10 @@ export interface QueryResource extends QueryCreateRequest {
 export async function createQuery(
   datamartId: number,
   query: QueryCreateRequest,
+  access_token: string,
 ): Promise<QueryResource> {
   const endpoint = `datamarts/${datamartId}/queries`;
-  return postRequest(endpoint, query).then(({ data: query }) => {
+  return postRequest(endpoint, access_token, query).then(({ data: query }) => {
     return query;
   });
 }

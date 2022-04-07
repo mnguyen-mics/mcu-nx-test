@@ -4,7 +4,6 @@ import faker from 'faker';
 describe('Should not access the platform when using bad credentials', () => {
   beforeEach(() => {
     cy.logout();
-    window.localStorage.setItem('enable_keycloak', 'true');
     cy.visit('/');
   });
 

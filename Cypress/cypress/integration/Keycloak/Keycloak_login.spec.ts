@@ -3,7 +3,6 @@ import loginPageKeycloak from '../../pageobjects/LoginPageKeycloak';
 describe('Should test keycloak login', () => {
   beforeEach(() => {
     cy.logout();
-    window.localStorage.setItem('enable_keycloak', 'true');
     cy.visit('/');
   });
 
