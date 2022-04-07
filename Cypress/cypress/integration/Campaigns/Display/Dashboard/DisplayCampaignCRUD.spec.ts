@@ -91,7 +91,7 @@ describe('The purpose of this test is to check if display campaign CRUD is prope
         .should('contain', updatedCampaignName);
 
       // Archive campaign
-      cy.get('.mcs-chevron').first().click();
+      cy.get('.mcs-table-container').find('.mcs-chevron').first().click();
       cy.contains('Archive').click();
       cy.contains('Archive now').click();
       cy.should('not.contain', updatedCampaignName);
