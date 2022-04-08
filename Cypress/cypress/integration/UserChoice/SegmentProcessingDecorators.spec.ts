@@ -24,7 +24,8 @@ describe('User Processing on segments tests', () => {
       cy.contains('Advanced').click();
       cy.get('[id="technical_name"]').type(faker.lorem.word());
       cy.get('[type="submit"]').contains('Save').click({ force: true });
-      cy.get('.anticon.anticon-appstore.menu-icon').click({ force: true });
+      cy.get('.mcs-header_actions').find('.mcs-header_actions_appLauncher').click();
+      cy.contains('Navigator').click();
       cy.contains('Audience').click();
       cy.contains('Segments').click();
       // Click on "new Segment"
