@@ -3,7 +3,7 @@ import { BASE_CHART_HEIGHT } from '../../../../components/Charts/domain';
 import { Select } from 'antd';
 import moment from 'moment';
 
-export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie';
+export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie' | 'table';
 
 export interface QuickOption {
   key: string;
