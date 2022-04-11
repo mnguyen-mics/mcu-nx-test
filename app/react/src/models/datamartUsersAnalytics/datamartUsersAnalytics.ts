@@ -13,6 +13,7 @@ type ChartType =
   | 'COUNT'
   | 'TABS'
   | 'SINGLE_STAT'
+  | 'TABLE'
   | 'COLUMN';
 
 export type Dataset = { [key: string]: string | number | undefined };
