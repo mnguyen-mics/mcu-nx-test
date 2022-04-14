@@ -9,6 +9,7 @@ export interface QuickOption {
   key: string;
   value: string;
   label: string;
+  className?: string;
 }
 
 export interface QuickOptionsSelector {
@@ -166,16 +167,19 @@ export function getQuickOptionsForChartType(_chartType: chartType, hasDateHistog
         key: 'count',
         value: 'count',
         label: 'Count',
+        className: 'mcs-chartOptions_count',
       },
       {
         key: 'percentage',
         value: 'percentage',
         label: 'Percentage',
+        className: 'mcs-chartOptions_percentage',
       },
       {
         key: 'index',
         value: 'index',
         label: 'Index',
+        className: 'mcs-chartOptions_index',
       },
     ],
   };
@@ -254,7 +258,12 @@ function renderQuickOptionsSelector(
     >
       {quickOptionSelector.options.map(option => {
         return (
-          <Select.Option key={option.key} title={option.key} value={option.value}>
+          <Select.Option
+            key={option.key}
+            title={option.key}
+            value={option.value}
+            className={option.className}
+          >
             {option.label}
           </Select.Option>
         );
