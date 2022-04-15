@@ -25,7 +25,6 @@ describe('Segments lookalike tests', () => {
   it('should create a user lookalike segment from user list segment and edit it', () => {
     const segmentDescription = faker.random.words(3);
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.switchOrg(data.organisationName);
       cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
       cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
       cy.createSegmentFromUI('User List');

@@ -1,4 +1,5 @@
 import faker from 'faker';
+import LeftMenu from '../components/LeftMenu';
 
 describe('Should test the datamart selector', () => {
   const datamartName = faker.random.word();
@@ -31,11 +32,10 @@ describe('Should test the datamart selector', () => {
 
   it('Should have datamartSelector on audience home page', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.home').click();
+      LeftMenu.goToHomePage();
       checkDatamartSelector(datamartName, data.datamartName);
       cy.contains(data.datamartName).click();
-      cy.get('.mcs-homePage_breadcrumb').should('be.visible');
+      cy.get('.mcs-content-container').should('be.visible');
     });
   });
 

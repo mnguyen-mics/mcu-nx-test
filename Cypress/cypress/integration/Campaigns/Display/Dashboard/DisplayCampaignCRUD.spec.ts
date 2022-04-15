@@ -1,4 +1,3 @@
-import faker from 'faker';
 describe('The purpose of this test is to check if display campaign CRUD is properly working', () => {
   const second = 1000;
   const campaignName = '#bogoss ' + (Math.random() * 100).toFixed(0);
@@ -91,6 +90,7 @@ describe('The purpose of this test is to check if display campaign CRUD is prope
         .should('contain', updatedCampaignName);
 
       // Archive campaign
+      cy.wait(1000);
       cy.get('.mcs-table-container').find('.mcs-chevron').first().click();
       cy.contains('Archive').click();
       cy.contains('Archive now').click();

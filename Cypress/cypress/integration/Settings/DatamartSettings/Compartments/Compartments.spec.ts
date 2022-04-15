@@ -1,18 +1,12 @@
 import faker from 'faker';
 describe('Compartments test', () => {
-  before(() => {
-    cy.login();
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.switchOrg(data.organisationName);
-    });
-  });
+  before(() => {});
 
   beforeEach(() => {
-    cy.restoreLocalStorageCache();
-  });
-
-  afterEach(() => {
-    cy.saveLocalStorageCache();
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.login();
+      cy.switchOrg(data.organisationName);
+    });
   });
 
   it('Should display settings/datamart/compartments list', () => {

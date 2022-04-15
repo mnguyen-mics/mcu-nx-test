@@ -1,18 +1,10 @@
 import faker from 'faker';
 describe('partitions test', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
     });
-  });
-
-  beforeEach(() => {
-    cy.restoreLocalStorageCache();
-  });
-
-  afterEach(() => {
-    cy.saveLocalStorageCache();
   });
 
   it('Should display partitions list', () => {
