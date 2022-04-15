@@ -132,19 +132,36 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
   };
 
   handleChangeMultipleValues = (values: LabeledValue[]) => {
-    const { input, handleValue } = this.props;
-    this.setState(
-      {
-        value: values,
-        currentValue: undefined,
-      },
-      () => {
-        this.filterData();
-      },
-    );
-    input.onChange(values.map(i => i.key));
-    if (handleValue) {
-      handleValue(values, input.name);
+    const { input, handleValue, type } = this.props;
+    if (type === 'Int' || type === 'Float') {
+      const filteredValues = values.filter(value => !isNaN(Number(value.key)));
+      input.onChange(filteredValues.map(value => Number(value.key)));
+      if (handleValue) {
+        handleValue(filteredValues, input.name);
+      }
+      this.setState(
+        {
+          value: filteredValues,
+          currentValue: undefined,
+        },
+        () => {
+          this.filterData();
+        },
+      );
+    } else {
+      input.onChange(values.map(value => value.key));
+      if (handleValue) {
+        handleValue(values, input.name);
+      }
+      this.setState(
+        {
+          value: values,
+          currentValue: undefined,
+        },
+        () => {
+          this.filterData();
+        },
+      );
     }
   };
 

@@ -315,6 +315,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
       };
       return (
         <FormSearchObjectListField
+          type={variable.type?.toString()}
           component={FormSearchObjectList}
           handleNoValue={handleNoValue}
           {...formProps}
