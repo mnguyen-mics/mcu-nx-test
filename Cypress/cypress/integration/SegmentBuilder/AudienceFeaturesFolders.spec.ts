@@ -59,6 +59,7 @@ describe('This test should check that the audience feature folders work properly
         cy.goToHome(data.organisationId);
         const audienceFeaturesFolderName = faker.random.word();
         createAudienceFeaturesFolder(data.datamartName, audienceFeaturesFolderName);
+        cy.wait(1000);
         cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
         cy.get('.mcs-audienceFeatureTable_dropDownMenu--edit').click();
         cy.get('.mcs-audienceFeatureFolder').click();
@@ -141,6 +142,7 @@ describe('This test should check that the audience feature folders work properly
       }).then(() => {
         const audienceFeaturesFolderName = faker.random.word();
         createAudienceFeaturesFolder(data.datamartName, audienceFeaturesFolderName);
+        cy.wait(1000);
         cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
         cy.get('.mcs-audienceFeatureTable_dropDownMenu--edit').click();
         cy.get('.mcs-audienceFeatureFolder').click();

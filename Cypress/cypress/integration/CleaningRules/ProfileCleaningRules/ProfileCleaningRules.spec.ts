@@ -28,6 +28,7 @@ describe('Profile Cleaning Rules Tests', () => {
         headers: { Authorization: data.accessToken },
       }).then(response => {
         const compartmentId: number = response.body.data[0].compartment_id;
+        cy.wait(1000);
         cy.get('.mcs-cleaningRules_table').find('tr').eq(1).find('.mcs-chevron').click();
         cy.get('.mcs-cleaningRulesActions_EDIT').click();
         // Update the cleaning rule
@@ -41,6 +42,7 @@ describe('Profile Cleaning Rules Tests', () => {
         cy.get('.mcs-cleaningRules_table').should('contain', compartmentId);
         cy.get('.mcs-cleaningRules_table').should('contain', 'DRAFT');
         // Delete the compartment filter
+        cy.wait(1000);
         cy.get('.mcs-cleaningRules_table').find('tr').eq(1).find('.mcs-chevron').click();
         cy.get('.mcs-cleaningRulesActions_EDIT').click();
         cy.get('.mcs-cleaningRules_seperator').should('contain', 'after');
@@ -51,6 +53,7 @@ describe('Profile Cleaning Rules Tests', () => {
         cy.get('.mcs-cleaningRules_table').should('contain', '5 years, 5 months, 20 days');
         cy.get('.mcs-cleaningRules_table').should('contain', 'All');
         // Delete the rule
+        cy.wait(1000);
         cy.get('.mcs-cleaningRules_table').find('tr').eq(1).find('.mcs-chevron').click();
         cy.get('.mcs-cleaningRulesActions_DELETE').click();
         cy.get('.mcs-cleaningRulesContainer_confirm_delete').click();
@@ -70,11 +73,13 @@ describe('Profile Cleaning Rules Tests', () => {
       cy.get('.mcs-form_saveButton_cleaningRuleForm').click();
       cy.get('.mcs-cleaningRulesContainer_update_status').click();
       cy.get('.mcs-cleaningRulesContainer_status_confirm_modal').click();
+      cy.wait(1000);
       cy.get('.mcs-cleaningRules_table').find('tr').eq(1).find('.mcs-chevron').click();
       cy.get('.mcs-cleaningRulesActions_EDIT').click();
       cy.get('.mcs-cleaningRulesActions_DELETE').click();
       cy.get('.mcs-cleaningRulesContainer_update_status').click();
       cy.get('.mcs-cleaningRulesContainer_status_confirm_modal').click();
+      cy.wait(1000);
       cy.get('.mcs-cleaningRules_table').find('tr').eq(1).find('.mcs-chevron').click();
       cy.get('.mcs-cleaningRulesActions_EDIT').click();
       cy.get('.mcs-cleaningRulesActions_DELETE').click();

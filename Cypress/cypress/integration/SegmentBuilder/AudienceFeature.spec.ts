@@ -47,6 +47,7 @@ describe('This test should check that the audience feature forms are working pro
 
       // Edit an audience feature
       cy.get('.mcs-audienceFeature_table').within($table => {
+        cy.wait(1000);
         cy.get('.mcs-chevron').first().click();
       });
       cy.get('.mcs-dropdown-actions').contains('Edit').click();
@@ -102,6 +103,7 @@ describe('This test should check that the audience feature forms are working pro
 
       // Delete an audience feature
       cy.get('.mcs-audienceFeature_table').within($table => {
+        cy.wait(1000);
         cy.get('.mcs-chevron').first().click();
       });
       cy.get('.mcs-dropdown-actions').contains('Delete').click();
