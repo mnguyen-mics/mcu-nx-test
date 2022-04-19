@@ -5,3 +5,76 @@
     font-size: 0.8em;
   }
 }
+
+.mcs-charts-list-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-right: 36px;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.mcs-charts-list-item_icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  position: absolute;
+  right: 16px;
+}
+
+.mcs-charts-list-item_title {
+  font-size: 12px;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-weight: 400;
+  color: #000000a6;
+}
+
+.mcs-charts-list-item_author {
+  font-size: 10px;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-weight: 400;
+  color: #000000a6;
+  margin-right: 5px;
+}
+
+.mcs-charts-list-item_date {
+  font-size: 10px;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-weight: 400;
+  color: #0000006e;
+}
+
+.mcs-charts-search-panel {
+  height: 70vh;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: max-width 0.3s ease;
+  margin-left: 10px;
+  background-color: #fff;
+  border-radius: 6px;
+}
+
+.mcs-charts-search-panel_search-bar {
+  margin: 20px 10px 20px 10px;
+  height: 40px;
+  width: ~'calc(100% - 20px)';
+  input {
+    padding-left: 15px;
+    ::placeholder {
+      color: #cccccc;
+    }
+  }
+}
+
+.mcs-charts-search-panel_title {
+  font-size: 12px;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-weight: 400;
+  color: #000000;
+  line-height: 32px;
+  margin-left: 20px;
+  margin-top: 20px;
+}

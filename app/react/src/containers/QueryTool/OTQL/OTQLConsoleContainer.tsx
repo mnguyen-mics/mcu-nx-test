@@ -19,6 +19,7 @@ import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/Run
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import OTQLRequest from './OTQLRequest';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import ChartsSearchPanel from '../ChartsSearchPanel';
 
 const messages = defineMessages({
   queryToSave: {
@@ -284,8 +285,34 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     });
   };
 
+  renderSchemaVisualizer = (startType: string) => {
+    const { rawSchema } = this.state;
+
+    return (
+      <div className='schema-visualizer'>
+        <SchemaVizualizer
+          schema={
+            rawSchema && rawSchema.length > 0
+              ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
+              : undefined
+          }
+          disableDragAndDrop={true}
+        />
+      </div>
+    );
+  };
+
   render() {
-    const { datamartId, intl, editionMode, createdQueryId } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+      datamartId,
+      intl,
+      editionMode,
+      createdQueryId,
+      hasFeature,
+    } = this.props;
     const { schemaLoading, rawSchema, activeKey, panes, tabQueries, query } = this.state;
 
     const currentQuery =
@@ -344,16 +371,18 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                     )}
                     <div className={'mcs-OTQLConsoleContainer_tab_content'}>
                       {pane.content}
-                      <div className='schema-visualizer'>
-                        <SchemaVizualizer
-                          schema={
-                            rawSchema && rawSchema.length > 0
-                              ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
-                              : undefined
-                          }
-                          disableDragAndDrop={true}
-                        />
-                      </div>
+                      {hasFeature('datastudio-query_tool-charts_loader') && (
+                        <Tabs key={0} type='line' className='mcs-OTQLConsoleContainer_right-tab'>
+                          <Tabs.TabPane tab='Schema' key={1}>
+                            {this.renderSchemaVisualizer(startType)}
+                          </Tabs.TabPane>
+                          <Tabs.TabPane tab='Charts' key={2}>
+                            <ChartsSearchPanel organisationId={organisationId} />
+                          </Tabs.TabPane>
+                        </Tabs>
+                      )}
+                      {!hasFeature('datastudio-query_tool-charts_loader') &&
+                        this.renderSchemaVisualizer(startType)}
                     </div>
                   </TabPane>
                 ))}
