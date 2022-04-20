@@ -78,9 +78,6 @@ class MonitoringActionbar extends React.Component<Props, State> {
           isLoading: false,
         });
 
-        // console.log(res.data)
-        // console.log(this.props)
-
         const defaultCompartment =
           res.data.length > 0 ? res.data.filter(c => c.default)[0] : undefined;
         if (defaultCompartment) {

@@ -7,6 +7,8 @@ import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult'
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { compose } from 'recompose';
 import { SettingOutlined } from '@ant-design/icons';
+import OTQLSeriesEditor from './OTQLSeriesEditor';
+import { SerieQueryModel } from './OTQLRequest';
 
 export interface OtqlInputEditorProps {
   onRunQuery: (query: string) => void;
@@ -24,6 +26,14 @@ export interface OtqlInputEditorProps {
     precision: QueryPrecisionMode,
   ) => void;
   queryEditorClassName?: string;
+  isQuerySeriesActivated?: boolean;
+  serieQueries: SerieQueryModel[];
+  onInputChange: (id: string) => (e: any) => void;
+  updateQueryModel: (id: string) => (query: string) => void;
+  updateNameModel: (id: string) => (e: any) => void;
+  displaySerieInput: (id: string) => (e: any) => void;
+  addNewSerie: (index: number) => () => void;
+  deleteSerie: (id: string) => () => void;
 }
 
 type Props = OtqlInputEditorProps & InjectedFeaturesProps;
@@ -59,7 +69,8 @@ class OTQLInputEditor extends React.Component<Props, State> {
   };
 
   buildEditorActions = () => {
-    const { onRunQuery, onAbortQuery, runningQuery, hasFeature } = this.props;
+    const { onRunQuery, onAbortQuery, runningQuery, hasFeature, isQuerySeriesActivated } =
+      this.props;
     const { query } = this.state;
     const clearButton = (
       <Button onClick={this.clearQuery}>
@@ -121,14 +132,14 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
     return !hasFeature('query-tool-graphs') ? (
       <div>
-        {query && clearButton}
+        {query && !isQuerySeriesActivated && clearButton}
         {runningQuery ? abortButton : runButton}
         {params}
       </div>
     ) : (
       <div>
         {newParams}
-        {query && newClearButton}
+        {query && !isQuerySeriesActivated && newClearButton}
         {runningQuery ? newAbortButton : newRunButton}
       </div>
     );
@@ -152,6 +163,14 @@ class OTQLInputEditor extends React.Component<Props, State> {
       handleChange,
       queryEditorClassName = 'mcs-otqlInputEditor_otqlConsole',
       hasFeature,
+      isQuerySeriesActivated,
+      serieQueries,
+      onInputChange,
+      updateQueryModel,
+      updateNameModel,
+      displaySerieInput,
+      addNewSerie,
+      deleteSerie,
     } = this.props;
 
     const onCacheChange = (a: boolean) => handleChange(evaluateGraphQl, a, precision);
@@ -159,15 +178,41 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const onPrecisionChange = (a: QueryPrecisionMode) => handleChange(evaluateGraphQl, useCache, a);
 
     return (
-      <Card
-        title={<FormattedMessage id='queryTool.otql.card.title' defaultMessage='OTQL' />}
-        buttons={this.buildEditorActions()}
-        className={
-          hasFeature('query-tool-graphs')
-            ? 'mcs-otqlInputEditor_card mcs-modal_container'
-            : 'mcs-modal_container'
-        }
-      >
+      <React.Fragment>
+        {isQuerySeriesActivated ? (
+          <OTQLSeriesEditor
+            datamartId={datamartId}
+            actionButtons={this.buildEditorActions()}
+            serieQueries={serieQueries}
+            onInputChange={onInputChange}
+            updateQueryModel={updateQueryModel}
+            updateNameModel={updateNameModel}
+            displaySerieInput={displaySerieInput}
+            addNewSerie={addNewSerie}
+            deleteSerie={deleteSerie}
+          />
+        ) : (
+          <Card
+            title={<FormattedMessage id='queryTool.otql.card.title' defaultMessage='OTQL' />}
+            buttons={this.buildEditorActions()}
+            className={
+              hasFeature('query-tool-graphs')
+                ? 'mcs-otqlInputEditor_card mcs-modal_container'
+                : 'mcs-modal_container'
+            }
+          >
+            <OtqlConsole
+              onChange={this.updateQuery}
+              datamartId={datamartId}
+              value={query}
+              showPrintMargin={false}
+              height='250px'
+              enableBasicAutocompletion={true}
+              enableLiveAutocompletion={false}
+              className={queryEditorClassName ? queryEditorClassName : ''}
+            />
+          </Card>
+        )}
         <Modal
           title='Query Settings'
           visible={this.state.visible}
@@ -213,17 +258,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
             </Select>
           </div>
         </Modal>
-        <OtqlConsole
-          onChange={this.updateQuery}
-          datamartId={datamartId}
-          value={query}
-          showPrintMargin={false}
-          height='250px'
-          enableBasicAutocompletion={true}
-          enableLiveAutocompletion={false}
-          className={queryEditorClassName ? queryEditorClassName : ''}
-        />
-      </Card>
+      </React.Fragment>
     );
   }
 }

@@ -12,6 +12,8 @@ import {
   OTQLAggregations,
   OTQLBucket,
   OTQLBuckets,
+  isOTQLAggregations,
+  isAggregateDataset,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { compose } from 'recompose';
 import { Button, McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
@@ -26,11 +28,11 @@ import {
   PieChartOptions,
   RadarChartOptions,
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
-
 import {
   chartType,
   formatDate,
   getBaseChartProps,
+  getChartDataset,
   getChartOption,
   getQuickOptionsForChartType,
   renderQuickOptions,
@@ -41,7 +43,6 @@ import injectNotifications, {
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
-
 import snakeCaseKeys from 'snakecase-keys';
 import {
   DatasetDateFormatter,
@@ -54,11 +55,8 @@ import {
   AggregateDataset,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
-import {
-  AbstractSource,
-  OTQLSource,
-} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
 import { omit } from 'lodash';
+import { SerieQueryModel } from './OTQLRequest';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -79,15 +77,17 @@ interface BucketPath {
 }
 
 // To align source and dataset when building the tree
-interface WrappedAbstractDataset {
+export interface WrappedAbstractDataset {
   dataset: AbstractDataset;
 }
 
 export interface AggregationRendererProps {
-  rootAggregations: OTQLAggregations;
+  rootAggregations: OTQLAggregations | AggregateDataset;
   datamartId: string;
   organisationId: string;
   query?: string;
+  showChartLegend?: boolean;
+  serieQueries?: SerieQueryModel[];
 }
 type Props = AggregationRendererProps &
   InjectedFeaturesProps &
@@ -116,56 +116,72 @@ class AggregationRenderer extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    const defaultQuickOptions: { [key: string]: string } = props.showChartLegend
+      ? {}
+      : {
+          legend: 'no_legend',
+        };
     this.state = {
       aggregationsPath: [],
       selectedView: this.getDefaultView(props.rootAggregations),
-      numberItems:
-        props.rootAggregations &&
-        props.rootAggregations.buckets &&
-        props.rootAggregations.buckets[0] &&
-        props.rootAggregations.buckets[0].buckets &&
-        props.rootAggregations.buckets[0].buckets.length <= 6
-          ? props.rootAggregations.buckets[0].buckets.length
-          : 6,
+      numberItems: this.getNumberItems(),
       selectedChart: 'table',
-      selectedQuickOptions: {},
+      selectedQuickOptions: defaultQuickOptions,
     };
   }
+
+  getNumberItems = () => {
+    const { rootAggregations } = this.props;
+    if (rootAggregations) {
+      if (isOTQLAggregations(rootAggregations)) {
+        return rootAggregations.buckets &&
+          rootAggregations.buckets[0] &&
+          rootAggregations.buckets[0].buckets &&
+          rootAggregations.buckets[0].buckets.length <= 6
+          ? rootAggregations.buckets[0].buckets.length
+          : 6;
+      } else if (isAggregateDataset(rootAggregations)) {
+        return rootAggregations.dataset.length <= 6 ? rootAggregations.dataset.length : 6;
+      }
+    }
+    return 0;
+  };
 
   private async updateDataset(chartProps: any) {
     const { rootAggregations } = this.props;
     const { selectedChart, aggregationsPath, selectedView } = this.state;
+    let data;
+    if (isOTQLAggregations(rootAggregations)) {
+      const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
+      const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
+      const numberOfItems = Math.min(MAX_ELEMENTS, buckets.buckets.length);
+      const dataset: Dataset =
+        this.formatDataset(buckets.buckets.slice(0, numberOfItems), this.state.numberItems) || [];
 
-    const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
-    const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
-    const numberOfItems = Math.min(MAX_ELEMENTS, buckets.buckets.length);
-    const dataset: Dataset =
-      this.formatDataset(buckets.buckets.slice(0, numberOfItems), this.state.numberItems) || [];
+      const aggregateDataset: AggregateDataset = {
+        type: 'aggregate',
+        metadata: {
+          seriesTitles: ['count'],
+        },
+        dataset: dataset,
+      };
 
-    const aggregateDataset: AggregateDataset = {
-      type: 'aggregate',
-      metadata: {
-        seriesTitles: ['count'],
-      },
-      dataset: dataset,
-    };
+      const abstractDataset = getChartDataset(
+        selectedChart,
+        {
+          dataset: aggregateDataset,
+        },
+        true,
+        chartProps,
+      );
 
-    const abstractDataset = this.getChartDataset(
-      selectedChart,
-      {
-        dataset: aggregateDataset,
-      },
-      true,
-      chartProps,
-    );
-
-    const transformed = await this.applyTransformations(
-      this.adaptChartType(selectedChart),
-      abstractDataset,
-    );
+      data = await this.applyTransformations(this.adaptChartType(selectedChart), abstractDataset);
+    } else if (isAggregateDataset(rootAggregations)) {
+      data = rootAggregations;
+    }
 
     this.setState({
-      dataset: transformed,
+      dataset: data,
     });
   }
 
@@ -176,8 +192,8 @@ class AggregationRenderer extends React.Component<Props, State> {
     await this.updateDataset(quickOptions);
   }
 
-  getDefaultView = (aggregations: OTQLAggregations) => {
-    if (aggregations.buckets.length > 0) {
+  getDefaultView = (aggregations: OTQLAggregations | AggregateDataset | undefined) => {
+    if (aggregations && isOTQLAggregations(aggregations) && aggregations.buckets.length > 0) {
       return '0';
     } else {
       return 'metrics';
@@ -191,14 +207,6 @@ class AggregationRenderer extends React.Component<Props, State> {
     });
   }
 
-  private hasPercentageTransformation(quickOptions: any): boolean {
-    return quickOptions.format === 'percentage';
-  }
-
-  private hasDateFormatTransformation(quickOptions: any): boolean {
-    return quickOptions.date_options && quickOptions.date_options.format !== undefined;
-  }
-
   private getChartProps = (_chartType: chartType) => {
     const chartPropsMap = this.getChartOptionsMap(_chartType);
     const baseProps: ChartOptions = getBaseChartProps(_chartType);
@@ -206,36 +214,6 @@ class AggregationRenderer extends React.Component<Props, State> {
       return { ...acc, ...property };
     }, baseProps);
     return newChartProps;
-  };
-
-  private getChartDataset = (
-    _chartType: chartType,
-    dataset: WrappedAbstractDataset | AbstractSource,
-    isDataset: boolean,
-    chartProps: any,
-  ) => {
-    const childProperty = isDataset ? 'children' : 'sources';
-    let source: any = {
-      type: 'otql',
-      ...dataset,
-    };
-
-    if (this.hasPercentageTransformation(chartProps)) {
-      source = {
-        type: 'to-percentages',
-        [childProperty]: [source],
-      };
-    }
-
-    if (this.hasDateFormatTransformation(chartProps)) {
-      source = {
-        type: 'format-dates',
-        date_options: chartProps.date_options,
-        [childProperty]: [source],
-      };
-    }
-
-    return source;
   };
 
   getMetrics = (metrics: OTQLMetric[] = []) => {
@@ -261,29 +239,37 @@ class AggregationRenderer extends React.Component<Props, State> {
   setNbrOfShowedItems = () => {
     const { rootAggregations } = this.props;
     const { aggregationsPath, selectedView } = this.state;
-
-    const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
-    const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
-    this.setState({
-      numberItems: Math.min(MAX_ELEMENTS, buckets.buckets.length),
-    });
+    if (isOTQLAggregations(rootAggregations)) {
+      const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
+      const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
+      this.setState({
+        numberItems: Math.min(MAX_ELEMENTS, buckets.buckets.length),
+      });
+    }
   };
 
   async updateAggregatePath(newAggregationPath: BucketPath[], defaultView: string) {
     const { rootAggregations } = this.props;
     const { selectedView, selectedChart } = this.state;
 
-    const aggregations = this.findAggregations(rootAggregations, newAggregationPath)!;
-    const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
+    if (isOTQLAggregations(rootAggregations)) {
+      const aggregations = this.findAggregations(rootAggregations, newAggregationPath)!;
+      const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
 
+      this.setState({
+        aggregationsPath: newAggregationPath,
+        numberItems: Math.min(MAX_ELEMENTS, buckets.buckets.length),
+        selectedView: defaultView,
+      });
+    } else {
+      this.setState({
+        aggregationsPath: newAggregationPath,
+        numberItems: Math.min(MAX_ELEMENTS, rootAggregations.dataset.length),
+        selectedView: defaultView,
+      });
+    }
     const chartProps = this.getChartProps(selectedChart);
     await this.updateDataset(chartProps);
-
-    this.setState({
-      aggregationsPath: newAggregationPath,
-      numberItems: Math.min(MAX_ELEMENTS, buckets.buckets.length),
-      selectedView: defaultView,
-    });
   }
 
   hasDateHistogram = () => {
@@ -371,29 +357,56 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 
   async handleCopyToClipboard() {
-    const { query, datamartId } = this.props;
+    const { query, datamartId, rootAggregations, serieQueries } = this.props;
     const { selectedChart } = this.state;
-    const queryResponse = await this._queryService
-      .createQuery(datamartId, {
-        query_language: 'OTQL',
-        query_text: query,
-      })
-      .catch(e => {
-        return undefined;
-      });
+    let _dataset: any;
+    if (isOTQLAggregations(rootAggregations)) {
+      const queryResponse = await this._queryService
+        .createQuery(datamartId, {
+          query_language: 'OTQL',
+          query_text: query,
+        })
+        .catch(e => {
+          return undefined;
+        });
 
-    if (!queryResponse) {
-      this.props.notifyError('Could not save query, please retry later');
-      return;
+      if (!queryResponse) {
+        this.props.notifyError('Could not save query, please retry later');
+        return;
+      }
+
+      const queryResource = queryResponse.data;
+      _dataset = {
+        query_id: queryResource?.id,
+        type: 'OTQL' as SourceType,
+      };
+    } else {
+      const promises = serieQueries
+        ? serieQueries.map(serieQuery => {
+            return this._queryService
+              .createQuery(datamartId, {
+                query_language: 'OTQL',
+                query_text: serieQuery.query,
+              })
+              .then(res => {
+                return {
+                  type: 'OTQL',
+                  query_id: res.data.id,
+                  series_title: serieQuery.serieName,
+                };
+              });
+          })
+        : [];
+      await Promise.all(promises).then(res => {
+        _dataset = {
+          type: 'join',
+          sources: res,
+        };
+      });
     }
 
-    const queryResource = queryResponse.data;
-    const _dataset: OTQLSource = {
-      query_id: queryResource?.id,
-      type: 'OTQL' as SourceType,
-    };
     const chartProps = this.getChartProps(selectedChart);
-    const dataset = this.getChartDataset(selectedChart, _dataset, false, chartProps);
+    const dataset = getChartDataset(selectedChart, _dataset, false, chartProps);
 
     const chart: ChartConfig = {
       title: '',
@@ -418,12 +431,15 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 
   getBuckets = () => {
-    const { hasFeature, intl, rootAggregations } = this.props;
+    const { hasFeature, intl, rootAggregations, showChartLegend } = this.props;
     const { selectedChart, dataset, aggregationsPath, selectedView } = this.state;
     const datasetOptions = this.getChartOptionsMap(selectedChart);
-    const viewBuckets = this.findAggregations(rootAggregations, aggregationsPath)?.buckets[
-      parseInt(selectedView, 0)
-    ];
+    const viewBuckets = isOTQLAggregations(rootAggregations)
+      ? this.findAggregations(rootAggregations, aggregationsPath)?.buckets[
+          parseInt(selectedView, 0)
+        ]
+      : undefined;
+    const aggregateData = !isOTQLAggregations(rootAggregations) ? rootAggregations : undefined;
 
     if (!dataset || !this.isAggregate(dataset) || dataset.dataset.length === 0)
       return (
@@ -440,6 +456,8 @@ class AggregationRenderer extends React.Component<Props, State> {
           [...aggregationsPath, { aggregationBucket: viewBuckets, bucket }],
           this.getDefaultView(aggregations),
         );
+      } else if (aggregateData) {
+        this.updateAggregatePath([], this.getDefaultView(undefined));
       }
     };
 
@@ -449,6 +467,7 @@ class AggregationRenderer extends React.Component<Props, State> {
 
     const bucketHasData = (record: OTQLBucket) => {
       return !!(
+        record &&
         record.aggregations &&
         (record.aggregations.buckets.find(b => b.buckets.length > 0) ||
           record.aggregations.metrics.length > 0)
@@ -460,18 +479,27 @@ class AggregationRenderer extends React.Component<Props, State> {
       return '';
     };
 
-    if (hasFeature('query-tool-graphs') && viewBuckets && dataset && dataset.type === 'aggregate') {
+    if (
+      hasFeature('query-tool-graphs') &&
+      (viewBuckets || aggregateData) &&
+      dataset &&
+      dataset.type === 'aggregate'
+    ) {
       const aggregateDataset = dataset as AggregateDataset;
-      const displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
-      // Reformat dataset to expected key and value
-      if (selectedChart === 'radar') {
-        displayedDataset.dataset = displayedDataset.dataset.map((bucket: any) => {
-          return { xKey: bucket.key, value: bucket.count };
-        });
-      } else if (selectedChart === 'pie') {
-        displayedDataset.dataset = displayedDataset.dataset.map((bucket: any) => {
-          return { key: bucket.key, value: bucket.count };
-        });
+      let displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
+      if (isOTQLAggregations(rootAggregations)) {
+        // Reformat dataset to expected key and value
+        if (selectedChart === 'radar') {
+          displayedDataset.dataset = displayedDataset.dataset.map((bucket: any) => {
+            return { xKey: bucket.key, value: bucket.count };
+          });
+        } else if (selectedChart === 'pie') {
+          displayedDataset.dataset = displayedDataset.dataset.map((bucket: any) => {
+            return { key: bucket.key, value: bucket.count };
+          });
+        }
+      } else if (aggregateData) {
+        displayedDataset = JSON.parse(JSON.stringify(aggregateData));
       }
 
       const tabs = [
@@ -480,46 +508,27 @@ class AggregationRenderer extends React.Component<Props, State> {
           key: 'table',
           display: (
             <Card bordered={false}>
-              <Table<OTQLBucket>
-                columns={[
-                  {
-                    title: 'Key',
-                    dataIndex: 'key',
-                    sorter: (a, b) =>
-                      typeof a.key === 'string' &&
-                      typeof b.key === 'string' &&
-                      !isNaN(Date.parse(a.key)) &&
-                      !isNaN(Date.parse(b.key))
-                        ? Date.parse(a.key) - Date.parse(b.key)
-                        : a.key.length - b.key.length,
+              <ManagedChart
+                chartConfig={{
+                  title: '',
+                  options: {
+                    ...omit(this.getChartProps('table'), ['date_options']),
+                    handle_on_row: handleOnRow,
+                    bucket_has_data: bucketHasData,
+                    get_row_className: getRowClassName,
                   },
-                  {
-                    title: 'Count',
-                    dataIndex: 'count',
-                    sorter: (a, b) => a.count - b.count,
-                  },
-                  {
-                    render: (text, record) => {
-                      if (bucketHasData(record)) {
-                        return (
-                          <div className='float-right'>
-                            <McsIcon type='chevron-right' />
-                          </div>
-                        );
-                      }
-                      return null;
-                    },
-                  },
-                ]}
-                className='mcs-aggregationRendered_table'
-                onRow={handleOnRow}
-                rowClassName={getRowClassName}
-                dataSource={viewBuckets?.buckets}
-                pagination={{
-                  size: 'small',
-                  showSizeChanger: true,
-                  hideOnSinglePage: true,
+                  type: 'table',
                 }}
+                formattedData={{
+                  metadata: {
+                    seriesTitles: ['count'],
+                  },
+                  ...datasetOptions,
+                  ...displayedDataset,
+                  type: 'aggregate',
+                }}
+                loading={false}
+                stillLoading={false}
               />
             </Card>
           ),
@@ -534,17 +543,20 @@ class AggregationRenderer extends React.Component<Props, State> {
                   title: '',
                   options: {
                     ...(omit(this.getChartProps('bar'), ['date_options']) as BarChartOptions),
+                    legend: {
+                      enabled: !!showChartLegend,
+                    },
                     drilldown: true,
                   },
                   type: 'bars',
                 }}
                 formattedData={{
-                  ...datasetOptions,
-                  ...displayedDataset,
-                  type: 'aggregate',
                   metadata: {
                     seriesTitles: ['count'],
                   },
+                  ...datasetOptions,
+                  ...displayedDataset,
+                  type: 'aggregate',
                 }}
                 loading={false}
                 stillLoading={false}
@@ -560,16 +572,21 @@ class AggregationRenderer extends React.Component<Props, State> {
               <ManagedChart
                 chartConfig={{
                   title: '',
-                  options: omit(this.getChartProps('radar'), ['date_options']) as RadarChartOptions,
+                  options: {
+                    ...(omit(this.getChartProps('radar'), [
+                      'date_options',
+                      'xKey',
+                    ]) as RadarChartOptions),
+                  },
                   type: 'radar',
                 }}
                 formattedData={{
-                  ...datasetOptions,
-                  ...displayedDataset,
-                  type: 'aggregate',
                   metadata: {
                     seriesTitles: ['value'],
                   },
+                  ...datasetOptions,
+                  ...displayedDataset,
+                  type: 'aggregate',
                 }}
                 loading={false}
                 stillLoading={false}
@@ -585,16 +602,21 @@ class AggregationRenderer extends React.Component<Props, State> {
               <ManagedChart
                 chartConfig={{
                   title: '',
-                  options: omit(this.getChartProps('pie'), ['date_options']) as PieChartOptions,
+                  options: {
+                    ...(omit(this.getChartProps('pie'), ['date_options']) as PieChartOptions),
+                    legend: {
+                      enabled: !!showChartLegend,
+                    },
+                  },
                   type: 'pie',
                 }}
                 formattedData={{
-                  ...datasetOptions,
-                  ...displayedDataset,
-                  type: 'aggregate',
                   metadata: {
                     seriesTitles: ['value'],
                   },
+                  ...datasetOptions,
+                  ...displayedDataset,
+                  type: 'aggregate',
                 }}
                 loading={false}
                 stillLoading={false}
@@ -702,9 +724,8 @@ class AggregationRenderer extends React.Component<Props, State> {
   findAggregations = (
     aggregations: OTQLAggregations,
     aggregationsPath: BucketPath[],
-  ): OTQLAggregations | null => {
+  ): OTQLAggregations | undefined => {
     if (aggregationsPath.length === 0) return aggregations;
-
     const [head, ...tail] = aggregationsPath;
 
     const bucketAggregation = aggregations.buckets.find(
@@ -716,11 +737,11 @@ class AggregationRenderer extends React.Component<Props, State> {
 
       if (countBucket && countBucket.aggregations) {
         return this.findAggregations(countBucket.aggregations, tail);
-      } else return null;
-    } else return null;
+      } else return;
+    } else return;
   };
 
-  getBreadcrumb = (aggregations: OTQLAggregations) => {
+  getBreadcrumb = (aggregations: OTQLAggregations | AggregateDataset) => {
     const { aggregationsPath } = this.state;
 
     if (aggregationsPath.length === 0) return null;
@@ -757,9 +778,11 @@ class AggregationRenderer extends React.Component<Props, State> {
     const { rootAggregations } = this.props;
     const { aggregationsPath, selectedView } = this.state;
 
-    const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
+    const aggregations = isOTQLAggregations(rootAggregations)
+      ? this.findAggregations(rootAggregations, aggregationsPath)!
+      : rootAggregations;
     let selectedAggregationData = null;
-    if (selectedView === 'metrics') {
+    if (selectedView === 'metrics' && isOTQLAggregations(aggregations)) {
       selectedAggregationData = this.getMetrics(aggregations.metrics);
     } else {
       // selectedView is a buckets indice;
@@ -768,15 +791,16 @@ class AggregationRenderer extends React.Component<Props, State> {
 
     const handleOnSelect = (value: string) => this.setState({ selectedView: value });
 
-    const showSelect =
-      (aggregations.buckets.length > 0 && aggregations.metrics.length > 0) ||
-      aggregations.buckets.length > 1;
+    const showSelect = isOTQLAggregations(aggregations)
+      ? (aggregations.buckets.length > 0 && aggregations.metrics.length > 0) ||
+        aggregations.buckets.length > 1
+      : aggregations.dataset.length > 0;
 
     return (
       <div>
         {this.getBreadcrumb(aggregations)}
         <div style={{ marginBottom: 14 }}>
-          {showSelect && (
+          {showSelect && isOTQLAggregations(aggregations) && (
             <div>
               <div className='m-r-10' style={{ display: 'inline-block' }}>
                 <FormattedMessage

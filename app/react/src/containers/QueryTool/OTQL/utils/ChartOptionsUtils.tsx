@@ -2,6 +2,8 @@ import React from 'react';
 import { BASE_CHART_HEIGHT } from '../../../../components/Charts/domain';
 import { Select } from 'antd';
 import moment from 'moment';
+import { AbstractSource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
+import { WrappedAbstractDataset } from '../AggregationRenderer';
 
 export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie' | 'table';
 
@@ -107,7 +109,6 @@ export function getBaseChartProps(_chartType: chartType) {
             message: 'count',
           },
         ],
-        colors: ['#00a1df'],
         legend: {
           enabled: true,
         },
@@ -285,4 +286,42 @@ export const renderQuickOptions = (
       })}
     </div>
   );
+};
+
+const hasPercentageTransformation = (quickOptions: any) => {
+  return quickOptions.format === 'percentage';
+};
+
+const hasDateFormatTransformation = (quickOptions: any) => {
+  return quickOptions.date_options && quickOptions.date_options.format !== undefined;
+};
+
+export const getChartDataset = (
+  _chartType: chartType,
+  dataset: WrappedAbstractDataset | AbstractSource,
+  isDataset: boolean,
+  chartProps: any,
+) => {
+  const childProperty = isDataset ? 'children' : 'sources';
+  let source: any = {
+    type: 'otql',
+    ...dataset,
+  };
+
+  if (hasPercentageTransformation(chartProps)) {
+    source = {
+      type: 'to-percentages',
+      [childProperty]: [source],
+    };
+  }
+
+  if (hasDateFormatTransformation(chartProps)) {
+    source = {
+      type: 'format-dates',
+      date_options: chartProps.date_options,
+      [childProperty]: [source],
+    };
+  }
+
+  return source;
 };

@@ -1,3 +1,5 @@
+import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+
 export interface OTQLResult {
   took: number | null;
   timed_out: boolean;
@@ -55,11 +57,39 @@ export interface OTQLDataResult {
 }
 
 export function isAggregateResult(rows: OTQLResultRowsShape): rows is OTQLAggregationResult[] {
-  return !!(rows.length && (rows as OTQLAggregationResult[])[0].aggregations !== undefined);
+  return !!(rows?.length && (rows as OTQLAggregationResult[])[0].aggregations !== undefined);
+}
+
+export function isAggregateDataset(
+  aggregations: OTQLResult | AggregateDataset,
+): aggregations is AggregateDataset {
+  return !!((aggregations as AggregateDataset).dataset !== undefined);
+}
+
+export function isOTQLAggregations(
+  aggregations: OTQLAggregations | AggregateDataset,
+): aggregations is OTQLAggregations {
+  return !!((aggregations as OTQLAggregations).buckets !== undefined);
 }
 
 export function isCountResult(rows: OTQLResultRowsShape): rows is OTQLCountResult[] {
-  return !!(rows.length && (rows as OTQLCountResult[])[0].count !== undefined);
+  return !!(rows?.length && (rows as OTQLCountResult[])[0].count !== undefined);
+}
+
+function hasSubBuckets(rows: OTQLAggregationResult[]) {
+  return !!rows[0].aggregations.buckets[0].buckets;
+}
+
+function hasMultipleSeries(rows: OTQLResultRowsShape) {
+  return !!(Object.keys(rows[0]).length > 2);
+}
+
+export function isOTQLResult(result: OTQLResult | AggregateDataset): result is OTQLResult {
+  return !!(result as OTQLResult).result_type;
+}
+
+export function hasSubBucketsOrMultipleSeries(rows: OTQLResultRowsShape) {
+  return (isAggregateResult(rows) && hasSubBuckets(rows)) || hasMultipleSeries(rows);
 }
 
 export interface GraphQLResult {
