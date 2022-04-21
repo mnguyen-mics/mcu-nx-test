@@ -256,6 +256,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
               headerSettings={settings}
               linkPath={`/v2/o/${organisationId}/campaigns/display`}
               prodEnv={process.env.API_ENV === 'prod'}
+              className='mcs-themed-header'
             />
             <Layout>
               <NavigatorSettingsMainMenu menu={menu} />
