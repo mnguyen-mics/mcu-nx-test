@@ -36,15 +36,11 @@ class OTQLSeriesEditor extends React.Component<Props> {
   };
 
   getSteps(series: SerieQueryModel[]): Array<Step<SerieQueryModel>> {
-    return series.map((p, i) => {
-      const step = {
-        id: `${i}`,
-        name: p.serieName || `Series ${i}`,
-        properties: p,
-      };
-      p.serieName = step.name;
-      return step;
-    });
+    return series.map((p, i) => ({
+      id: `${i}`,
+      name: p.serieName || `Serie ${i}`,
+      properties: p,
+    }));
   }
   renderHeaderTimeline = () => {
     return <div />;

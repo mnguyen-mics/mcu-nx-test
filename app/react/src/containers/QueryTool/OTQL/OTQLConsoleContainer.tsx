@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Alert, Layout, Row, Tabs } from 'antd';
+import { Alert, Button, Layout, Row, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 import { OTQLResult, QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
@@ -313,6 +313,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       editionMode,
       createdQueryId,
       hasFeature,
+      renderActionBar 
     } = this.props;
     const { schemaLoading, rawSchema, activeKey, panes, tabQueries, query } = this.state;
 
