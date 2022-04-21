@@ -37,11 +37,12 @@ export function defineAce() {
       exports.cssText =
         '\
         .ace-otql .ace_gutter {\
-        background: #e8e8e8;\
+        background: #fff;\
         color: #AAA;\
         }\
         .ace-otql  {\
         background: #fff;\
+        font-size: 12; \
         color: #000;\
         }\
         .ace-otql .ace_keyword {\

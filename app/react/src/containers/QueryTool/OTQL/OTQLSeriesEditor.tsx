@@ -1,23 +1,23 @@
 import * as React from 'react';
 import { Button, Input } from 'antd';
-import { FormattedMessage } from 'react-intl';
-import { Card } from '@mediarithmics-private/mcs-components-library';
 import { OtqlConsole } from '../../../components/index';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { compose } from 'recompose';
-import { CloseOutlined } from '@ant-design/icons';
 import { SerieQueryModel } from './OTQLRequest';
+import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
+import TimelineStepBuilder, {
+  Step,
+} from '../../../components/TimelineStepBuilder/TimelineStepBuilder';
 
 export interface OTQLSeriesEditorProps {
   datamartId: string;
   actionButtons?: React.ReactNode;
-  serieQueries: SerieQueryModel[];
+  seriesQueries: SerieQueryModel[];
   onInputChange: (id: string) => (e: any) => void;
   updateQueryModel: (id: string) => (query: string) => void;
   updateNameModel: (id: string) => (e: any) => void;
-  displaySerieInput: (id: string) => (e: any) => void;
-  addNewSerie: (index: number) => () => void;
-  deleteSerie: (id: string) => () => void;
+  displaySeriesInput: (id: string) => (e: any) => void;
+  onSeriesChanged: (series: SerieQueryModel[]) => void;
 }
 
 type Props = OTQLSeriesEditorProps & InjectedFeaturesProps;
@@ -27,74 +27,128 @@ class OTQLSeriesEditor extends React.Component<Props> {
     super(props);
   }
 
+  onStepChange = (steps: Array<Step<SerieQueryModel>>) => {
+    this.props.onSeriesChanged(
+      steps.map(x => {
+        return x.properties;
+      }),
+    );
+  };
+
+  getSteps(series: SerieQueryModel[]): Array<Step<SerieQueryModel>> {
+    return series.map((p, i) => {
+      const step = {
+        id: `${i}`,
+        name: p.serieName || `Series ${i}`,
+        properties: p,
+      };
+      p.serieName = step.name;
+      return step;
+    });
+  }
+  renderHeaderTimeline = () => {
+    return <div />;
+  };
+
+  renderFooterTimeline = () => {
+    return <div />;
+  };
+
+  renderStepHeader = (queryModelStep: Step<SerieQueryModel>, i: number) => {
+    const { onInputChange, updateNameModel, displaySeriesInput } = this.props;
+    const queryModel = queryModelStep.properties;
+    const queryModelId = queryModel.id;
+    return (
+      <React.Fragment>
+        {queryModel.inputVisible ? (
+          <Input
+            className={'mcs-otqlInputEditor_stepNameInput'}
+            onChange={onInputChange(queryModelId)}
+            onPressEnter={updateNameModel(queryModelId)}
+            value={queryModel.serieName}
+          />
+        ) : (
+          <Button
+            className={'mcs-otqlInputEditor_stepNameButton'}
+            onClick={displaySeriesInput(queryModelId)}
+            type='dashed'
+          >
+            {queryModel.serieName || `Serie ${i + 1}`}
+          </Button>
+        )}
+      </React.Fragment>
+    );
+  };
+
+  renderStepBody = (queryModelStep: Step<SerieQueryModel>, i: number) => {
+    const { updateQueryModel, datamartId } = this.props;
+    const queryModel = queryModelStep.properties;
+    const queryModelId = queryModel.id;
+    return (
+      <OtqlConsole
+        key={queryModelId}
+        onChange={updateQueryModel(queryModelId)}
+        datamartId={datamartId}
+        value={queryModel.query}
+        showPrintMargin={false}
+        enableBasicAutocompletion={true}
+        enableLiveAutocompletion={false}
+        className={'mcs-otqlInputEditor_otqlConsole'}
+      />
+    );
+  };
+
+  renderAfterBulletElement() {
+    return <div />;
+  }
+
   render() {
-    const {
-      serieQueries,
-      onInputChange,
-      updateQueryModel,
-      updateNameModel,
-      displaySerieInput,
-      addNewSerie,
-      deleteSerie,
-    } = this.props;
-    const { hasFeature, datamartId, actionButtons } = this.props;
+    const { seriesQueries } = this.props;
+
+    const getStepFromSeriesModel = (series: SerieQueryModel) => {
+      return {
+        id: series.id,
+        name: series.serieName,
+        properties: {
+          id: series.id,
+          query: series.query,
+        },
+      };
+    };
+    const rendering = {
+      shouldDisplayNumbersInBullet: false,
+      renderHeaderTimeline: this.renderHeaderTimeline,
+      renderFooterTimeline: this.renderFooterTimeline,
+      renderStepBody: this.renderStepBody,
+      renderAfterBulletElement: this.renderAfterBulletElement,
+      renderStepHeader: this.renderStepHeader,
+      shouldRenderArrows: false,
+      shouldRenderTimeline: false,
+      getAddStepText: () => {
+        return {
+          id: 'otql.serieseditor.newseries',
+          defaultMessage: 'New series',
+        };
+      },
+    };
+
+    const newName = `Series ${seriesQueries.length + 1}`;
+    const stepManagement = {
+      onStepAdded: this.onStepChange,
+      onStepRemoved: this.onStepChange,
+      onStepsReordered: this.onStepChange,
+      getDefaultStep: () => getStepFromSeriesModel(getNewSerieQuery(newName, DEFAULT_OTQL_QUERY)),
+    };
+
     return (
       <div className='mcs-otqlInputEditor_serieQuery'>
-        {serieQueries.map((queryModel, i) => {
-          const queryModelId = queryModel.id;
-          const title = (
-            <React.Fragment>
-              {queryModel.inputVisible ? (
-                <Input
-                  style={{ width: '200px' }}
-                  onChange={onInputChange(queryModelId)}
-                  onPressEnter={updateNameModel(queryModelId)}
-                  value={queryModel.serieName}
-                />
-              ) : (
-                <Button onClick={displaySerieInput(queryModelId)} type='dashed'>
-                  {queryModel.serieName || `Serie ${i + 1}`}
-                </Button>
-              )}
-              <CloseOutlined
-                className='mcs-otqlInputEditor_deleteSerie'
-                onClick={deleteSerie(queryModelId)}
-                style={{ visibility: i === 0 ? 'hidden' : 'visible' }}
-              />
-            </React.Fragment>
-          );
-          return (
-            <Card
-              key={queryModelId}
-              title={title}
-              className={
-                hasFeature('query-tool-graphs')
-                  ? 'mcs-otqlInputEditor_card mcs-modal_container'
-                  : 'mcs-modal_container'
-              }
-            >
-              <OtqlConsole
-                onChange={updateQueryModel(queryModelId)}
-                datamartId={datamartId}
-                value={queryModel.query}
-                showPrintMargin={false}
-                height='100px'
-                enableBasicAutocompletion={true}
-                enableLiveAutocompletion={false}
-                className={'mcs-otqlInputEditor_otqlConsole'}
-              />
-            </Card>
-          );
-        })}
-        <div className='mcs-otqlInputEditor_serieButtons'>
-          <Button
-            className='mcs-otqlInputEditor_newSerieButton'
-            onClick={addNewSerie(serieQueries.length + 1)}
-          >
-            <FormattedMessage id='queryTool.otql.newSerie' defaultMessage='New Series' />
-          </Button>
-          {actionButtons}
-        </div>
+        <TimelineStepBuilder
+          steps={this.getSteps(seriesQueries)}
+          rendering={rendering}
+          stepManagement={stepManagement}
+          maxSteps={4}
+        />
+        <div className='mcs-otqlInputEditor_serieButtons'>{this.props.actionButtons}</div>
       </div>
     );
   }

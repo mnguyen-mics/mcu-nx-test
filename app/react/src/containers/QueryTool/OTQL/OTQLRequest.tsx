@@ -3,14 +3,14 @@ import { Alert } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
+import { CancelablePromise, makeCancelable } from '../../../utils/ApiHelper';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import {
-  hasSubBucketsOrMultipleSeries,
   OTQLResult,
   isCountResult,
   QueryPrecisionMode,
   isAggregateDataset,
+  hasSubBucketsOrMultipleSeries,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -19,14 +19,14 @@ import OTQLResultRenderer from './OTQLResultRenderer';
 import OTQLInputEditor from './OTQLInputEditor';
 import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { lazyInject } from '../../../config/inversify.config';
-import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import cuid from 'cuid';
 import { IChartDatasetService } from '@mediarithmics-private/advanced-components';
 import { getChartDataset } from './utils/ChartOptionsUtils';
 import { TYPES } from '../../../constants/types';
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
+import { IQueryService } from '../../../services/QueryService';
 
 export interface OTQLRequestProps {
   datamartId: string;
@@ -41,14 +41,6 @@ export interface SerieQueryModel {
   inputVisible?: boolean;
   query: string;
 }
-
-const getNewSerieQuery = (index: number, defaultValue?: string): SerieQueryModel => {
-  return {
-    id: cuid(),
-    query: defaultValue || '',
-    serieName: `Serie ${index}`,
-  };
-};
 
 interface State {
   queryResult: OTQLResult | AggregateDataset | null;
@@ -89,8 +81,8 @@ class OTQLRequest extends React.Component<Props, State> {
       runningQuery: false,
       queryAborted: false,
       error: null,
-      query: this.getDefaultQuery(),
-      serieQueries: [getNewSerieQuery(1, this.getDefaultQuery())],
+      query: DEFAULT_OTQL_QUERY,
+      serieQueries: [getNewSerieQuery('Series 1', DEFAULT_OTQL_QUERY)],
       schemaVizOpen: true,
       precision: 'FULL_PRECISION',
       evaluateGraphQl: true,
@@ -99,12 +91,7 @@ class OTQLRequest extends React.Component<Props, State> {
     };
   }
 
-  getDefaultQuery = () => {
-    const { query } = this.props;
-    return query || 'SELECT @count{} FROM UserPoint';
-  };
-
-  runQuery = (otqlQuery: string) => {
+  runQuery = () => {
     const { datamartId } = this.props;
     const { precision, useCache, evaluateGraphQl, serieQueries } = this.state;
     this.setState({
@@ -112,9 +99,10 @@ class OTQLRequest extends React.Component<Props, State> {
       error: null,
       queryAborted: false,
     });
-    if (this.isQuerySeriesActivated()) {
-      this.fetchQuerySeriesDataset();
-    } else {
+    if (serieQueries.length > 1) {
+      this.fetchQuerySeriesDataset(serieQueries);
+    } else if (serieQueries.length === 1) {
+      const otqlQuery = serieQueries[0].query;
       this.asyncQuery = makeCancelable(
         this._queryService.runOTQLQuery(datamartId, otqlQuery, {
           precision: precision,
@@ -149,14 +137,13 @@ class OTQLRequest extends React.Component<Props, State> {
     }
   };
 
-  fetchQuerySeriesDataset = () => {
+  fetchQuerySeriesDataset = (serieQueries: SerieQueryModel[]) => {
     const {
       datamartId,
       match: {
         params: { organisationId },
       },
     } = this.props;
-    const { serieQueries } = this.state;
     // TODO: improve typing of fetchDataset
     // in ADV library
     return this._chartDatasetService
@@ -263,23 +250,16 @@ class OTQLRequest extends React.Component<Props, State> {
     });
   };
 
-  addNewSerie = (index: number) => () => {
-    this.setState({
-      serieQueries: this.state.serieQueries.concat(getNewSerieQuery(index, this.getDefaultQuery())),
-    });
-  };
-
-  deleteSerie = (id: string) => () => {
-    const { serieQueries } = this.state;
-    this.setState({
-      serieQueries: serieQueries.filter(queryModel => queryModel.id !== id),
-    });
-  };
-
   isQuerySeriesActivated = () => {
     const { queryResult } = this.state;
     return !!queryResult && (isAggregateDataset(queryResult) || !isCountResult(queryResult.rows));
   };
+
+  onSeriesChanged(newSeries: SerieQueryModel[]) {
+    this.setState({
+      serieQueries: newSeries,
+    });
+  }
 
   render() {
     const { intl, datamartId, queryEditorClassName, hasFeature } = this.props;
@@ -341,13 +321,7 @@ class OTQLRequest extends React.Component<Props, State> {
       />
     );
 
-    const onChange = (q: string) => {
-      if (this.props.setQuery) {
-        this.props.setQuery(q);
-      }
-
-      this.setState({ query: q });
-    };
+    const _onSeriesChanged = this.onSeriesChanged.bind(this);
 
     const handleChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) =>
       this.setState({ evaluateGraphQl: eg, useCache: c, precision: p });
@@ -371,21 +345,19 @@ class OTQLRequest extends React.Component<Props, State> {
           onAbortQuery={this.abortQuery}
           runningQuery={runningQuery}
           datamartId={datamartId}
-          onQueryChange={onChange}
           defaultValue={query}
           handleChange={handleChange}
           precision={precision}
           evaluateGraphQl={evaluateGraphQl}
           useCache={useCache}
           queryEditorClassName={queryEditorClassName}
-          isQuerySeriesActivated={this.isQuerySeriesActivated()}
+          isQuerySeriesActivated={true}
           serieQueries={serieQueries}
           onInputChange={this.onInputChange}
           updateQueryModel={this.updateQueryModel}
           updateNameModel={this.updateNameModel}
           displaySerieInput={this.displaySerieInput}
-          addNewSerie={this.addNewSerie}
-          deleteSerie={this.deleteSerie}
+          onSeriesChanged={_onSeriesChanged}
         />
         {queryResultRenderer}
       </span>

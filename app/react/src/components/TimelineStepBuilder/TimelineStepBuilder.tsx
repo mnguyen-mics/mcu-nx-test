@@ -18,6 +18,8 @@ interface TimelineStepBuilderRendering<StepsProperties> {
   renderAfterBulletElement?: (step: Step<StepsProperties>, index: number) => JSX.Element;
   getAddStepText?: () => { id: string; defaultMessage?: string };
   shouldRenderDisabledArrow?: boolean;
+  shouldRenderArrows?: boolean;
+  shouldRenderTimeline?: boolean;
 }
 
 interface StepManagement<StepsProperties> {
@@ -87,9 +89,18 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
   render() {
     const { steps } = this.props;
 
+    const shouldRenderLine =
+      this.props.rendering.shouldRenderTimeline === undefined ||
+      this.props.rendering.shouldRenderTimeline;
     return (
       <div className={'mcs-timelineStepBuilder ' + (steps.length === 0 ? 'empty' : '')}>
-        <div className={'mcs-timelineStepBuilder_steps'}>
+        <div
+          className={
+            shouldRenderLine
+              ? 'mcs-timelineStepBuilder_steps'
+              : 'mcs-timelineStepBuilder_steps_noline'
+          }
+        >
           <div className={'mcs-timelineStepBuilder_step_timelineStart'}>
             {this.props.rendering.renderHeaderTimeline?.()}
           </div>
@@ -97,7 +108,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
             return (
               <Card key={step.id} className={'mcs-timelineStepBuilder_step'} bordered={false}>
                 <div className={'mcs-timelineStepBuilder_step_body'}>
-                  {steps.length > 1 && (
+                  {steps.length > 1 && this.props.rendering.shouldRenderArrows && (
                     <div className={'mcs-timelineStepBuilder_step_reorderBtn'}>
                       {(this.props.rendering.shouldRenderDisabledArrow || index > 0) && (
                         <ArrowUpOutlined
@@ -137,22 +148,28 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
                       {this.props.rendering.renderStepHeader?.(step, index) || (
                         <div className='mcs-timelineStepBuilder_stepName_title'>{step.name}</div>
                       )}
-                      <Button
-                        shape='circle'
-                        icon={<CloseOutlined />}
-                        className={'mcs-timelineStepBuilder_removeStepBtn'}
-                        onClick={this.removeStep.bind(this, step.id)}
-                      />
+                      {steps.length > 1 ? (
+                        <Button
+                          shape='circle'
+                          icon={<CloseOutlined />}
+                          className={'mcs-timelineStepBuilder_removeStepBtn'}
+                          onClick={this.removeStep.bind(this, step.id)}
+                        />
+                      ) : undefined}
                     </div>
                     {this.props.rendering.renderStepBody(step, index)}
                   </div>
                 </div>
-                <div className={'mcs-timelineStepBuilder_step_bullet'}>
-                  <div className={'mcs-timelineStepBuilder_step_bullet_icon'}>
-                    {this.props.rendering.shouldDisplayNumbersInBullet ? index + 1 : ''}
+                {shouldRenderLine ? (
+                  <div>
+                    <div className={'mcs-timelineStepBuilder_step_bullet'}>
+                      <div className={'mcs-timelineStepBuilder_step_bullet_icon'}>
+                        {this.props.rendering.shouldDisplayNumbersInBullet ? index + 1 : ''}
+                      </div>
+                    </div>
+                    {this.props.rendering.renderAfterBulletElement?.(step, index)}
                   </div>
-                </div>
-                {this.props.rendering.renderAfterBulletElement?.(step, index)}
+                ) : undefined}
               </Card>
             );
           })}

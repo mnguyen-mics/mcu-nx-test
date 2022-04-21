@@ -67,7 +67,6 @@ export default class ChartService implements IChartService {
       ...resource,
       organisation_id: organisationId,
     };
-
     return ApiService.postRequest<DataResponse<ChartResource>>(endpoint, body);
   }
 

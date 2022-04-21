@@ -13,9 +13,12 @@ export interface OtqlConsoleProps extends AceEditorProps {
   datamartId: string;
 }
 
+const MIN_ACE_HEIGHT = 17;
+
 interface State {
   annotations: Annotation[];
   editorWidth: string;
+  editorHeight: number;
 }
 
 export default class OtqlConsole extends React.Component<OtqlConsoleProps, State> {
@@ -30,6 +33,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
     this.state = {
       annotations: [],
       editorWidth: '100%',
+      editorHeight: MIN_ACE_HEIGHT,
     };
   }
 
@@ -85,6 +89,15 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
       this.props.onChange(value, event);
     }
 
+    if (this.aceEditor && this.aceEditor.editor) {
+      const computedHeight =
+        this.aceEditor.editor.getSession().getScreenLength() *
+        this.aceEditor.editor.renderer.lineHeight;
+      let newHeight = computedHeight;
+      newHeight = newHeight >= MIN_ACE_HEIGHT ? newHeight : MIN_ACE_HEIGHT;
+      this.setState({ editorHeight: newHeight });
+    }
+
     if (this.debouncing) {
       window.clearTimeout(this.debouncing);
     }
@@ -133,12 +146,13 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
 
   render() {
     const setAceEditorRef = (aceEditorRef: any) => (this.aceEditor = aceEditorRef);
-    const { editorWidth } = this.state;
+    const { editorWidth, editorHeight } = this.state;
 
     defineAce();
 
+    const newHeight = editorHeight ? editorHeight : MIN_ACE_HEIGHT;
     return (
-      <div>
+      <div className='mcs-otqlInputEditor_editor'>
         <AceEditor
           {...this.props}
           onChange={this.onChange}
@@ -147,8 +161,11 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
           theme='otql'
           ref={setAceEditorRef}
           width={editorWidth}
+          height={`${newHeight}px`}
           setOptions={{
-            showGutter: true,
+            highlightActiveLine: false,
+            highlightGutterLine: false,
+            showLineNumbers: true,
           }}
         />
       </div>

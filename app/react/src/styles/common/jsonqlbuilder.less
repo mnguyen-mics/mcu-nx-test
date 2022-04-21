@@ -428,6 +428,7 @@
   transition: max-width 0.3s ease;
   margin-left: 10px;
   background-color: #fff;
+  padding: 20px 5px;
 
   .ant-tree-list-holder-inner {
     .ant-tree-treenode {
@@ -535,7 +536,7 @@
   }
   .mcs-otqlQuery_result_tag {
     position: absolute;
-    right: 0;
+    right: 0px;
     margin-right: -1px;
     top: -25px;
     color: @info-color;
@@ -558,6 +559,95 @@
     border-radius: 2px;
     border: 1px solid #d3dbe1;
   }
+}
+
+.mcs-otqlInputEditor_editor {
+  padding: 10px 0px;
+  background: #fff;
+}
+
+.mcs-otqlInputEditor_save_button {
+  padding: 0px 15px 0px 15px;
+  height: 40px;
+  vertical-align: middle;
+  background: @info-color;
+  border: none;
+}
+
+.mcs-otqlChart_items_share_button {
+  position: absolute;
+  right: 120px;
+}
+
+.mcs-otqlInputEditor_save_as_button {
+  padding: 0px 15px 0px 15px;
+  height: 32px;
+  vertical-align: middle;
+  background: #fff0;
+  border: none;
+}
+
+.mcs-timelineStepBuilder_steps_noline {
+  width: 100%;
+}
+
+.mcs-timelineStepBuilder_addStepBlock {
+  padding: 0px 20px;
+}
+
+.mcs-otqlInputEditor_serieQuery {
+  margin-left: 10px;
+
+  .mcs-timelineStepBuilder_step:hover {
+    .mcs-otqlInputEditor_clear_button {
+      opacity: 1;
+    }
+  }
+  .mcs-timelineStepBuilder_step {
+    background-color: #ffffff00;
+    box-shadow: none;
+    .mcs-card-header {
+      margin-top: -10px;
+    }
+    .mcs-otqlInputEditor_settings_button {
+      font-size: 15px;
+      position: absolute;
+      left: 60px;
+    }
+    .mcs-otqlInputEditor_clear_button {
+      opacity: 0;
+      border: 0px;
+      transition: 0.3s;
+      height: 32px;
+      vertical-align: middle;
+      padding: 0px 15px 0px 15px;
+    }
+
+    .mcs-otqlInputEditor_run_button {
+      padding: 0px 15px 0px 15px;
+      height: 32px;
+      vertical-align: middle;
+      background: @info-color;
+      border: none;
+    }
+
+    .mcs-otqlInputEditor_run_button.ant-btn-primary[disabled] {
+      color: rgba(0, 0, 0, 0.25);
+      border-color: #e0e1e1;
+      background: #dcdcdc;
+    }
+    .mcs-otqlInputEditor_abort_button {
+      padding: 0px 15px 0px 15px;
+      height: 32px;
+      vertical-align: middle;
+      background: @info-color;
+      border: none;
+    }
+  }
+}
+
+.mcs-timelineStepBuilder_steps {
+  width: 100%;
 }
 
 .mcs-otqlInputEditor_card:hover {
@@ -733,6 +823,7 @@
   flex: 4;
   margin-top: 40px;
   padding: 0 2px;
+  background: #fff0;
 
   .ant-tabs-ink-bar {
     display: none;
@@ -745,6 +836,7 @@
 
 .mcs-OTQLConsoleContainer_tabs > .ant-tabs-nav {
   margin-bottom: 30px;
+  background: #fff0;
 
   .ant-tabs-nav-list {
     .ant-tabs-nav-add {
@@ -761,7 +853,7 @@
         color: rgba(0, 0, 0, 0.65);
       }
       &-active {
-        background-color: #fff;
+        background-color: #fff0;
 
         .ant-tabs-tab-btn {
           color: @info-color;
@@ -775,8 +867,7 @@
   display: flex;
 
   .schema-visualizer {
-    height: 70vh;
-    padding-top: 10px;
+    height: 71vh;
   }
 
   .mcs-schemaVizualizer_search_bar {
@@ -831,4 +922,17 @@
       }
     }
   }
+}
+
+.mcs-otqlInputEditor_stepNameInput {
+  margin: 5px 0px;
+}
+
+.mcs-otqlInputEditor_stepNameButton {
+  margin: 5px 0px;
+  font-weight: bold;
+}
+
+.mcs-timelineStepBuilder_removeStepBtn {
+  margin: 5px 0px;
 }

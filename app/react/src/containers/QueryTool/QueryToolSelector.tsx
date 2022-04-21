@@ -10,7 +10,8 @@ import { injectFeatures, InjectedFeaturesProps } from '../Features';
 
 export interface IQueryToolSelectorProps {
   datamartId: string;
-  renderActionBar: (query: string, datamartId: string) => React.ReactNode;
+  renderActionBar?: (query: string, datamartId: string) => React.ReactNode;
+  renderSaveAsButton?: (query: string, datamartId: string) => React.ReactNode;
   createdQueryId?: string;
 }
 

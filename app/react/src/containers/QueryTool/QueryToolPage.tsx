@@ -7,7 +7,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { DatamartSelector } from '../Datamart';
-import SaveQueryAsActionBar from '../QueryTool/SaveAs/SaveQueryAsActionBar';
 import { NewUserQuerySimpleFormData } from '../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import { UserQuerySegment } from '../../models/audiencesegment/AudienceSegmentResource';
 import { NewExportSimpleFormData } from '../QueryTool/SaveAs/NewExportSimpleForm';
@@ -28,6 +27,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../Notifications/injectNotifications';
 import { UserProfileResource } from '../../models/directory/UserProfileResource';
+import SaveQueryAsButton from './SaveAs/SaveQueryAsButton';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -114,7 +114,7 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
 
     const selectedDatamart = this.getSelectedDatamart();
 
-    const OTQLActionbar = (query: string, datamartId: string) => {
+    const renderSaveAsButton = (query: string, datamartId: string) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
         return this._queryService
           .createQuery(datamartId, {
@@ -204,12 +204,11 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
           });
       };
       return (
-        <SaveQueryAsActionBar
+        <SaveQueryAsButton
           saveAsUserQuery={saveAsUserQuery}
           saveAsExport={saveAsExport}
           saveAsTechnicalQuery={saveAsTechnicalQuery}
           csvExportDisabled={true}
-          breadcrumb={[intl.formatMessage(messages.queryBuilder)]}
         />
       );
     };
@@ -227,7 +226,7 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
         )}
         {selectedDatamart && selectedDatamart.storage_model_version === 'v201709' && (
           <QueryToolSelector
-            renderActionBar={OTQLActionbar}
+            renderSaveAsButton={renderSaveAsButton}
             datamartId={selectedDatamart.id}
             createdQueryId={createdQueryId}
           />
