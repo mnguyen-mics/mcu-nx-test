@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { InboxOutlined } from '@ant-design/icons';
-import { Upload } from 'antd';
+import { Tooltip, Upload } from 'antd';
 
 import { getLogo, putLogo } from '../../redux/Session/actions';
 import { MenuMode } from 'antd/lib/menu';
@@ -12,6 +12,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../Notifications/injectNotifications';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const Dragger = Upload.Dragger;
 
@@ -36,7 +37,11 @@ const messages = defineMessages({
   error: {
     id: 'logo.error.upload',
     defaultMessage:
-      'The logo file should be a PNG with a maximum size of 200kb. Please make sure the file you have selected meets those criterias.',
+      'The logo file should be a PNG with a maximum size of 200kB. Please make sure the file you have selected meets those criterias.',
+  },
+  tooltip: {
+    id: 'logo.tooltip',
+    defaultMessage: 'The logo file should be a PNG with a maximum size of 200kB.',
   },
 });
 
@@ -92,11 +97,10 @@ class EditableLogo extends React.Component<Props> {
     const { putLogoRequest, notifyError, intl } = this.props;
 
     const file = uploadData.file;
-    if (file.type !== 'image/png' || file.size / 1024 > 200) {
+    if (file.type !== 'image/png' || file.size / 1000 > 200) {
       notifyError({
         status: 'error',
         error: intl.formatMessage(messages.error),
-        error_id: '',
       });
     } else {
       putLogoRequest({ organisationId, file });
@@ -118,7 +122,7 @@ class EditableLogo extends React.Component<Props> {
   }
 
   render() {
-    const { mode, isUploadingLogo, logoUrl } = this.props;
+    const { mode, isUploadingLogo, logoUrl, intl } = this.props;
 
     const insideComponent = !logoUrl
       ? this.buildDragLabel()
@@ -137,6 +141,9 @@ class EditableLogo extends React.Component<Props> {
             )}
           </div>
         )}
+        <Tooltip title={intl.formatMessage(messages.tooltip)}>
+          <McsIcon type='info' />
+        </Tooltip>
       </div>
     );
   }

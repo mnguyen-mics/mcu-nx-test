@@ -82,10 +82,13 @@ export default class OrganisationService implements IOrganisationService {
     return cachedValue ? Promise.resolve(cachedValue) : this.doGetLogo(organisationId);
   };
 
-  putLogo(organisationId: string, formData: FormData): Promise<any> {
+  putLogo = (organisationId: string, formData: FormData) => {
     const endpoint = `organisations/${organisationId}/logo`;
-    return ApiService.putRequest(endpoint, formData);
-  }
+    return ApiService.putRequest(endpoint, formData).then(_ => {
+      delete this.logoCache[organisationId];
+    });
+  };
+
   getBillingAccounts(organisationId: string): Promise<DataListResponse<BillingAccountResource>> {
     const endpoint = `billing_accounts?organisation_id=${organisationId}`;
     return ApiService.getRequest(endpoint);
