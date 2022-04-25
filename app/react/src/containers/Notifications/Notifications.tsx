@@ -188,7 +188,20 @@ class Notifications extends React.Component<Props> {
           );
         }
       } else if (!notifcationConfig.description) {
-        notifcationConfig.description = <span>{formatMessage(messages.errorDescription)}</span>;
+        notifcationConfig.description = notification.error.error ? (
+          <div>
+            {notifcationConfig.description}
+            <p>
+              <span>
+                {formatMessage(messages.errorDescription)}&nbsp;
+                {formatMessage(messages.errorDescriptionReason)}&nbsp;
+                <code>{notification.error.error}</code>
+              </span>
+            </p>
+          </div>
+        ) : (
+          <span>{formatMessage(messages.errorDescription)}</span>
+        );
       }
     }
 
