@@ -12,6 +12,6 @@ describe('Should test logout on the new NavBar', () => {
     cy.get('.mcs-actionbar').should('be.visible');
     cy.get('.mcs-user').click();
     cy.contains('Log out').click();
-    cy.get('.mcs-login-container').should('be.visible');
+    cy.get('.mcs-keycloak_formLogin').should('be.visible');
   });
 });
