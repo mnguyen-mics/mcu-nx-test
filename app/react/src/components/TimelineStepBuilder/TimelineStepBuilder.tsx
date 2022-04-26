@@ -22,10 +22,10 @@ interface TimelineStepBuilderRendering<StepsProperties> {
   shouldRenderTimeline?: boolean;
 }
 
-interface StepManagement<StepsProperties> {
+export interface StepManagement<StepsProperties> {
   computeStepName?: (step: Step<StepsProperties>, index: number) => string;
   onStepAdded: (steps: Array<Step<StepsProperties>>) => void;
-  onStepRemoved: (steps: Array<Step<StepsProperties>>) => void;
+  onStepRemoved: (steps: Array<Step<StepsProperties>>, stepId?: string) => void;
   onStepsReordered: (steps: Array<Step<StepsProperties>>) => void;
   getDefaultStep: () => Step<StepsProperties>;
 }
@@ -35,6 +35,7 @@ type Props<StepsProperties> = {
   rendering: TimelineStepBuilderRendering<StepsProperties>;
   stepManagement: StepManagement<StepsProperties>;
   maxSteps: number;
+  editionMode?: boolean;
 };
 
 export default class TimelineStepBuilder<StepsProperties> extends React.Component<
@@ -47,16 +48,16 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
   }
 
   addStep = () => {
-    const { steps } = this.props;
+    const { steps, stepManagement } = this.props;
     const newSteps = steps.slice();
-    newSteps.push(this.getRenamedStep(this.props.stepManagement.getDefaultStep(), steps.length));
-    this.props.stepManagement.onStepAdded(newSteps);
+    newSteps.push(this.getRenamedStep(stepManagement.getDefaultStep(), steps.length));
+    stepManagement.onStepAdded(newSteps);
   };
 
   removeStep = (stepId: string) => {
-    const { steps } = this.props;
+    const { steps, stepManagement } = this.props;
     const newSteps = steps.filter(step => step.id !== stepId).map(this.getRenamedStep);
-    this.props.stepManagement.onStepRemoved(newSteps);
+    stepManagement.onStepRemoved(newSteps, stepId);
   };
 
   getRenamedStep = (step: Step<StepsProperties>, index: number) => {
@@ -65,7 +66,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
   };
 
   sortStep = (index: number, direction: 'up' | 'down') => {
-    const { steps } = this.props;
+    const { steps, stepManagement } = this.props;
 
     const temp = steps[index];
 
@@ -78,7 +79,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
       steps[index] = steps[index + 1];
       steps[index + 1] = temp;
     }
-    this.props.stepManagement.onStepsReordered(steps.map(this.getRenamedStep));
+    stepManagement.onStepsReordered(steps.map(this.getRenamedStep));
   };
 
   private computeTimelineEndClassName(stepsNumber: number) {
@@ -87,11 +88,25 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
   }
 
   render() {
-    const { steps } = this.props;
+    const {
+      steps,
+      editionMode,
+      rendering: {
+        shouldRenderTimeline,
+        renderHeaderTimeline,
+        shouldRenderArrows,
+        shouldRenderDisabledArrow,
+        renderStepHeader,
+        renderStepBody,
+        renderAfterBulletElement,
+        renderFooterTimeline,
+        getAddStepText,
+        shouldDisplayNumbersInBullet,
+      },
+      maxSteps,
+    } = this.props;
 
-    const shouldRenderLine =
-      this.props.rendering.shouldRenderTimeline === undefined ||
-      this.props.rendering.shouldRenderTimeline;
+    const shouldRenderLine = shouldRenderTimeline === undefined || shouldRenderTimeline;
     return (
       <div className={'mcs-timelineStepBuilder ' + (steps.length === 0 ? 'empty' : '')}>
         <div
@@ -102,15 +117,15 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
           }
         >
           <div className={'mcs-timelineStepBuilder_step_timelineStart'}>
-            {this.props.rendering.renderHeaderTimeline?.()}
+            {renderHeaderTimeline?.()}
           </div>
           {steps.map((step, index) => {
             return (
               <Card key={step.id} className={'mcs-timelineStepBuilder_step'} bordered={false}>
                 <div className={'mcs-timelineStepBuilder_step_body'}>
-                  {steps.length > 1 && this.props.rendering.shouldRenderArrows && (
+                  {steps.length > 1 && shouldRenderArrows && (
                     <div className={'mcs-timelineStepBuilder_step_reorderBtn'}>
-                      {(this.props.rendering.shouldRenderDisabledArrow || index > 0) && (
+                      {(shouldRenderDisabledArrow || index > 0) && (
                         <ArrowUpOutlined
                           className={
                             'mcs-timelineStepBuilder_sortBtn mcs-timelineStepBuilder_sortBtn--up ' +
@@ -125,8 +140,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
                           }
                         />
                       )}
-                      {(this.props.rendering.shouldRenderDisabledArrow ||
-                        index + 1 < steps.length) && (
+                      {(shouldRenderDisabledArrow || index + 1 < steps.length) && (
                         <ArrowDownOutlined
                           className={
                             'mcs-timelineStepBuilder_sortBtn ' +
@@ -145,7 +159,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
                   )}
                   <div className={'mcs-timelineStepBuilder_step_content'}>
                     <div className={'mcs-timelineStepBuilder_stepHeader'}>
-                      {this.props.rendering.renderStepHeader?.(step, index) || (
+                      {renderStepHeader?.(step, index) || (
                         <div className='mcs-timelineStepBuilder_stepName_title'>{step.name}</div>
                       )}
                       {steps.length > 1 ? (
@@ -157,17 +171,17 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
                         />
                       ) : undefined}
                     </div>
-                    {this.props.rendering.renderStepBody(step, index)}
+                    {renderStepBody(step, index)}
                   </div>
                 </div>
                 {shouldRenderLine ? (
                   <div>
                     <div className={'mcs-timelineStepBuilder_step_bullet'}>
                       <div className={'mcs-timelineStepBuilder_step_bullet_icon'}>
-                        {this.props.rendering.shouldDisplayNumbersInBullet ? index + 1 : ''}
+                        {shouldDisplayNumbersInBullet ? index + 1 : ''}
                       </div>
                     </div>
-                    {this.props.rendering.renderAfterBulletElement?.(step, index)}
+                    {renderAfterBulletElement?.(step, index)}
                   </div>
                 ) : undefined}
               </Card>
@@ -175,12 +189,12 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
           })}
           <div className={'mcs-timelineStepBuilder_addStepBlock'}>
             <div className={this.computeTimelineEndClassName(steps.length)}>
-              {this.props.rendering.renderFooterTimeline?.()}
+              {renderFooterTimeline?.()}
             </div>
-            {steps.length < this.props.maxSteps && (
+            {steps.length < maxSteps && !editionMode && (
               <Button className={'mcs-timelineStepBuilder_addStepBtn'} onClick={this.addStep}>
                 <FormattedMessage
-                  {...(this.props.rendering.getAddStepText?.() || {
+                  {...(getAddStepText?.() || {
                     id: 'timeline.stepBuilder.newStep',
                     defaultMessage: 'Add a step',
                   })}

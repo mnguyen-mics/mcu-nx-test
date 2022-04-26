@@ -393,26 +393,53 @@ class AggregationRenderer extends React.Component<Props, State> {
         type: 'OTQL' as SourceType,
       };
     } else {
-      const promises = serieQueries
-        ? serieQueries.map(serieQuery => {
-            return this._queryService
-              .createQuery(datamartId, {
-                query_language: 'OTQL',
-                query_text: serieQuery.query,
-              })
-              .then(res => {
-                return {
-                  type: 'OTQL',
-                  query_id: res.data.id,
-                  series_title: serieQuery.serieName,
-                };
-              });
+      const createQueryPromise = (
+        queryText: string,
+        serieTitle: string,
+        type: 'join' | 'to-list',
+      ) => {
+        return this._queryService
+          .createQuery(datamartId, {
+            query_language: 'OTQL',
+            query_text: queryText,
           })
-        : [];
+          .then(res => {
+            return {
+              type: 'OTQL',
+              query_id: res.data.id,
+              series_title: serieTitle,
+              operation_type: type,
+            };
+          });
+      };
+      const promises: Array<Promise<any>> = [];
+      serieQueries?.forEach(serieQuery => {
+        if (typeof serieQuery.queryModel === 'string') {
+          promises.push(createQueryPromise(serieQuery.queryModel, serieQuery.name, 'join'));
+        } else {
+          serieQuery.queryModel.forEach(model => {
+            promises.push(createQueryPromise(model.query, model.name, 'to-list'));
+          });
+        }
+      });
       await Promise.all(promises).then(res => {
+        const getSources = (operationType: 'join' | 'to-list') => {
+          return res
+            .filter(r => r.operation_type === operationType)
+            .map(r => {
+              return {
+                type: 'OTQL',
+                query_id: r.query_id,
+                series_title: r.series_title,
+              };
+            });
+        };
         _dataset = {
           type: 'join',
-          sources: res,
+          sources: getSources('join').concat({
+            type: 'to-list',
+            sources: getSources('to-list'),
+          } as any),
         };
       });
     }

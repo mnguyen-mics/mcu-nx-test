@@ -14,7 +14,6 @@ export interface OtqlInputEditorProps {
   onAbortQuery: () => void;
   runningQuery: boolean;
   datamartId: string;
-  defaultValue?: string;
   precision: QueryPrecisionMode;
   evaluateGraphQl: boolean;
   useCache: boolean;
@@ -31,6 +30,7 @@ export interface OtqlInputEditorProps {
   updateNameModel: (id: string) => (e: any) => void;
   displaySerieInput: (id: string) => (e: any) => void;
   onSeriesChanged: (series: SerieQueryModel[]) => void;
+  editionMode?: boolean;
 }
 
 type Props = OtqlInputEditorProps & InjectedFeaturesProps;
@@ -131,6 +131,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       updateNameModel,
       displaySerieInput,
       onSeriesChanged,
+      editionMode,
     } = this.props;
 
     const onCacheChange = (a: boolean) => handleChange(evaluateGraphQl, a, precision);
@@ -148,6 +149,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
           updateNameModel={updateNameModel}
           displaySeriesInput={displaySerieInput}
           onSeriesChanged={onSeriesChanged}
+          editionMode={editionMode}
         />
         <Modal
           title='Query Settings'

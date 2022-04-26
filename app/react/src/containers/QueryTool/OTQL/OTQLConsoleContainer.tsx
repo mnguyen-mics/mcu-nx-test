@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Alert, Button, Layout, Row, Tabs } from 'antd';
+import { Alert, Layout, Row, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 import { OTQLResult, QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
@@ -239,6 +239,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
           datamartId={this.props.datamartId}
           setQuery={this.getCurrentTabQuery.bind(this, activeKey)}
           query={editionMode && query?.includes('where') ? query : undefined}
+          editionMode={editionMode}
         />
       ),
       key: activeKey,
@@ -313,7 +314,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       editionMode,
       createdQueryId,
       hasFeature,
-      renderActionBar 
+      renderActionBar,
     } = this.props;
     const { schemaLoading, rawSchema, activeKey, panes, tabQueries, query } = this.state;
 
@@ -349,6 +350,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
     return (
       <Layout>
+        {this.state.query && renderActionBar && renderActionBar(queryToUse, datamartId)}
         <Layout>
           <Content className='mcs-content-container'>
             {schemaLoading ? (

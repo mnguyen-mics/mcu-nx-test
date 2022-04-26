@@ -569,7 +569,7 @@
 
 .mcs-otqlInputEditor_save_button {
   padding: 0px 15px 0px 15px;
-  height: 32px;
+  height: 40px;
   vertical-align: middle;
   background: @info-color;
   border: none;
@@ -603,10 +603,6 @@
   .mcs-timelineStepBuilder_addStepBlock {
     padding: 0px;
   }
-}
-
-.mcs-timelineStepBuilder_addStepBlock {
-  padding: 0px 20px;
 }
 
 .mcs-otqlInputEditor_serieQuery {
@@ -655,11 +651,54 @@
       background: @info-color;
       border: none;
     }
+    .ant-card-body {
+      padding: 0px 24px 10px 24px;
+    }
   }
-}
-
-.mcs-timelineStepBuilder_steps {
-  width: 100%;
+  .mcs-otqlInputEditor_newSubSerieQuery {
+    border: none;
+    background: none;
+    box-shadow: none;
+    position: absolute;
+    padding: 0px;
+    color: @text-color;
+    bottom: -19px;
+  }
+  .mcs-timelineStepBuilder_steps {
+    width: 100%;
+    padding: 0px;
+  }
+  .mcs-timelineStepBuilder_addStepBlock {
+    padding: 0px 20px;
+  }
+  .mcs-timelineStepBuilder_step_bullet {
+    left: -10px !important;
+    bottom: -30px !important;
+    &:after {
+      content: '+';
+      color: white;
+      font-size: 18px;
+      top: 5px;
+      left: 5px;
+      position: absolute;
+    }
+  }
+  .mcs-timelineStepBuilder_stepHeader {
+    position: relative;
+    left: -25px;
+    top: -5px;
+    width: calc(100% + 25px);
+  }
+  .mcs-timelineStepBuilder_step_body {
+    .mcs-timelineStepBuilder_step_body {
+      .mcs-otqlInputEditor_editor {
+        margin-left: -25px;
+      }
+    }
+  }
+  .timelineStepBuilder_removeStepBtn {
+    margin: 5px 0px;
+  }
 }
 
 .mcs-otqlInputEditor_card:hover {
@@ -835,8 +874,9 @@
 .mcs-OTQLConsoleContainer_tabs {
   flex: 4;
   margin-top: 40px;
-  padding: 0 2px;
+  padding: 0 10px;
   background: #fff0;
+  border-bottom: none;
 
   .ant-tabs-ink-bar {
     display: none;
@@ -944,8 +984,4 @@
 .mcs-otqlInputEditor_stepNameButton {
   margin: 5px 0px;
   font-weight: bold;
-}
-
-.mcs-timelineStepBuilder_removeStepBtn {
-  margin: 5px 0px;
 }

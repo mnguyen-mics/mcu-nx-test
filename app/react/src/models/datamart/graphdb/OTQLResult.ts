@@ -1,4 +1,5 @@
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+import { QueryListModel, SerieQueryModel } from '../../../containers/QueryTool/OTQL/OTQLRequest';
 
 export interface OTQLResult {
   took: number | null;
@@ -96,4 +97,16 @@ export interface GraphQLResult {
   took: number;
   cache_hit: boolean;
   data: any;
+}
+
+export function isQueryListModel(
+  queryModel: string | QueryListModel[],
+): queryModel is QueryListModel[] {
+  return Array.isArray(queryModel);
+}
+
+export function isSerieQueryModel(
+  model: SerieQueryModel | QueryListModel,
+): model is SerieQueryModel {
+  return !!(model as SerieQueryModel).queryModel;
 }
