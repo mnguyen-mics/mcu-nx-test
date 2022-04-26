@@ -29,15 +29,16 @@ describe('This test should check that the search by final value feature is worki
     cy.get('.mcs-tabs_tab--audienceFeatures').click();
     cy.get('.mcs-audienceFeatureTable_dropDownMenu')
       .should('be.visible')
-      .each(dropdownArrow => {
-        cy.wrap(dropdownArrow)
+      .each(() => {
+        cy.get('.mcs-audienceFeatureTable_dropDownMenu')
+          .first()
           .click()
           .then(() => {
-            //Wait between deletions
-            cy.wait(1000);
             cy.get('.mcs-audienceFeatureTable_dropDownMenu--delete').click();
             cy.get('.mcs-audienceFeatureDeletePopUp').should('be.visible');
             cy.get('.mcs-audienceFeatureDeletePopUp_ok_button').click();
+            // Wait deletion of audience features
+            cy.wait(1000);
           });
       });
   };
@@ -50,13 +51,16 @@ describe('This test should check that the search by final value feature is worki
     cy.get('.mcs-tabs_tab--segmentBuilder').click();
     cy.get('.mcs-standardSegmentBuilderTable_dropDownMenu')
       .should('be.visible')
-      .each(dropdownArrow => {
-        cy.wrap(dropdownArrow)
+      .each(() => {
+        cy.get('.mcs-standardSegmentBuilderTable_dropDownMenu')
+          .first()
           .click()
           .then(() => {
             cy.get('.mcs-standardSegmentBuilderTable_dropDownMenu--delete').click();
             cy.get('.mcs-standardSegmentBuilderDeletePopUp').should('be.visible');
             cy.get('.mcs-standardSegmentBuilderDeletePopUp_delete_button').click();
+            // Wait deletion of standard segment builder
+            cy.wait(1000);
           });
       });
   };
