@@ -164,6 +164,7 @@ import {
   ChartDatasetService,
   IChartDatasetService,
 } from '@mediarithmics-private/advanced-components';
+import ChartService, { IChartService } from '../services/ChartsService';
 
 export const container = new Container();
 
@@ -319,6 +320,7 @@ container
   .to(StandardSegmentBuilderQueryService);
 container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
 container.bind<IChartDatasetService>(TYPES.IChartDatasetService).to(ChartDatasetService);
+container.bind<IChartService>(TYPES.IChartService).to(ChartService);
 
 export const { lazyInject } = getDecorators(container, false);
 
