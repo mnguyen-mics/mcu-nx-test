@@ -130,7 +130,7 @@ class EditableLogo extends React.Component<Props> {
     const uploadLogoComponent = this.wrapInDraggerComponent(insideComponent);
 
     return (
-      <div className='mcs-logo-placeholder'>
+      <div className='mcs-settings-edit-logo'>
         {mode === 'inline' && (
           <div className='mcs-logo'>
             {uploadLogoComponent}
