@@ -43,6 +43,7 @@ export function defineAce() {
         .ace-otql  {\
         background: #fff;\
         font-size: 12; \
+        border-radius: 5px;\
         color: #000;\
         }\
         .ace-otql .ace_keyword {\

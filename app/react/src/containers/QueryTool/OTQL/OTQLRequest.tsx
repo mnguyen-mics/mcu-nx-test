@@ -118,14 +118,7 @@ class OTQLRequest extends React.Component<Props, State> {
             showChartLegend: !(
               result?.data?.rows && hasSubBucketsOrMultipleSeries(result.data.rows)
             ),
-            serieQueries: serieQueries.map((q, i) =>
-              i === 0
-                ? {
-                    ...q,
-                    query: otqlQuery,
-                  }
-                : q,
-            ),
+            serieQueries: serieQueries,
           });
         })
         .catch(error => {

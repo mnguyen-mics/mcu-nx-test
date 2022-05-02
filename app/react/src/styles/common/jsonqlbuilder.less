@@ -563,6 +563,7 @@
 
 .mcs-otqlInputEditor_editor {
   padding: 10px 0px;
+  border-radius: 5px;
   background: #fff;
 }
 
@@ -589,6 +590,19 @@
 
 .mcs-timelineStepBuilder_steps_noline {
   width: 100%;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+.mcs-timelineStepBuilder_steps_noline {
+  .ant-card-body {
+    padding: 24px 0px;
+  }
+  .mcs-timelineStepBuilder_addStepBlock {
+    padding: 0px;
+  }
 }
 
 .mcs-timelineStepBuilder_addStepBlock {
@@ -596,8 +610,6 @@
 }
 
 .mcs-otqlInputEditor_serieQuery {
-  margin-left: 10px;
-
   .mcs-timelineStepBuilder_step:hover {
     .mcs-otqlInputEditor_clear_button {
       opacity: 1;
@@ -699,6 +711,7 @@
   .mcs-otqlInputEditor_deleteSerie,
   .mcs-otqlInputEditor_settings_button {
     float: right;
+    margin-right: 20px;
     font-size: 20px;
   }
   .mcs-otqlInputEditor_deleteSerie {
@@ -708,7 +721,7 @@
     margin-top: 10px;
   }
   .mcs-otqlInputEditor_serieButtons {
-    padding: 0px 20px;
+    padding: 0px 0px;
     .mcs-otqlInputEditor_newSerieButton,
     .mcs-otqlInputEditor_newSerieButton:hover,
     .mcs-otqlInputEditor_newSerieButton:active,

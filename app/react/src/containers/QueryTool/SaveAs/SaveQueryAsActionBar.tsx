@@ -17,9 +17,9 @@ import { SegmentSelector } from '@mediarithmics-private/advanced-components';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 
 export interface SaveQueryAsActionBarProps {
-  saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
-  saveAsExport?: (formData: NewExportSimpleFormData) => Promise<any>;
-  saveAsTechnicalQuery?: () => Promise<any>;
+  saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<void>;
+  saveAsExport?: (formData: NewExportSimpleFormData) => Promise<void>;
+  saveAsTechnicalQuery?: () => Promise<void>;
   convertToOtql?: () => Promise<DataResponse<QueryTranslationResource>>;
   breadcrumb: React.ReactNode[];
   csvExportDisabled?: boolean;

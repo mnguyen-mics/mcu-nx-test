@@ -527,13 +527,21 @@ class AggregationRenderer extends React.Component<Props, State> {
       if (isOTQLAggregations(rootAggregations)) {
         // Reformat dataset to expected key and value
         if (selectedChart === 'radar') {
+          const RADAR_Y_KEY = 'value';
           displayedDataset.dataset = displayedDataset.dataset.map((bucket: any) => {
-            return { xKey: bucket.key, value: bucket.count };
+            return { key: bucket.key, [RADAR_Y_KEY]: bucket.count };
           });
+          displayedDataset.metadata = {
+            seriesTitles: [RADAR_Y_KEY],
+          };
         } else if (selectedChart === 'pie') {
+          const PIE_Y_KEY = 'value';
           displayedDataset.dataset = displayedDataset.dataset.map((bucket: any) => {
-            return { key: bucket.key, value: bucket.count };
+            return { key: bucket.key, [PIE_Y_KEY]: bucket.count };
           });
+          displayedDataset.metadata = {
+            seriesTitles: [PIE_Y_KEY],
+          };
         }
       } else if (aggregateData) {
         displayedDataset = JSON.parse(JSON.stringify(aggregateData));
