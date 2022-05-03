@@ -131,16 +131,19 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
 
     const basePath = '/v2/o/:organisationId(\\d+)';
 
+    const buildHomeUrl = (organisationId: string) => {
+      const { workspaces } = this.props;
+      return workspaces?.[parseInt(organisationId, 0)]?.datamarts?.length > 0
+        ? `/v2/o/${organisationId}/home`
+        : `/v2/o/${organisationId}/campaigns/display`;
+    };
+
     const renderSlashRoute = ({ match }: RouteComponentProps<{ organisationId: string }>) => {
       const redirectTo = () => {
-        const { defaultWorkspaceOrganisationId, workspaces } = this.props;
+        const { defaultWorkspaceOrganisationId } = this.props;
 
         if (defaultWorkspaceOrganisationId && defaultWorkspaceOrganisationId !== 'none') {
-          const homeUrl =
-            workspaces?.[parseInt(defaultWorkspaceOrganisationId, 0)]?.datamarts?.length > 0
-              ? `/v2/o/${defaultWorkspaceOrganisationId}/audience/segments`
-              : `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
-          return homeUrl;
+          return buildHomeUrl(defaultWorkspaceOrganisationId);
         }
         return undefined;
       };
@@ -212,6 +215,7 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
             requiredFeatures={route.requiredFeature}
             requireDatamart={route.requireDatamart}
             renderOnError={renderValue(compsForRenderWhenError)}
+            homePage={buildHomeUrl}
           >
             {renderValue(compsForRender)}
           </RenderOnAuthenticated>
