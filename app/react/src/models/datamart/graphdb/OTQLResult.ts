@@ -77,7 +77,7 @@ export function isCountResult(rows: OTQLResultRowsShape): rows is OTQLCountResul
 }
 
 function hasSubBuckets(rows: OTQLAggregationResult[]) {
-  return !!rows[0].aggregations.buckets[0].buckets;
+  return !!rows[0].aggregations.buckets[0]?.buckets;
 }
 
 function hasMultipleSeries(rows: OTQLResultRowsShape) {
