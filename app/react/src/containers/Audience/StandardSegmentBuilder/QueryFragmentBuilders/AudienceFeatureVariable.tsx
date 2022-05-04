@@ -243,7 +243,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
 
         const query = `${queryStart} ${innerQuery} FROM UserPoint`;
         return this._queryService
-          .runOTQLQuery(datamartId, query, {
+          .runOTQLQuery(datamartId, query, 'DASHBOARD', 'STANDARD_SEGMENT_BUILDER_DASHBOARD', {
             use_cache: true,
           })
           .then(otqlResultResp => {

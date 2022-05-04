@@ -11,8 +11,14 @@ import {
   QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import { mapData2 } from '../mapData';
+import {
+  QueryExecutionSource,
+  QueryExecutionSubSource,
+} from '@mediarithmics-private/advanced-components';
 
 export interface WorldMapChartProps {
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   title: string;
   queryId: string;
   datamartId: string;
@@ -71,7 +77,7 @@ export default class WorldMapChart extends React.Component<WorldMapChartProps, S
 
   fetchData = (chartQueryId: string, datamartId: string): Promise<void> => {
     this.setState({ error: false });
-    const { precision } = this.props;
+    const { precision, queryExecutionSource, queryExecutionSubSource } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
 
@@ -80,7 +86,7 @@ export default class WorldMapChart extends React.Component<WorldMapChartProps, S
       })
       .then(q => {
         return this._queryService
-          .runOTQLQuery(datamartId, q.query_text, {
+          .runOTQLQuery(datamartId, q.query_text, queryExecutionSource, queryExecutionSubSource, {
             use_cache: true,
             precision: precision,
           })

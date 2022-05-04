@@ -9,6 +9,8 @@ import {
 import {
   injectThemeColors,
   InjectedThemeColorsProps,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -33,6 +35,8 @@ export interface CountBarChartProps {
   plotLabels: string[];
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   precision?: QueryPrecisionMode;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
 }
 
 interface QueryResult {
@@ -145,7 +149,7 @@ class CountBarChart extends React.Component<Props, State> {
     plotLabelIndex: number,
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<QueryResult[]> => {
-    const { precision } = this.props;
+    const { precision, queryExecutionSource, queryExecutionSubSource } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
       .then(queryResp => {
@@ -156,7 +160,7 @@ class CountBarChart extends React.Component<Props, State> {
       })
       .then(q => {
         return this._queryService
-          .runOTQLQuery(datamartId, q.query_text, {
+          .runOTQLQuery(datamartId, q.query_text, queryExecutionSource, queryExecutionSubSource, {
             use_cache: true,
             precision: precision,
           })

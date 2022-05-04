@@ -9,6 +9,10 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { getFormattedQuery } from '../domain';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import {
+  QueryExecutionSource,
+  QueryExecutionSubSource,
+} from '@mediarithmics-private/advanced-components';
 
 export interface PercentageProps {
   queryId: string;
@@ -16,6 +20,8 @@ export interface PercentageProps {
   datamartId: string;
   title: string;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   precision?: QueryPrecisionMode;
 }
 
@@ -96,7 +102,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<number | void> => {
     this.setState({ error: false, loading: true });
-    const { precision } = this.props;
+    const { precision, queryExecutionSource, queryExecutionSubSource } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
 
@@ -109,7 +115,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
       .then(q => {
         const query = q.query_text;
         return this._queryService
-          .runOTQLQuery(datamartId, query, {
+          .runOTQLQuery(datamartId, query, queryExecutionSource, queryExecutionSubSource, {
             use_cache: true,
             precision: precision,
           })

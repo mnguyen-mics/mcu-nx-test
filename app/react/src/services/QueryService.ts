@@ -1,4 +1,9 @@
-import { ApiService } from '@mediarithmics-private/advanced-components';
+import {
+  ApiService,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
+  getOTQLSourceHeader,
+} from '@mediarithmics-private/advanced-components';
 import {
   DataListResponse,
   DataResponse,
@@ -18,7 +23,6 @@ import {
 import { QueryDocument } from '../models/datamart/graphdb/QueryDocument';
 import log from '../utils/Logger';
 import { injectable } from 'inversify';
-
 export interface IQueryService {
   getQuery: (datamartId: string, queryId: string) => Promise<DataResponse<QueryResource>>;
 
@@ -36,6 +40,8 @@ export interface IQueryService {
   runOTQLQuery: (
     datamartId: string,
     query: string,
+    source: QueryExecutionSource,
+    subSource: QueryExecutionSubSource,
     options?: {
       index_name?: string;
       query_id?: string;
@@ -59,6 +65,8 @@ export interface IQueryService {
   runJSONOTQLQuery: (
     datamartId: string,
     query: QueryDocument,
+    source: QueryExecutionSource,
+    subSource: QueryExecutionSubSource,
     options?: {
       index_name?: string;
       query_id?: string;
@@ -115,6 +123,8 @@ export class QueryService implements IQueryService {
   runOTQLQuery(
     datamartId: string,
     query: string,
+    source: QueryExecutionSource,
+    subSource: QueryExecutionSubSource,
     options: {
       index_name?: string;
       query_id?: string;
@@ -132,6 +142,7 @@ export class QueryService implements IQueryService {
       'Content-Type': `${
         options.content_type ? options.content_type : 'text/plain; charset=utf-8'
       }`,
+      'X-MICS-OTQL-SOURCE': getOTQLSourceHeader(source, subSource),
     }; // to finish
     return ApiService.postRequest(endpoint, query, options, headers);
   }
@@ -151,6 +162,8 @@ export class QueryService implements IQueryService {
   runJSONOTQLQuery(
     datamartId: string,
     query: QueryDocument,
+    source: QueryExecutionSource,
+    subSource: QueryExecutionSubSource,
     options: {
       index_name?: string;
       query_id?: string;
@@ -161,7 +174,11 @@ export class QueryService implements IQueryService {
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/jsonotql`;
-    return ApiService.postRequest(endpoint, query, options);
+    const headers = {
+      'Content-Type': 'application/json',
+      'X-MICS-OTQL-SOURCE': getOTQLSourceHeader(source, subSource),
+    };
+    return ApiService.postRequest(endpoint, JSON.stringify(query), options, headers);
   }
 
   // TODO add query body and return type

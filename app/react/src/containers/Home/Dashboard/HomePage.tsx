@@ -273,6 +273,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                 className='mcs-homePage_dashboard_page_wrapper'
                 onShowDashboard={handleOnShowDashboard}
                 onFinishLoading={this.handleFinishLoading}
+                queryExecutionSource={'DASHBOARD'}
+                queryExecutionSubSource={'HOME_DASHBOARD'}
               />
             )}
             {!isLoading && !hasDashboards && this.renderPlaceholder()}
@@ -314,6 +316,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                   schema={defaultDashboard as DashboardContentSchema}
                   openNextDrawer={emptyFunction}
                   closeNextDrawer={emptyFunction}
+                  queryExecutionSource={'DASHBOARD'}
+                  queryExecutionSubSource={'HOME_DASHBOARD'}
                 />
               </div>
             </div>

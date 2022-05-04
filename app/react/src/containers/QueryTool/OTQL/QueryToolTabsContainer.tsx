@@ -28,7 +28,11 @@ import { Loading } from '@mediarithmics-private/mcs-components-library';
 import ChartsSearchPanel from '../ChartsSearchPanel';
 import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
 import { getChartDataset } from './utils/ChartOptionsUtils';
-import { IChartDatasetService } from '@mediarithmics-private/advanced-components';
+import {
+  IChartDatasetService,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
+} from '@mediarithmics-private/advanced-components';
 import _ from 'lodash';
 import cuid from 'cuid';
 import {
@@ -78,6 +82,8 @@ export interface QueryToolTabsContainerProps {
   queryEditorClassName?: string;
   editionMode?: boolean;
   createdQueryId?: string;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   renderSaveAsButton?: (query: string, datamartId: string) => React.ReactNode;
 }
 
@@ -195,7 +201,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
   };
 
   runQuery = () => {
-    const { datamartId } = this.props;
+    const { datamartId, queryExecutionSource, queryExecutionSubSource } = this.props;
     const { activeKey, tabs } = this.state;
     const activeTab = tabs.find(tab => tab.key === activeKey);
     this.setState({
@@ -221,11 +227,17 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       const useCache = activeTab?.useCache;
       const evaluateGraphQl = activeTab?.evaluateGraphQl;
       this.asyncQuery = makeCancelable(
-        this._queryService.runOTQLQuery(datamartId, otqlQuery, {
-          precision: precision,
-          use_cache: useCache,
-          graphql_select: evaluateGraphQl,
-        }),
+        this._queryService.runOTQLQuery(
+          datamartId,
+          otqlQuery,
+          queryExecutionSource,
+          queryExecutionSubSource,
+          {
+            precision: precision,
+            use_cache: useCache,
+            graphql_select: evaluateGraphQl,
+          },
+        ),
       );
       this.asyncQuery.promise
         .then(result => {
@@ -443,6 +455,8 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      queryExecutionSource,
+      queryExecutionSubSource,
     } = this.props;
     const { tabs, activeKey } = this.state;
     // TODO: improve typings of 'sources' and chart configs in ADV library
@@ -479,14 +493,20 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       });
     };
     return this._chartDatasetService
-      .fetchDataset(datamartId, organisationId, {
-        title: '',
-        type: tabQuery.chartItem?.type || 'table',
-        dataset: {
-          type: 'join',
-          sources: getSources(),
-        } as any,
-      })
+      .fetchDataset(
+        datamartId,
+        organisationId,
+        {
+          title: '',
+          type: tabQuery.chartItem?.type || 'table',
+          dataset: {
+            type: 'join',
+            sources: getSources(),
+          } as any,
+        },
+        queryExecutionSource,
+        queryExecutionSubSource,
+      )
       .then(res => {
         const response = res as any;
         this.setState({

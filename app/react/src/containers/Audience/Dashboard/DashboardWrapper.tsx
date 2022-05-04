@@ -22,7 +22,8 @@ class DashboardWrapper extends React.Component<Props, State> {
   }
 
   render() {
-    const { source, layout, title, datamartId } = this.props;
+    const { source, layout, title, datamartId, queryExecutionSource, queryExecutionSubSource } =
+      this.props;
 
     return (
       <div>
@@ -32,6 +33,8 @@ class DashboardWrapper extends React.Component<Props, State> {
           onLayoutChange={this.onLayoutChange}
           source={source}
           datamartId={datamartId}
+          queryExecutionSource={queryExecutionSource}
+          queryExecutionSubSource={queryExecutionSubSource}
         />
       </div>
     );

@@ -229,6 +229,8 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
             renderSaveAsButton={renderSaveAsButton}
             datamartId={selectedDatamart.id}
             createdQueryId={createdQueryId}
+            queryExecutionSource='DATA_STUDIO'
+            queryExecutionSubSource='OTQL_EXPLORER'
           />
         )}
         {selectedDatamart && selectedDatamart.storage_model_version === 'v201506' && (
