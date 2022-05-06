@@ -146,26 +146,38 @@
   margin-right: 10px;
 }
 
-.mcs-audienceSegmentDashboard_contextualTargetingTab {
-  .mcs-audienceSegmentDashboard_stepOne {
+.mcs-contextualTargetingDashboard_contextualTargetingTab {
+  padding: 20px 60px;
+  min-height: 500px;
+  .mcs-contextualTargetingDashboard_noCtStep {
     text-align: center;
+    .mcs-empty-chart-no-data {
+      margin-bottom: 25px;
+    }
   }
-  .mcs-audienceSegmentDashboard_stepTwo {
-    padding: 20px 60px;
-    .mcs-audienceSegmentDashboard_graph {
+  .mcs-contextualTargetingDashboard_initializationStep {
+    text-align: center;
+    color: #00000066;
+    font-size: 16px;
+    .mcs-empty-chart-no-data {
+      margin-bottom: 25px;
+    }
+  }
+  .mcs-contextualTargetingDashboard_draftStep {
+    .mcs-contextualTargetingDashboard_graph {
       text-align: center;
       background-color: @border-color-base;
       height: 300px;
       line-height: 300px;
     }
   }
-  .mcs-audienceSegmentDashboard_settingsCard {
+  .mcs-contextualTargetingDashboard_settingsCard {
     background-color: white;
     border-radius: @border-radius-base;
-    .mcs-audienceSegmentDashboard_settingsCardContainer {
+    .mcs-contextualTargetingDashboard_settingsCardContainer {
       padding: 15px;
     }
-    .mcs-audienceSegmentDashboard_settingsCardButton {
+    .mcs-contextualTargetingDashboard_settingsCardButton {
       background-color: @primary-color;
       color: white;
       padding: 10px;

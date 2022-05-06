@@ -72,6 +72,7 @@ const TYPES = {
   IStandardSegmentBuilderQueryService: Symbol.for('StandardSegmentBuilderQueryService'),
   IChartDatasetService: Symbol.for('chartDatasetService'),
   IChartService: Symbol.for('chartService'),
+  IContextualTargetingService: Symbol.for('contextualTargetingService'),
 };
 
 export { TYPES };
