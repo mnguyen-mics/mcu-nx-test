@@ -111,7 +111,6 @@ class OTQLRequest extends React.Component<Props, State> {
       runningQuery: true,
       error: null,
       queryAborted: false,
-      queryResult: null,
     });
     if (this.isQuerySeriesActivated()) {
       this.fetchQuerySeriesDataset();
@@ -279,9 +278,7 @@ class OTQLRequest extends React.Component<Props, State> {
 
   isQuerySeriesActivated = () => {
     const { queryResult } = this.state;
-    return (
-      !!queryResult && (isAggregateDataset(queryResult) ? true : !isCountResult(queryResult.rows))
-    );
+    return !!queryResult && (isAggregateDataset(queryResult) || !isCountResult(queryResult.rows));
   };
 
   render() {
