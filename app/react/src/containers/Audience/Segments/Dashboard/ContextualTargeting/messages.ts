@@ -1,25 +1,33 @@
 import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
-  contextualTargetingTabText: {
-    id: 'audience.segment.dashboard.tab-text.contextualTargeting',
-    defaultMessage: 'Target this segment using the URLs its users visit the most',
+  noContextualTargetingTabText: {
+    id: 'audience.segment.dashboard.contextualTargeting.noContextualTargetingTabText',
+    defaultMessage: 'Target this segment using content visited by its users',
   },
-  contextualTargetingTabButton: {
-    id: 'audience.segment.dashboard.tab-text.contextualTargeting.button',
-    defaultMessage: 'Start using contextual targeting for this segment',
+  noContextualTargetingTabButton: {
+    id: 'audience.segment.dashboard.contextualTargeting.noContextualTargetingTabButton',
+    defaultMessage: 'Activate Contextual Targeting for this segment',
+  },
+  InitializationTabText: {
+    id: 'audience.segment.dashboard.contextualTargeting.InitializationTabText',
+    defaultMessage: 'We are analyzing content visited by users in this segment',
+  },
+  InitializationTabSubText: {
+    id: 'audience.segment.dashboard.contextualTargeting.InitializationTabSubText',
+    defaultMessage: 'We will let you know when this is done',
   },
   stepOneTitle: {
     id: 'audience.segment.dashboard.contextualTargeting.stepOneTitle',
-    defaultMessage: 'Analyzing pages',
+    defaultMessage: 'Analyze content',
   },
   stepOneDescription: {
     id: 'audience.segment.dashboard.contextualTargeting.stepOneDescription',
-    defaultMessage: 'Which pages users visit more',
+    defaultMessage: 'Content viewed by users',
   },
   stepTwoTitle: {
     id: 'audience.segment.dashboard.contextualTargeting.stepTwoTitle',
-    defaultMessage: 'Select reach and lift',
+    defaultMessage: 'Select targeted ratio',
   },
   stepTwoDescription: {
     id: 'audience.segment.dashboard.contextualTargeting.stepTwoDescription',
@@ -27,11 +35,11 @@ export const messages = defineMessages({
   },
   stepThreeTitle: {
     id: 'audience.segment.dashboard.contextualTargeting.stepThreeTitle',
-    defaultMessage: 'Generate site tag',
+    defaultMessage: 'Activate',
   },
   stepThreeDescription: {
     id: 'audience.segment.dashboard.contextualTargeting.stepThreeDescription',
-    defaultMessage: 'Automatically integrated',
+    defaultMessage: 'Integrated to your channels',
   },
   noUrls: {
     id: 'audience.segment.dashboard.contextualTargeting.noUrls',

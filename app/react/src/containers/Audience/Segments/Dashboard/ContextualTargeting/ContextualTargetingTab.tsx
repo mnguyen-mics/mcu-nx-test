@@ -1,12 +1,26 @@
-import { Card, EmptyChart, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  EmptyChart,
+  LoadingChart,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
 import { messages } from './messages';
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Button, Col, Row, Slider, Statistic, Steps } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { fetchUrls } from './domain';
+import {
+  ContextualTargetingResource,
+  ContextualTargetingStatus,
+} from '../../../../../models/contextualtargeting/ContextualTargeting';
+import { IContextualTargetingService } from '../../../../../services/ContextualTargetingService';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 export interface UrlResource {
   id: string;
@@ -23,11 +37,11 @@ interface ContextualTargetingTabProps {
 
 const { Step } = Steps;
 
-type Props = ContextualTargetingTabProps & InjectedIntlProps;
+type Props = ContextualTargetingTabProps & InjectedNotificationProps & InjectedIntlProps;
 
 interface State {
-  current: number;
-  loading?: boolean;
+  contextualTargeting?: ContextualTargetingResource;
+  isLoading: boolean;
   initialUrls: UrlResource[];
   urls: UrlResource[];
   isLoadingUrls: boolean;
@@ -37,10 +51,19 @@ interface State {
 }
 
 class ContextualTargetingTab extends React.Component<Props, State> {
+  @lazyInject(TYPES.IContextualTargetingService)
+  private _contextualTargetingService: IContextualTargetingService;
+
+  private refreshContextualTargetingInterval = setInterval(() => {
+    if (this.getContextualTargetingStatus() === 'INIT') {
+      this.getContextualTargeting();
+    }
+  }, 10000);
+
   constructor(props: Props) {
     super(props);
     this.state = {
-      current: 0,
+      isLoading: true,
       isLoadingUrls: true,
       initialUrls: [],
       urls: [],
@@ -51,10 +74,34 @@ class ContextualTargetingTab extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.fetchUrls();
+    this.getContextualTargeting();
+    this.mockUrls();
   }
 
-  fetchUrls = () => {
+  componentWillUnmount() {
+    clearInterval(this.refreshContextualTargetingInterval);
+  }
+
+  getContextualTargeting = () => {
+    const { segmentId } = this.props;
+
+    this._contextualTargetingService
+      .getContextualTargetings(segmentId)
+      .then(res => {
+        this.setState({
+          contextualTargeting: res.data[0],
+          isLoading: false,
+        });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          isLoading: false,
+        });
+      });
+  };
+
+  mockUrls = () => {
     this.setState({
       isLoadingUrls: true,
     });
@@ -90,24 +137,85 @@ class ContextualTargetingTab extends React.Component<Props, State> {
 
   onClick = () => {
     this.setState({
-      loading: true,
+      isLoading: true,
     });
-    setTimeout(() => {
-      this.setState({ current: 1 });
-    }, 3000);
+    this.createContextualTargeting();
   };
 
-  render() {
+  createContextualTargeting = () => {
+    const { segmentId } = this.props;
+    const contextualTargeting = {
+      segment_id: segmentId,
+    };
+    this._contextualTargetingService
+      .createContextualTargeting(segmentId, contextualTargeting)
+      .then(res => {
+        this.setState({
+          contextualTargeting: res.data,
+          isLoading: false,
+        });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          isLoading: false,
+        });
+      });
+  };
+
+  getContextualTargetingStatus = () => {
+    const { contextualTargeting } = this.state;
+    return contextualTargeting ? contextualTargeting.status : undefined;
+  };
+
+  getStepIndex = (status?: ContextualTargetingStatus) => {
+    switch (status) {
+      case undefined:
+        return -1;
+      case 'INIT':
+        return 0;
+      case 'DRAFT':
+        return 1;
+      case 'PUBLISHED':
+        return 2;
+      case 'LIVE':
+        return 2;
+      case 'LIVE_PUBLISHED':
+        return 2;
+    }
+  };
+
+  renderNoCtStepTab = () => {
     const { intl } = this.props;
-    const {
-      current,
-      loading,
-      urls,
-      isLoadingUrls,
-      sliderValue,
-      totalUrls,
-      totalOfUserPointsInUrls,
-    } = this.state;
+    return (
+      <div className='mcs-contextualTargetingDashboard_noCtStep'>
+        <EmptyChart
+          title={intl.formatMessage(messages.noContextualTargetingTabText)}
+          icon='optimization'
+        />
+        <Button className='mcs-primary' type='primary' onClick={this.onClick}>
+          {intl.formatMessage(messages.noContextualTargetingTabButton)}
+        </Button>
+      </div>
+    );
+  };
+
+  renderInitializationStepTab = () => {
+    const { intl } = this.props;
+    return (
+      <div className='mcs-contextualTargetingDashboard_initializationStep'>
+        <EmptyChart
+          title={intl.formatMessage(messages.InitializationTabText)}
+          icon='optimization'
+        />
+        <span>{intl.formatMessage(messages.InitializationTabSubText)}</span>
+      </div>
+    );
+  };
+
+  renderDraftStepTab = () => {
+    const { intl } = this.props;
+    const { urls, isLoadingUrls, sliderValue } = this.state;
     const marks = {
       0: 0,
       2: 2,
@@ -115,7 +223,6 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       6: 6,
       8: 8,
     };
-
     const dataColumnsDefinition: Array<DataColumnDefinition<UrlResource>> = [
       {
         title: intl.formatMessage(messages.url),
@@ -138,59 +245,66 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     ];
 
     return (
-      <Row className='mcs-audienceSegmentDashboard_contextualTargetingTab'>
-        <Col span={20}>
-          {current === 1 ? (
-            <div className='mcs-audienceSegmentDashboard_stepTwo'>
-              <div className='mcs-audienceSegmentDashboard_graph'>graph</div>
-              <Slider
-                marks={marks}
-                defaultValue={3}
-                max={9}
-                value={sliderValue}
-                onChange={this.onSliderChange}
-              />
-              <Card title={intl.formatMessage(messages.targetedUrls)}>
-                <TableViewFilters
-                  dataSource={urls}
-                  loading={isLoadingUrls}
-                  columns={dataColumnsDefinition}
-                />
-              </Card>
-            </div>
-          ) : (
-            <div className='mcs-audienceSegmentDashboard_stepOne'>
-              <EmptyChart
-                title={intl.formatMessage(messages.contextualTargetingTabText)}
-                icon='optimization'
-              />
-              <Button className='mcs-primary' type='primary' onClick={this.onClick}>
-                {intl.formatMessage(messages.contextualTargetingTabButton)}
-              </Button>
-            </div>
-          )}
-        </Col>
-        <Col span={4}>
-          <Steps direction='vertical' current={current}>
+      <div className='mcs-contextualTargetingDashboard_draftStep'>
+        <div className='mcs-contextualTargetingDashboard_graph'>graph</div>
+        <Slider
+          marks={marks}
+          defaultValue={3}
+          max={9}
+          value={sliderValue}
+          onChange={this.onSliderChange}
+        />
+        <Card title={intl.formatMessage(messages.targetedUrls)}>
+          <TableViewFilters
+            dataSource={urls}
+            loading={isLoadingUrls}
+            columns={dataColumnsDefinition}
+          />
+        </Card>
+      </div>
+    );
+  };
+
+  render() {
+    const { intl } = this.props;
+    const { sliderValue, totalUrls, totalOfUserPointsInUrls, isLoading } = this.state;
+
+    const contextualTargetingStatus = this.getContextualTargetingStatus();
+    const stepIndex = this.getStepIndex(contextualTargetingStatus);
+
+    let stepTabComp;
+
+    if (isLoading) {
+      stepTabComp = <LoadingChart />;
+    } else if (!contextualTargetingStatus) {
+      stepTabComp = this.renderNoCtStepTab();
+    } else if (contextualTargetingStatus === 'INIT') {
+      stepTabComp = this.renderInitializationStepTab();
+    } else {
+      stepTabComp = this.renderDraftStepTab();
+    }
+
+    return (
+      <Row className='mcs-contextualTargetingDashboard_contextualTargetingTab'>
+        <Col span={19}>{stepTabComp}</Col>
+        <Col span={5}>
+          <Steps direction='vertical' current={this.getStepIndex(contextualTargetingStatus)}>
             <Step
               title={intl.formatMessage(messages.stepOneTitle)}
               description={intl.formatMessage(messages.stepOneDescription)}
-              icon={loading && current !== 1 && <LoadingOutlined />}
             />
             <Step
               title={intl.formatMessage(messages.stepTwoTitle)}
               description={intl.formatMessage(messages.stepTwoDescription)}
-              disabled={true}
             />
             <Step
               title={intl.formatMessage(messages.stepThreeTitle)}
               description={intl.formatMessage(messages.stepThreeDescription)}
-              disabled={true}
             />
           </Steps>
-          {current === 1 && (
-            <div className='mcs-audienceSegmentDashboard_settingsCard'>
-              <div className='mcs-audienceSegmentDashboard_settingsCardContainer'>
+          {stepIndex >= 1 && (
+            <div className='mcs-contextualTargetingDashboard_settingsCard'>
+              <div className='mcs-contextualTargetingDashboard_settingsCardContainer'>
                 <Statistic title={intl.formatMessage(messages.selectedLift)} value={sliderValue} />
                 <Statistic
                   title={intl.formatMessage(messages.numberOfTargetedUrls)}
@@ -203,7 +317,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
               </div>
 
               <div
-                className='mcs-audienceSegmentDashboard_settingsCardButton'
+                className='mcs-contextualTargetingDashboard_settingsCardButton'
                 onClick={this.onPublishSiteTag}
               >
                 {intl.formatMessage(messages.settingsCardButton)}
@@ -216,4 +330,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, ContextualTargetingTabProps>(injectIntl)(ContextualTargetingTab);
+export default compose<Props, ContextualTargetingTabProps>(
+  injectIntl,
+  injectNotifications,
+)(ContextualTargetingTab);

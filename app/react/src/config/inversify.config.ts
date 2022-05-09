@@ -165,6 +165,10 @@ import {
   IChartDatasetService,
 } from '@mediarithmics-private/advanced-components';
 import ChartService, { IChartService } from '../services/ChartsService';
+import {
+  ContextualTargetingService,
+  IContextualTargetingService,
+} from '../services/ContextualTargetingService';
 
 export const container = new Container();
 
@@ -321,6 +325,9 @@ container
 container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
 container.bind<IChartDatasetService>(TYPES.IChartDatasetService).to(ChartDatasetService);
 container.bind<IChartService>(TYPES.IChartService).to(ChartService);
+container
+  .bind<IContextualTargetingService>(TYPES.IContextualTargetingService)
+  .to(ContextualTargetingService);
 
 export const { lazyInject } = getDecorators(container, false);
 
