@@ -5,6 +5,10 @@ export const messages = defineMessages({
     id: 'settings.organisation.users.list.title',
     defaultMessage: 'Users',
   },
+  user: {
+    id: 'settings.organisation.users.list.title.user',
+    defaultMessage: 'User',
+  },
   usersFirstName: {
     id: 'settings.organisation.users.list.first.name',
     defaultMessage: 'First Name',
@@ -44,5 +48,83 @@ export const messages = defineMessages({
   usersCreationDate: {
     id: 'settings.organisation.users.list.creationDate',
     defaultMessage: 'Creation Date',
+  },
+  addAUser: {
+    id: 'settings.organisation.users.add',
+    defaultMessage: 'Add a user',
+  },
+  addAUserRole: {
+    id: 'settings.organisation.users.addRole',
+    defaultMessage: 'Add a role',
+  },
+  role: {
+    id: 'settings.organisation.users.role',
+    defaultMessage: 'Role',
+  },
+  save: {
+    id: 'settings.organisation.userForm.saveButton',
+    defaultMessage: 'Save',
+  },
+  editAUserRole: {
+    id: 'settings.organisation.users.editARole',
+    defaultMessage: 'Edit a role',
+  },
+  filterOnUser: {
+    id: 'settings.organisation.users.filterOnUser',
+    defaultMessage: 'Filter on User',
+  },
+  userInformation: {
+    id: 'settings.organisation.users.information',
+    defaultMessage: 'User Information',
+  },
+  userInformationDescription: {
+    id: 'settings.organisation.users.informationDescription',
+    defaultMessage: 'Those information will be visible by all users in the Community',
+  },
+  organisation: {
+    id: 'settings.organisation.users.organisation',
+    defaultMessage: 'Organisation',
+  },
+  selectOrganisation: {
+    id: 'settings.organisation.users.selectOrganisation',
+    defaultMessage: 'Select an organisation',
+  },
+  organisationDescription: {
+    id: 'settings.organisation.users.organisationDescription',
+    defaultMessage:
+      'The organisation will be used for login purposes only. User rights and privileges will be assigned through user roles',
+  },
+  modalCancel: {
+    id: 'settings.organisation.users.modalCancel',
+    defaultMessage: 'Cancel',
+  },
+  modalUserDeleteTitle: {
+    id: 'settings.organisation.users.modalUserDeleteTitle',
+    defaultMessage: 'Are you sure you want to delete this user ?',
+  },
+  modalUserRoleDeleteTitle: {
+    id: 'settings.organisation.users.modalUserRoleDeleteTitle',
+    defaultMessage: 'Are you sure you want to delete this role ?',
+  },
+  displayInheritedRole: {
+    id: 'settings.organisation.users.displayInheritedRole',
+    defaultMessage: 'Display inherited role',
+  },
+  userSearchPlaceholder: {
+    id: 'settings.organisation.users.form.userSearchPlaceholder',
+    defaultMessage: 'Search for a first or last name',
+  },
+  readerDescription: {
+    id: 'settings.organisation.users.form.readerDescription',
+    defaultMessage: 'Read access to organisations and all their child organisations',
+  },
+  editorDescription: {
+    id: 'settings.organisation.users.form.editorDescription',
+    defaultMessage: 'Read/write access to objects of an organisation and all child organisations',
+  },
+  orgAdminDescription: {
+    id: 'settings.organisation.users.form.orgAdminDescription',
+    defaultMessage:
+      'Read/write access to settings and objects of an organisation and all child organisations',
   },
 });
