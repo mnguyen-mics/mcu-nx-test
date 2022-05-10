@@ -641,6 +641,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       renderFooterTimeline: this.renderFooterTimeline,
       renderStepBody: this.renderStepBody,
       renderAfterBulletElement: this.renderAfterBulletElement,
+      shouldRenderArrows: true,
     };
     const stepManagement = {
       onStepAdded: this.onStepChange,

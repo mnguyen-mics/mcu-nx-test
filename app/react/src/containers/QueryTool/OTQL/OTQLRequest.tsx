@@ -3,14 +3,14 @@ import { Alert } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
+import { CancelablePromise, makeCancelable } from '../../../utils/ApiHelper';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import {
-  hasSubBucketsOrMultipleSeries,
   OTQLResult,
-  isCountResult,
   QueryPrecisionMode,
-  isAggregateDataset,
+  hasSubBucketsOrMultipleSeries,
+  isQueryListModel,
+  isSerieQueryModel,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -19,36 +19,35 @@ import OTQLResultRenderer from './OTQLResultRenderer';
 import OTQLInputEditor from './OTQLInputEditor';
 import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { lazyInject } from '../../../config/inversify.config';
-import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import cuid from 'cuid';
 import { IChartDatasetService } from '@mediarithmics-private/advanced-components';
 import { getChartDataset } from './utils/ChartOptionsUtils';
 import { TYPES } from '../../../constants/types';
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
+import { IQueryService } from '../../../services/QueryService';
 
 export interface OTQLRequestProps {
   datamartId: string;
   query?: string;
   queryEditorClassName?: string;
   setQuery?: (query: string) => void;
+  editionMode?: boolean;
 }
 
-export interface SerieQueryModel {
+interface AbstractSerieQueryModel {
   id: string;
-  serieName: string;
+  name: string;
   inputVisible?: boolean;
+}
+
+export interface QueryListModel extends AbstractSerieQueryModel {
   query: string;
 }
-
-const getNewSerieQuery = (index: number, defaultValue?: string): SerieQueryModel => {
-  return {
-    id: cuid(),
-    query: defaultValue || '',
-    serieName: `Serie ${index}`,
-  };
-};
+export interface SerieQueryModel extends AbstractSerieQueryModel {
+  queryModel: string | QueryListModel[];
+}
 
 interface State {
   queryResult: OTQLResult | AggregateDataset | null;
@@ -89,8 +88,8 @@ class OTQLRequest extends React.Component<Props, State> {
       runningQuery: false,
       queryAborted: false,
       error: null,
-      query: this.getDefaultQuery(),
-      serieQueries: [getNewSerieQuery(1, this.getDefaultQuery())],
+      query: DEFAULT_OTQL_QUERY,
+      serieQueries: [getNewSerieQuery('Series 1', this.getInitialQuery())],
       schemaVizOpen: true,
       precision: 'FULL_PRECISION',
       evaluateGraphQl: true,
@@ -99,12 +98,12 @@ class OTQLRequest extends React.Component<Props, State> {
     };
   }
 
-  getDefaultQuery = () => {
-    const { query } = this.props;
-    return query || 'SELECT @count{} FROM UserPoint';
+  getInitialQuery = (): string => {
+    const { editionMode, query } = this.props;
+    return editionMode && query ? query : DEFAULT_OTQL_QUERY;
   };
 
-  runQuery = (otqlQuery: string) => {
+  runQuery = () => {
     const { datamartId } = this.props;
     const { precision, useCache, evaluateGraphQl, serieQueries } = this.state;
     this.setState({
@@ -112,9 +111,8 @@ class OTQLRequest extends React.Component<Props, State> {
       error: null,
       queryAborted: false,
     });
-    if (this.isQuerySeriesActivated()) {
-      this.fetchQuerySeriesDataset();
-    } else {
+    if (serieQueries.length === 1 && typeof serieQueries[0].queryModel === 'string') {
+      const otqlQuery = serieQueries[0].queryModel;
       this.asyncQuery = makeCancelable(
         this._queryService.runOTQLQuery(datamartId, otqlQuery, {
           precision: precision,
@@ -135,6 +133,7 @@ class OTQLRequest extends React.Component<Props, State> {
                 ? {
                     ...q,
                     query: otqlQuery,
+                    queryModel: otqlQuery,
                   }
                 : q,
             ),
@@ -146,37 +145,61 @@ class OTQLRequest extends React.Component<Props, State> {
             runningQuery: false,
           });
         });
+    } else {
+      this.fetchQuerySeriesDataset(serieQueries);
     }
   };
 
-  fetchQuerySeriesDataset = () => {
+  fetchQuerySeriesDataset = (serieQueries: SerieQueryModel[]) => {
     const {
       datamartId,
       match: {
         params: { organisationId },
       },
     } = this.props;
-    const { serieQueries } = this.state;
     // TODO: improve typing of fetchDataset
     // in ADV library
+    const getSources = () => {
+      return serieQueries.map(serieQuery => {
+        if (isSerieQueryModel(serieQuery)) {
+          if (typeof serieQuery.queryModel === 'string') {
+            return getChartDataset(
+              'table',
+              {
+                query_text: serieQuery.queryModel,
+                type: 'otql',
+                series_title: serieQuery.name,
+              } as any,
+              true,
+              {},
+            );
+          } else {
+            return {
+              type: 'to-list',
+              sources: serieQuery.queryModel.map(queryListModel => {
+                return getChartDataset(
+                  'table',
+                  {
+                    query_text: queryListModel.query,
+                    type: 'otql',
+                    series_title: queryListModel.name,
+                  } as any,
+                  true,
+                  {},
+                );
+              }),
+            };
+          }
+        }
+      });
+    };
     return this._chartDatasetService
       .fetchDataset(datamartId, organisationId, {
         title: '',
         type: 'table',
         dataset: {
-          sources: serieQueries.map(serieQuery => {
-            return getChartDataset(
-              'table',
-              {
-                query_text: serieQuery.query,
-                type: 'otql',
-                series_title: serieQuery.serieName,
-              } as any,
-              true,
-              {},
-            );
-          }),
           type: 'join',
+          sources: getSources(),
         } as any,
       })
       .then(res => {
@@ -188,6 +211,9 @@ class OTQLRequest extends React.Component<Props, State> {
         });
       })
       .catch(error => {
+        // tslint:disable-next-line:no-console
+        console.log(error);
+
         this.setState({
           error: !error.isCanceled ? error : null,
           runningQuery: false,
@@ -202,87 +228,133 @@ class OTQLRequest extends React.Component<Props, State> {
 
   dismissError = () => this.setState({ error: null });
 
-  updateQueryModel = (id: string) => (query: string) => {
+  updateQueryModel = (serieId: string, queryId?: string) => (query: string) => {
     const { serieQueries } = this.state;
-    this.setState({
-      serieQueries: serieQueries.map(queryModel => {
-        if (queryModel.id === id) {
+    const { editionMode, setQuery } = this.props;
+    if (editionMode && setQuery) {
+      setQuery(query);
+      this.setState({
+        serieQueries: [
+          {
+            id: '',
+            name: '',
+            queryModel: query,
+          },
+        ],
+      });
+    } else {
+      this.setState({
+        serieQueries: serieQueries.map(serie => {
+          const serieQueryModel = serie.queryModel;
+          if (isQueryListModel(serieQueryModel) && queryId) {
+            return {
+              ...serie,
+              queryModel: serieQueryModel.map(model => {
+                if (model.id === queryId) {
+                  return {
+                    ...model,
+                    query,
+                  };
+                }
+                return model;
+              }),
+            };
+          } else {
+            if (serie.id === serieId) {
+              return {
+                ...serie,
+                queryModel: query,
+              };
+            }
+            return serie;
+          }
+        }),
+      });
+    }
+  };
+
+  updateTree = (serieId: string, event: any, inputVisible: boolean, queryId?: string) => {
+    const { serieQueries } = this.state;
+    return serieQueries.map(serie => {
+      const serieQueryModel = serie.queryModel;
+      if (isQueryListModel(serieQueryModel) && queryId) {
+        return {
+          ...serie,
+          queryModel: serieQueryModel.map(model => {
+            if (model.id === queryId) {
+              return {
+                ...model,
+                inputVisible: inputVisible,
+                name: event.target.value,
+              };
+            }
+            return model;
+          }),
+        };
+      } else {
+        if (serie.id === serieId) {
           return {
-            ...queryModel,
-            query,
+            ...serie,
+            inputVisible: inputVisible,
+            name: event.target.value,
           };
         }
-        return queryModel;
+        return serie;
+      }
+    });
+  };
+
+  updateNameModel = (serieId: string, queryId?: string) => (event: any) => {
+    this.setState({
+      serieQueries: this.updateTree(serieId, event, false, queryId),
+    });
+  };
+
+  onInputChange = (serieId: string, queryId?: string) => (event: any) => {
+    this.setState({
+      serieQueries: this.updateTree(serieId, event, true, queryId),
+    });
+  };
+
+  displaySerieInput = (serieId: string, queryId?: string) => (e: any) => {
+    const { serieQueries } = this.state;
+    this.setState({
+      serieQueries: serieQueries.map(serie => {
+        const serieQueryModel = serie.queryModel;
+        if (isQueryListModel(serieQueryModel) && queryId) {
+          return {
+            ...serie,
+            queryModel: serieQueryModel.map(model => {
+              if (model.id === queryId) {
+                return {
+                  ...model,
+                  inputVisible: !model.inputVisible,
+                };
+              }
+              return model;
+            }),
+          };
+        } else {
+          if (serie.id === serieId) {
+            return {
+              ...serie,
+              inputVisible: !serie.inputVisible,
+            };
+          }
+          return serie;
+        }
       }),
     });
   };
 
-  updateNameModel = (id: string) => (event: any) => {
-    const { serieQueries } = this.state;
+  onSeriesChanged(newSeries: SerieQueryModel[]) {
     this.setState({
-      serieQueries: serieQueries.map(queryModel => {
-        if (queryModel.id === id) {
-          return {
-            ...queryModel,
-            inputVisible: false,
-            serieName: event.target.value,
-          };
-        }
-        return queryModel;
-      }),
+      serieQueries: newSeries,
     });
-  };
-
-  onInputChange = (id: string) => (e: any) => {
-    const { serieQueries } = this.state;
-    this.setState({
-      serieQueries: serieQueries.map(queryModel => {
-        if (queryModel.id === id) {
-          return {
-            ...queryModel,
-            serieName: e.target.value,
-          };
-        }
-        return queryModel;
-      }),
-    });
-  };
-
-  displaySerieInput = (id: string) => (e: any) => {
-    const { serieQueries } = this.state;
-    this.setState({
-      serieQueries: serieQueries.map(queryModel => {
-        if (queryModel.id === id) {
-          return {
-            ...queryModel,
-            inputVisible: !queryModel.inputVisible,
-          };
-        }
-        return queryModel;
-      }),
-    });
-  };
-
-  addNewSerie = (index: number) => () => {
-    this.setState({
-      serieQueries: this.state.serieQueries.concat(getNewSerieQuery(index, this.getDefaultQuery())),
-    });
-  };
-
-  deleteSerie = (id: string) => () => {
-    const { serieQueries } = this.state;
-    this.setState({
-      serieQueries: serieQueries.filter(queryModel => queryModel.id !== id),
-    });
-  };
-
-  isQuerySeriesActivated = () => {
-    const { queryResult } = this.state;
-    return !!queryResult && (isAggregateDataset(queryResult) || !isCountResult(queryResult.rows));
-  };
+  }
 
   render() {
-    const { intl, datamartId, queryEditorClassName, hasFeature } = this.props;
+    const { intl, datamartId, queryEditorClassName, hasFeature, editionMode } = this.props;
     const {
       error,
       queryResult,
@@ -341,13 +413,7 @@ class OTQLRequest extends React.Component<Props, State> {
       />
     );
 
-    const onChange = (q: string) => {
-      if (this.props.setQuery) {
-        this.props.setQuery(q);
-      }
-
-      this.setState({ query: q });
-    };
+    const _onSeriesChanged = this.onSeriesChanged.bind(this);
 
     const handleChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) =>
       this.setState({ evaluateGraphQl: eg, useCache: c, precision: p });
@@ -371,21 +437,19 @@ class OTQLRequest extends React.Component<Props, State> {
           onAbortQuery={this.abortQuery}
           runningQuery={runningQuery}
           datamartId={datamartId}
-          onQueryChange={onChange}
-          defaultValue={query}
           handleChange={handleChange}
           precision={precision}
           evaluateGraphQl={evaluateGraphQl}
           useCache={useCache}
           queryEditorClassName={queryEditorClassName}
-          isQuerySeriesActivated={this.isQuerySeriesActivated()}
+          isQuerySeriesActivated={true}
           serieQueries={serieQueries}
           onInputChange={this.onInputChange}
           updateQueryModel={this.updateQueryModel}
           updateNameModel={this.updateNameModel}
           displaySerieInput={this.displaySerieInput}
-          addNewSerie={this.addNewSerie}
-          deleteSerie={this.deleteSerie}
+          onSeriesChanged={_onSeriesChanged}
+          editionMode={editionMode}
         />
         {queryResultRenderer}
       </span>

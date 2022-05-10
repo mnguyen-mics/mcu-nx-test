@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Layout, Tabs } from 'antd';
+import { Alert, Layout, Row, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
@@ -47,11 +47,12 @@ interface TabQuery {
 
 export interface OTQLConsoleContainerProps {
   datamartId: string;
-  renderActionBar: (query: string, datamartId: string) => React.ReactNode;
+  renderActionBar?: (query: string, datamartId: string) => React.ReactNode;
   query?: string;
   queryEditorClassName?: string;
   editionMode?: boolean;
   createdQueryId?: string;
+  renderSaveAsButton?: (query: string, datamartId: string) => React.ReactNode;
 }
 
 interface State {
@@ -238,6 +239,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
           datamartId={this.props.datamartId}
           setQuery={this.getCurrentTabQuery.bind(this, activeKey)}
           query={editionMode && query?.includes('where') ? query : undefined}
+          editionMode={editionMode}
         />
       ),
       key: activeKey,
@@ -312,6 +314,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       editionMode,
       createdQueryId,
       hasFeature,
+      renderActionBar,
     } = this.props;
     const { schemaLoading, rawSchema, activeKey, panes, tabQueries, query } = this.state;
 
@@ -336,9 +339,18 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         startType = foundType.name;
       }
     }
+
+    const saveExtraOptions = (
+      <Row>
+        {this.state.query &&
+          this.props.renderSaveAsButton &&
+          this.props.renderSaveAsButton(queryToUse, datamartId)}
+      </Row>
+    );
+
     return (
       <Layout>
-        {this.state.query && this.props.renderActionBar(queryToUse, datamartId)}
+        {this.state.query && renderActionBar && renderActionBar(queryToUse, datamartId)}
         <Layout>
           <Content className='mcs-content-container'>
             {schemaLoading ? (
@@ -350,6 +362,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                 onChange={this.onChange}
                 activeKey={activeKey}
                 onEdit={this.onEdit}
+                tabBarExtraContent={saveExtraOptions}
               >
                 {panes.map((pane, i) => (
                   <TabPane

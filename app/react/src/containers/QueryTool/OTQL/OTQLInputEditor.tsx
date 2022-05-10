@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Button, Switch, Select, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { OtqlConsole } from '../../../components/index';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { compose } from 'recompose';
@@ -11,12 +10,10 @@ import OTQLSeriesEditor from './OTQLSeriesEditor';
 import { SerieQueryModel } from './OTQLRequest';
 
 export interface OtqlInputEditorProps {
-  onRunQuery: (query: string) => void;
+  onRunQuery: () => void;
   onAbortQuery: () => void;
   runningQuery: boolean;
   datamartId: string;
-  onQueryChange: (query: string) => void;
-  defaultValue?: string;
   precision: QueryPrecisionMode;
   evaluateGraphQl: boolean;
   useCache: boolean;
@@ -32,14 +29,13 @@ export interface OtqlInputEditorProps {
   updateQueryModel: (id: string) => (query: string) => void;
   updateNameModel: (id: string) => (e: any) => void;
   displaySerieInput: (id: string) => (e: any) => void;
-  addNewSerie: (index: number) => () => void;
-  deleteSerie: (id: string) => () => void;
+  onSeriesChanged: (series: SerieQueryModel[]) => void;
+  editionMode?: boolean;
 }
 
 type Props = OtqlInputEditorProps & InjectedFeaturesProps;
 
 interface State {
-  query: string;
   visible: boolean;
 }
 
@@ -47,52 +43,22 @@ class OTQLInputEditor extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      query: props.defaultValue || '',
       visible: false,
     };
   }
 
-  updateQuery = (value: string /*event: React.ChangeEvent<HTMLTextAreaElement>*/) => {
-    this.setState({ query: value });
-    this.props.onQueryChange(value);
-  };
-
-  clearQuery = () => this.setState({ query: '' });
-
-  validateQuery = () => {
-    const { query } = this.state;
-    return (
-      query &&
-      query.toLowerCase().indexOf('select') !== -1 &&
-      query.toLowerCase().indexOf('from') !== -1
-    );
-  };
-
   buildEditorActions = () => {
     const { onRunQuery, onAbortQuery, runningQuery, hasFeature, isQuerySeriesActivated } =
       this.props;
-    const { query } = this.state;
-    const clearButton = (
-      <Button onClick={this.clearQuery}>
-        <FormattedMessage id='queryTool.otql.edit.clear.label' defaultMessage='Clear Query' />
-      </Button>
-    );
-
-    const newClearButton = (
-      <Button onClick={this.clearQuery} className='mcs-otqlInputEditor_clear_button'>
-        <FormattedMessage id='queryTool.otql.edit.new.clear.label' defaultMessage='Clear' />
-      </Button>
-    );
-
     const abortButton = (
       <Button type='primary' className='m-l-10' onClick={onAbortQuery}>
         <FormattedMessage id='queryTool.otql.edit.abort.label' defaultMessage='Abort Query' />
       </Button>
     );
 
-    const handleOnRunButtonClick = () => onRunQuery(query);
+    const handleOnRunButtonClick = () => onRunQuery();
     const runButton = (
-      <Button type='primary' className='m-l-10' disabled={!query} onClick={handleOnRunButtonClick}>
+      <Button type='primary' className='m-l-10' onClick={handleOnRunButtonClick}>
         <FormattedMessage id='queryTool.otql.edit.run.label' defaultMessage='Run Query' />
       </Button>
     );
@@ -101,7 +67,6 @@ class OTQLInputEditor extends React.Component<Props, State> {
       <Button
         type='primary'
         className='m-l-10 mcs-otqlInputEditor_run_button'
-        disabled={!query}
         onClick={handleOnRunButtonClick}
       >
         <FormattedMessage id='queryTool.otql.edit.new.run.label' defaultMessage='Run' />
@@ -132,14 +97,14 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
     return !hasFeature('query-tool-graphs') ? (
       <div>
-        {query && !isQuerySeriesActivated && clearButton}
+        {!isQuerySeriesActivated}
         {runningQuery ? abortButton : runButton}
         {params}
       </div>
     ) : (
       <div>
         {newParams}
-        {query && !isQuerySeriesActivated && newClearButton}
+        {!isQuerySeriesActivated}
         {runningQuery ? newAbortButton : newRunButton}
       </div>
     );
@@ -154,23 +119,19 @@ class OTQLInputEditor extends React.Component<Props, State> {
   };
 
   render() {
-    const { query } = this.state;
     const {
       datamartId,
       useCache,
       evaluateGraphQl,
       precision,
       handleChange,
-      queryEditorClassName = 'mcs-otqlInputEditor_otqlConsole',
-      hasFeature,
-      isQuerySeriesActivated,
       serieQueries,
       onInputChange,
       updateQueryModel,
       updateNameModel,
       displaySerieInput,
-      addNewSerie,
-      deleteSerie,
+      onSeriesChanged,
+      editionMode,
     } = this.props;
 
     const onCacheChange = (a: boolean) => handleChange(evaluateGraphQl, a, precision);
@@ -179,40 +140,17 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        {isQuerySeriesActivated ? (
-          <OTQLSeriesEditor
-            datamartId={datamartId}
-            actionButtons={this.buildEditorActions()}
-            serieQueries={serieQueries}
-            onInputChange={onInputChange}
-            updateQueryModel={updateQueryModel}
-            updateNameModel={updateNameModel}
-            displaySerieInput={displaySerieInput}
-            addNewSerie={addNewSerie}
-            deleteSerie={deleteSerie}
-          />
-        ) : (
-          <Card
-            title={<FormattedMessage id='queryTool.otql.card.title' defaultMessage='OTQL' />}
-            buttons={this.buildEditorActions()}
-            className={
-              hasFeature('query-tool-graphs')
-                ? 'mcs-otqlInputEditor_card mcs-modal_container'
-                : 'mcs-modal_container'
-            }
-          >
-            <OtqlConsole
-              onChange={this.updateQuery}
-              datamartId={datamartId}
-              value={query}
-              showPrintMargin={false}
-              height='250px'
-              enableBasicAutocompletion={true}
-              enableLiveAutocompletion={false}
-              className={queryEditorClassName ? queryEditorClassName : ''}
-            />
-          </Card>
-        )}
+        <OTQLSeriesEditor
+          datamartId={datamartId}
+          actionButtons={this.buildEditorActions()}
+          seriesQueries={serieQueries}
+          onInputChange={onInputChange}
+          updateQueryModel={updateQueryModel}
+          updateNameModel={updateNameModel}
+          displaySeriesInput={displaySerieInput}
+          onSeriesChanged={onSeriesChanged}
+          editionMode={editionMode}
+        />
         <Modal
           title='Query Settings'
           visible={this.state.visible}

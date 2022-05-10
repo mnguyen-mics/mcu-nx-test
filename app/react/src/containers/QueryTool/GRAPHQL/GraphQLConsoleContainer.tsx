@@ -25,7 +25,7 @@ const { Content, Sider } = Layout;
 
 export interface GraphQLConsoleContainerProps {
   datamartId: string;
-  renderActionBar: (query: string, datamartId: string) => React.ReactNode;
+  renderActionBar?: (query: string, datamartId: string) => React.ReactNode;
 }
 
 interface State {
@@ -122,7 +122,7 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
   dismissError = () => this.setState({ error: null });
 
   render() {
-    const { intl, datamartId } = this.props;
+    const { intl, datamartId, renderActionBar } = this.props;
     const {
       error,
       queryResult,
@@ -168,7 +168,7 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
 
     return (
       <Layout>
-        {this.props.renderActionBar(this.state.query, datamartId)}
+        {renderActionBar ? renderActionBar(this.state.query, datamartId) : undefined}
         <Layout>
           <Layout>
             <Content className='mcs-content-container'>
