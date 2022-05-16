@@ -472,17 +472,17 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 
   async handleSaveChart() {
-    const { organisationId, datamartId } = this.props;
+    const { organisationId } = this.props;
     const { chartToSaveName } = this.state;
     const prettyJson = await this.generateChartJson(chartToSaveName);
+    const parsedJson = prettyJson ? JSON.parse(prettyJson) : undefined;
     const type = (prettyJson ? JSON.parse(prettyJson) : prettyJson)?.type;
     const dashboardResource = {
       title: chartToSaveName,
       type: type || 'bars',
-      content: prettyJson,
-      organisationId: organisationId,
+      content: parsedJson,
     };
-    await this._chartService.createChart(datamartId, dashboardResource);
+    await this._chartService.createChart(organisationId, dashboardResource);
   }
 
   private isSelectedTypeExportable(): boolean {
