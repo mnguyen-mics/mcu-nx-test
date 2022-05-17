@@ -538,7 +538,7 @@
     position: absolute;
     right: 0px;
     margin-right: -1px;
-    top: -25px;
+    top: -12px;
     color: @info-color;
     border-color: @info-color;
     background: #e8f7fc;
@@ -669,7 +669,7 @@
     padding: 0px;
   }
   .mcs-timelineStepBuilder_addStepBlock {
-    padding: 0px 20px;
+    padding: 0px 20px 0px 0px;
   }
   .mcs-timelineStepBuilder_step_bullet {
     left: -10px !important;
@@ -784,7 +784,7 @@
       color: white;
       background-color: @info-color;
       margin-left: 0px;
-      margin-top: 30px;
+      margin-top: 10px;
     }
     .mcs-otqlInputEditor_run_button {
       background-color: @info-color;
@@ -796,6 +796,9 @@
   .mcs-card {
     background-color: #f0f3f5;
     margin-bottom: 0px;
+  }
+  .mcs-timelineStepBuilder_mainStep {
+    margin-top: 60px;
   }
 }
 
@@ -914,6 +917,9 @@
       }
     }
   }
+  .ant-tabs-tab-active {
+    border-bottom-color: transparent !important;
+  }
 }
 
 .mcs-OTQLConsoleContainer_tab_content {
@@ -929,7 +935,7 @@
 }
 
 .mcs-otqlQuery_container {
-  flex: 4;
+  flex: 3;
   width: 80%;
 }
 

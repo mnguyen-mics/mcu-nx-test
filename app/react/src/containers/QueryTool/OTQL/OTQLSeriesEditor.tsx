@@ -79,32 +79,36 @@ class OTQLSeriesEditor extends React.Component<Props> {
   }
 
   renderStepHeader = (queryModelStep: Step<SerieQueryModel | QueryListModel>, i: number) => {
-    const { onInputChange, updateNameModel, displaySeriesInput, editionMode } = this.props;
+    const { onInputChange, updateNameModel, displaySeriesInput, editionMode, seriesQueries } =
+      this.props;
     const queryModel = queryModelStep.properties;
     const queryModelId = queryModel.id;
     const subSerieQueryId = isSerieQueryModel(queryModel) ? undefined : queryModel.id;
-    return !editionMode ? (
-      <React.Fragment>
-        {queryModel.inputVisible ? (
-          <Input
-            className={'mcs-otqlInputEditor_stepNameInput'}
-            onChange={onInputChange(queryModelId, subSerieQueryId)}
-            onPressEnter={updateNameModel(queryModelId, subSerieQueryId)}
-            value={queryModel.name}
-          />
-        ) : (
-          <Button
-            className={'mcs-otqlInputEditor_stepNameButton'}
-            onClick={displaySeriesInput(queryModelId, subSerieQueryId)}
-            type='dashed'
-          >
-            {queryModel.name || `Serie ${i + 1}`}
-          </Button>
-        )}
-      </React.Fragment>
-    ) : (
-      <span />
-    );
+    const onlyOneSerie = seriesQueries.length === 1;
+    if (editionMode || onlyOneSerie) {
+      return <span />;
+    } else {
+      return (
+        <React.Fragment>
+          {queryModel.inputVisible ? (
+            <Input
+              className={'mcs-otqlInputEditor_stepNameInput'}
+              onChange={onInputChange(queryModelId, subSerieQueryId)}
+              onPressEnter={updateNameModel(queryModelId, subSerieQueryId)}
+              value={queryModel.name}
+            />
+          ) : (
+            <Button
+              className={'mcs-otqlInputEditor_stepNameButton'}
+              onClick={displaySeriesInput(queryModelId, subSerieQueryId)}
+              type='dashed'
+            >
+              {queryModel.name || `Serie ${i + 1}`}
+            </Button>
+          )}
+        </React.Fragment>
+      );
+    }
   };
 
   renderAfterBulletElement = (
@@ -124,7 +128,7 @@ class OTQLSeriesEditor extends React.Component<Props> {
             ];
             const newQueryModels = isQueryListModel(previousModels)
               ? previousModels.concat(newModel)
-              : newModel.concat(
+              : [getNewSubSerieQuery(`Dimension ${dimensionIndex}`, previousModels)].concat(
                   getNewSubSerieQuery(`Dimension ${dimensionIndex + 1}`, DEFAULT_OTQL_QUERY),
                 );
 
@@ -254,6 +258,7 @@ class OTQLSeriesEditor extends React.Component<Props> {
           stepManagement={this.getStepManagementProps(true)}
           maxSteps={4}
           editionMode={editionMode}
+          mainStep={true}
         />
         <div className='mcs-otqlInputEditor_serieButtons'>{this.props.actionButtons}</div>
       </div>
