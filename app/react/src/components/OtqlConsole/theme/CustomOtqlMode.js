@@ -6,7 +6,7 @@ export class CustomHighlightRules extends window.ace.acequire('ace/mode/text_hig
   .TextHighlightRules {
   constructor() {
     super();
-    var keywords = 'select|from|where|and|or|not|limit|in';
+    var keywords = 'select|from|where|join|and|or|not|limit|in';
 
     var builtinConstants = 'true|false';
 
