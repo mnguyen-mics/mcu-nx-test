@@ -18,7 +18,7 @@
   "dependencies": {
     "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.2.2",
-    "@mediarithmics-private/advanced-components": "9.19.2",
+    "@mediarithmics-private/advanced-components": "9.19.3",
     "@mediarithmics-private/mcs-components-library": "7.7.0",
     "@splitsoftware/splitio": "^10.17.3",
     "antd": "^4.16.13",
