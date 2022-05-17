@@ -7,6 +7,7 @@ const { Panel } = Collapse;
 
 export interface FoldableCardProps {
   className?: string;
+  organisationId?: string;
   isDefaultActive: boolean;
   header: React.ReactNode;
   body: React.ReactNode;
@@ -14,13 +15,13 @@ export interface FoldableCardProps {
 
 export default class FoldableCard extends React.Component<FoldableCardProps> {
   render() {
-    const { className, header, body, isDefaultActive } = this.props;
+    const { className, header, body, isDefaultActive, organisationId } = this.props;
 
     const expendIcon = (props: any) =>
       props.isActive ? <MinusCircleOutlined /> : <PlusCircleOutlined />;
 
     return (
-      <Content>
+      <Content id={`mcs-foldable-card-${organisationId}`}>
         <Collapse
           ghost={true}
           defaultActiveKey={isDefaultActive ? '1' : []}

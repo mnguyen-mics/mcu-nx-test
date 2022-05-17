@@ -25,6 +25,7 @@ export default class FoldableCardHierarchy extends React.Component<FoldableCardH
         for (let index = 0; index < currentNode.children.length; index++) {
           childrenNodes.push(
             <Timeline.Item
+              key={`mcs-foldable-card-timelineItem-${index}`}
               className={
                 'mcs-foldable-card-timeline' +
                 (index === currentNode.children.length - 1

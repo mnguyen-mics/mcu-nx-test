@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Button, Layout, Select, Drawer, Modal, Switch } from 'antd';
+import { Button, Layout, Select, Drawer, Modal, Switch, Input } from 'antd';
 import { messages } from './messages';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -13,7 +13,7 @@ import { IOrganisationService } from '../../../../../services/OrganisationServic
 import { OrganisationResource } from '../../../../../models/organisation/organisation';
 import { TYPES } from '../../../../../constants/types';
 import UserContainer from './UserContainer';
-import { ExclamationCircleOutlined, FilterOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, FilterOutlined, SafetyOutlined } from '@ant-design/icons';
 import UserForm from '../Edit/UserForm';
 import { IUsersService } from '../../../../../services/UsersService';
 import UserRoleForm from '../Edit/UserRoleForm';
@@ -23,16 +23,19 @@ import _ from 'lodash';
 
 const { Content } = Layout;
 
+export type UserDisplay = 'users' | 'user_roles';
 interface State {
   isLoadingOrganisation: boolean;
   organisation?: OrganisationResource;
-  userDisplay: string;
+  userDisplay: UserDisplay;
   isUserDrawerVisible: boolean;
   isUserRoleDrawerVisible: boolean;
   user?: UserResource;
+  filterValue: string;
+  displayInheritedRole: boolean;
 }
 
-interface RouterProps {
+export interface RouterProps {
   organisationId: string;
 }
 
@@ -55,6 +58,8 @@ class UserListPage extends React.Component<Props, State> {
       userDisplay: 'users',
       isUserDrawerVisible: false,
       isUserRoleDrawerVisible: false,
+      filterValue: '',
+      displayInheritedRole: true,
     };
   }
 
@@ -83,17 +88,19 @@ class UserListPage extends React.Component<Props, State> {
     }
   }
 
-  fetchOrganisation = (organisationId: string) => {
+  fetchOrganisation = (organisationId: string, user?: UserResource) => {
     const { notifyError } = this.props;
     this.setState({
       isLoadingOrganisation: true,
     });
-    this._organisationService
+    return this._organisationService
       .getOrganisation(organisationId)
       .then(res => {
         this.setState({
           isLoadingOrganisation: false,
           organisation: res.data,
+          filterValue: '',
+          user: user ? user : this.state.user,
         });
       })
       .catch(err => {
@@ -104,27 +111,23 @@ class UserListPage extends React.Component<Props, State> {
       });
   };
 
-  getUserDrawerTitle = (user?: UserResource) => {
-    const { intl } = this.props;
+  getUserDrawerTitle = () => {
     return (
       <FormattedMessage
         id='settings.organisation.users.userFormTitle'
-        defaultMessage='Organisation > User > {title}'
-        values={{
-          title: user
-            ? `${user.first_name} ${user.last_name}`
-            : intl.formatMessage(messages.addAUser),
-        }}
+        defaultMessage='Organisation > User > Edit user'
       />
     );
   };
 
-  getUserRoleDrawerTitle = (user?: UserResource) => {
+  getUserRoleDrawerTitle = () => {
     const { intl } = this.props;
+    const { user } = this.state;
+
     return (
       <FormattedMessage
         id='settings.organisation.users.userRoleFormTitle'
-        defaultMessage='Organisation > User Roles > {title}'
+        defaultMessage='Organisation > Roles > {title}'
         values={{
           title: user
             ? intl.formatMessage(messages.editAUserRole)
@@ -141,9 +144,13 @@ class UserListPage extends React.Component<Props, State> {
     });
   };
 
-  editUserRole = (user: UserResource) => {
+  editUserRole = (user: UserResource, organisationId?: string) => {
+    const userFormData = user;
+    if (organisationId) {
+      userFormData.organisation_id = organisationId;
+    }
     this.setState({
-      user: user,
+      user: userFormData,
       isUserRoleDrawerVisible: true,
     });
   };
@@ -151,13 +158,15 @@ class UserListPage extends React.Component<Props, State> {
   deleteUser = (user: UserResource) => {
     const {
       intl: { formatMessage },
-      match: {
-        params: { organisationId },
-      },
       notifyError,
     } = this.props;
     const deleteUser = () => {
-      this._usersService.deleteUser(user.id, organisationId).catch(err => notifyError(err));
+      this._usersService
+        .deleteUser(user.id, user.organisation_id)
+        .then(() => {
+          this.refreshAndScrollToElement(user);
+        })
+        .catch(err => notifyError(err));
     };
     Modal.confirm({
       title: formatMessage(messages.modalUserDeleteTitle),
@@ -166,7 +175,7 @@ class UserListPage extends React.Component<Props, State> {
           id='settings.organisation.users.modalUserDeleteDescription'
           defaultMessage='You are about to definitively delete the user {userName}. Are you sure you want to continue ?'
           values={{
-            userName: `${user.first_name} ${user.last_name}`,
+            userName: <b>{`${user.first_name} ${user.last_name}`}</b>,
           }}
         />
       ),
@@ -188,7 +197,15 @@ class UserListPage extends React.Component<Props, State> {
       if (user.role?.id)
         this._userRolesService
           .deleteUserRole(user.id, user.role?.id)
-          .catch(err => notifyError(err));
+          .then(() => {
+            this.refreshAndScrollToElement(user);
+          })
+          .catch(err => {
+            notifyError(err);
+            this.setState({
+              userDisplay: 'user_roles',
+            });
+          });
     };
     Modal.confirm({
       title: formatMessage(messages.modalUserRoleDeleteTitle),
@@ -197,9 +214,9 @@ class UserListPage extends React.Component<Props, State> {
           id='settings.organisation.users.modalUserRoleDeleteDescription'
           defaultMessage='You are about to definitively delete the {role} role for {userName} on organisation {orgName}. All inherited roles will also be deleted. Are you sure you want to continue ?'
           values={{
-            userName: `${user.first_name} ${user.last_name}`,
-            orgName: user.organisation_id,
-            role: user.role?.role,
+            userName: <b>{`${user.first_name} ${user.last_name}`}</b>,
+            orgName: <b>{user.organisation_id}</b>,
+            role: <b>{user.role?.role}</b>,
           }}
         />
       ),
@@ -212,20 +229,45 @@ class UserListPage extends React.Component<Props, State> {
     });
   };
 
-  saveUserRole = (userId: string, organisationId: string, role: string) => {
+  saveUserRole = (
+    userId: string,
+    organisationId: string,
+    newRole: string,
+    userRoleId?: string,
+    isInherited?: boolean,
+  ) => {
     const { notifyError } = this.props;
-    this._userRolesService
-      .createUserRole(userId, {
-        role: role,
-        organisation_id: organisationId,
-      })
+    let promise: Promise<any>;
+    if (userRoleId && !isInherited) {
+      promise = this._userRolesService.deleteUserRole(userId, userRoleId);
+    } else {
+      promise = Promise.resolve();
+    }
+    return promise
       .then(() => {
-        this.setState({
-          isUserRoleDrawerVisible: false,
-        });
+        this._userRolesService
+          .createUserRole(userId, {
+            role: newRole,
+            organisation_id: organisationId,
+          })
+          .then(() => {
+            this.setState({
+              isUserRoleDrawerVisible: false,
+            });
+            this.refreshAndScrollToElement();
+          })
+          .catch(err => {
+            notifyError(err);
+            this.setState({
+              userDisplay: 'user_roles',
+            });
+          });
       })
       .catch(err => {
         notifyError(err);
+        this.setState({
+          userDisplay: 'user_roles',
+        });
       });
   };
 
@@ -242,10 +284,31 @@ class UserListPage extends React.Component<Props, State> {
         this.setState({
           isUserDrawerVisible: false,
         });
+        this.refreshAndScrollToElement(user);
       })
       .catch(err => {
         notifyError(err);
       });
+  };
+
+  refreshAndScrollToElement = (user?: UserResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+    const { userDisplay } = this.state;
+    this.fetchOrganisation(organisationId, user).then(() => {
+      // wait for DOM to be populated
+      const orgId = userDisplay === 'users' ? user?.organisation_id : user?.role?.organisation_id;
+      const elementId = `mcs-foldable-card-${
+        user ? orgId : this.state.user?.role?.organisation_id
+      }`;
+      setTimeout(() => {
+        const element = document.getElementById(elementId);
+        element?.scrollIntoView();
+      }, 2000);
+    });
   };
 
   getUsersOptions = () => {
@@ -256,12 +319,12 @@ class UserListPage extends React.Component<Props, State> {
       },
       {
         value: 'user_roles',
-        label: 'User Roles',
+        label: 'Roles',
       },
     ];
   };
 
-  handleChange = (value: string) => {
+  handleChange = (value: UserDisplay) => {
     this.setState({
       userDisplay: value,
       user: undefined,
@@ -273,30 +336,26 @@ class UserListPage extends React.Component<Props, State> {
     if (userDisplay === 'users') {
       this.setState({
         isUserDrawerVisible: isVisible,
+        user: undefined,
       });
     } else {
       this.setState({
         isUserRoleDrawerVisible: isVisible,
+        user: undefined,
       });
     }
   };
 
-  renderPlaceholder() {
-    const { intl } = this.props;
-    return (
-      <React.Fragment>
-        <span>{intl.formatMessage(messages.filterOnUser)}</span>
-        <FilterOutlined className='mcs-userSettings_iconFilter' />
-      </React.Fragment>
-    );
-  }
-
-  handleFilter = () => {
-    //
+  handleFilter = (e: any) => {
+    this.setState({
+      filterValue: e.target.value,
+    });
   };
 
   onSwitchChange = (checked: boolean) => {
-    //
+    this.setState({
+      displayInheritedRole: checked,
+    });
   };
 
   render() {
@@ -314,7 +373,15 @@ class UserListPage extends React.Component<Props, State> {
       isUserDrawerVisible,
       isUserRoleDrawerVisible,
       user,
+      filterValue,
+      displayInheritedRole,
     } = this.state;
+
+    const suffixIcon = (
+      <span className='mcs-userSettings_userSelectIcon'>
+        {userDisplay === 'users' ? <McsIcon type='users' /> : <SafetyOutlined />}
+      </span>
+    );
 
     return (
       <div className='ant-layout'>
@@ -325,27 +392,26 @@ class UserListPage extends React.Component<Props, State> {
             <React.Fragment>
               <Select
                 className='mcs-primary mcs-userSettings_userSelect'
-                suffixIcon={<McsIcon type='users' />}
+                suffixIcon={suffixIcon}
                 onChange={this.handleChange}
                 options={this.getUsersOptions()}
                 value={userDisplay}
                 placeholder={this.getUsersOptions()[0].value}
               />
-              <Select
-                className='mcs-primary mcs-userSettings_userSelect'
+              <Input
+                className='mcs-primary mcs-userSettings_userSelect mcs-userSettings_userFilter'
                 onChange={this.handleFilter}
-                options={this.getUsersOptions()}
-                placeholder={this.renderPlaceholder()}
-                showSearch={true}
-                allowClear={true}
-                showArrow={false}
+                placeholder={intl.formatMessage(messages.filterOnUser)}
+                value={filterValue}
+                suffix={<FilterOutlined />}
+                size='small'
               />
               {userDisplay === 'user_roles' && (
                 <React.Fragment>
                   {intl.formatMessage(messages.displayInheritedRole)}
                   <Switch
                     className='mcs-userSettings_switch'
-                    defaultChecked={true}
+                    checked={displayInheritedRole}
                     onChange={this.onSwitchChange}
                   />
                 </React.Fragment>
@@ -364,10 +430,13 @@ class UserListPage extends React.Component<Props, State> {
                   currentOrganisationId={organisationId}
                   communityId={organisation.community_id}
                   userDisplay={userDisplay}
+                  user={user}
                   editUser={this.editUser}
                   editUserRole={this.editUserRole}
                   deleteUser={this.deleteUser}
                   deleteUserRole={this.deleteUserRole}
+                  filterValue={filterValue}
+                  displayInheritedRole={displayInheritedRole}
                 />
               )}
               <Drawer
@@ -394,11 +463,7 @@ class UserListPage extends React.Component<Props, State> {
                 visible={isUserRoleDrawerVisible}
                 destroyOnClose={true}
               >
-                <UserRoleForm
-                  user={user}
-                  communityId={organisation?.community_id}
-                  save={this.saveUserRole}
-                />
+                <UserRoleForm user={user} organisation={organisation} save={this.saveUserRole} />
               </Drawer>
             </React.Fragment>
           )}

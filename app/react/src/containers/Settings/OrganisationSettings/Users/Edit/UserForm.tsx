@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { AutoComplete, Button, Col, Form, Input, message, Row } from 'antd';
 import { FormSection } from '../../../../../components/Form';
 import { messages } from '../List/messages';
 import { UserCreationWithRoleResource as UserResource } from '../../../../../models/directory/UserResource';
@@ -12,6 +12,10 @@ import { UserProfileResource } from '../../../../../models/directory/UserProfile
 
 interface State {
   user: Partial<UserResource>;
+  orgInput: {
+    value?: string;
+    id?: string;
+  };
 }
 
 interface MapStateToProps {
@@ -38,6 +42,7 @@ class UserForm extends React.Component<Props, State> {
         email: '',
         organisation_id: '',
       },
+      orgInput: {},
     };
   }
   componentDidMount() {
@@ -45,6 +50,10 @@ class UserForm extends React.Component<Props, State> {
     if (user) {
       this.setState({
         user: user,
+        orgInput: {
+          id: user.organisation_id,
+          value: this.getOrganisations().find(o => o.key === user?.organisation_id)?.label,
+        },
       });
     }
   }
@@ -66,29 +75,41 @@ class UserForm extends React.Component<Props, State> {
     return connectedUser?.workspaces.map(ws => {
       return {
         label: ws.organisation_name,
-        value: ws.organisation_id,
+        value: ws.organisation_name,
+        key: ws.organisation_id,
       };
     });
   };
 
   save = () => {
-    const { user } = this.state;
-    this.props.save(user);
+    const { intl } = this.props;
+    const { user, orgInput } = this.state;
+    if (user.first_name && user.last_name && user.email && orgInput.id) {
+      const userResource: Partial<UserResource> = {
+        ...user,
+        organisation_id: orgInput.id,
+      };
+      this.props.save(userResource);
+    } else {
+      message.error(intl.formatMessage(messages.formNotComplete), 3);
+    }
   };
 
-  onOrgChange = (value: string) => {
-    const { user } = this.state;
+  onOrgSelect = (value: string, optionData: any) => {
     this.setState({
-      user: {
-        ...user,
-        organisation_id: value,
+      orgInput: {
+        value: value,
+        id: optionData.key,
       },
     });
   };
 
   render() {
     const { intl } = this.props;
-    const { user } = this.state;
+    const { user, orgInput } = this.state;
+    const filterOption = (inputValue: string, option: { label: string; value: string }) => {
+      return option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1;
+    };
     return (
       <Form layout='vertical'>
         <FormSection
@@ -127,14 +148,21 @@ class UserForm extends React.Component<Props, State> {
             onChange={this.onChange('email')}
           />
         </Form.Item>
-        <FormSection title={messages.organisation} subtitle={messages.organisationDescription} />
-        <Select
+        <FormSection
+          title={messages.organisation}
+          subtitle={messages.organisationDescription}
+          className='mcs-userForm_section'
+        />
+        <AutoComplete
           className='mcs-userForm_select'
           options={this.getOrganisations()}
-          value={user.organisation_id}
-          onChange={this.onOrgChange}
+          searchValue={this.getOrganisations().find(o => o.key === user?.organisation_id)?.label}
+          onSelect={this.onOrgSelect}
+          filterOption={filterOption}
           placeholder={intl.formatMessage(messages.selectOrganisation)}
-        />
+        >
+          <Input.Search value={orgInput.value || user.organisation_id} />
+        </AutoComplete>
         <Button type='primary' className='mcs-primary mcs-saveButton' onClick={this.save}>
           {intl.formatMessage(messages.save)}
         </Button>

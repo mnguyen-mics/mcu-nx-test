@@ -19,7 +19,7 @@ export interface ICommunityService {
 
   getCommunityUsers: (
     communityId: string,
-    params: object,
+    params?: object,
   ) => Promise<DataListResponse<UserResource>>;
 }
 

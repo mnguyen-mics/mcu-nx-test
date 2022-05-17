@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Button, Form, Input, Select, AutoComplete, Radio, Space } from 'antd';
+import { Button, Form, Input, AutoComplete, Radio, Space, message } from 'antd';
 import { messages } from '../List/messages';
 import { UserCreationWithRoleResource } from '../../../../../models/directory/UserResource';
 import { connect } from 'react-redux';
@@ -10,7 +10,13 @@ import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { UserProfileResource } from '../../../../../models/directory/UserProfileResource';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { IUsersService } from '../../../../../services/UsersService';
+import { IOrganisationService } from '../../../../../services/OrganisationService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
+import { OrganisationResource } from '../../../../../models/organisation/organisation';
+import { isNull } from 'lodash';
+import { ICommunityService } from '../../../../../services/CommunityServices';
 
 interface State {
   user?: Partial<UserCreationWithRoleResource>;
@@ -19,7 +25,13 @@ interface State {
     value?: string;
     id?: string;
   };
+  orgInput: {
+    value?: string;
+    id?: string;
+    isCommunity?: boolean;
+  };
   roleInput: string;
+  userOrganisation?: OrganisationResource;
 }
 
 interface MapStateToProps {
@@ -27,48 +39,71 @@ interface MapStateToProps {
 }
 
 interface UserRoleFormProps {
-  communityId?: string;
+  organisation?: OrganisationResource;
   user?: UserCreationWithRoleResource;
-  save: (userId: string, organisationId: string, role: string) => void;
+  save: (
+    userId: string,
+    organisationId: string,
+    role: string,
+    userRoleId?: string,
+    isInherited?: boolean,
+  ) => void;
 }
 
 type Props = UserRoleFormProps &
   MapStateToProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; userId: string }> &
   InjectedIntlProps;
 
 class UserRoleForm extends React.Component<Props, State> {
-  @lazyInject(TYPES.IUsersService)
-  private _usersService: IUsersService;
+  @lazyInject(TYPES.ICommunityService)
+  private _communityService: ICommunityService;
+  @lazyInject(TYPES.IOrganisationService)
+  private _organisationService: IOrganisationService;
   constructor(props: Props) {
     super(props);
     this.state = {
       userInput: {},
+      orgInput: {},
       roleInput: 'READER',
     };
   }
   componentDidMount() {
-    const { user, communityId } = this.props;
+    const { user, organisation, notifyError } = this.props;
     if (user) {
-      this.setState({
-        user: user,
-        roleInput: user.role?.role || 'READER',
-      });
-    } else if (communityId) {
-      this._usersService.getUsers(communityId).then(res => {
-        this.setState({
-          users: res.data,
+      this._organisationService
+        .getOrganisation(user.organisation_id)
+        .then(res => {
+          this.setState({
+            user: user,
+            roleInput: user.role?.role || 'READER',
+            userOrganisation: res.data,
+          });
+        })
+        .catch(err => {
+          notifyError(err);
         });
-      });
+    } else if (organisation?.community_id) {
+      this._communityService
+        .getCommunityUsers(organisation.community_id)
+        .then(res => {
+          this.setState({
+            users: res.data,
+          });
+        })
+        .catch(err => {
+          notifyError(err);
+        });
     }
   }
 
-  onChange = (value: string) => {
-    const { user } = this.state;
+  onOrgSelect = (value: string, optionData: any) => {
     this.setState({
-      user: {
-        ...user,
-        organisation_id: value,
+      orgInput: {
+        value: value,
+        id: optionData.key,
+        isCommunity: optionData.isCommunity,
       },
     });
   };
@@ -78,16 +113,28 @@ class UserRoleForm extends React.Component<Props, State> {
     return connectedUser?.workspaces.map(ws => {
       return {
         label: ws.organisation_name,
-        value: ws.organisation_id,
+        value: ws.organisation_name,
+        key: ws.organisation_id,
+        isCommunity: !ws.administrator_id,
       };
     });
   };
 
   save = () => {
-    const { user, userInput, roleInput } = this.state;
-    if (user && user.organisation_id) {
+    const { intl } = this.props;
+    const { user, userInput, orgInput, roleInput } = this.state;
+    // edition
+    if (user) {
       const userId = userInput?.id || user.id;
-      if (userId) this.props.save(userId, user.organisation_id, roleInput);
+      const userRoleId = user.role?.id;
+      const orgId = orgInput.id || user.organisation_id;
+      if (userId && userRoleId && orgId)
+        this.props.save(userId, orgId, roleInput, userRoleId, user.role?.is_inherited);
+    } else if (userInput.id && orgInput.id && roleInput) {
+      // creation
+      this.props.save(userInput.id, orgInput.id, roleInput);
+    } else {
+      message.error(intl.formatMessage(messages.selectAvailableValue), 3);
     }
   };
 
@@ -102,7 +149,7 @@ class UserRoleForm extends React.Component<Props, State> {
     });
   };
 
-  onSelect = (value: string, optionData: any) => {
+  onUserSelect = (value: string, optionData: any) => {
     this.setState({
       userInput: {
         value: value,
@@ -117,13 +164,28 @@ class UserRoleForm extends React.Component<Props, State> {
     });
   };
 
+  displayCommunityAdminOption = () => {
+    const { intl } = this.props;
+    const { userOrganisation, orgInput } = this.state;
+    return (userOrganisation && isNull(userOrganisation.administrator_id)) ||
+      orgInput?.isCommunity ? (
+      <Radio value={'COMMUNITY_ADMIN'}>
+        <b>Community Admin</b>
+        <br />
+        {intl.formatMessage(messages.communityAdminDescription)}
+      </Radio>
+    ) : null;
+  };
+
   render() {
     const { intl } = this.props;
-    const { user, userInput, roleInput } = this.state;
+    const { user, userInput, orgInput, roleInput } = this.state;
 
-    const filterOption = (inputValue: string, option: { label: string; value: string }) => {
-      return option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1;
-    };
+    const filterOption =
+      (hasValue: boolean) => (inputValue: string, option: { label: string; value: string }) => {
+        const property = hasValue ? 'value' : 'label';
+        return option[property].toUpperCase().indexOf(inputValue.toUpperCase()) !== -1;
+      };
 
     return (
       <Form layout='vertical'>
@@ -131,9 +193,13 @@ class UserRoleForm extends React.Component<Props, State> {
           <AutoComplete
             options={this.getUserOptions()}
             disabled={!!user?.id}
-            placeholder={intl.formatMessage(messages.userSearchPlaceholder)}
-            filterOption={filterOption}
-            onSelect={this.onSelect}
+            placeholder={
+              user?.id
+                ? `${user.first_name} ${user.last_name}`
+                : intl.formatMessage(messages.userSearchPlaceholder)
+            }
+            filterOption={filterOption(true)}
+            onSelect={this.onUserSelect}
           >
             <Input.Search
               value={user?.id ? `${user.first_name} ${user.last_name}` : userInput.value}
@@ -141,14 +207,16 @@ class UserRoleForm extends React.Component<Props, State> {
           </AutoComplete>
         </Form.Item>
         <Form.Item label={intl.formatMessage(messages.organisation)}>
-          <Select
+          <AutoComplete
             className='mcs-userForm_select'
             options={this.getOrganisations()}
-            value={user?.organisation_id}
-            onChange={this.onChange}
+            onSelect={this.onOrgSelect}
+            filterOption={filterOption(false)}
             disabled={!!user?.id}
             placeholder={intl.formatMessage(messages.selectOrganisation)}
-          />
+          >
+            <Input.Search value={orgInput.value} />
+          </AutoComplete>
         </Form.Item>
         <Form.Item label={intl.formatMessage(messages.role)}>
           <Radio.Group onChange={this.onRadioChange} value={roleInput}>
@@ -168,6 +236,7 @@ class UserRoleForm extends React.Component<Props, State> {
                 <br />
                 {intl.formatMessage(messages.orgAdminDescription)}
               </Radio>
+              {this.displayCommunityAdminOption()}
             </Space>
           </Radio.Group>
         </Form.Item>
@@ -182,6 +251,7 @@ class UserRoleForm extends React.Component<Props, State> {
 export default compose<Props, UserRoleFormProps>(
   withRouter,
   injectIntl,
+  injectNotifications,
   connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,
   })),

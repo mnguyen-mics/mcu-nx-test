@@ -51,11 +51,11 @@ export const messages = defineMessages({
   },
   addAUser: {
     id: 'settings.organisation.users.add',
-    defaultMessage: 'Add a user',
+    defaultMessage: 'Add user',
   },
   addAUserRole: {
     id: 'settings.organisation.users.addRole',
-    defaultMessage: 'Add a role',
+    defaultMessage: 'Add role',
   },
   role: {
     id: 'settings.organisation.users.role',
@@ -67,7 +67,7 @@ export const messages = defineMessages({
   },
   editAUserRole: {
     id: 'settings.organisation.users.editARole',
-    defaultMessage: 'Edit a role',
+    defaultMessage: 'Edit role',
   },
   filterOnUser: {
     id: 'settings.organisation.users.filterOnUser',
@@ -126,5 +126,26 @@ export const messages = defineMessages({
     id: 'settings.organisation.users.form.orgAdminDescription',
     defaultMessage:
       'Read/write access to settings and objects of an organisation and all child organisations',
+  },
+  communityAdminDescription: {
+    id: 'settings.organisation.users.form.communityAdminDescription',
+    defaultMessage:
+      'Read/write access to settings and objects of your community and all child organisations',
+  },
+  selectAvailableValue: {
+    id: 'settings.organisation.users.form.selectAvailableValue',
+    defaultMessage: 'Please select available value for all inputs.',
+  },
+  formNotComplete: {
+    id: 'settings.organisation.users.form.formNotComplete',
+    defaultMessage: 'Please fill all inputs before submitting',
+  },
+  inherited: {
+    id: 'settings.organisation.users.inherited',
+    defaultMessage: 'Inherited',
+  },
+  homeUser: {
+    id: 'settings.organisation.users.homeUser',
+    defaultMessage: 'This user is defined on this organisation.',
   },
 });
