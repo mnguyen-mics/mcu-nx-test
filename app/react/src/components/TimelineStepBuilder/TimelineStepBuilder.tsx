@@ -36,6 +36,7 @@ type Props<StepsProperties> = {
   stepManagement: StepManagement<StepsProperties>;
   maxSteps: number;
   editionMode?: boolean;
+  mainStep?: boolean;
 };
 
 export default class TimelineStepBuilder<StepsProperties> extends React.Component<
@@ -104,6 +105,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
         shouldDisplayNumbersInBullet,
       },
       maxSteps,
+      mainStep,
     } = this.props;
 
     const shouldRenderLine = shouldRenderTimeline === undefined || shouldRenderTimeline;
@@ -121,7 +123,13 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
           </div>
           {steps.map((step, index) => {
             return (
-              <Card key={step.id} className={'mcs-timelineStepBuilder_step'} bordered={false}>
+              <Card
+                key={step.id}
+                className={`mcs-timelineStepBuilder_step ${
+                  mainStep && index !== 0 ? 'mcs-timelineStepBuilder_mainStep' : ''
+                }`}
+                bordered={false}
+              >
                 <div className={'mcs-timelineStepBuilder_step_body'}>
                   {steps.length > 1 && shouldRenderArrows && (
                     <div className={'mcs-timelineStepBuilder_step_reorderBtn'}>
