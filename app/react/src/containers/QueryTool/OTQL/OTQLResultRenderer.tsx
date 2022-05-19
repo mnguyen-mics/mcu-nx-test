@@ -28,6 +28,7 @@ export interface OTQLResultRendererProps {
   datamartId: string;
   showChartLegend?: boolean;
   serieQueries: SerieQueryModel[];
+  onSaveChart?: () => void;
 }
 
 type Props = OTQLResultRendererProps &
@@ -50,6 +51,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       },
       showChartLegend,
       serieQueries,
+      onSaveChart,
     } = this.props;
 
     let content: React.ReactNode;
@@ -81,6 +83,7 @@ class OTQLResultRenderer extends React.Component<Props> {
             datamartId={datamartId}
             organisationId={organisationId}
             showChartLegend={showChartLegend}
+            onSaveChart={onSaveChart}
           />
         </div>
       );
@@ -94,6 +97,7 @@ class OTQLResultRenderer extends React.Component<Props> {
             organisationId={organisationId}
             showChartLegend={showChartLegend}
             serieQueries={serieQueries}
+            onSaveChart={onSaveChart}
           />
         </div>
       );
