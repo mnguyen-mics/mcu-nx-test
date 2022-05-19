@@ -4,7 +4,10 @@ import { withRouter, RouteComponentProps, match } from 'react-router-dom';
 import * as featureSelector from '../../redux/Features/selectors';
 import * as SessionHelper from '../../redux/Session/selectors';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
-import { UserProfileResource } from '../../models/directory/UserProfileResource';
+import {
+  UserProfileResource,
+  UserWorkspaceResource,
+} from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 export interface InjectedFeaturesProps {
@@ -18,6 +21,7 @@ interface RouteParams {
 type Props = RouteComponentProps<RouteParams> & {
   getFeatureFlagClient: SplitIO.IClient;
   getDefaultDatamart: (orgnasationId: string) => DatamartResource;
+  getWorkspace: (organisationId: string) => UserWorkspaceResource;
 } & {
   computedMatch: match<RouteParams>;
 } & { [key: string]: any };
@@ -27,6 +31,7 @@ const mapStateToProps = (state: MicsReduxState) => {
     getFeatureFlagClient: featureSelector.getFeatureFlagClient(state),
     hasFeatureStore: featureSelector.hasFeature(state),
     getDefaultDatamart: SessionHelper.getDefaultDatamart(state),
+    getWorkspace: SessionHelper.getWorkspace(state),
     getConnectedUser: SessionHelper.getStoredConnectedUser(state),
   };
 };
@@ -35,14 +40,23 @@ export default compose<any, InjectedFeaturesProps>(
   withRouter,
   connect(mapStateToProps),
   mapProps((props: Props) => {
-    const { getDefaultDatamart, getFeatureFlagClient, getConnectedUser, hasFeatureStore, ...rest } =
-      props;
+    const {
+      getDefaultDatamart,
+      getFeatureFlagClient,
+      getConnectedUser,
+      hasFeatureStore,
+      getWorkspace,
+      ...rest
+    } = props;
     const organisationId =
       rest.match && rest.match.params && rest.match.params.organisationId
         ? rest.match.params.organisationId
         : rest.computedMatch && rest.computedMatch.params.organisationId
         ? rest.computedMatch.params.organisationId
         : '';
+
+    const workspace = getWorkspace(organisationId);
+
     const defaultDatamart = getDefaultDatamart(organisationId);
     const client: SplitIO.IClient = getFeatureFlagClient;
     const connectedUser: UserProfileResource = getConnectedUser;
@@ -50,7 +64,11 @@ export default compose<any, InjectedFeaturesProps>(
     const attributes: SplitIO.Attributes = {
       user_id: connectedUser.id,
       is_mics: !!connectedUser.workspaces.find(ws => ws.organisation_id === '1'),
+      user_organisation: connectedUser.workspaces[connectedUser.default_workspace].organisation_id,
+      user_community: connectedUser.workspaces[connectedUser.default_workspace].community_id,
       organisation_ids: connectedUser.workspaces.map(ws => ws.organisation_id),
+      current_organisation: workspace && workspace.organisation_id,
+      current_community: workspace && workspace.community_id,
       locale: connectedUser.locale,
       domain: (window as any).MCS_CONSTANTS
         ? (window as any).MCS_CONSTANTS.NAVIGATOR_URL
