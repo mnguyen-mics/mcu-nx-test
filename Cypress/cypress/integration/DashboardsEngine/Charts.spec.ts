@@ -107,4 +107,60 @@ describe('Charts Tests', () => {
       });
     });
   });
+
+  it.only('test the charts on the query tool', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'first channel',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
+        cy.prepareActivitiesForDashboards(
+          data.accessToken,
+          data.datamartId,
+          channel.body.data.id,
+          'test_query_tool_1',
+          'test_query_tool_2',
+        ).then(() => {
+          cy.wait(30000);
+          cy.executeQuery(
+            data.accessToken,
+            data.datamartId,
+            'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+          ).then(() => {
+            cy.switchOrg(data.organisationName);
+            cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+            cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
+            cy.get('.mcs-otqlInputEditor_otqlConsole')
+              .find('textarea')
+              .type('{selectall}{selectall}{backspace}{backspace}', {
+                force: true,
+              })
+              .type(
+                'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+                { force: true, parseSpecialCharSequences: false },
+              );
+            cy.get('.mcs-otqlInputEditor_run_button').click();
+            cy.get('.mcs-otqlChart_icons_bar').click();
+            cy.wait(1000);
+            cy.get('.mcs-otqlChart_items_share_button').click();
+            cy.window().then(win => {
+              win.navigator.clipboard.readText().then(text => {
+                console.log(text);
+                expect(text)
+                  .to.contain('"title": "",')
+                  .and('contain', '"type": "bars",')
+                  .and('contain', '"format": "count"')
+                  .and('contain', '"type": "bar"')
+                  .and('contain', '"type": "OTQL"');
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });
