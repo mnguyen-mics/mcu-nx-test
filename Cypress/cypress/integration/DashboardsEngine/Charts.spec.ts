@@ -92,12 +92,12 @@ describe('Charts Tests', () => {
               .and('contain', 'Modified by dev')
               .and('contain', '0 days ago');
 
-            cy.get('.mcs-charts-search-panel_search-bar').find('input').type('t{enter}');
+            cy.get('.mcs-charts-search-panel_search-bar').find('input').type('te{enter}');
             cy.get('.mcs-charts-search-panel')
               .should('contain', 'test')
               .and('contain', 'Modified by dev')
               .and('contain', '0 days ago');
-            cy.get('.mcs-charts-search-panel_search-bar').find('input').clear().type('t{enter}');
+            cy.get('.mcs-charts-search-panel_search-bar').find('input').clear().type('sk{enter}');
             cy.get('.mcs-charts-search-panel')
               .should('not.contain', 'test')
               .and('not.contain', 'Modified by dev')

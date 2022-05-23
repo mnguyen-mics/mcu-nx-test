@@ -259,17 +259,15 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.get('.mcs-timelineStepBuilder_step').should('have.length', 1);
-      cy.get('.mcs-timelineStepBuilder_removeStepBtn').click();
-      cy.get('.mcs-timelineStepBuilder_step').should('have.length', 0);
-      cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
-      cy.get('.mcs-timelineStepBuilder_step').should('have.length', 1);
       cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
       cy.get('.mcs-timelineStepBuilder_step').should('have.length', 2);
-      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 2);
+      cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
+      cy.get('.mcs-timelineStepBuilder_step').should('have.length', 3);
+      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 3);
       cy.get('.mcs-funnelQueryBuilder_removeFilterBtn').first().click();
-      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 1);
-      cy.get('.mcs-funnelQueryBuilder_addDimensionBtn').first().click();
       cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 2);
+      cy.get('.mcs-funnelQueryBuilder_addDimensionBtn').first().click();
+      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 3);
     });
   });
 
