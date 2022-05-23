@@ -284,7 +284,7 @@ describe('This test should check that the audience feature forms are working pro
             cy.goToHome(data.organisationId);
             cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
             cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
-            cy.wait(3000);
+            cy.wait(30000);
             cy.url().then(url => {
               if (url.match(/.*segment-builder-selector$/g)) {
                 cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
@@ -358,7 +358,8 @@ describe('This test should check that the audience feature forms are working pro
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();
       cy.contains('Audience Features').click();
-      cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
+      cy.wait(500);
+      cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click({ force: true });
       cy.get('.mcs-audienceFeatureTable_dropDownMenu--delete').click();
       cy.get('.mcs-modal--confirmDialog')
         .should('be.visible')
@@ -367,12 +368,16 @@ describe('This test should check that the audience feature forms are working pro
         cy.contains('Ok').click();
       });
       cy.get('.mcs-audienceFeature_table').should('contain', audienceFeatureName);
-      cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
+      cy.wait(500);
+      cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click({ force: true });
       cy.get('.mcs-audienceFeatureTable_dropDownMenu--edit').click();
       cy.get('.mcs-audienceFeature_edit_query_button').click();
-      cy.get('.mcs-otqlInputEditor_otqlConsole').type(
-        '{selectall}{backspace}SELECT @count{} FROM UserPoint where id > $id',
-      );
+      cy.get('.mcs-otqlInputEditor_otqlConsole')
+        .find('textarea')
+        .type('{selectall}{selectall}{backspace}{backspace}', { force: true });
+      cy.get('.mcs-otqlInputEditor_otqlConsole')
+        .find('textarea')
+        .type('SELECT @count{} FROM UserPoint where id > $id', { force: true });
       cy.get('.mcs-audienceFeature_update_query').click();
       cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
       cy.get('.mcs-modal--confirmDialog')

@@ -7,7 +7,7 @@ describe('Audience Segments List Test', () => {
     cy.clearLocalStorage();
   });
 
-  it.skip('check that filters on the audience segment page are persisted', () => {
+  it('check that filters on the audience segment page are persisted', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
       cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
