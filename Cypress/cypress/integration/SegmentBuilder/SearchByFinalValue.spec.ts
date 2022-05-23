@@ -27,6 +27,7 @@ describe('This test should check that the search by final value feature is worki
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();
     cy.get('.mcs-tabs_tab--audienceFeatures').click();
+    cy.wait(500);
     cy.get('.mcs-audienceFeatureTable_dropDownMenu')
       .should('be.visible')
       .each(() => {
@@ -94,12 +95,11 @@ describe('This test should check that the search by final value feature is worki
     cy.get('.mcs-audienceFeatureName').type(audienceFeatureName);
     cy.get('.mcs-audienceFeatureDescription').type(audienceFeatureDescription);
     cy.get('.mcs-audienceFeature_edit_query_button').click();
-    cy.get('.mcs-otqlInputEditor_otqlConsole > textarea').type(
-      '{selectall}{backspace}{backspace}',
-      {
+    cy.get('.mcs-otqlInputEditor_otqlConsole')
+      .find('textarea')
+      .type('{selectall}{selectall}{backspace}{backspace}', {
         force: true,
-      },
-    );
+      });
     cy.get('.mcs-otqlInputEditor_otqlConsole > textarea').type(
       'select {id} from UserPoint where ' + object_tree_expression,
       {
