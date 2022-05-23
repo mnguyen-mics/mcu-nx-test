@@ -867,4 +867,63 @@ describe('dashboards engine Tests', () => {
       });
     });
   });
+
+  it('should test the to-list transformation on the query tool', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'first channel',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
+        cy.prepareActivitiesForDashboards(
+          data.accessToken,
+          data.datamartId,
+          channel.body.data.id,
+          'test_to_list_1',
+          'test_to_list_2',
+        ).then(() => {
+          cy.wait(30000);
+          cy.executeQuery(
+            data.accessToken,
+            data.datamartId,
+            'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
+          ).then(() => {
+            cy.switchOrg(data.organisationName);
+            cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+            cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
+            cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
+              .type('{selectall}{backspace}{backspace}', {
+                force: true,
+              })
+              .type(
+                'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
+                { force: true, parseSpecialCharSequences: false },
+              );
+            cy.get('.mcs-otqlInputEditor_newSubSerieQuery').click();
+            cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
+              .eq(1)
+              .type('{selectall}{backspace}{backspace}', {
+                force: true,
+              })
+              .type(
+                'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
+                { force: true, parseSpecialCharSequences: false },
+              );
+            cy.get('.mcs-otqlInputEditor_stepNameButton').eq(2).click();
+            cy.get('.mcs-otqlInputEditor_stepNameInput').clear().type('Dimension Test{enter}');
+            cy.get('.mcs-otqlInputEditor_run_button').click();
+            cy.get('.mcs-otqlChart_icons_bar').click();
+            cy.wait(1000);
+            cy.get('.mcs-chart_content_container').eq(1).trigger('mouseover');
+            cy.get('.mcs-otqlChart_content_bar')
+              .should('contain', 'Dimension Test')
+              .and('contain', 'count: 6');
+          });
+        });
+      });
+    });
+  });
 });
