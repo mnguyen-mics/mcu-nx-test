@@ -84,8 +84,8 @@ class OTQLSeriesEditor extends React.Component<Props> {
     const queryModel = queryModelStep.properties;
     const queryModelId = queryModel.id;
     const subSerieQueryId = isSerieQueryModel(queryModel) ? undefined : queryModel.id;
-    const onlyOneSerie = seriesQueries.length === 1;
-    if (editionMode || onlyOneSerie) {
+    const hideHeader = seriesQueries.length === 1 && isSerieQueryModel(queryModel);
+    if (editionMode || hideHeader) {
       return <span />;
     } else {
       return (
