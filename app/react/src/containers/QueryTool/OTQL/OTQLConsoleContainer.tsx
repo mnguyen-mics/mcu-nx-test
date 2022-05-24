@@ -30,11 +30,16 @@ import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
 import { getChartDataset } from './utils/ChartOptionsUtils';
 import { IChartDatasetService } from '@mediarithmics-private/advanced-components';
 import _ from 'lodash';
+import cuid from 'cuid';
 
 const messages = defineMessages({
   queryToSave: {
     id: 'queryTool.OtqlConsole.tab.queryToSave',
     defaultMessage: 'Query to save',
+  },
+  chartSaved: {
+    id: 'queryTool.OtqlConsole.tab.chartSaved',
+    defaultMessage: 'Chart is saved',
   },
 });
 
@@ -74,6 +79,7 @@ interface State {
   panes: McsTabsItem[];
   activeKey: string;
   showChartLegend?: boolean;
+  chartsSearchPanelKey: string;
 }
 
 type Props = OTQLConsoleContainerProps &
@@ -109,6 +115,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       noLiveSchemaFound: false,
       activeKey: '1',
       panes: [],
+      chartsSearchPanelKey: cuid(),
     };
   }
 
@@ -572,6 +579,18 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     return queryToUse;
   };
 
+  onSaveChart = () => {
+    const { intl } = this.props;
+    this.props.notifySuccess({
+      message: intl.formatMessage(messages.chartSaved),
+      description: '',
+    });
+
+    this.setState({
+      chartsSearchPanelKey: cuid(),
+    });
+  };
+
   render() {
     const {
       match: {
@@ -600,6 +619,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       showChartLegend,
       evaluateGraphQl,
       rawSchema,
+      chartsSearchPanelKey,
     } = this.state;
 
     const queryToUse = this.getStringFirstQuery();
@@ -691,6 +711,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                         rawSchema={rawSchema}
                         dismissError={this.dismissError}
                         abortQuery={this.abortQuery}
+                        onSaveChart={this.onSaveChart}
                       />
 
                       {hasFeature('datastudio-query_tool-charts_loader') && (
@@ -699,7 +720,10 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                             {this.renderSchemaVisualizer(startType)}
                           </Tabs.TabPane>
                           <Tabs.TabPane tab='Charts' key={2}>
-                            <ChartsSearchPanel organisationId={organisationId} />
+                            <ChartsSearchPanel
+                              key={chartsSearchPanelKey}
+                              organisationId={organisationId}
+                            />
                           </Tabs.TabPane>
                         </Tabs>
                       )}

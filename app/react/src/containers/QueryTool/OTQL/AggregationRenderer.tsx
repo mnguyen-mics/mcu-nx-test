@@ -93,6 +93,7 @@ export interface AggregationRendererProps {
   query?: string;
   showChartLegend?: boolean;
   serieQueries?: SerieQueryModel[];
+  onSaveChart?: () => void;
 }
 type Props = AggregationRendererProps &
   InjectedFeaturesProps &
@@ -472,8 +473,11 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 
   async handleSaveChart() {
-    const { organisationId } = this.props;
+    const { organisationId, onSaveChart } = this.props;
     const { chartToSaveName } = this.state;
+    this.setState({
+      isModalVisible: false,
+    });
     const prettyJson = await this.generateChartJson(chartToSaveName);
     const parsedJson = prettyJson ? JSON.parse(prettyJson) : undefined;
     const type = (prettyJson ? JSON.parse(prettyJson) : prettyJson)?.type;
@@ -483,6 +487,7 @@ class AggregationRenderer extends React.Component<Props, State> {
       content: parsedJson,
     };
     await this._chartService.createChart(organisationId, dashboardResource);
+    if (onSaveChart) onSaveChart();
   }
 
   private isSelectedTypeExportable(): boolean {
@@ -720,21 +725,28 @@ class AggregationRenderer extends React.Component<Props, State> {
             <div className={'mcs-otqlChart_chartConfig_clipboard_container'}>
               <AntButton
                 type='ghost'
-                className={'mcs-otqlChart_items_share_button'}
+                className={
+                  hasFeature('datastudio-query_tool-charts_loader')
+                    ? 'mcs-otqlChart_items_share_button'
+                    : 'mcs-otqlChart_items_share_button_right'
+                }
                 onClick={handleCopyToClipboard}
               >
                 {intl.formatMessage(messages.share)}
               </AntButton>
-              <AntButton
-                type='primary'
-                className='m-l-10 mcs-otqlInputEditor_save_button'
-                onClick={handleOnSaveButtonClick}
-              >
-                <FormattedMessage
-                  id='queryTool.otql.edit.new.save.label'
-                  defaultMessage='Save this chart'
-                />
-              </AntButton>
+              {hasFeature('datastudio-query_tool-charts_loader') && (
+                <AntButton
+                  type='primary'
+                  className='m-l-10 mcs-otqlInputEditor_save_button'
+                  onClick={handleOnSaveButtonClick}
+                  hidden={!hasFeature('datastudio-query_tool-charts_loader')}
+                >
+                  <FormattedMessage
+                    id='queryTool.otql.edit.new.save.label'
+                    defaultMessage='Save this chart'
+                  />
+                </AntButton>
+              )}
             </div>
           ) : undefined}
         </div>

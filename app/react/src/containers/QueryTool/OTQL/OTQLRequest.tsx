@@ -37,6 +37,7 @@ export interface OTQLRequestProps {
   rawSchema?: ObjectLikeTypeInfoResource[];
   dismissError: () => void;
   abortQuery: () => void;
+  onSaveChart?: () => void;
 }
 
 interface AbstractSerieQueryModel {
@@ -90,6 +91,7 @@ class OTQLRequest extends React.Component<Props> {
       showChartLegend,
       abortQuery,
       query,
+      onSaveChart,
     } = this.props;
 
     const errorMsg = error && (
@@ -133,6 +135,7 @@ class OTQLRequest extends React.Component<Props> {
         datamartId={datamartId}
         showChartLegend={showChartLegend}
         serieQueries={serieQueries}
+        onSaveChart={onSaveChart}
       />
     );
 
