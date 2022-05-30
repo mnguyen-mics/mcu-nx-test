@@ -1,6 +1,10 @@
 import Page from './Page';
 
 class LoginPageKeycloak extends Page {
+  get formLogin() {
+    return cy.get('.mcs-keycloak_formLogin');
+  }
+
   get emailField() {
     return cy.get('.mcs-keycloak_formLogin_usernameField');
   }
