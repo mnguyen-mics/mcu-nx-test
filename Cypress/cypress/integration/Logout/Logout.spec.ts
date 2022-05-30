@@ -1,3 +1,6 @@
+import ActionbarObject from '../../pageobjects/ActionbarObject';
+import LoginPageKeycloak from '../../pageobjects/LoginPageKeycloak';
+
 describe('Should test logout on the new NavBar', () => {
   beforeEach(() => {
     window.localStorage.setItem('features', '["new-navigation-system"]');
@@ -9,9 +12,9 @@ describe('Should test logout on the new NavBar', () => {
   });
 
   it('Logout after clicking the logout button', () => {
-    cy.get('.mcs-actionbar').should('be.visible');
-    cy.get('.mcs-user').click();
-    cy.contains('Log out').click();
-    cy.get('.mcs-keycloak_formLogin').should('be.visible');
+    ActionbarObject.actionbar.should('be.visible');
+    ActionbarObject.clickUserIcon();
+    ActionbarObject.clickBtnLogout();
+    LoginPageKeycloak.formLogin.should('be.visible');
   });
 });
