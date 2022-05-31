@@ -912,7 +912,7 @@ describe('dashboards engine Tests', () => {
                 'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
                 { force: true, parseSpecialCharSequences: false },
               );
-            cy.get('.mcs-otqlInputEditor_stepNameButton').eq(2).click();
+            cy.get('.mcs-otqlInputEditor_stepNameButton').eq(1).click();
             cy.get('.mcs-otqlInputEditor_stepNameInput').clear().type('Dimension Test{enter}');
             cy.get('.mcs-otqlInputEditor_run_button').click();
             cy.get('.mcs-otqlChart_icons_bar').click();
