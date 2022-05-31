@@ -18,7 +18,7 @@
   "dependencies": {
     "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.2.2",
-    "@mediarithmics-private/advanced-components": "9.19.4",
+    "@mediarithmics-private/advanced-components": "9.20.0",
     "@mediarithmics-private/mcs-components-library": "7.7.0",
     "@splitsoftware/splitio": "^10.17.3",
     "antd": "^4.16.13",
@@ -34,7 +34,7 @@
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.19",
     "loglevel": "^1.6.8",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "moment-duration-format": "^2.2.2",
     "numeral": "^2.0.6",
     "omit-deep-lodash": "^1.1.6",
