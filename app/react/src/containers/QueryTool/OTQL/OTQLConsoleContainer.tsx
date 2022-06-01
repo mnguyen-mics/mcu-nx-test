@@ -54,6 +54,7 @@ interface McsTabsItem {
   closable: boolean;
   serieQueries: SerieQueryModel[];
 }
+
 export interface OTQLConsoleContainerProps {
   datamartId: string;
   renderActionBar?: (query: string, datamartId: string) => React.ReactNode;
