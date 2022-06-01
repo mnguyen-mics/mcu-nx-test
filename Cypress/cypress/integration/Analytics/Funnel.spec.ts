@@ -852,12 +852,16 @@ describe('Should test the funnel', () => {
           }).then(() => {
             cy.wait(30000);
             cy.reload();
+            cy.get('.mcs-dateRangePicker').click();
+            cy.contains('Last 30 days').click({ force: true });
+            cy.reload();
             cy.get('.mcs-funnelQueryBuilder_select--dimensions').type('channel');
             cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
             cy.get('.mcs-funnelQueryBuilder_dimensionValue').click();
             cy.contains(`${complementaryChannel.body.data.id} - test_complementary`).click({
               force: true,
             });
+
             cy.get('.mcs-funnelQueryBuilder_executeQueryBtn').click();
             cy.get('.mcs-timelineStepBuilder_addStepBtn').click({ force: true });
             cy.get('.mcs-funnelQueryBuilder_select--dimensions').eq(1).type('conversion');
