@@ -207,22 +207,6 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
             showChartLegend: !(
               result?.data?.rows && hasSubBucketsOrMultipleSeries(result.data.rows)
             ),
-            panes: panes.map(tab => {
-              if (tab.key === activeKey) {
-                return {
-                  ...tab,
-                  serieQueries: serieQueries.map((q, i) =>
-                    i === 0
-                      ? {
-                          ...q,
-                          query: otqlQuery,
-                          queryModel: otqlQuery,
-                        }
-                      : q,
-                  ),
-                };
-              } else return tab;
-            }),
           });
         })
         .catch(error => {
@@ -574,7 +558,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     const { panes } = this.state;
     const firstTabQuery = panes.find(t => t.key === '1');
     const queryToUse =
-      firstTabQuery && !isQueryListModel(firstTabQuery.serieQueries[0].queryModel)
+      firstTabQuery && !isQueryListModel(firstTabQuery.serieQueries[0]?.queryModel)
         ? firstTabQuery.serieQueries[0].queryModel
         : DEFAULT_OTQL_QUERY;
     return queryToUse;
