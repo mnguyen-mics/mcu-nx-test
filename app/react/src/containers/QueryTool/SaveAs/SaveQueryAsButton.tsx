@@ -126,7 +126,7 @@ class SaveQueryAsButton extends React.Component<Props, State> {
     return (
       <div>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
-          <Button className={`mcs-otqlInputEditor_save_as_button`}>
+          <Button className='mcs-otqlInputEditor_save_as_button'>
             <FormattedMessage
               id='queryTool.query-builder.actionbar.save'
               defaultMessage='Save As...'

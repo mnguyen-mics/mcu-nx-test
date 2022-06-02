@@ -152,7 +152,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
           />
         )}
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
-          <Button className={`mcs-saveQueryAsActionBar_button`}>
+          <Button className='mcs-saveQueryAsActionBar_button mcs-primary' type='primary'>
             <FormattedMessage
               id='queryTool.query-builder.actionbar.save'
               defaultMessage='Save As'
