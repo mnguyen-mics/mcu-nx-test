@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Alert } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { OTQLResult, QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -70,7 +69,6 @@ class OTQLRequest extends React.Component<Props> {
       intl,
       datamartId,
       queryEditorClassName,
-      hasFeature,
       editionMode,
       serieQueries,
       onSeriesChanged,
@@ -146,16 +144,6 @@ class OTQLRequest extends React.Component<Props> {
 
     return (
       <span className='mcs-otqlQuery_container'>
-        {!hasFeature('query-tool-graphs') && (
-          <ContentHeader
-            title={
-              <FormattedMessage
-                id='queryTool.OTQL.query-tool-page-title'
-                defaultMessage='Query Tool'
-              />
-            }
-          />
-        )}
         {errorMsg}
         {noLiveSchemaErrorMsg}
         <OTQLInputEditor
