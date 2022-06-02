@@ -70,7 +70,7 @@ class SaveQueryAsButton extends React.Component<Props, State> {
   }
 
   render() {
-    const { hasFeature, saveAsUserQuery, saveAsExport, saveAsTechnicalQuery } = this.props;
+    const { saveAsUserQuery, saveAsExport, saveAsTechnicalQuery } = this.props;
     const closeExportModal = () =>
       this.setState({
         exportModalVisible: false,
@@ -126,12 +126,7 @@ class SaveQueryAsButton extends React.Component<Props, State> {
     return (
       <div>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
-          <Button
-            className={`mcs-otqlInputEditor_save_as_button ${
-              hasFeature('query-tool-graphs') ? '' : 'mcs-primary'
-            }`}
-            type={hasFeature('query-tool-graphs') ? undefined : 'primary'}
-          >
+          <Button className={`mcs-otqlInputEditor_save_as_button`}>
             <FormattedMessage
               id='queryTool.query-builder.actionbar.save'
               defaultMessage='Save As...'

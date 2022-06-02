@@ -60,7 +60,6 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
       convertToOtql,
       breadcrumb,
       csvExportDisabled,
-      hasFeature,
       saveAsTechnicalQuery,
       datamartId,
       organisationId,
@@ -153,12 +152,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
           />
         )}
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
-          <Button
-            className={`mcs-saveQueryAsActionBar_button ${
-              hasFeature('query-tool-graphs') ? '' : 'mcs-primary'
-            }`}
-            type={hasFeature('query-tool-graphs') ? undefined : 'primary'}
-          >
+          <Button className={`mcs-saveQueryAsActionBar_button`}>
             <FormattedMessage
               id='queryTool.query-builder.actionbar.save'
               defaultMessage='Save As'
