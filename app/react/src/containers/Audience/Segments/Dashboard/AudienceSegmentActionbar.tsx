@@ -275,7 +275,15 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
           <MentionTag
             mention={'BETA'}
             customContent={'dashboards-new-engine'}
-            tooltip={intl.formatMessage(messages.mentionTagTooltip)}
+            tooltip={intl.formatMessage(messages.dashboardsNewEngineMentionTagTooltip)}
+            className='mcs-homePage_mentionTag'
+          />
+        )}
+        {hasFeature('segments-contextual-targeting') && (
+          <MentionTag
+            mention={'ALPHA'}
+            customContent={'segments-contextual-targeting'}
+            tooltip={intl.formatMessage(messages.contextualTargetingMentionTagTooltip)}
             className='mcs-homePage_mentionTag'
           />
         )}
