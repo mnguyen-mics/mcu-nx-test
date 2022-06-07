@@ -11,19 +11,18 @@ import LabelsReducers from '../redux/Labels/reducer.ts';
 import MenuReducers from '../redux/Menu/reducer.ts';
 import { drawerReducer } from '../components/Drawer/DrawerStore.ts';
 
-const allReducers = Object.assign(
-  {},
-  FormReducer,
-  AppReducer,
-  ThemeReducer,
-  FeaturesReducer,
-  NotificationsReducers,
-  LoginReducers,
-  SessionReducers,
-  LabelsReducers,
-  MenuReducers,
-  drawerReducer,
-  keycloakPostLoginReducer,
-);
+const allReducers = {
+  ...FormReducer,
+  ...AppReducer,
+  ...ThemeReducer,
+  ...FeaturesReducer,
+  ...NotificationsReducers,
+  ...LoginReducers,
+  ...SessionReducers,
+  ...LabelsReducers,
+  ...MenuReducers,
+  ...drawerReducer,
+  ...keycloakPostLoginReducer,
+};
 
 export default combineReducers(allReducers);

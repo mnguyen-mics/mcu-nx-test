@@ -1,6 +1,5 @@
 import { OrganisationResource } from '@mediarithmics-private/advanced-components/lib/models/organisation/organisation';
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
-import { IOrganisationService } from '@mediarithmics-private/advanced-components/lib/services/OrganisationService';
 import { Loading, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import {
   ActionsColumnDefinition,
@@ -25,6 +24,7 @@ import UserResource from '../../../../../models/directory/UserResource';
 import _ from 'lodash';
 import { Tooltip } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
+import { IOrganisationService } from '../../../../../services/OrganisationService';
 
 export interface UserContainerProps {
   communityId: string;

@@ -1085,7 +1085,6 @@ export class AutomationFormService implements IAutomationFormService {
     feedId?: string,
   ) => {
     const node = storylineNode.node as ScenarioNodeShape;
-    let saveOrCreateScenarioNode: Promise<DataResponse<ScenarioNodeShape>>;
     let scenarioNodeResource = {};
     let resourceId: string | undefined;
     if (isEmailCampaignNode(node)) {
@@ -1193,7 +1192,7 @@ export class AutomationFormService implements IAutomationFormService {
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     }
-    saveOrCreateScenarioNode = resourceId
+    return resourceId
       ? this._scenarioService
           .updateScenarioNode(automationId, node.id, scenarioNodeResource)
           .then(e => {
@@ -1204,7 +1203,6 @@ export class AutomationFormService implements IAutomationFormService {
           ...scenarioNodeResource,
           id: undefined,
         });
-    return saveOrCreateScenarioNode;
   };
 
   saveOrCreateEdges = (automationId: string, customEdgeData: CustomEdgeResource): Promise<any> => {
