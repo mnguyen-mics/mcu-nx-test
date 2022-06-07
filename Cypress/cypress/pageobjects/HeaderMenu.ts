@@ -1,6 +1,6 @@
 import Page from './Page';
 
-class Header extends Page {
+class HeaderMenu extends Page {
   get header() {
     return cy.get('.mcs-header');
   }
@@ -123,4 +123,4 @@ class Header extends Page {
   }
 }
 
-export default new Header();
+export default new HeaderMenu();

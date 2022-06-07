@@ -1,4 +1,4 @@
-import loginPageKeycloak from '../../pageobjects/LoginPageKeycloak';
+import loginPageKeycloak from '../../pageobjects/LoginPage';
 import Keycloak from '../../utils/Keycloak';
 
 describe('Should test keycloak update password', () => {

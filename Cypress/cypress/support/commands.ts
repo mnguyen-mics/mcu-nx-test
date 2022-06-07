@@ -11,7 +11,7 @@
 //
 import faker from 'faker';
 import 'cypress-file-upload';
-import loginPageKeycloak from '../pageobjects/LoginPageKeycloak';
+import loginPageKeycloak from '../pageobjects/LoginPage';
 
 before(() => {
   cy.initTestContext();

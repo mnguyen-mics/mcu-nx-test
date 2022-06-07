@@ -1,6 +1,6 @@
-import Page from './Page';
+import Page from './../Page';
 
-class SettingsMainMenu extends Page {
+class SettingsMenu extends Page {
   get settingsMainMenuContainer() {
     return cy.get('.mcs-settingsMainMenu_container');
   }
@@ -86,4 +86,4 @@ class SettingsMainMenu extends Page {
   }
 }
 
-export default new SettingsMainMenu();
+export default new SettingsMenu();

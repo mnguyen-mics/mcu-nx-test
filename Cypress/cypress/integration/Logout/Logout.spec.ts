@@ -1,5 +1,5 @@
-import Header from '../../pageobjects/Header';
-import LoginPageKeycloak from '../../pageobjects/LoginPageKeycloak';
+import Header from '../../pageobjects/HeaderMenu';
+import LoginPageKeycloak from '../../pageobjects/LoginPage';
 
 describe('Should test logout on the new NavBar', () => {
   beforeEach(() => {
