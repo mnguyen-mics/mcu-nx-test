@@ -170,14 +170,12 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
                       {renderStepHeader?.(step, index) || (
                         <div className='mcs-timelineStepBuilder_stepName_title'>{step.name}</div>
                       )}
-                      {steps.length > 1 ? (
-                        <Button
-                          shape='circle'
-                          icon={<CloseOutlined />}
-                          className={'mcs-timelineStepBuilder_removeStepBtn'}
-                          onClick={this.removeStep.bind(this, step.id)}
-                        />
-                      ) : undefined}
+                      <Button
+                        shape='circle'
+                        icon={<CloseOutlined />}
+                        className={'mcs-timelineStepBuilder_removeStepBtn'}
+                        onClick={this.removeStep.bind(this, step.id)}
+                      />
                     </div>
                     {renderStepBody(step, index)}
                   </div>

@@ -283,7 +283,7 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
       renderFooterTimeline: this.renderFooterTimeline,
       renderStepBody: this.renderStepBody,
       renderStepHeader: this.renderStepHeader,
-      shouldRenderDisabledArrow: true,
+      shouldRenderArrows: true,
       getAddStepText: () => messages.addStepButton,
     };
     const stepManagement = {

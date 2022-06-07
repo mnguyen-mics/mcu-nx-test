@@ -43,7 +43,6 @@ class OTQLResultRenderer extends React.Component<Props> {
       loading,
       aborted,
       colors,
-      hasFeature,
       query,
       datamartId,
       match: {
@@ -118,8 +117,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       );
     }
 
-    return !hasFeature('query-tool-graphs') ||
-      !(result && isOTQLResult(result) && isAggregateResult(result.rows)) ? (
+    return !(result && isOTQLResult(result) && isAggregateResult(result.rows)) ? (
       <div className='mcs-otqlQuery_result'>
         {result && (
           <React.Fragment>

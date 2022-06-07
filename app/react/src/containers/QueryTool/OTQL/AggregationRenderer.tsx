@@ -548,12 +548,7 @@ class AggregationRenderer extends React.Component<Props, State> {
       return '';
     };
 
-    if (
-      hasFeature('query-tool-graphs') &&
-      (viewBuckets || aggregateData) &&
-      dataset &&
-      dataset.type === 'aggregate'
-    ) {
+    if ((viewBuckets || aggregateData) && dataset && dataset.type === 'aggregate') {
       const aggregateDataset = dataset as AggregateDataset;
       let displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
       if (isOTQLAggregations(rootAggregations)) {

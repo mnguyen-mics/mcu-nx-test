@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button, Switch, Select, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { compose } from 'recompose';
@@ -48,22 +47,11 @@ class OTQLInputEditor extends React.Component<Props, State> {
   }
 
   buildEditorActions = () => {
-    const { onRunQuery, onAbortQuery, runningQuery, hasFeature, isQuerySeriesActivated } =
-      this.props;
-    const abortButton = (
-      <Button type='primary' className='m-l-10' onClick={onAbortQuery}>
-        <FormattedMessage id='queryTool.otql.edit.abort.label' defaultMessage='Abort Query' />
-      </Button>
-    );
+    const { onRunQuery, onAbortQuery, runningQuery, isQuerySeriesActivated } = this.props;
 
     const handleOnRunButtonClick = () => onRunQuery();
-    const runButton = (
-      <Button type='primary' className='m-l-10' onClick={handleOnRunButtonClick}>
-        <FormattedMessage id='queryTool.otql.edit.run.label' defaultMessage='Run Query' />
-      </Button>
-    );
 
-    const newRunButton = (
+    const runButton = (
       <Button
         type='primary'
         className='m-l-10 mcs-otqlInputEditor_run_button'
@@ -73,7 +61,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       </Button>
     );
 
-    const newAbortButton = (
+    const abortButton = (
       <Button
         type='primary'
         className='m-l-10 mcs-otqlInputEditor_abort_button'
@@ -84,28 +72,16 @@ class OTQLInputEditor extends React.Component<Props, State> {
     );
 
     const params = (
-      <a className='m-l-10' onClick={this.showModal}>
-        <McsIcon type='gears' />
-      </a>
-    );
-
-    const newParams = (
       <a className='mcs-otqlInputEditor_settings_button' onClick={this.showModal}>
         <SettingOutlined />
       </a>
     );
 
-    return !hasFeature('query-tool-graphs') ? (
+    return (
       <div>
+        {params}
         {!isQuerySeriesActivated}
         {runningQuery ? abortButton : runButton}
-        {params}
-      </div>
-    ) : (
-      <div>
-        {newParams}
-        {!isQuerySeriesActivated}
-        {runningQuery ? newAbortButton : newRunButton}
       </div>
     );
   };

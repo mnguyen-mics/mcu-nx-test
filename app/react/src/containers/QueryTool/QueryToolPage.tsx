@@ -15,7 +15,6 @@ import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
 import { IQueryService } from '../../services/QueryService';
 import { IExportService } from '../../services/Library/ExportService';
-import QueryToolSelector from '../QueryTool/QueryToolSelector';
 import {
   ITagService,
   MicsReduxState,
@@ -28,6 +27,7 @@ import injectNotifications, {
 } from '../Notifications/injectNotifications';
 import { UserProfileResource } from '../../models/directory/UserProfileResource';
 import SaveQueryAsButton from './SaveAs/SaveQueryAsButton';
+import OTQLConsoleContainer from './OTQL/OTQLConsoleContainer';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -225,7 +225,7 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
           />
         )}
         {selectedDatamart && selectedDatamart.storage_model_version === 'v201709' && (
-          <QueryToolSelector
+          <OTQLConsoleContainer
             renderSaveAsButton={renderSaveAsButton}
             datamartId={selectedDatamart.id}
             createdQueryId={createdQueryId}

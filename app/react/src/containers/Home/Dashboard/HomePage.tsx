@@ -53,10 +53,15 @@ export const messages = defineMessages({
     id: 'home.acquisitionEngagementTitle',
     defaultMessage: 'Acquisition Engagement',
   },
-  mentionTagTooltip: {
-    id: 'home.mentionTagTooltip',
+  dashboardsNewEngineMentionTagTooltip: {
+    id: 'home.dashboardsNewEngineMentionTagTooltip',
     defaultMessage:
       'You can see new engine dashboards and old dashboards in tabs. All users don’t have access to this feature yet.',
+  },
+  contextualTargetingMentionTagTooltip: {
+    id: 'home.contextualTargetingMentionTagTooltip',
+    defaultMessage:
+      'You can see contextual targeting tab. All users don’t have access to this feature yet.',
   },
   setupYourHomePageTitle: {
     id: 'home.setupYourHomePageTitle',
@@ -248,7 +253,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                     <MentionTag
                       mention={'BETA'}
                       customContent={'dashboards-new-engine'}
-                      tooltip={intl.formatMessage(messages.mentionTagTooltip)}
+                      tooltip={intl.formatMessage(messages.dashboardsNewEngineMentionTagTooltip)}
                       className='mcs-homePage_mentionTag'
                     />
                   )}
