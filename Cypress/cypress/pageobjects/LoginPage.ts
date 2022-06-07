@@ -1,6 +1,6 @@
 import Page from './Page';
 
-class LoginPageKeycloak extends Page {
+class LoginPage extends Page {
   get formLogin() {
     return cy.get('.mcs-keycloak_formLogin');
   }
@@ -146,4 +146,4 @@ class LoginPageKeycloak extends Page {
   }
 }
 
-export default new LoginPageKeycloak();
+export default new LoginPage();
