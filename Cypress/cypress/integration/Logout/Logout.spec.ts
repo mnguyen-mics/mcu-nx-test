@@ -1,4 +1,4 @@
-import ActionbarObject from '../../pageobjects/ActionbarObject';
+import Header from '../../pageobjects/Header';
 import LoginPageKeycloak from '../../pageobjects/LoginPageKeycloak';
 
 describe('Should test logout on the new NavBar', () => {
@@ -12,9 +12,9 @@ describe('Should test logout on the new NavBar', () => {
   });
 
   it('Logout after clicking the logout button', () => {
-    ActionbarObject.actionbar.should('be.visible');
-    ActionbarObject.clickUserIcon();
-    ActionbarObject.clickBtnLogout();
+    Header.header.should('be.visible');
+    Header.clickUserIcon();
+    Header.clickBtnLogout();
     LoginPageKeycloak.formLogin.should('be.visible');
   });
 });

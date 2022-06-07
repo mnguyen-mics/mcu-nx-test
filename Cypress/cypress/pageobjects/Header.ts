@@ -1,8 +1,8 @@
 import Page from './Page';
 
-class ActionbarObject extends Page {
-  get actionbar() {
-    return cy.get('.mcs-actionbar');
+class Header extends Page {
+  get header() {
+    return cy.get('.mcs-header');
   }
 
   get settingsIcon() {
@@ -123,4 +123,4 @@ class ActionbarObject extends Page {
   }
 }
 
-export default new ActionbarObject();
+export default new Header();
