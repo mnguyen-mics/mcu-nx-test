@@ -1,29 +1,20 @@
 import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datamarts/List';
-
 import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels';
-import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UsersListsList';
 import UserRoleListPage from '../containers/Settings/OrganisationSettings/UserRoles/List/UserRolesList';
 import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount';
-
 import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/Profile';
-
 import MobileApplicationEditPage from '../containers/Settings/DatamartSettings/MobileApplications/Edit/MobileApplicationEditPage';
 import SiteEditPage from '../containers/Settings/DatamartSettings/Sites/Edit/SiteEditPage';
 import DatamartEditPage from '../containers/Settings/DatamartSettings/Datamarts/Edit/DatamartEditPage';
-
 import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List';
 import EditAttributionModelPage from '../containers/Settings/CampaignSettings/AttributionModel/Edit/EditAttributionModelPage';
-
 import { EmailRouterContent } from '../containers/Settings/CampaignSettings/EmailRouter/List';
 import { CreateEditEmailRouter } from '../containers/Settings/CampaignSettings/EmailRouter/Edit';
-
 import { RecommenderContent } from '../containers/Settings/CampaignSettings/Recommender/List';
 import { CreateEditRecommender } from '../containers/Settings/CampaignSettings/Recommender/Edit';
-
 import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/VisitAnalyzer/List';
 import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit';
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
-
 import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportListPage';
 import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit/EditUserPage';
 import ApiTokenListPage from '../containers/Settings/ProfileSettings/ApiToken/List/ApiTokenListPage';
@@ -54,6 +45,7 @@ import CleaningRuleEditPage from '../containers/Settings/DatamartSettings/Cleani
 import EditUserRolePage from '../containers/Settings/OrganisationSettings/UserRoles/Edit/EditUserRolePage';
 import AudienceFeatureEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/AudienceFeatureEditPage';
 import StandardSegmentBuilderEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/StandardSegmentBuilderEditPage';
+import UserListPageContainer from '../containers/Settings/OrganisationSettings/Users/List/UserListPageContainer';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -365,7 +357,7 @@ export const settingsDefinition: NavigatorDefinition = {
   settingsOrganisationUserList: {
     path: '/settings/organisation/users',
     layout: 'settings',
-    contentComponent: UserListPage,
+    contentComponent: UserListPageContainer,
     requiredFeature: 'organisationSettings-users',
   },
   settingsOrganisationUserEdition: {
