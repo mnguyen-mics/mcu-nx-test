@@ -1,7 +1,6 @@
 import Page from './Page';
 
 class HeaderMenu extends Page {
-
   get header() {
     return cy.get('.mcs-header');
   }
