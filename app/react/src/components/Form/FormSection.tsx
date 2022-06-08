@@ -21,6 +21,7 @@ interface FormSectionProps extends FormTitleProps {
     disabled?: boolean;
   };
   dropdownItems?: DropdownButtonItemProps[];
+  className?: string;
 }
 
 class FormSection extends React.Component<FormSectionProps> {
@@ -57,7 +58,7 @@ class FormSection extends React.Component<FormSectionProps> {
   };
 
   render() {
-    const { title, subtitle, button, dropdownItems } = this.props;
+    const { title, subtitle, button, dropdownItems, className } = this.props;
     const titleColSpan = 24 - 3 * ((!!button ? 1 : 0) + (!!dropdownItems ? 1 : 0));
 
     const hasRestCol = !!button || !!dropdownItems;
@@ -74,7 +75,11 @@ class FormSection extends React.Component<FormSectionProps> {
     );
 
     return (
-      <Row align='middle' justify='space-between' className='section-header'>
+      <Row
+        align='middle'
+        justify='space-between'
+        className={`${'section-header'} ${className ? className : ''}`}
+      >
         <Col span={titleColSpan}>
           <FormTitle title={title} subtitle={subtitle} />
         </Col>

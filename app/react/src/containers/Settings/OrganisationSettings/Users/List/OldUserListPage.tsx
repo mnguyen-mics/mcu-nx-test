@@ -47,7 +47,7 @@ interface RouterProps {
 
 type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
 
-class UserListsList extends React.Component<Props, UserListState> {
+class OldUserListPage extends React.Component<Props, UserListState> {
   state = initialState;
 
   @lazyInject(TYPES.IOrganisationService)
@@ -229,4 +229,4 @@ class UserListsList extends React.Component<Props, UserListState> {
   }
 }
 
-export default compose<Props, {}>(withRouter, injectIntl, injectNotifications)(UserListsList);
+export default compose<Props, {}>(withRouter, injectIntl, injectNotifications)(OldUserListPage);
