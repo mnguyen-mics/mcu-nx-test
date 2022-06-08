@@ -1,0 +1,463 @@
+import { OrganisationResource } from '@mediarithmics-private/advanced-components/lib/models/organisation/organisation';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
+import { IOrganisationService } from '@mediarithmics-private/advanced-components/lib/services/OrganisationService';
+import { Loading, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import * as React from 'react';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { compose } from 'recompose';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import UserRoleResource from '../../../../../models/directory/UserRoleResource';
+import { ICommunityService } from '../../../../../services/CommunityServices';
+import { IUserRolesService } from '../../../../../services/UserRolesService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
+import FoldableCardHierarchy, { FoldableCardHierarchyResource } from './FoldableCardHierarchy';
+import { RouterProps, UserDisplay } from './UserListPage';
+import { messages } from './messages';
+import UserResource from '../../../../../models/directory/UserResource';
+import _ from 'lodash';
+import { Tooltip } from 'antd';
+import { HomeOutlined } from '@ant-design/icons';
+
+export interface UserContainerProps {
+  communityId: string;
+  currentOrganisationId: string;
+  userDisplay: UserDisplay;
+  user?: UserResourceWithRole;
+  editUser: (user: UserResourceWithRole) => void;
+  editUserRole: (user: UserResourceWithRole, organisationId?: string) => void;
+  deleteUser: (user: UserResourceWithRole) => void;
+  deleteUserRole: (user: UserResourceWithRole) => void;
+  filterValue: string;
+  displayInheritedRole: boolean;
+}
+
+interface UserResourceWithRole extends UserResource {
+  role?: UserRoleResource;
+}
+
+type Props = UserContainerProps &
+  InjectedNotificationProps &
+  RouteComponentProps<RouterProps> &
+  InjectedIntlProps;
+
+interface State {
+  organisations?: OrganisationResource[];
+  users?: UserResourceWithRole[];
+  userHierarchy?: FoldableCardHierarchyResource;
+  loading?: boolean;
+}
+
+class UserContainer extends React.Component<Props, State> {
+  @lazyInject(TYPES.ICommunityService)
+  private _communityService: ICommunityService;
+  @lazyInject(TYPES.IUserRolesService)
+  private _userRolesService: IUserRolesService;
+  @lazyInject(TYPES.IOrganisationService)
+  private _organisationService: IOrganisationService;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      loading: true,
+    };
+  }
+
+  componentDidMount() {
+    const { communityId } = this.props;
+    this.initializeUserHierarchy(communityId);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { userDisplay, communityId, filterValue, displayInheritedRole } = this.props;
+    const {
+      userDisplay: prevUserDisplay,
+      filterValue: prevFilterValue,
+      displayInheritedRole: prevDisplayInheritedRole,
+    } = prevProps;
+    if (
+      userDisplay !== prevUserDisplay ||
+      displayInheritedRole !== prevDisplayInheritedRole ||
+      (filterValue !== prevFilterValue && (filterValue.length >= 3 || filterValue.length === 0))
+    ) {
+      this.initializeUserHierarchy(communityId, filterValue);
+    }
+  }
+
+  initializeUserHierarchy(communityId: string, filterValue?: string) {
+    const {
+      userDisplay,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+    const promises: Array<Promise<DataListResponse<any>>> = [
+      this._organisationService.getOrganisations(communityId),
+      this._communityService.getCommunityUsers(communityId),
+    ];
+
+    this.setState({
+      loading: true,
+    });
+
+    Promise.all(promises)
+      .then(res => {
+        const users = (res[1] as DataListResponse<UserResourceWithRole>).data;
+        const filteredUsers = filterValue
+          ? users.filter(
+              u =>
+                u.first_name.toLocaleLowerCase().includes(filterValue) ||
+                u.last_name.toLocaleLowerCase().includes(filterValue) ||
+                u.email.toLocaleLowerCase().includes(filterValue),
+            )
+          : users;
+        const nextPromises: Array<Promise<any>> =
+          userDisplay === 'user_roles'
+            ? filteredUsers.map(async user => {
+                const rolesRes = await this._userRolesService.getUserRoles(user.id);
+                if (rolesRes.data.length >= 1) {
+                  return rolesRes.data.map(role => {
+                    // The reason why we put role's org id instead of user's org id here is because :
+                    // when the "Role" screen is selected we want to recursively build tree hierarchy
+                    // based on userRole's organisationId
+                    return {
+                      ...user,
+                      organisation_id: role.organisation_id,
+                      role: {
+                        ...role,
+                        // The reason we use the org Id here is because we want to know during the tree build
+                        // which role is belonging to a user belonging to the current organisation (see is_home_user usage)
+                        organisation_id: user.organisation_id,
+                      },
+                    };
+                  });
+                } else {
+                  return Promise.resolve(user);
+                }
+              })
+            : filteredUsers.map(u => {
+                return Promise.resolve(u);
+              });
+        Promise.all(nextPromises)
+          .then(usersResponse => {
+            const flattenUsers = _.flattenDeep(usersResponse);
+            this.setState(
+              {
+                organisations: (res[0] as DataListResponse<OrganisationResource>).data,
+                users:
+                  userDisplay === 'user_roles'
+                    ? flattenUsers.filter(u => u.role?.role)
+                    : usersResponse,
+              },
+              () => {
+                this.setState({
+                  userHierarchy: this.buildHierarchy(),
+                  loading: false,
+                });
+              },
+            );
+          })
+          .then(() => {
+            const element = document.getElementById(`mcs-foldable-card-${organisationId}`);
+            element?.scrollIntoView();
+          })
+          .catch(err => {
+            this.props.notifyError(err);
+            this.setState({
+              loading: false,
+            });
+          });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          loading: false,
+        });
+      });
+  }
+
+  buildHierarchy(): FoldableCardHierarchyResource | undefined {
+    const { organisations, users } = this.state;
+    const { currentOrganisationId, displayInheritedRole, userDisplay, user } = this.props;
+
+    const recursiveBuildHierarchy = (
+      organisation?: OrganisationResource,
+    ): FoldableCardHierarchyResource => {
+      const orgUsers = users
+        ?.filter(u => u.organisation_id === organisation?.id)
+        .map(u => {
+          if (u.role?.organisation_id === organisation?.id) {
+            return {
+              ...u,
+              role: {
+                ...u.role,
+                organisation_id: u.organisation_id,
+                role: u.role ? u.role.role : '',
+                is_home_user: true,
+              },
+            };
+          } else return u;
+        });
+      // To do : make recursive function for N parental bonds
+      const isParentUser = (u: UserResourceWithRole) => {
+        const parentOrg = organisations?.find(o => o.id === organisation?.administrator_id);
+        const grandParentOrg = organisations?.find(o => o.id === parentOrg?.administrator_id);
+        const greatGrandParentOrg = organisations?.find(
+          o => o.id === grandParentOrg?.administrator_id,
+        );
+
+        const userCondition =
+          u.organisation_id === organisation?.administrator_id ||
+          u.organisation_id === grandParentOrg?.id ||
+          u.organisation_id === greatGrandParentOrg?.id;
+        return userCondition;
+      };
+
+      const parentOrgUsers =
+        users?.filter(isParentUser).map(u => {
+          const userResourceWithRole: UserResourceWithRole = {
+            ...u,
+            role: {
+              ...u.role,
+              organisation_id: u.organisation_id,
+              role: u.role ? u.role.role : '',
+              is_inherited: true,
+            },
+          };
+          return userResourceWithRole;
+        }) || [];
+      const childrenOrg = organisations
+        ?.filter(org => org.administrator_id === organisation?.id)
+        .sort(
+          (a: OrganisationResource, b: OrganisationResource) =>
+            parseInt(a.id, 10) - parseInt(b.id, 10),
+        );
+      const children: FoldableCardHierarchyResource[] = [];
+      if (childrenOrg) {
+        childrenOrg.forEach(org => {
+          const foldableCardHierarchyResource = recursiveBuildHierarchy(org);
+          if (foldableCardHierarchyResource) children.push(foldableCardHierarchyResource);
+        });
+      }
+      const orgUsersWithParents = orgUsers
+        ? userDisplay === 'user_roles' && displayInheritedRole
+          ? orgUsers.concat(parentOrgUsers)
+          : orgUsers
+        : [];
+      const sortedUsers = orgUsersWithParents.sort(
+        (a: UserResourceWithRole, b: UserResourceWithRole) =>
+          a.last_name.localeCompare(b.last_name),
+      );
+      return {
+        foldableCard: {
+          isDefaultActive:
+            organisation?.id === currentOrganisationId ||
+            organisation?.id === user?.organisation_id,
+          header: this.buildHeader(
+            organisation?.name || '',
+            orgUsers ? orgUsers.length : 0,
+            parentOrgUsers.length,
+          ),
+          body: this.buildBody(sortedUsers, organisation?.id),
+          organisationId: organisation?.id,
+        },
+        children: children,
+      };
+    };
+    let orga = organisations?.find(currentOrg => currentOrg.id === currentOrganisationId);
+    while (orga?.administrator_id) {
+      orga = organisations?.find(parentOrg => parentOrg.id === orga?.administrator_id);
+    }
+    if (orga) {
+      return recursiveBuildHierarchy(orga);
+    } else return;
+  }
+
+  buildHeader(
+    organisationName: string,
+    orgUsersNb: number,
+    inheritedUsersNb: number,
+  ): React.ReactNode {
+    const { userDisplay } = this.props;
+    const renderHeaderText = () => {
+      if (userDisplay === 'users') {
+        return ` (${orgUsersNb} users)`;
+      } else {
+        const inheritedText = inheritedUsersNb !== 0 ? `, ${inheritedUsersNb} roles inherited` : '';
+        return ` (${orgUsersNb} roles defined${inheritedText})`;
+      }
+    };
+    return (
+      <React.Fragment>
+        <span>{organisationName}</span>
+        <span className='mcs-userRoleList_inherited mcs-userRoleList_cardSubtitle'>
+          {renderHeaderText()}
+        </span>
+      </React.Fragment>
+    );
+  }
+
+  onClickEdit = (user: UserResourceWithRole) => {
+    this.props.editUser(user);
+  };
+
+  onClickDelete = (user: UserResourceWithRole) => {
+    this.props.deleteUser(user);
+  };
+
+  onClickEditUserRole = (user: UserResourceWithRole, organisationId?: string) => {
+    this.props.editUserRole(user, organisationId);
+  };
+
+  onClickDeleteUserRole = (user: UserResourceWithRole) => {
+    this.props.deleteUserRole(user);
+  };
+
+  buildBody(orgUsers: UserResourceWithRole[], organisationId?: string): React.ReactNode {
+    const { userDisplay, intl } = this.props;
+    const sorter = (a: UserResourceWithRole, b: UserResourceWithRole) => a.id.localeCompare(b.id);
+    let dataColumns: Array<DataColumnDefinition<UserResourceWithRole>> = [
+      {
+        title: 'Id',
+        key: 'id',
+        isHideable: false,
+        render: (text: string) => text,
+        sorter: sorter,
+      },
+      {
+        title: 'First name',
+        key: 'first_name',
+        isHideable: false,
+        render: (text: string) => text,
+        sorter: sorter,
+      },
+      {
+        title: 'Last name',
+        key: 'last_name',
+        isHideable: false,
+        render: (text: string) => text,
+        sorter: sorter,
+      },
+      {
+        title: 'Email',
+        key: 'email',
+        isHideable: false,
+        render: (text: string) => text,
+        sorter: sorter,
+      },
+    ];
+
+    if (userDisplay === 'user_roles') {
+      dataColumns = dataColumns
+        .concat({
+          title: 'Role',
+          key: 'role',
+          isHideable: false,
+          render: (userWithRole: any) => (
+            <span>
+              {userWithRole?.role}
+              {userWithRole?.is_inherited ? (
+                <i className='mcs-userRoleList_inherited'>
+                  {' '}
+                  ({intl.formatMessage(messages.inherited)})
+                </i>
+              ) : (
+                ''
+              )}
+            </span>
+          ),
+          sorter: sorter,
+        })
+        .filter(c => c.key !== 'id');
+      dataColumns.unshift({
+        title: '',
+        key: '',
+        isHideable: false,
+        className: 'mcs-userRoleList_homeUserCell',
+        render: (userWithRole: any) => {
+          return (
+            !!userWithRole.role?.is_home_user && (
+              <Tooltip title={intl.formatMessage(messages.homeUser)}>
+                <HomeOutlined />
+              </Tooltip>
+            )
+          );
+        },
+      });
+    }
+
+    const userActionsColumns: Array<ActionsColumnDefinition<UserResourceWithRole>> = [
+      {
+        className: 'mcs-userRoleList_dropDownMenu',
+        key: 'action',
+        actions: () => [
+          {
+            className: 'mcs-userRoleList_dropDownMenu--edit',
+            message: 'Edit user',
+            callback: this.onClickEdit,
+          },
+          {
+            className: 'mcs-userRoleList_dropDownMenu--delete',
+            message: 'Delete user',
+            callback: this.onClickDelete,
+          },
+        ],
+      },
+    ];
+
+    const userRoleActionsColumns: Array<ActionsColumnDefinition<UserResourceWithRole>> = [
+      {
+        className: 'mcs-userRoleList_dropDownMenu',
+        key: 'action',
+        actions: (user: UserResourceWithRole) => [
+          {
+            className: 'mcs-userRoleList_dropDownMenu--edit',
+            message: 'Edit role',
+            callback: (u: UserResourceWithRole) => {
+              this.onClickEditUserRole(u, organisationId);
+            },
+          },
+          {
+            className: 'mcs-userRoleList_dropDownMenu--delete',
+            message: 'Delete role',
+            callback: this.onClickDeleteUserRole,
+            disabled: !!user.role?.is_inherited,
+          },
+        ],
+      },
+    ];
+
+    return (
+      <TableViewFilters
+        pagination={false}
+        columns={dataColumns}
+        actionsColumnsDefinition={
+          userDisplay === 'users' ? userActionsColumns : userRoleActionsColumns
+        }
+        dataSource={orgUsers}
+      />
+    );
+  }
+
+  render() {
+    const { userHierarchy, loading } = this.state;
+    return loading ? (
+      <Loading isFullScreen={true} />
+    ) : (
+      <FoldableCardHierarchy hierachy={userHierarchy} />
+    );
+  }
+}
+
+export default compose<Props, UserContainerProps>(
+  injectNotifications,
+  withRouter,
+  injectIntl,
+)(UserContainer);

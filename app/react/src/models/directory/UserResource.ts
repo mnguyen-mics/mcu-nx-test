@@ -11,7 +11,7 @@ export interface User {
 }
 
 export interface UserCreationWithRoleResource extends User {
-  role?: string;
+  role?: UserRoleResource;
 }
 export default interface UserResource extends User {
   user_roles?: UserRoleResource[];

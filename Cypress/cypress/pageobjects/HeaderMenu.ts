@@ -1,8 +1,9 @@
 import Page from './Page';
 
 class HeaderMenu extends Page {
-  get actionbar() {
-    return cy.get('.mcs-actionbar');
+
+  get header() {
+    return cy.get('.mcs-header');
   }
 
   get settingsIcon() {

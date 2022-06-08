@@ -53,7 +53,16 @@ interface McsTabsItem {
   key: string;
   closable: boolean;
   serieQueries: SerieQueryModel[];
+  runningQuery: boolean;
+  queryResult: OTQLResult | null;
+  queryAborted: boolean;
+  error?: any;
+  precision: QueryPrecisionMode;
+  evaluateGraphQl: boolean;
+  useCache: boolean;
+  showChartLegend?: boolean;
 }
+
 export interface OTQLConsoleContainerProps {
   datamartId: string;
   renderActionBar?: (query: string, datamartId: string) => React.ReactNode;
@@ -65,20 +74,12 @@ export interface OTQLConsoleContainerProps {
 }
 
 interface State {
-  queryResult: OTQLResult | null;
-  runningQuery: boolean;
-  queryAborted: boolean;
-  error: any | null;
   schemaVizOpen: boolean;
   schemaLoading: boolean;
   rawSchema?: ObjectLikeTypeInfoResource[];
-  precision: QueryPrecisionMode;
-  evaluateGraphQl: boolean;
-  useCache: boolean;
   noLiveSchemaFound: boolean;
-  panes: McsTabsItem[];
+  tabs: McsTabsItem[];
   activeKey: string;
-  showChartLegend?: boolean;
   chartsSearchPanelKey: string;
 }
 
@@ -103,26 +104,20 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      queryResult: null,
-      runningQuery: false,
-      queryAborted: false,
-      error: null,
       schemaVizOpen: true,
       schemaLoading: false,
-      precision: 'FULL_PRECISION',
-      evaluateGraphQl: true,
-      useCache: false,
       noLiveSchemaFound: false,
       activeKey: '1',
-      panes: [],
+      tabs: [],
       chartsSearchPanelKey: cuid(),
     };
   }
 
   componentDidMount() {
     const { datamartId } = this.props;
-    this.add();
-    this.fetchObjectTypes(datamartId);
+    this.fetchObjectTypes(datamartId).then(() => {
+      this.add();
+    });
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -131,7 +126,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     if (prevDatamartId !== datamartId) {
       this.setState(
         {
-          panes: [],
+          tabs: [],
         },
         () => {
           this.add();
@@ -151,7 +146,16 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   fetchObjectTypes = (datamartId: string) => {
-    this.setState({ schemaLoading: true, noLiveSchemaFound: false, error: null });
+    this.setState({
+      schemaLoading: true,
+      noLiveSchemaFound: false,
+      tabs: this.state.tabs.map(t => {
+        return {
+          ...t,
+          error: null,
+        };
+      }),
+    });
     return this._runtimeSchemaService
       .getRuntimeSchemas(datamartId)
       .then(schemaRes => {
@@ -170,7 +174,12 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       })
       .catch(err => {
         this.setState({
-          error: err,
+          tabs: this.state.tabs.map(t => {
+            return {
+              ...t,
+              error: err,
+            };
+          }),
           schemaLoading: false,
         });
       });
@@ -178,19 +187,30 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   runQuery = () => {
     const { datamartId } = this.props;
-    const { precision, useCache, evaluateGraphQl, activeKey, panes } = this.state;
+    const { activeKey, tabs } = this.state;
+    const activeTab = tabs.find(tab => tab.key === activeKey);
     this.setState({
-      runningQuery: true,
-      error: null,
-      queryAborted: false,
+      tabs: tabs.map(t => {
+        if (t.key === activeKey) {
+          return {
+            ...t,
+            runningQuery: true,
+            error: null,
+            queryAborted: false,
+          };
+        } else return t;
+      }),
     });
-    const serieQueries = panes.find(tab => tab.key === activeKey)?.serieQueries;
+    const serieQueries = activeTab?.serieQueries;
     if (
       serieQueries &&
       serieQueries.length === 1 &&
       typeof serieQueries[0].queryModel === 'string'
     ) {
       const otqlQuery = serieQueries[0].queryModel;
+      const precision = activeTab?.precision;
+      const useCache = activeTab?.useCache;
+      const evaluateGraphQl = activeTab?.evaluateGraphQl;
       this.asyncQuery = makeCancelable(
         this._queryService.runOTQLQuery(datamartId, otqlQuery, {
           precision: precision,
@@ -201,15 +221,15 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       this.asyncQuery.promise
         .then(result => {
           this.setState({
-            runningQuery: false,
-            queryResult: result.data,
-            showChartLegend: !(
-              result?.data?.rows && hasSubBucketsOrMultipleSeries(result.data.rows)
-            ),
-            panes: panes.map(tab => {
+            tabs: tabs.map(tab => {
               if (tab.key === activeKey) {
                 return {
                   ...tab,
+                  runningQuery: false,
+                  queryResult: result.data,
+                  showChartLegend: !(
+                    result?.data?.rows && hasSubBucketsOrMultipleSeries(result.data.rows)
+                  ),
                   serieQueries: serieQueries.map((q, i) =>
                     i === 0
                       ? {
@@ -226,12 +246,19 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         })
         .catch(error => {
           this.setState({
-            error: !error.isCanceled ? error : null,
-            runningQuery: false,
+            tabs: tabs.map(tab => {
+              if (tab.key === activeKey) {
+                return {
+                  ...tab,
+                  error: !error.isCanceled ? error : null,
+                  runningQuery: false,
+                };
+              } else return tab;
+            }),
           });
         });
     } else {
-      const tabQuery = panes.find(tab => tab.key === activeKey);
+      const tabQuery = tabs.find(tab => tab.key === activeKey);
       if (tabQuery) {
         this.fetchQuerySeriesDataset(tabQuery.serieQueries);
       }
@@ -239,11 +266,11 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   updateQueryModel = (serieId: string, queryId?: string) => (query: string) => {
-    const { activeKey, panes } = this.state;
+    const { activeKey, tabs } = this.state;
     const { editionMode } = this.props;
     if (editionMode) {
       this.setState({
-        panes: panes.map(tab => {
+        tabs: tabs.map(tab => {
           if (tab.key === activeKey) {
             return {
               ...tab,
@@ -260,7 +287,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       });
     } else {
       this.setState({
-        panes: panes.map(tab => {
+        tabs: tabs.map(tab => {
           if (tab.key === activeKey) {
             return {
               ...tab,
@@ -333,9 +360,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   updateNameModel = (serieId: string, queryId?: string) => (event: any) => {
-    const { activeKey, panes } = this.state;
+    const { activeKey, tabs } = this.state;
     this.setState({
-      panes: panes.map(tab => {
+      tabs: tabs.map(tab => {
         if (tab.key === activeKey) {
           return {
             ...tab,
@@ -347,9 +374,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   onInputChange = (serieId: string, queryId?: string) => (event: any) => {
-    const { activeKey, panes } = this.state;
+    const { activeKey, tabs } = this.state;
     this.setState({
-      panes: panes.map(tab => {
+      tabs: tabs.map(tab => {
         if (tab.key === activeKey) {
           return {
             ...tab,
@@ -361,10 +388,10 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   displaySerieInput = (serieId: string, queryId?: string) => (e: any) => {
-    const { activeKey, panes } = this.state;
+    const { activeKey, tabs } = this.state;
 
     this.setState({
-      panes: panes.map(tab => {
+      tabs: tabs.map(tab => {
         if (tab.key === activeKey) {
           return {
             ...tab,
@@ -406,6 +433,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         params: { organisationId },
       },
     } = this.props;
+    const { tabs, activeKey } = this.state;
     // TODO: improve typing of fetchDataset
     // in ADV library
     const getSources = () => {
@@ -454,33 +482,69 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       .then(res => {
         const response = res as any;
         this.setState({
-          runningQuery: false,
-          queryResult: response,
-          showChartLegend: response.dataset?.length < 2,
+          tabs: tabs.map(tab => {
+            if (tab.key === activeKey) {
+              return {
+                ...tab,
+                runningQuery: false,
+                queryResult: response,
+                showChartLegend: response.dataset?.length < 2,
+              };
+            } else return tab;
+          }),
         });
       })
       .catch(error => {
         // tslint:disable-next-line:no-console
         console.log(error);
-
         this.setState({
-          error: !error.isCanceled ? error : null,
-          runningQuery: false,
+          tabs: tabs.map(tab => {
+            if (tab.key === activeKey) {
+              return {
+                ...tab,
+                error: !error.isCanceled ? error : null,
+                runningQuery: false,
+              };
+            } else return tab;
+          }),
         });
       });
   };
 
   abortQuery = () => {
+    const { tabs, activeKey } = this.state;
     this.asyncQuery.cancel();
-    this.setState({ queryAborted: true, runningQuery: false });
+    this.setState({
+      tabs: tabs.map(tab => {
+        if (tab.key === activeKey) {
+          return {
+            ...tab,
+            queryAborted: true,
+            runningQuery: false,
+          };
+        } else return tab;
+      }),
+    });
   };
 
-  dismissError = () => this.setState({ error: null });
+  dismissError = () => {
+    const { tabs, activeKey } = this.state;
+    this.setState({
+      tabs: tabs.map(tab => {
+        if (tab.key === activeKey) {
+          return {
+            ...tab,
+            error: null,
+          };
+        } else return tab;
+      }),
+    });
+  };
 
   onSeriesChanged = (newSeries: SerieQueryModel[]) => {
-    const { panes, activeKey } = this.state;
+    const { tabs, activeKey } = this.state;
     this.setState({
-      panes: panes?.map(tab => {
+      tabs: tabs?.map(tab => {
         if (tab.key === activeKey) {
           return {
             ...tab,
@@ -501,53 +565,59 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   remove = (targetKey: string) => {
-    const { panes, activeKey } = this.state;
+    const { tabs, activeKey } = this.state;
     let newActiveKey = activeKey;
     let lastIndex;
 
-    panes.forEach((pane, i) => {
+    tabs.forEach((pane, i) => {
       if (pane.key === targetKey) {
         lastIndex = i - 1;
       }
     });
 
-    const newPanes = panes.filter(pane => pane.key !== targetKey);
+    const newTabs = tabs.filter(pane => pane.key !== targetKey);
 
-    if (newPanes.length && newActiveKey === targetKey) {
+    if (newTabs.length && newActiveKey === targetKey) {
       if (lastIndex && lastIndex >= 0) {
-        newActiveKey = newPanes[lastIndex].key;
+        newActiveKey = newTabs[lastIndex].key;
       } else {
-        newActiveKey = newPanes[0].key;
+        newActiveKey = newTabs[0].key;
       }
     }
-    if (newPanes.length === 1) {
-      newPanes[0].closable = false;
+    if (newTabs.length === 1) {
+      newTabs[0].closable = false;
     }
 
     this.setState({
-      panes: newPanes,
+      tabs: newTabs,
       activeKey: newActiveKey,
     });
   };
 
   add = () => {
-    const { panes } = this.state;
+    const { tabs } = this.state;
 
-    if (panes.length === 1) {
-      panes[0].closable = true;
+    if (tabs.length === 1) {
+      tabs[0].closable = true;
     }
 
-    const newPanes = [...panes];
-    const newKey = newPanes.length > 0 ? parseInt(newPanes[newPanes.length - 1].key, 10) + 1 : 1;
+    const newTabs = [...tabs];
+    const newKey = newTabs.length > 0 ? parseInt(newTabs[newTabs.length - 1].key, 10) + 1 : 1;
     const activeKey = newKey.toString();
-    newPanes.push({
+    newTabs.push({
       title: `Query ${newKey}`,
       key: activeKey,
-      closable: !!(this.state.panes.length > 0),
+      closable: !!(this.state.tabs.length > 0),
       serieQueries: this.getDefaultSerieQuery(),
+      runningQuery: false,
+      queryAborted: false,
+      precision: 'FULL_PRECISION',
+      evaluateGraphQl: true,
+      useCache: false,
+      queryResult: null,
     });
     this.setState({
-      panes: newPanes,
+      tabs: newTabs,
       activeKey,
     });
   };
@@ -570,11 +640,11 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   getStringFirstQuery = () => {
-    const { panes } = this.state;
-    const firstTabQuery = panes.find(t => t.key === '1');
+    const { tabs } = this.state;
+    const firstTabQuery = tabs.find(t => t.key === '1');
     const queryToUse =
-      firstTabQuery && !isQueryListModel(firstTabQuery.serieQueries[0].queryModel)
-        ? firstTabQuery.serieQueries[0].queryModel
+      firstTabQuery && !isQueryListModel(firstTabQuery.serieQueries[0]?.queryModel)
+        ? firstTabQuery.serieQueries[0]?.queryModel
         : DEFAULT_OTQL_QUERY;
     return queryToUse;
   };
@@ -605,32 +675,18 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       renderSaveAsButton,
       query,
     } = this.props;
-    const {
-      schemaLoading,
-      activeKey,
-      panes,
-      error,
-      queryAborted,
-      queryResult,
-      runningQuery,
-      precision,
-      useCache,
-      noLiveSchemaFound,
-      showChartLegend,
-      evaluateGraphQl,
-      rawSchema,
-      chartsSearchPanelKey,
-    } = this.state;
+    const { schemaLoading, activeKey, tabs, noLiveSchemaFound, rawSchema, chartsSearchPanelKey } =
+      this.state;
 
     const queryToUse = this.getStringFirstQuery();
 
-    const currentTab = panes.length > 0 ? panes.find(p => p.key === activeKey) : undefined;
+    const currentTab = tabs.length > 0 ? tabs.find(t => t.key === activeKey) : undefined;
 
     let startType = 'UserPoint';
 
     if (rawSchema) {
       const foundType = rawSchema.find(ot => {
-        const matchResult = queryToUse.match(/FROM(?:\W*)(\w+)/i);
+        const matchResult = queryToUse?.match(/FROM(?:\W*)(\w+)/i);
         if (!matchResult || matchResult.length === 0) return false;
         return matchResult[1] === ot.name;
       });
@@ -665,14 +721,14 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                 onEdit={this.onEdit}
                 tabBarExtraContent={saveExtraOptions}
               >
-                {panes.map((pane, i) => (
+                {tabs.map((tab, i) => (
                   <TabPane
                     className={'mcs-OTQLConsoleContainer_tabs_tab'}
                     tab={
-                      i === 0 && editionMode ? intl.formatMessage(messages.queryToSave) : pane.title
+                      i === 0 && editionMode ? intl.formatMessage(messages.queryToSave) : tab.title
                     }
-                    key={pane.key}
-                    closable={pane.closable}
+                    key={tab.key}
+                    closable={tab.closable}
                   >
                     {createdQueryId && (
                       <Alert
@@ -692,22 +748,22 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                             : this.getStringFirstQuery()
                         }
                         editionMode={editionMode}
-                        serieQueries={pane.serieQueries}
+                        serieQueries={tab.serieQueries}
                         runQuery={this.runQuery}
                         onInputChange={this.onInputChange}
                         updateNameModel={this.updateNameModel}
                         updateQueryModel={this.updateQueryModel}
                         displaySerieInput={this.displaySerieInput}
                         onSeriesChanged={this.onSeriesChanged}
-                        showChartLegend={showChartLegend}
-                        error={error}
-                        queryAborted={queryAborted}
-                        queryResult={queryResult}
-                        precision={precision}
-                        runningQuery={runningQuery}
-                        useCache={useCache}
+                        showChartLegend={tab.showChartLegend}
+                        error={tab.error}
+                        queryAborted={tab.queryAborted}
+                        queryResult={tab.queryResult}
+                        precision={tab.precision}
+                        runningQuery={tab.runningQuery}
+                        useCache={tab.useCache}
                         noLiveSchemaFound={noLiveSchemaFound}
-                        evaluateGraphQl={evaluateGraphQl}
+                        evaluateGraphQl={tab.evaluateGraphQl}
                         rawSchema={rawSchema}
                         dismissError={this.dismissError}
                         abortQuery={this.abortQuery}
