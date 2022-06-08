@@ -13,7 +13,7 @@ export interface OtqlConsoleProps extends AceEditorProps {
   datamartId: string;
 }
 
-const MIN_ACE_HEIGHT = 17;
+const MIN_ACE_HEIGHT = 25;
 
 interface State {
   annotations: Annotation[];
@@ -39,6 +39,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
 
   componentDidMount() {
     defineAce();
+    this.setInputSize();
     if (this.aceEditor && this.aceEditor.editor) {
       this.aceEditor.editor.completers = [this.buildCustomCompleters()];
       this.aceEditor.editor.getSession().setUseWrapMode(true);
@@ -78,6 +79,16 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
     }
   };
 
+  setInputSize() {
+    if (this.aceEditor && this.aceEditor.editor) {
+      const computedHeight =
+        this.aceEditor.editor.getSession().getScreenLength() *
+        this.aceEditor.editor.renderer.lineHeight;
+      const newHeight = computedHeight >= MIN_ACE_HEIGHT ? computedHeight : MIN_ACE_HEIGHT;
+      this.setState({ editorHeight: newHeight });
+    }
+  }
+
   onChange = (value: string, event?: any) => {
     const editor = this.aceEditor.editor;
     const { editorWidth } = this.state;
@@ -89,14 +100,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
       this.props.onChange(value, event);
     }
 
-    if (this.aceEditor && this.aceEditor.editor) {
-      const computedHeight =
-        this.aceEditor.editor.getSession().getScreenLength() *
-        this.aceEditor.editor.renderer.lineHeight;
-      let newHeight = computedHeight;
-      newHeight = newHeight >= MIN_ACE_HEIGHT ? newHeight : MIN_ACE_HEIGHT;
-      this.setState({ editorHeight: newHeight });
-    }
+    this.setInputSize();
 
     if (this.debouncing) {
       window.clearTimeout(this.debouncing);
