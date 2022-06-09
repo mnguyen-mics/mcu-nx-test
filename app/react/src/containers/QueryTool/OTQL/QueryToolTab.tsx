@@ -8,11 +8,11 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import OTQLResultRenderer from './OTQLResultRenderer';
-import OTQLInputEditor from './OTQLInputEditor';
+import OTQLEditor from './OTQLEditor';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 
-export interface OTQLRequestProps {
+export interface QueryToolTabProps {
   datamartId: string;
   query?: string;
   queryEditorClassName?: string;
@@ -52,13 +52,13 @@ export interface SerieQueryModel extends AbstractSerieQueryModel {
   queryModel: string | QueryListModel[];
 }
 
-type Props = OTQLRequestProps &
+type Props = QueryToolTabProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps &
   InjectedFeaturesProps;
 
-class OTQLRequest extends React.Component<Props> {
+class QueryToolTab extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state = {};
@@ -146,7 +146,7 @@ class OTQLRequest extends React.Component<Props> {
       <span className='mcs-otqlQuery_container'>
         {errorMsg}
         {noLiveSchemaErrorMsg}
-        <OTQLInputEditor
+        <OTQLEditor
           onRunQuery={runQuery}
           onAbortQuery={abortQuery}
           runningQuery={runningQuery}
@@ -171,12 +171,12 @@ class OTQLRequest extends React.Component<Props> {
   }
 }
 
-export default compose<Props, OTQLRequestProps>(
+export default compose<Props, QueryToolTabProps>(
   injectIntl,
   withRouter,
   injectNotifications,
   injectFeatures,
-)(OTQLRequest);
+)(QueryToolTab);
 
 const messages = defineMessages({
   queryToolBreadcrumbLabel: {

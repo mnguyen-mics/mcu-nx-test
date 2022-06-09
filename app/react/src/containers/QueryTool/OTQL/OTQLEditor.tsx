@@ -5,10 +5,10 @@ import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult'
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { compose } from 'recompose';
 import { SettingOutlined } from '@ant-design/icons';
-import OTQLSeriesEditor from './OTQLSeriesEditor';
-import { SerieQueryModel } from './OTQLRequest';
+import OTQLSeries from './OTQLSeries';
+import { SerieQueryModel } from './QueryToolTab';
 
-export interface OtqlInputEditorProps {
+export interface OtqlEditorProps {
   onRunQuery: () => void;
   onAbortQuery: () => void;
   runningQuery: boolean;
@@ -32,13 +32,13 @@ export interface OtqlInputEditorProps {
   editionMode?: boolean;
 }
 
-type Props = OtqlInputEditorProps & InjectedFeaturesProps;
+type Props = OtqlEditorProps & InjectedFeaturesProps;
 
 interface State {
   visible: boolean;
 }
 
-class OTQLInputEditor extends React.Component<Props, State> {
+class OTQLEditor extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -116,7 +116,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <OTQLSeriesEditor
+        <OTQLSeries
           datamartId={datamartId}
           actionButtons={this.buildEditorActions()}
           seriesQueries={serieQueries}
@@ -177,4 +177,4 @@ class OTQLInputEditor extends React.Component<Props, State> {
   }
 }
 
-export default compose<{}, OtqlInputEditorProps>(injectFeatures)(OTQLInputEditor);
+export default compose<{}, OtqlEditorProps>(injectFeatures)(OTQLEditor);

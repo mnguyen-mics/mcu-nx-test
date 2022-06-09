@@ -3,7 +3,7 @@ import { Button, Input } from 'antd';
 import { OtqlConsole } from '../../../components/index';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { compose } from 'recompose';
-import { QueryListModel, SerieQueryModel } from './OTQLRequest';
+import { QueryListModel, SerieQueryModel } from './QueryToolTab';
 import { DEFAULT_OTQL_QUERY, getNewSerieQuery, getNewSubSerieQuery } from './utils/QueryUtils';
 import TimelineStepBuilder, {
   Step,
@@ -12,7 +12,7 @@ import TimelineStepBuilder, {
 import { isQueryListModel, isSerieQueryModel } from '../../../models/datamart/graphdb/OTQLResult';
 import { FormattedMessage } from 'react-intl';
 
-export interface OTQLSeriesEditorProps {
+export interface OTQLSeriesProps {
   datamartId: string;
   actionButtons?: React.ReactNode;
   seriesQueries: SerieQueryModel[];
@@ -24,9 +24,9 @@ export interface OTQLSeriesEditorProps {
   editionMode?: boolean;
 }
 
-type Props = OTQLSeriesEditorProps & InjectedFeaturesProps;
+type Props = OTQLSeriesProps & InjectedFeaturesProps;
 
-class OTQLSeriesEditor extends React.Component<Props> {
+class OTQLSeries extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
@@ -266,4 +266,4 @@ class OTQLSeriesEditor extends React.Component<Props> {
   }
 }
 
-export default compose<{}, OTQLSeriesEditorProps>(injectFeatures)(OTQLSeriesEditor);
+export default compose<{}, OTQLSeriesProps>(injectFeatures)(OTQLSeries);

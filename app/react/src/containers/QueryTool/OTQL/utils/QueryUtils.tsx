@@ -1,5 +1,5 @@
 import cuid from 'cuid';
-import { QueryListModel, SerieQueryModel } from '../OTQLRequest';
+import { QueryListModel, SerieQueryModel } from '../QueryToolTab';
 
 export const DEFAULT_OTQL_QUERY = 'SELECT @count{} FROM UserPoint';
 
