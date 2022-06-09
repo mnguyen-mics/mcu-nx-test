@@ -678,13 +678,13 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     const { schemaLoading, activeKey, tabs, noLiveSchemaFound, rawSchema, chartsSearchPanelKey } =
       this.state;
 
-    const queryToUse = this.getStringFirstQuery();
-
     const currentTab = tabs.length > 0 ? tabs.find(t => t.key === activeKey) : undefined;
+
+    const queryToUse = currentTab?.serieQueries[0].queryModel;
 
     let startType = 'UserPoint';
 
-    if (rawSchema) {
+    if (rawSchema && typeof queryToUse === 'string') {
       const foundType = rawSchema.find(ot => {
         const matchResult = queryToUse?.match(/FROM(?:\W*)(\w+)/i);
         if (!matchResult || matchResult.length === 0) return false;
@@ -699,7 +699,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       <Row>
         {currentTab &&
           currentTab.serieQueries.length === 1 &&
-          !isQueryListModel(currentTab.serieQueries[0].queryModel) &&
+          typeof queryToUse === 'string' &&
           renderSaveAsButton &&
           renderSaveAsButton(queryToUse, datamartId)}
       </Row>
@@ -707,7 +707,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
     return (
       <Layout>
-        {renderActionBar && renderActionBar(queryToUse, datamartId)}
+        {renderActionBar && queryToUse === 'string' && renderActionBar(queryToUse, datamartId)}
         <Layout>
           <Content className='mcs-content-container'>
             {schemaLoading ? (
