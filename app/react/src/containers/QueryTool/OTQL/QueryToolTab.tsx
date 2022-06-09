@@ -18,7 +18,7 @@ export interface QueryToolTabProps {
   queryEditorClassName?: string;
   editionMode?: boolean;
   serieQueries: SerieQueryModel[];
-  onSeriesChanged: (newSeries: SerieQueryModel[]) => void;
+  onSeriesChange: (newSeries: SerieQueryModel[]) => void;
   runQuery: () => void;
   onInputChange: (id: string) => (e: any) => void;
   updateQueryModel: (id: string) => (query: string) => void;
@@ -71,7 +71,7 @@ class QueryToolTab extends React.Component<Props> {
       queryEditorClassName,
       editionMode,
       serieQueries,
-      onSeriesChanged,
+      onSeriesChange,
       runQuery,
       onInputChange,
       displaySerieInput,
@@ -137,8 +137,6 @@ class QueryToolTab extends React.Component<Props> {
       />
     );
 
-    const _onSeriesChanged = onSeriesChanged;
-
     const handleChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) =>
       this.setState({ evaluateGraphQl: eg, useCache: c, precision: p });
 
@@ -162,7 +160,7 @@ class QueryToolTab extends React.Component<Props> {
           updateQueryModel={updateQueryModel}
           updateNameModel={updateNameModel}
           displaySerieInput={displaySerieInput}
-          onSeriesChanged={_onSeriesChanged}
+          onSeriesChange={onSeriesChange}
           editionMode={editionMode}
         />
         {queryResultRenderer}

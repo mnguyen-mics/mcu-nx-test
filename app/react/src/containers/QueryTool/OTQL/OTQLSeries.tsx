@@ -5,12 +5,9 @@ import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { compose } from 'recompose';
 import { QueryListModel, SerieQueryModel } from './QueryToolTab';
 import { DEFAULT_OTQL_QUERY, getNewSerieQuery, getNewSubSerieQuery } from './utils/QueryUtils';
-import TimelineStepBuilder, {
-  Step,
-  StepManagement,
-} from '../../../components/TimelineStepBuilder/TimelineStepBuilder';
 import { isQueryListModel, isSerieQueryModel } from '../../../models/datamart/graphdb/OTQLResult';
 import { FormattedMessage } from 'react-intl';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 
 export interface OTQLSeriesProps {
   datamartId: string;
@@ -20,7 +17,7 @@ export interface OTQLSeriesProps {
   updateQueryModel: (serieId: string, queryId?: string) => (query: string) => void;
   updateNameModel: (id: string, queryId?: string) => (e: any) => void;
   displaySeriesInput: (id: string, queryId?: string) => (e: any) => void;
-  onSeriesChanged: (series: SerieQueryModel[]) => void;
+  onSeriesChange: (series: SerieQueryModel[]) => void;
   editionMode?: boolean;
 }
 
@@ -31,16 +28,21 @@ class OTQLSeries extends React.Component<Props> {
     super(props);
   }
 
-  onStepChange = (steps: Array<Step<SerieQueryModel>>) => {
-    this.props.onSeriesChanged(
-      steps.map(x => {
-        return x.properties;
-      }),
-    );
+  onStepRemove = (stepId: string) => (e: any) => {
+    const { seriesQueries, onSeriesChange } = this.props;
+    const newSteps = seriesQueries.filter(step => step.id !== stepId);
+    onSeriesChange(newSteps);
   };
 
-  onSubStepChange = (serieId?: string) => (steps: Array<Step<QueryListModel>>) => {
-    const { seriesQueries } = this.props;
+  addStep = () => {
+    const { seriesQueries, onSeriesChange } = this.props;
+    const newName = `Series ${seriesQueries.length + 1}`;
+    const newSteps = seriesQueries.concat([getNewSerieQuery(newName, DEFAULT_OTQL_QUERY)]);
+    onSeriesChange(newSteps);
+  };
+
+  onSubStepRemove = (serieId?: string, subSerieId?: string) => (e: any) => {
+    const { seriesQueries, onSeriesChange } = this.props;
 
     const newSeries = seriesQueries.map(serie => {
       const queryModel = serie.queryModel;
@@ -50,7 +52,7 @@ class OTQLSeries extends React.Component<Props> {
         if (queryModel.length === 2) {
           newQueryModel = DEFAULT_OTQL_QUERY;
         } else {
-          newQueryModel = steps.map(s => s.properties);
+          newQueryModel = queryModel.filter(q => q.id !== subSerieId);
         }
         return {
           ...serie,
@@ -59,29 +61,13 @@ class OTQLSeries extends React.Component<Props> {
       }
       return serie;
     });
-    this.props.onSeriesChanged(newSeries);
+    onSeriesChange(newSeries);
   };
 
-  getSteps(series: SerieQueryModel[]): Array<Step<SerieQueryModel>> {
-    return series.map((p, i) => ({
-      id: p.id,
-      name: p.name || `Serie ${i}`,
-      properties: p,
-    }));
-  }
-
-  getSubSteps(subSeries: QueryListModel[]): Array<Step<QueryListModel>> {
-    return subSeries.map((p, i) => ({
-      id: p.id,
-      name: p.name || `Dimension ${i}`,
-      properties: p,
-    }));
-  }
-
-  renderStepHeader = (queryModelStep: Step<SerieQueryModel | QueryListModel>, i: number) => {
+  renderStepHeader = (queryModelStep: SerieQueryModel | QueryListModel, i: number) => {
     const { onInputChange, updateNameModel, displaySeriesInput, editionMode, seriesQueries } =
       this.props;
-    const queryModel = queryModelStep.properties;
+    const queryModel = queryModelStep;
     const queryModelId = queryModel.id;
     const subSerieQueryId = isSerieQueryModel(queryModel) ? undefined : queryModel.id;
     const hideHeader = seriesQueries.length === 1 && isSerieQueryModel(queryModel);
@@ -111,16 +97,13 @@ class OTQLSeries extends React.Component<Props> {
     }
   };
 
-  renderAfterBulletElement = (
-    queryModelStep: Step<SerieQueryModel | QueryListModel>,
-    i: number,
-  ) => {
-    const { onSeriesChanged, seriesQueries, editionMode } = this.props;
-    const model = queryModelStep.properties;
+  renderAddNewValueButton = (serieQueryModelStep: SerieQueryModel) => {
+    const { onSeriesChange, seriesQueries, editionMode } = this.props;
+    const model = serieQueryModelStep;
     if (isSerieQueryModel(model) && !editionMode) {
       const addNewSubSerie = () => {
         const newSeries = seriesQueries.map(serie => {
-          if (serie.id === queryModelStep.id) {
+          if (serie.id === serieQueryModelStep.id) {
             const previousModels = serie.queryModel;
             const dimensionIndex = isQueryListModel(previousModels) ? previousModels.length + 1 : 1;
             const newModel = [
@@ -139,111 +122,74 @@ class OTQLSeries extends React.Component<Props> {
           }
           return serie;
         });
-        onSeriesChanged(newSeries);
+        onSeriesChange(newSeries);
       };
       return (
-        <Button className='mcs-otqlInputEditor_newSubSerieQuery' onClick={addNewSubSerie}>
-          <FormattedMessage id='otql.serieseditor.newseries.newValue' defaultMessage='New Value' />
-        </Button>
+        <div
+          className={`${
+            typeof serieQueryModelStep.queryModel === 'string'
+              ? ''
+              : 'mcs-otqlSeries_newValueContainer'
+          }`}
+        >
+          <Button className='mcs-otqlSeries_newValue' onClick={addNewSubSerie}>
+            <div className='mcs-otqlSeries_plusBtn'>
+              <PlusOutlined />
+            </div>
+            <FormattedMessage
+              id='otql.serieseditor.newseries.newValue'
+              defaultMessage='New Value'
+            />
+          </Button>
+        </div>
       );
     }
     return <div />;
   };
 
-  getRenderingProps = (isMainStep?: boolean) => {
-    const { editionMode } = this.props;
-    return {
-      shouldDisplayNumbersInBullet: false,
-      renderStepBody: this.renderStepBody,
-      renderStepHeader: this.renderStepHeader,
-      shouldRenderArrows: false,
-      renderAfterBulletElement: this.renderAfterBulletElement,
-      shouldRenderTimeline: editionMode ? false : !!isMainStep,
-      getAddStepText: () => {
-        return {
-          id: 'otql.serieseditor.newseries',
-          defaultMessage: 'New series',
-        };
-      },
-    };
-  };
+  renderBodyStep = (step: SerieQueryModel | QueryListModel) => {
+    const { updateQueryModel, datamartId } = this.props;
+    const queryModelId = step.id;
+    const subSerieQueryId = isSerieQueryModel(step) ? undefined : step.id;
 
-  getStepManagementProps = (isMainStep: boolean, serieId?: string) => {
-    const { seriesQueries } = this.props;
-    const getStepFromSeriesModel = (serie: SerieQueryModel | QueryListModel) => {
-      const queryProperty = isSerieQueryModel(serie)
-        ? {
-            queryModel: serie.queryModel,
-          }
-        : { query: serie.query };
-      return {
-        id: serie.id,
-        name: serie.name,
-        properties: {
-          id: serie.id,
-          name: serie.name,
-          inputVisble: serie.inputVisible,
-          ...queryProperty,
-        },
-      };
-    };
-
-    const getDefaultStep = () => {
-      if (isMainStep) {
-        return getStepFromSeriesModel(getNewSerieQuery(newName, DEFAULT_OTQL_QUERY));
-      } else {
-        return getStepFromSeriesModel(getNewSubSerieQuery(newName, DEFAULT_OTQL_QUERY));
-      }
-    };
-
-    const newName = `Series ${seriesQueries.length + 1}`;
-    const stepManagement: StepManagement<SerieQueryModel | QueryListModel> = {
-      onStepAdded: this.onStepChange,
-      onStepRemoved: isMainStep ? this.onStepChange : this.onSubStepChange(serieId),
-      onStepsReordered: this.onStepChange,
-      getDefaultStep: () => getDefaultStep(),
-    };
-    return stepManagement;
-  };
-
-  renderStepBody = (step: Step<SerieQueryModel | QueryListModel>) => {
-    const { updateQueryModel, datamartId, editionMode } = this.props;
-    const properties = step.properties;
-    const queryModelId = properties.id;
-    const subSerieQueryId = isSerieQueryModel(properties) ? undefined : properties.id;
-
-    return isSerieQueryModel(properties) ? (
-      typeof properties.queryModel === 'string' ? (
+    const renderOtqlConsole = (queryModel: string) => {
+      return (
         <OtqlConsole
           key={queryModelId}
           onChange={updateQueryModel(queryModelId, subSerieQueryId)}
           datamartId={datamartId}
-          value={properties.queryModel}
+          value={queryModel}
           showPrintMargin={false}
           enableBasicAutocompletion={true}
           enableLiveAutocompletion={false}
           className={'mcs-otqlInputEditor_otqlConsole'}
         />
+      );
+    };
+
+    return isSerieQueryModel(step) ? (
+      typeof step.queryModel === 'string' ? (
+        renderOtqlConsole(step.queryModel)
       ) : (
-        <TimelineStepBuilder
-          steps={this.getSubSteps(properties.queryModel)}
-          rendering={this.getRenderingProps()}
-          stepManagement={this.getStepManagementProps(false, queryModelId)}
-          maxSteps={0}
-          editionMode={editionMode}
-        />
+        <div className='mcs-otqlSeries_subStepsContainer'>
+          {step.queryModel.map((subStep, i) => {
+            return (
+              <div key={i} className='mcs-otqlSeries_subStep'>
+                {this.renderStepHeader(subStep, i)}
+                <Button
+                  shape='circle'
+                  icon={<CloseOutlined />}
+                  className={'mcs-otqlSeries_removeStepBtn'}
+                  onClick={this.onSubStepRemove(step.id, subStep.id)}
+                />
+                {renderOtqlConsole(subStep.query)}
+              </div>
+            );
+          })}
+        </div>
       )
     ) : (
-      <OtqlConsole
-        key={queryModelId}
-        onChange={updateQueryModel(queryModelId, subSerieQueryId)}
-        datamartId={datamartId}
-        value={properties.query}
-        showPrintMargin={false}
-        enableBasicAutocompletion={true}
-        enableLiveAutocompletion={false}
-        className={'mcs-otqlInputEditor_otqlConsole'}
-      />
+      renderOtqlConsole(step.query)
     );
   };
 
@@ -251,16 +197,35 @@ class OTQLSeries extends React.Component<Props> {
     const { seriesQueries, editionMode } = this.props;
 
     return (
-      <div className='mcs-otqlInputEditor_serieQuery'>
-        <TimelineStepBuilder
-          steps={this.getSteps(seriesQueries)}
-          rendering={this.getRenderingProps(true)}
-          stepManagement={this.getStepManagementProps(true)}
-          maxSteps={4}
-          editionMode={editionMode}
-          mainStep={true}
-        />
-        <div className='mcs-otqlInputEditor_serieButtons'>{this.props.actionButtons}</div>
+      <div className='mcs-otqlSeries_container'>
+        {seriesQueries.map((serieQuery, i) => {
+          return (
+            <div key={i} className='mcs-otqlSeries_mainStep'>
+              {this.renderStepHeader(serieQuery, i)}
+              {i !== 0 && (
+                <Button
+                  shape='circle'
+                  icon={<CloseOutlined />}
+                  className={'mcs-otqlSeries_removeStepBtn'}
+                  onClick={this.onStepRemove(serieQuery.id)}
+                />
+              )}
+              {this.renderBodyStep(serieQuery)}
+              {this.renderAddNewValueButton(serieQuery)}
+            </div>
+          );
+        })}
+        {!editionMode && (
+          <Button className={'mcs-timelineStepBuilder_addStepBtn'} onClick={this.addStep}>
+            <FormattedMessage
+              {...{
+                id: 'queryTool.newSerieButton',
+                defaultMessage: 'New serie',
+              }}
+            />
+          </Button>
+        )}
+        <div className='mcs-otqlSeries_serieButtons'>{this.props.actionButtons}</div>
       </div>
     );
   }

@@ -28,7 +28,7 @@ export interface OtqlEditorProps {
   updateQueryModel: (id: string) => (query: string) => void;
   updateNameModel: (id: string) => (e: any) => void;
   displaySerieInput: (id: string) => (e: any) => void;
-  onSeriesChanged: (series: SerieQueryModel[]) => void;
+  onSeriesChange: (series: SerieQueryModel[]) => void;
   editionMode?: boolean;
 }
 
@@ -54,7 +54,7 @@ class OTQLEditor extends React.Component<Props, State> {
     const runButton = (
       <Button
         type='primary'
-        className='m-l-10 mcs-otqlInputEditor_run_button'
+        className='mcs-otqlInputEditor_run_button'
         onClick={handleOnRunButtonClick}
       >
         <FormattedMessage id='queryTool.otql.edit.new.run.label' defaultMessage='Run' />
@@ -62,11 +62,7 @@ class OTQLEditor extends React.Component<Props, State> {
     );
 
     const abortButton = (
-      <Button
-        type='primary'
-        className='m-l-10 mcs-otqlInputEditor_abort_button'
-        onClick={onAbortQuery}
-      >
+      <Button type='primary' className='mcs-otqlInputEditor_abort_button' onClick={onAbortQuery}>
         <FormattedMessage id='queryTool.otql.edit.new.abort.label' defaultMessage='Abort' />
       </Button>
     );
@@ -106,7 +102,7 @@ class OTQLEditor extends React.Component<Props, State> {
       updateQueryModel,
       updateNameModel,
       displaySerieInput,
-      onSeriesChanged,
+      onSeriesChange,
       editionMode,
     } = this.props;
 
@@ -124,7 +120,7 @@ class OTQLEditor extends React.Component<Props, State> {
           updateQueryModel={updateQueryModel}
           updateNameModel={updateNameModel}
           displaySeriesInput={displaySerieInput}
-          onSeriesChanged={onSeriesChanged}
+          onSeriesChange={onSeriesChange}
           editionMode={editionMode}
         />
         <Modal

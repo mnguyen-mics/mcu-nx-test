@@ -541,7 +541,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     });
   };
 
-  onSeriesChanged = (newSeries: SerieQueryModel[]) => {
+  onSeriesChange = (newSeries: SerieQueryModel[]) => {
     const { tabs, activeKey } = this.state;
     this.setState({
       tabs: tabs?.map(tab => {
@@ -754,7 +754,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                         updateNameModel={this.updateNameModel}
                         updateQueryModel={this.updateQueryModel}
                         displaySerieInput={this.displaySerieInput}
-                        onSeriesChanged={this.onSeriesChanged}
+                        onSeriesChange={this.onSeriesChange}
                         showChartLegend={tab.showChartLegend}
                         error={tab.error}
                         queryAborted={tab.queryAborted}
