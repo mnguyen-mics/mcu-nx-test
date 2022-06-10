@@ -8,17 +8,17 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import OTQLResultRenderer from './OTQLResultRenderer';
-import OTQLInputEditor from './OTQLInputEditor';
+import OTQLEditor from './OTQLEditor';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 
-export interface OTQLRequestProps {
+export interface QueryToolTabProps {
   datamartId: string;
   query?: string;
   queryEditorClassName?: string;
   editionMode?: boolean;
   serieQueries: SerieQueryModel[];
-  onSeriesChanged: (newSeries: SerieQueryModel[]) => void;
+  onSeriesChange: (newSeries: SerieQueryModel[]) => void;
   runQuery: () => void;
   onInputChange: (id: string) => (e: any) => void;
   updateQueryModel: (id: string) => (query: string) => void;
@@ -52,13 +52,13 @@ export interface SerieQueryModel extends AbstractSerieQueryModel {
   queryModel: string | QueryListModel[];
 }
 
-type Props = OTQLRequestProps &
+type Props = QueryToolTabProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps &
   InjectedFeaturesProps;
 
-class OTQLRequest extends React.Component<Props> {
+class QueryToolTab extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state = {};
@@ -71,7 +71,7 @@ class OTQLRequest extends React.Component<Props> {
       queryEditorClassName,
       editionMode,
       serieQueries,
-      onSeriesChanged,
+      onSeriesChange,
       runQuery,
       onInputChange,
       displaySerieInput,
@@ -137,8 +137,6 @@ class OTQLRequest extends React.Component<Props> {
       />
     );
 
-    const _onSeriesChanged = onSeriesChanged;
-
     const handleChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) =>
       this.setState({ evaluateGraphQl: eg, useCache: c, precision: p });
 
@@ -146,7 +144,7 @@ class OTQLRequest extends React.Component<Props> {
       <span className='mcs-otqlQuery_container'>
         {errorMsg}
         {noLiveSchemaErrorMsg}
-        <OTQLInputEditor
+        <OTQLEditor
           onRunQuery={runQuery}
           onAbortQuery={abortQuery}
           runningQuery={runningQuery}
@@ -162,7 +160,7 @@ class OTQLRequest extends React.Component<Props> {
           updateQueryModel={updateQueryModel}
           updateNameModel={updateNameModel}
           displaySerieInput={displaySerieInput}
-          onSeriesChanged={_onSeriesChanged}
+          onSeriesChange={onSeriesChange}
           editionMode={editionMode}
         />
         {queryResultRenderer}
@@ -171,12 +169,12 @@ class OTQLRequest extends React.Component<Props> {
   }
 }
 
-export default compose<Props, OTQLRequestProps>(
+export default compose<Props, QueryToolTabProps>(
   injectIntl,
   withRouter,
   injectNotifications,
   injectFeatures,
-)(OTQLRequest);
+)(QueryToolTab);
 
 const messages = defineMessages({
   queryToolBreadcrumbLabel: {

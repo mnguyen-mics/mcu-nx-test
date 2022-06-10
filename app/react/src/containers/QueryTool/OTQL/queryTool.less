@@ -1,0 +1,106 @@
+.mcs-otqlSeries_container {
+  .mcs-otqlSeries_mainStep {
+    position: relative;
+    margin: 10px 0px;
+
+    .mcs-otqlSeries_subStepsContainer {
+      padding-left: 30px;
+      border-left: 1px solid @border-color-split;
+      padding-top: 10px;
+      .mcs-otqlSeries_subStep {
+        margin: 10px 0px;
+      }
+    }
+    .mcs-otqlSeries_removeStepBtn {
+      border: none;
+      background: none;
+      box-shadow: none;
+      float: right;
+      top: -5px;
+      height: 30px !important;
+    }
+    .mcs-otqlInputEditor_stepNameButton {
+      height: 24px;
+      border-radius: 2px;
+      padding: 0px 15px 0px 15px;
+    }
+    .mcs-otqlInputEditor_stepNameInput {
+      height: 24px;
+      width: 250px;
+    }
+    .mcs-otqlSeries_newValueContainer {
+      margin-top: -10px;
+      border-left: 1px solid @border-color-split;
+    }
+    .mcs-otqlSeries_newValue {
+      border: none;
+      background: none;
+      box-shadow: none;
+      color: @text-color;
+      margin: 10px 0px;
+      position: relative;
+      .mcs-otqlSeries_plusBtn {
+        color: white;
+        top: 11px;
+        left: -7px;
+        position: absolute;
+        background-color: @info-color;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        font-size: 11px;
+        &:hover,
+        &:active,
+        &:focus {
+          box-shadow: none;
+        }
+      }
+    }
+
+    .mcs-otqlInputEditor_editor {
+      margin-top: 5px;
+    }
+  }
+  .mcs-otqlSeries_serieButtons {
+    position: relative;
+    .mcs-otqlInputEditor_settings_button {
+      font-size: 15px;
+      position: absolute;
+      right: 10px;
+      color: @text-color;
+    }
+    .mcs-otqlInputEditor_clear_button {
+      opacity: 0;
+      border: 0px;
+      transition: 0.3s;
+      height: 32px;
+      vertical-align: middle;
+      padding: 0px 15px 0px 15px;
+      width: 100%;
+    }
+
+    .mcs-otqlInputEditor_run_button {
+      padding: 0px 15px 0px 15px;
+      height: 32px;
+      vertical-align: middle;
+      background: @info-color;
+      border: none;
+      width: 100%;
+      margin-top: 30px;
+    }
+
+    .mcs-otqlInputEditor_run_button.ant-btn-primary[disabled] {
+      color: rgba(0, 0, 0, 0.25);
+      border-color: #e0e1e1;
+      background: #dcdcdc;
+    }
+    .mcs-otqlInputEditor_abort_button {
+      padding: 0px 15px 0px 15px;
+      height: 32px;
+      vertical-align: middle;
+      background: @info-color;
+      border: none;
+      width: 100%;
+    }
+  }
+}

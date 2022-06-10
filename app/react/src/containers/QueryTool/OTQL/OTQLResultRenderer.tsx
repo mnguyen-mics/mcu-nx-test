@@ -18,7 +18,7 @@ import {
 import { CountRenderer } from './CountRenderer';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
-import { SerieQueryModel } from './OTQLRequest';
+import { SerieQueryModel } from './QueryToolTab';
 
 export interface OTQLResultRendererProps {
   result: OTQLResult | AggregateDataset | null;

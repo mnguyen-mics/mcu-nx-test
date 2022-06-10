@@ -5,9 +5,9 @@ import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { injectDrawer } from '../../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
-import OTQLConsoleContainer, {
-  OTQLConsoleContainerProps,
-} from '../../../../../QueryTool/OTQL/OTQLConsoleContainer';
+import QueryToolTabsContainer, {
+  QueryToolTabsContainerProps,
+} from '../../../../../QueryTool/OTQL/QueryToolTabsContainer';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FormSection } from '../../../../../../components/Form';
 import { messages } from '../../messages';
@@ -101,7 +101,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
       const onClose = () => this.props.closeNextDrawer();
       return createActionBar(onSave, onClose, query);
     };
-    this.props.openNextDrawer<OTQLConsoleContainerProps>(OTQLConsoleContainer, {
+    this.props.openNextDrawer<QueryToolTabsContainerProps>(QueryToolTabsContainer, {
       additionalProps: {
         datamartId: this.props.match.params.datamartId,
         renderActionBar: actionbar,
