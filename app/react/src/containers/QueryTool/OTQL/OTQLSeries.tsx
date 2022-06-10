@@ -152,11 +152,11 @@ class OTQLSeries extends React.Component<Props> {
     const queryModelId = step.id;
     const subSerieQueryId = isSerieQueryModel(step) ? undefined : step.id;
 
-    const renderOtqlConsole = (queryModel: string) => {
+    const renderOtqlConsole = (queryModel: string, onChange: (query: string) => void) => {
       return (
         <OtqlConsole
           key={queryModelId}
-          onChange={updateQueryModel(queryModelId, subSerieQueryId)}
+          onChange={onChange}
           datamartId={datamartId}
           value={queryModel}
           showPrintMargin={false}
@@ -169,7 +169,7 @@ class OTQLSeries extends React.Component<Props> {
 
     return isSerieQueryModel(step) ? (
       typeof step.queryModel === 'string' ? (
-        renderOtqlConsole(step.queryModel)
+        renderOtqlConsole(step.queryModel, updateQueryModel(queryModelId, subSerieQueryId))
       ) : (
         <div className='mcs-otqlSeries_subStepsContainer'>
           {step.queryModel.map((subStep, i) => {
@@ -182,14 +182,14 @@ class OTQLSeries extends React.Component<Props> {
                   className={'mcs-otqlSeries_removeStepBtn'}
                   onClick={this.onSubStepRemove(step.id, subStep.id)}
                 />
-                {renderOtqlConsole(subStep.query)}
+                {renderOtqlConsole(subStep.query, updateQueryModel(queryModelId, subStep.id))}
               </div>
             );
           })}
         </div>
       )
     ) : (
-      renderOtqlConsole(step.query)
+      renderOtqlConsole(step.query, updateQueryModel(queryModelId, subSerieQueryId))
     );
   };
 
