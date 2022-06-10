@@ -108,5 +108,5 @@ export function isQueryListModel(
 export function isSerieQueryModel(
   model: SerieQueryModel | QueryListModel,
 ): model is SerieQueryModel {
-  return !!(model as SerieQueryModel).queryModel;
+  return (model as SerieQueryModel).queryModel !== undefined;
 }
