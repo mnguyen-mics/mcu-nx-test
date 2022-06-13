@@ -23,7 +23,7 @@ import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import OTQLRequest, { SerieQueryModel } from './OTQLRequest';
+import QueryToolTab, { SerieQueryModel } from './QueryToolTab';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import ChartsSearchPanel from '../ChartsSearchPanel';
 import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
@@ -63,7 +63,7 @@ interface McsTabsItem {
   showChartLegend?: boolean;
 }
 
-export interface OTQLConsoleContainerProps {
+export interface QueryToolTabsContainerProps {
   datamartId: string;
   renderActionBar?: (query: string, datamartId: string) => React.ReactNode;
   query?: string;
@@ -83,13 +83,13 @@ interface State {
   chartsSearchPanelKey: string;
 }
 
-type Props = OTQLConsoleContainerProps &
+type Props = QueryToolTabsContainerProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps &
   InjectedFeaturesProps;
 
-class OTQLConsoleContainer extends React.Component<Props, State> {
+class QueryToolTabsContainer extends React.Component<Props, State> {
   asyncQuery: CancelablePromise<DataResponse<OTQLResult>>;
 
   @lazyInject(TYPES.IQueryService)
@@ -541,7 +541,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     });
   };
 
-  onSeriesChanged = (newSeries: SerieQueryModel[]) => {
+  onSeriesChange = (newSeries: SerieQueryModel[]) => {
     const { tabs, activeKey } = this.state;
     this.setState({
       tabs: tabs?.map(tab => {
@@ -678,13 +678,13 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     const { schemaLoading, activeKey, tabs, noLiveSchemaFound, rawSchema, chartsSearchPanelKey } =
       this.state;
 
-    const queryToUse = this.getStringFirstQuery();
-
     const currentTab = tabs.length > 0 ? tabs.find(t => t.key === activeKey) : undefined;
+
+    const queryToUse = currentTab?.serieQueries[0].queryModel;
 
     let startType = 'UserPoint';
 
-    if (rawSchema) {
+    if (rawSchema && typeof queryToUse === 'string') {
       const foundType = rawSchema.find(ot => {
         const matchResult = queryToUse?.match(/FROM(?:\W*)(\w+)/i);
         if (!matchResult || matchResult.length === 0) return false;
@@ -699,7 +699,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       <Row>
         {currentTab &&
           currentTab.serieQueries.length === 1 &&
-          !isQueryListModel(currentTab.serieQueries[0].queryModel) &&
+          typeof queryToUse === 'string' &&
           renderSaveAsButton &&
           renderSaveAsButton(queryToUse, datamartId)}
       </Row>
@@ -707,7 +707,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
     return (
       <Layout>
-        {renderActionBar && renderActionBar(queryToUse, datamartId)}
+        {renderActionBar && queryToUse === 'string' && renderActionBar(queryToUse, datamartId)}
         <Layout>
           <Content className='mcs-content-container'>
             {schemaLoading ? (
@@ -740,7 +740,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                       />
                     )}
                     <div className={'mcs-OTQLConsoleContainer_tab_content'}>
-                      <OTQLRequest
+                      <QueryToolTab
                         datamartId={this.props.datamartId}
                         query={
                           editionMode && query?.includes('where')
@@ -754,7 +754,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                         updateNameModel={this.updateNameModel}
                         updateQueryModel={this.updateQueryModel}
                         displaySerieInput={this.displaySerieInput}
-                        onSeriesChanged={this.onSeriesChanged}
+                        onSeriesChange={this.onSeriesChange}
                         showChartLegend={tab.showChartLegend}
                         error={tab.error}
                         queryAborted={tab.queryAborted}
@@ -797,9 +797,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, OTQLConsoleContainerProps>(
+export default compose<Props, QueryToolTabsContainerProps>(
   injectIntl,
   withRouter,
   injectNotifications,
   injectFeatures,
-)(OTQLConsoleContainer);
+)(QueryToolTabsContainer);

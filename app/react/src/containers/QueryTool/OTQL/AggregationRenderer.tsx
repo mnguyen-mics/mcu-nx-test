@@ -57,7 +57,7 @@ import {
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
 import { omit } from 'lodash';
-import { SerieQueryModel } from './OTQLRequest';
+import { SerieQueryModel } from './QueryToolTab';
 
 const messages = defineMessages({
   copiedToClipboard: {

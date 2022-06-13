@@ -105,9 +105,18 @@ export default defineMessages({
     defaultMessage:
       'To create a Lookalike, please select a partition and your extension ratio. Your segment will then be overlapped against the partition selected and the most overlapping partitions will be added to your base segment.',
   },
+  cohortLookAlikeModalHelper: {
+    id: 'audience.segments.lookalike.cohort.modal.helper',
+    defaultMessage:
+      'Please fill a name and a description (optional) for your lookalike segment. You will be able to calibrate the lookalike after its creation.',
+  },
   lookAlikeModalNameLabel: {
     id: 'audience.segments.lookalike.modal.name.label',
     defaultMessage: 'Segment Name',
+  },
+  lookAlikeModalDescriptionLabel: {
+    id: 'audience.segments.lookalike.modal.description.label',
+    defaultMessage: 'Description',
   },
   lookAlikeModalPartitionLabel: {
     id: 'audience.segments.lookalike.modal.partition.label',
@@ -171,7 +180,8 @@ export default defineMessages({
   },
   lookalikeTypeSelectorsubTitle: {
     id: 'audience.segments.lookaliketypeSelector.subtitle',
-    defaultMessage: 'Choose between the two following lookalike types',
+    defaultMessage:
+      'Choose between the {nbOfTypes} following lookalike { nbOfTypes, plural, one { type } other { types }}',
   },
   extensionFactor: {
     id: 'audience.segments.lookalikeCreation.extension',
@@ -232,6 +242,10 @@ export const audienceSegmentTypeMessages: {
   USER_LOOKALIKE: {
     id: 'audience.segments.type.userLookalike',
     defaultMessage: 'User Lookalike',
+  },
+  USER_LOOKALIKE_BY_COHORTS: {
+    id: 'audience.segments.type.userLookalikeByCohort',
+    defaultMessage: 'User Cohort Lookalike',
   },
   USER_CLIENT: {
     id: 'audience.segments.type.userClient',

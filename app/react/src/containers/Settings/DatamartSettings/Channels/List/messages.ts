@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'settings.tab.title.channels',
     defaultMessage: 'Channels',
   },
+  channelId: {
+    id: 'settings.datamart.channels.list.id',
+    defaultMessage: 'Channel Id',
+  },
   channelName: {
     id: 'settings.datamart.channels.list.name',
     defaultMessage: 'Name',

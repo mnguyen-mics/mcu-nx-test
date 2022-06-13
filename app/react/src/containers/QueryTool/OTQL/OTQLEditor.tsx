@@ -5,10 +5,10 @@ import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult'
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { compose } from 'recompose';
 import { SettingOutlined } from '@ant-design/icons';
-import OTQLSeriesEditor from './OTQLSeriesEditor';
-import { SerieQueryModel } from './OTQLRequest';
+import OTQLSeries from './OTQLSeries';
+import { SerieQueryModel } from './QueryToolTab';
 
-export interface OtqlInputEditorProps {
+export interface OtqlEditorProps {
   onRunQuery: () => void;
   onAbortQuery: () => void;
   runningQuery: boolean;
@@ -28,17 +28,17 @@ export interface OtqlInputEditorProps {
   updateQueryModel: (id: string) => (query: string) => void;
   updateNameModel: (id: string) => (e: any) => void;
   displaySerieInput: (id: string) => (e: any) => void;
-  onSeriesChanged: (series: SerieQueryModel[]) => void;
+  onSeriesChange: (series: SerieQueryModel[]) => void;
   editionMode?: boolean;
 }
 
-type Props = OtqlInputEditorProps & InjectedFeaturesProps;
+type Props = OtqlEditorProps & InjectedFeaturesProps;
 
 interface State {
   visible: boolean;
 }
 
-class OTQLInputEditor extends React.Component<Props, State> {
+class OTQLEditor extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -54,7 +54,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const runButton = (
       <Button
         type='primary'
-        className='m-l-10 mcs-otqlInputEditor_run_button'
+        className='mcs-otqlInputEditor_run_button'
         onClick={handleOnRunButtonClick}
       >
         <FormattedMessage id='queryTool.otql.edit.new.run.label' defaultMessage='Run' />
@@ -62,11 +62,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
     );
 
     const abortButton = (
-      <Button
-        type='primary'
-        className='m-l-10 mcs-otqlInputEditor_abort_button'
-        onClick={onAbortQuery}
-      >
+      <Button type='primary' className='mcs-otqlInputEditor_abort_button' onClick={onAbortQuery}>
         <FormattedMessage id='queryTool.otql.edit.new.abort.label' defaultMessage='Abort' />
       </Button>
     );
@@ -106,7 +102,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       updateQueryModel,
       updateNameModel,
       displaySerieInput,
-      onSeriesChanged,
+      onSeriesChange,
       editionMode,
     } = this.props;
 
@@ -116,7 +112,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <OTQLSeriesEditor
+        <OTQLSeries
           datamartId={datamartId}
           actionButtons={this.buildEditorActions()}
           seriesQueries={serieQueries}
@@ -124,7 +120,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
           updateQueryModel={updateQueryModel}
           updateNameModel={updateNameModel}
           displaySeriesInput={displaySerieInput}
-          onSeriesChanged={onSeriesChanged}
+          onSeriesChange={onSeriesChange}
           editionMode={editionMode}
         />
         <Modal
@@ -177,4 +173,4 @@ class OTQLInputEditor extends React.Component<Props, State> {
   }
 }
 
-export default compose<{}, OtqlInputEditorProps>(injectFeatures)(OTQLInputEditor);
+export default compose<{}, OtqlEditorProps>(injectFeatures)(OTQLEditor);

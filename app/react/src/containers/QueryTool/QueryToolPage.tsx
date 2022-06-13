@@ -27,7 +27,7 @@ import injectNotifications, {
 } from '../Notifications/injectNotifications';
 import { UserProfileResource } from '../../models/directory/UserProfileResource';
 import SaveQueryAsButton from './SaveAs/SaveQueryAsButton';
-import OTQLConsoleContainer from './OTQL/OTQLConsoleContainer';
+import QueryToolTabsContainer from './OTQL/QueryToolTabsContainer';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -225,7 +225,7 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
           />
         )}
         {selectedDatamart && selectedDatamart.storage_model_version === 'v201709' && (
-          <OTQLConsoleContainer
+          <QueryToolTabsContainer
             renderSaveAsButton={renderSaveAsButton}
             datamartId={selectedDatamart.id}
             createdQueryId={createdQueryId}

@@ -12,17 +12,28 @@ import {
   withValidators,
   FormTitle,
   FormFieldWrapper,
+  FormTextArea,
+  FormTextAreaField,
 } from '../../../../../components/Form';
 import { injectDatamart } from '../../../../Datamart';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
-import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
+import {
+  injectIntl,
+  InjectedIntlProps,
+  defineMessages,
+  Messages,
+  FormattedMessage,
+} from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
 import messages from '../messages';
 import { Omit } from '../../../../../utils/Types';
 import { Layout, Row, Spin, Alert, Col } from 'antd';
-import { UserLookalikeSegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
+import {
+  UserLookalikeByCohortsSegment,
+  UserLookalikeSegment,
+} from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -33,26 +44,50 @@ import { IAudienceSegmentService } from '../../../../../services/AudienceSegment
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
-import { McsIcon, MenuList } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, MenuList, MentionTag } from '@mediarithmics-private/mcs-components-library';
 import { IQueryService } from '../../../../../services/QueryService';
 import { connect } from 'react-redux';
 
 const FORM_ID = 'lookalikeForm';
 const { Content } = Layout;
-const lookalikeTypes = ['partition_based_lookalike', 'score_based_lookalike'];
+type LookalikeType =
+  | 'PARTITION_BASED_LOOKALIKE'
+  | 'COHORT_BASED_LOOKALIKE'
+  | 'SCORE_BASED_LOOKALIKE';
 
 const messagesMap: {
-  [key: string]: FormattedMessage.MessageDescriptor;
-} = defineMessages({
-  partition_based_lookalike: {
-    id: 'audience.segments.lookaliketypeSelector.type.partitionBased',
-    defaultMessage: 'Partition based lookalike',
-  },
-  score_based_lookalike: {
-    id: 'audience.segments.lookaliketypeSelector.type.scoreBased',
-    defaultMessage: 'Score based lookalike',
-  },
-});
+  titles: Messages;
+  subtitles: Messages;
+} = {
+  titles: defineMessages({
+    PARTITION_BASED_LOOKALIKE: {
+      id: 'audience.segments.lookaliketypeSelector.type.partitionBased.title',
+      defaultMessage: 'Partition based lookalike',
+    },
+    COHORT_BASED_LOOKALIKE: {
+      id: 'audience.segments.lookaliketypeSelector.type.cohortBased.title',
+      defaultMessage: 'Cohort based lookalike',
+    },
+    SCORE_BASED_LOOKALIKE: {
+      id: 'audience.segments.lookaliketypeSelector.type.scoreBased.title',
+      defaultMessage: 'Score based lookalike',
+    },
+  }),
+  subtitles: defineMessages({
+    PARTITION_BASED_LOOKALIKE: {
+      id: 'audience.segments.lookaliketypeSelector.type.partitionBased.subtitle',
+      defaultMessage: 'Uses technical partitioning created in your environment',
+    },
+    COHORT_BASED_LOOKALIKE: {
+      id: 'audience.segments.lookaliketypeSelector.type.cohortBased',
+      defaultMessage: 'Uses cohorts calculated by our standard machine learning algorithm',
+    },
+    SCORE_BASED_LOOKALIKE: {
+      id: 'audience.segments.lookaliketypeSelector.type.scoreBased',
+      defaultMessage: 'Uses a specific machine learning function tailored to your needs',
+    },
+  }),
+};
 
 interface MapStateToProps {
   formValues: any;
@@ -67,7 +102,7 @@ export interface AudienceLookalikeCreationProps extends Omit<ConfigProps<any>, '
 interface AudienceLookalikeState {
   partitions: AudiencePartitionResource[];
   loading: boolean;
-  lookalikeType: string;
+  lookalikeType?: LookalikeType;
   extensionRatio?: number;
   similarity: number;
   min?: number;
@@ -103,7 +138,7 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
     this.state = {
       partitions: [],
       loading: true,
-      lookalikeType: '',
+      lookalikeType: undefined,
       similarity: 0,
     };
   }
@@ -148,15 +183,22 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
       formValues,
     } = this.props;
     const { lookalikeType, similarity } = this.state;
-    return this.setState({ loading: true }, () => {
-      const { extension_factor, ...rest } = formData;
-      const formattedFormData = extension_factor
-        ? { ...rest, extension_factor: extension_factor }
-        : { ...rest };
-      const promise =
-        lookalikeType === 'partition_based_lookalike'
-          ? this._audienceSegmentService.createAudienceSegment(organisationId, formattedFormData)
-          : this._queryService
+
+    if (lookalikeType) {
+      return this.setState({ loading: true }, () => {
+        const { extension_factor, ...rest } = formData;
+        const formattedFormData = extension_factor
+          ? { ...rest, extension_factor: extension_factor }
+          : { ...rest };
+
+        const getPromise = () => {
+          if (lookalikeType === 'PARTITION_BASED_LOOKALIKE')
+            return this._audienceSegmentService.createAudienceSegment(
+              organisationId,
+              formattedFormData,
+            );
+          else if (lookalikeType === 'SCORE_BASED_LOOKALIKE')
+            return this._queryService
               .createQuery(datamartId, {
                 datamart_id: datamartId,
                 query_language: 'OTQL',
@@ -175,23 +217,41 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
                   extension_factor: similarity / 100,
                 });
               });
-
-      promise
-        .then(res => res.data)
-        .then(res => {
-          this.setState({ loading: false }, () => {
-            this.props.close();
-            history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`);
+          else {
+            // if (lookalikeType === 'COHORT_BASED_LOOKALIKE')
+            const cohortResource: Partial<UserLookalikeByCohortsSegment> = {
+              source_segment_id: formData.source_segment_id,
+              type: 'USER_LOOKALIKE_BY_COHORTS',
+              short_description: formData.short_description,
+              lookalike_algorithm: 'COHORT_OVERLAP',
+              datamart_id: datamartId,
+              organisation_id: organisationId,
+              name: formData.name,
+              include_seed_segment: true,
+            };
+            return this._audienceSegmentService.createAudienceSegment(
+              organisationId,
+              cohortResource,
+            );
+          }
+        };
+        getPromise()
+          .then(res => res.data)
+          .then(res => {
+            this.setState({ loading: false }, () => {
+              this.props.close();
+              history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`);
+            });
+          })
+          .catch(err => {
+            notifyError(err);
+            this.setState({ loading: false });
           });
-        })
-        .catch(err => {
-          notifyError(err);
-          this.setState({ loading: false });
-        });
-    });
+      });
+    }
   };
 
-  onSelectLookalikeType = (type: string) => {
+  onSelectLookalikeType = (type: LookalikeType) => {
     this.setState({
       lookalikeType: type,
     });
@@ -295,191 +355,261 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
     if (this.state.loading) {
       return <Loading isFullScreen={true} />;
     }
-    // const defaultValue = this.state.partitions.length && this.state.partitions[0].id ? this.state.partitions[0].id : '';
 
-    if (
-      !hasFeature('audience-score_based_lookalike') &&
-      lookalikeType === 'partition_based_lookalike'
-    ) {
-      return (
-        <Layout className='edit-layout'>
-          <FormLayoutActionbar {...actionBarProps} />
-          <Layout>
-            <Form onSubmit={handleSubmit(this.save) as any} className={'edit-layout ant-layout'}>
-              <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
-                <div className='m-t-20 m-b-20'>
-                  {intl.formatMessage(messages.lookAlikeModalHelper)}
-                </div>
-                <div>
-                  <FormInputField
-                    name='name'
-                    component={FormInput}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: intl.formatMessage(messages.lookAlikeModalNameLabel),
-                        required: true,
-                        ...fieldGridConfig,
-                      },
-                      inputProps: {
-                        className: 'mcs-audienceLookAlikeCreation_segmentName',
-                        placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
-                      },
-                    }}
-                  />
-                </div>
-                <div>
-                  <FormSelectField
-                    name='audience_partition_id'
-                    component={DefaultSelect}
-                    options={this.state.partitions.map(i => {
-                      return { title: i.name || i.id, value: i.id };
-                    })}
-                    validate={[isRequired]}
-                    formItemProps={{
-                      label: intl.formatMessage(messages.lookAlikeModalPartitionLabel),
-                      required: true,
-                      ...fieldGridConfig,
-                    }}
-                  />
-                </div>
-
-                <div>
-                  {this.props.formValues.audience_partition_id ? (
-                    <FormSliderField
-                      name='extension_factor'
-                      component={FormSlider}
+    if (lookalikeType) {
+      if (lookalikeType === 'PARTITION_BASED_LOOKALIKE') {
+        return (
+          <Layout className='edit-layout'>
+            <FormLayoutActionbar {...actionBarProps} />
+            <Layout>
+              <Form onSubmit={handleSubmit(this.save) as any} className={'edit-layout ant-layout'}>
+                <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+                  <div className='m-t-20 m-b-20'>
+                    {intl.formatMessage(messages.lookAlikeModalHelper)}
+                  </div>
+                  <div>
+                    <FormInputField
+                      name='name'
+                      component={FormInput}
                       validate={[isRequired]}
-                      formItemProps={{
-                        label: intl.formatMessage(messages.lookAlikeModalExtentionFactorLabel),
-                        required: true,
-                        ...fieldGridConfig,
-                      }}
-                      inputProps={{
-                        min: 1,
-                        max: this.state.partitions
-                          .filter(
-                            partition =>
-                              partition.id === this.props.formValues.audience_partition_id,
-                          )
-                          .map(p => p.part_count)[0],
-                      }}
-                      helpToolTipProps={{
-                        title: intl.formatMessage(messages.tooltipExtensionFactor),
+                      props={{
+                        formItemProps: {
+                          label: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                          required: true,
+                          ...fieldGridConfig,
+                        },
+                        inputProps: {
+                          className: 'mcs-audienceLookAlikeCreation_segmentName',
+                          placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                        },
                       }}
                     />
-                  ) : (
-                    <Row>
-                      <Col offset={4} style={{ width: '66%' }}>
-                        <Alert
-                          message={
-                            <div>
-                              <McsIcon type={'warning'} />
-                              {intl.formatMessage(messages.extensionFactorError)}
-                            </div>
-                          }
-                          type={'error'}
-                        />
-                      </Col>
-                    </Row>
-                  )}
-                </div>
-              </Content>
-            </Form>
-          </Layout>
-        </Layout>
-      );
-    } else if (lookalikeType === 'score_based_lookalike') {
-      return (
-        <Layout className='edit-layout'>
-          <FormLayoutActionbar {...actionBarProps} />
-          <Layout>
-            <Form onSubmit={handleSubmit(this.save) as any} className={'edit-layout ant-layout'}>
-              <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
-                <div className='m-t-20 m-b-20'>
-                  {intl.formatMessage(messages.lookAlikeModalHelper)}
-                </div>
-                <div>
-                  <FormInputField
-                    name='name'
-                    component={FormInput}
-                    validate={[isRequired]}
-                    props={{
-                      formItemProps: {
-                        label: intl.formatMessage(messages.lookAlikeModalNameLabel),
-                        required: true,
-                        ...fieldGridConfig,
-                      },
-                      inputProps: {
-                        placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
-                      },
-                    }}
-                  />
-                </div>
-
-                <div>
-                  {min && max ? (
-                    <FormSliderField
-                      name='extension_factor'
-                      component={FormSlider}
+                  </div>
+                  <div>
+                    <FormSelectField
+                      name='audience_partition_id'
+                      component={DefaultSelect}
+                      options={this.state.partitions.map(i => {
+                        return { title: i.name || i.id, value: i.id };
+                      })}
                       validate={[isRequired]}
                       formItemProps={{
-                        label: intl.formatMessage(messages.similarity),
+                        label: intl.formatMessage(messages.lookAlikeModalPartitionLabel),
                         required: true,
                         ...fieldGridConfig,
                       }}
-                      inputProps={{
-                        value: similarity,
-                        min: -Math.round(max),
-                        max: -Math.round(min),
-                        onChange: this.onChange,
-                        onAfterChange: this.onAfterChange,
-                        tooltipVisible: false,
+                    />
+                  </div>
+
+                  <div>
+                    {this.props.formValues.audience_partition_id ? (
+                      <FormSliderField
+                        name='extension_factor'
+                        component={FormSlider}
+                        validate={[isRequired]}
+                        formItemProps={{
+                          label: intl.formatMessage(messages.lookAlikeModalExtentionFactorLabel),
+                          required: true,
+                          ...fieldGridConfig,
+                        }}
+                        inputProps={{
+                          min: 1,
+                          max: this.state.partitions
+                            .filter(
+                              partition =>
+                                partition.id === this.props.formValues.audience_partition_id,
+                            )
+                            .map(p => p.part_count)[0],
+                        }}
+                        helpToolTipProps={{
+                          title: intl.formatMessage(messages.tooltipExtensionFactor),
+                        }}
+                      />
+                    ) : (
+                      <Row>
+                        <Col offset={4} style={{ width: '66%' }}>
+                          <Alert
+                            message={
+                              <div>
+                                <McsIcon type={'warning'} />
+                                {intl.formatMessage(messages.extensionFactorError)}
+                              </div>
+                            }
+                            type={'error'}
+                          />
+                        </Col>
+                      </Row>
+                    )}
+                  </div>
+                </Content>
+              </Form>
+            </Layout>
+          </Layout>
+        );
+      } else if (lookalikeType === 'SCORE_BASED_LOOKALIKE') {
+        return (
+          <Layout className='edit-layout'>
+            <FormLayoutActionbar {...actionBarProps} />
+            <Layout>
+              <Form onSubmit={handleSubmit(this.save) as any} className={'edit-layout ant-layout'}>
+                <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+                  <div className='m-t-20 m-b-20'>
+                    {intl.formatMessage(messages.lookAlikeModalHelper)}
+                  </div>
+                  <div>
+                    <FormInputField
+                      name='name'
+                      component={FormInput}
+                      validate={[isRequired]}
+                      props={{
+                        formItemProps: {
+                          label: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                          required: true,
+                          ...fieldGridConfig,
+                        },
+                        inputProps: {
+                          placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                        },
                       }}
                     />
-                  ) : (
-                    <Spin />
+                  </div>
+
+                  <div>
+                    {min && max ? (
+                      <FormSliderField
+                        name='extension_factor'
+                        component={FormSlider}
+                        validate={[isRequired]}
+                        formItemProps={{
+                          label: intl.formatMessage(messages.similarity),
+                          required: true,
+                          ...fieldGridConfig,
+                        }}
+                        inputProps={{
+                          value: similarity,
+                          min: -Math.round(max),
+                          max: -Math.round(min),
+                          onChange: this.onChange,
+                          onAfterChange: this.onAfterChange,
+                          tooltipVisible: false,
+                        }}
+                      />
+                    ) : (
+                      <Spin />
+                    )}
+                  </div>
+                  <div>
+                    <FormFieldWrapper
+                      label={intl.formatMessage(messages.extensionFactor)}
+                      {...fieldGridConfig}
+                    >
+                      <span className='lookalike-form-extensionFactor'>
+                        {`${extensionRatio ? extensionRatio.toFixed(2) : '-'} %`}
+                      </span>
+                    </FormFieldWrapper>
+                  </div>
+                  {extensionRatio && extensionRatio > 100 && (
+                    <Alert
+                      className={'m-b-20'}
+                      message={intl.formatMessage(messages.lookalikeTooBroad)}
+                      type='warning'
+                    />
                   )}
-                </div>
-                <div>
-                  <FormFieldWrapper
-                    label={intl.formatMessage(messages.extensionFactor)}
-                    {...fieldGridConfig}
-                  >
-                    <span className='lookalike-form-extensionFactor'>
-                      {`${extensionRatio ? extensionRatio.toFixed(2) : '-'} %`}
-                    </span>
-                  </FormFieldWrapper>
-                </div>
-                {extensionRatio && extensionRatio > 100 && (
-                  <Alert
-                    className={'m-b-20'}
-                    message={intl.formatMessage(messages.lookalikeTooBroad)}
-                    type='warning'
-                  />
-                )}
-              </Content>
-            </Form>
+                </Content>
+              </Form>
+            </Layout>
           </Layout>
-        </Layout>
-      );
+        );
+      } else {
+        // Cohort based lookalike case
+        return (
+          <Layout className='edit-layout'>
+            <FormLayoutActionbar {...actionBarProps} />
+            <Layout>
+              <Form onSubmit={handleSubmit(this.save) as any} className={'edit-layout ant-layout'}>
+                <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+                  <div className='m-t-20 m-b-20'>
+                    {intl.formatMessage(messages.cohortLookAlikeModalHelper)}
+                  </div>
+                  <div>
+                    <FormInputField
+                      name='name'
+                      component={FormInput}
+                      validate={[isRequired]}
+                      props={{
+                        formItemProps: {
+                          label: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                          required: true,
+                          ...fieldGridConfig,
+                        },
+                        inputProps: {
+                          className: 'mcs-audienceLookAlikeCreation_segmentName',
+                          placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
+                        },
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormTextAreaField
+                      name='short_description'
+                      component={FormTextArea}
+                      props={{
+                        formItemProps: {
+                          label: intl.formatMessage(messages.lookAlikeModalDescriptionLabel),
+                          ...fieldGridConfig,
+                        },
+                        inputProps: {
+                          className: 'mcs-audienceLookAlikeCreation_description',
+                          placeholder: intl.formatMessage(messages.lookAlikeModalDescriptionLabel),
+                        },
+                      }}
+                    />
+                  </div>
+                </Content>
+              </Form>
+            </Layout>
+          </Layout>
+        );
+      }
     } else {
+      const { message, ...restActionBarProps } = actionBarProps;
+
+      const authorizedLookalikeTypes: LookalikeType[] = [
+        'PARTITION_BASED_LOOKALIKE' as LookalikeType,
+        'SCORE_BASED_LOOKALIKE' as LookalikeType,
+      ].concat(
+        hasFeature('audience-segments-cohort-lookalike')
+          ? ['COHORT_BASED_LOOKALIKE' as LookalikeType]
+          : [],
+      );
+
+      const subtitleMessage: FormattedMessage.Props = {
+        values: { nbOfTypes: authorizedLookalikeTypes.length },
+        ...messages.lookalikeTypeSelectorsubTitle,
+      };
+
       return (
         <Layout className='edit-layout'>
-          <FormLayoutActionbar {...actionBarProps} />
+          <FormLayoutActionbar {...restActionBarProps} />
           <Layout.Content className='mcs-content-container mcs-form-container text-center'>
-            <FormTitle
-              title={messages.lookalikeTypeSelectorTitle}
-              subtitle={messages.lookalikeTypeSelectorsubTitle}
-            />
+            <FormTitle title={messages.lookalikeTypeSelectorTitle} subtitle={subtitleMessage} />
             <Row className='mcs-selector_container'>
               <Row className='menu'>
-                {lookalikeTypes.map(type => {
+                {authorizedLookalikeTypes.map(type => {
                   const handleSelect = () => this.onSelectLookalikeType(type);
+                  const title: React.ReactChild = (
+                    <div className='algorithmSelectorTitle'>
+                      {intl.formatMessage(messagesMap.titles[type])}
+                      {type === 'COHORT_BASED_LOOKALIKE' ? (
+                        <MentionTag mention={'ALPHA'} className='algorithmSelectorTag' />
+                      ) : null}
+                    </div>
+                  );
                   return (
                     <MenuList
                       key={type}
-                      title={intl.formatMessage(messagesMap[type])}
+                      title={title}
+                      subtitles={[intl.formatMessage(messagesMap.subtitles[type])]}
                       select={handleSelect}
                     />
                   );
