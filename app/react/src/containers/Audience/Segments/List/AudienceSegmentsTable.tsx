@@ -71,6 +71,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { convertMessageDescriptorToString, labelSelectorMessages } from '../../../../IntlMessages';
 import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -88,6 +89,10 @@ const messages = defineMessages({
   USER_LOOKALIKE: {
     id: 'audience.segments.list.type.userLookalike',
     defaultMessage: 'User Lookalike',
+  },
+  USER_LOOKALIKE_BY_COHORTS: {
+    id: 'audience.segments.list.type.userCohortLookalike',
+    defaultMessage: 'User Cohort Lookalike',
   },
   USER_PARTITION: {
     id: 'audience.segments.list.type.userPartition',
@@ -232,6 +237,7 @@ type Props = RouteComponentProps<{ organisationId: string }> &
   MapStateToProps &
   InjectedIntlProps &
   InjectedNotificationProps &
+  InjectedFeaturesProps &
   InjectedDatamartProps;
 
 interface AudienceSegmentsFilterParams
@@ -450,6 +456,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       'USER_LIST',
       'USER_QUERY',
       'USER_LOOKALIKE',
+      'USER_LOOKALIKE_BY_COHORTS',
       'USER_ACTIVATION',
       'USER_PARTITION',
       'USER_DATA_SUBSCRIPTION',
@@ -689,6 +696,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             case 'USER_LOOKALIKE':
               typeIcon = <UsergroupAddOutlined />;
               break;
+            case 'USER_LOOKALIKE_BY_COHORTS':
+              typeIcon = <UsergroupAddOutlined />;
+              break;
+
             default:
               typeIcon = <DatabaseOutlined />;
               break;
@@ -796,6 +807,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       location: { search },
+      hasFeature,
     } = this.props;
 
     const filter = parseSearch(search, this.getSearchSetting());
@@ -842,17 +854,30 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           title: formatMessage(audienceSegmentTypeMessages.USER_LOOKALIKE),
           value: 'USER_LOOKALIKE',
         },
-        {
-          className: 'mcs-audienceSegmentTable-typeFilter_userPixel',
-          title: formatMessage(audienceSegmentTypeMessages.USER_PIXEL),
-          value: 'USER_PIXEL',
-        },
-        {
-          className: 'mcs-audienceSegmentTable-typeFilter_edge',
-          title: formatMessage(audienceSegmentTypeMessages.EDGE),
-          value: 'EDGE',
-        },
-      ],
+      ]
+        .concat(
+          hasFeature('audience-segments-cohort-lookalike')
+            ? [
+                {
+                  className: 'mcs-audienceSegmentTable-typeFilter_userCohortLookalike',
+                  title: formatMessage(audienceSegmentTypeMessages.USER_LOOKALIKE_BY_COHORTS),
+                  value: 'USER_LOOKALIKE_BY_COHORTS',
+                },
+              ]
+            : [],
+        )
+        .concat([
+          {
+            className: 'mcs-audienceSegmentTable-typeFilter_userPixel',
+            title: formatMessage(audienceSegmentTypeMessages.USER_PIXEL),
+            value: 'USER_PIXEL',
+          },
+          {
+            className: 'mcs-audienceSegmentTable-typeFilter_edge',
+            title: formatMessage(audienceSegmentTypeMessages.EDGE),
+            value: 'EDGE',
+          },
+        ]),
       selectedItems: filter.type.concat(filter.feed_type.map((ft: string) => `USER_LIST_${ft}`)),
       handleItemClick: filters => {
         this.updateLocationSearch({
@@ -1069,6 +1094,7 @@ export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectNotifications,
+  injectFeatures,
   injectDatamart,
   connect(mapStateToProps),
 )(AudienceSegmentsTable);

@@ -18,8 +18,8 @@
   "dependencies": {
     "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.2.2",
-    "@mediarithmics-private/advanced-components": "9.20.0",
-    "@mediarithmics-private/mcs-components-library": "7.7.0",
+    "@mediarithmics-private/advanced-components": "9.21.0",
+    "@mediarithmics-private/mcs-components-library": "7.10.0",
     "@splitsoftware/splitio": "^10.17.3",
     "antd": "^4.16.13",
     "brace": "^0.11.0",

@@ -45,37 +45,38 @@ class LookalikeStatusWarning extends React.Component<Props, any> {
       intl: { formatMessage },
     } = this.props;
 
-    if (
-      segment &&
-      Object.keys(segment).length &&
-      (segment as AudienceSegmentResource).type === 'USER_LOOKALIKE'
-    ) {
-      switch ((segment as UserLookalikeSegment).status) {
-        case 'DRAFT':
-          return (
-            <Alert className={'m-b-20'} message={formatMessage(messages.draft)} type='warning' />
-          );
-        case 'CALIBRATION_ERROR':
-          return (
-            <Alert
-              className={'m-b-20'}
-              message={formatMessage(messages.calibration_error)}
-              type='error'
-            />
-          );
-        case 'CALIBRATING':
-          return (
-            <Alert className={'m-b-20'} message={formatMessage(messages.calibrating)} type='info' />
-          );
-        case 'CALIBRATED':
-          return (
-            <Alert
-              className={'m-b-20'}
-              message={formatMessage(messages.calibration_success)}
-              type='success'
-            />
-          );
-      }
+    if (segment && Object.keys(segment).length && segment.type === 'USER_LOOKALIKE') {
+      if ((segment as UserLookalikeSegment).lookalike_algorithm !== 'COHORT_OVERLAP')
+        switch ((segment as UserLookalikeSegment).status) {
+          case 'DRAFT':
+            return (
+              <Alert className={'m-b-20'} message={formatMessage(messages.draft)} type='warning' />
+            );
+          case 'CALIBRATION_ERROR':
+            return (
+              <Alert
+                className={'m-b-20'}
+                message={formatMessage(messages.calibration_error)}
+                type='error'
+              />
+            );
+          case 'CALIBRATING':
+            return (
+              <Alert
+                className={'m-b-20'}
+                message={formatMessage(messages.calibrating)}
+                type='info'
+              />
+            );
+          case 'CALIBRATED':
+            return (
+              <Alert
+                className={'m-b-20'}
+                message={formatMessage(messages.calibration_success)}
+                type='success'
+              />
+            );
+        }
       return <div />;
     }
 
