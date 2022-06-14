@@ -9,165 +9,221 @@ describe('This test should test the settingsMainMenu functions', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       HeaderMenu.switchOrg(data.organisationName);
     });
+    new ProcessingActivitiesPage().goToProcessingActivitiesPage();
+  });
 
-    ProcessingActivitiesPage.goToProcessingActivitiesPage();
+  function verifyDataProcessingInformations(
+    name: string,
+    purpose: string,
+    legalBasis: string,
+    technicalName?: string,
+  ) {
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+    processingActivitiesPage.namesColumn.should('contain', name);
+    processingActivitiesPage.purposeColumn.should('contain', purpose);
+    processingActivitiesPage.legalBasisColumn.should('contain', legalBasis);
+    if (technicalName) {
+      processingActivitiesPage.technicalNamesColumn.should('contain', technicalName);
+    }
+  }
+
+  it('Should create a new data processing and verify the creation', () => {
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickConsent();
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+    verifyDataProcessingInformations(
+      processingActivitiesPage.name,
+      processingActivitiesPage.purpose,
+      'CONSENT',
+    );
+
+    processingActivitiesPage.namesColumn.should('contain', processingActivitiesPage.name);
+    processingActivitiesPage.namesColumn
+      .filter((index, elt) => {
+        return elt.innerText.includes(processingActivitiesPage.name);
+      })
+      .then($a => {
+        var countBefore = $a.length;
+        processingActivitiesPage.clickBtnNewDataProcessing();
+        processingActivitiesPage.clickConsent();
+        processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+        processingActivitiesPage.namesColumn
+          .filter((index, elt) => {
+            return elt.innerText.includes(processingActivitiesPage.name);
+          })
+          .then($a => {
+            var countAfter = $a.length;
+            expect(countAfter).to.eq(countBefore + 1);
+          });
+      });
+
+    processingActivitiesPage.purposeColumn.should('contain', processingActivitiesPage.purpose);
+    processingActivitiesPage.purposeColumn
+      .filter((index, elt) => {
+        return elt.innerText.includes(processingActivitiesPage.purpose);
+      })
+      .then($a => {
+        var countBefore = $a.length;
+        processingActivitiesPage.clickBtnNewDataProcessing();
+        processingActivitiesPage.clickConsent();
+        processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+        processingActivitiesPage.purposeColumn
+          .filter((index, elt) => {
+            return elt.innerText.includes(processingActivitiesPage.purpose);
+          })
+          .then($a => {
+            var countAfter = $a.length;
+            expect(countAfter).to.eq(countBefore + 1);
+          });
+      });
+
+    processingActivitiesPage.legalBasisColumn.should('contain', 'CONSENT');
+    processingActivitiesPage.legalBasisColumn
+      .filter((index, elt) => {
+        return elt.innerText.includes('CONSENT');
+      })
+      .then($a => {
+        var countBefore = $a.length;
+        processingActivitiesPage.clickBtnNewDataProcessing();
+        processingActivitiesPage.clickConsent();
+        processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+        processingActivitiesPage.legalBasisColumn
+          .filter((index, elt) => {
+            return elt.innerText.includes('CONSENT');
+          })
+          .then($a => {
+            var countAfter = $a.length;
+            expect(countAfter).to.eq(countBefore + 1);
+          });
+      });
   });
 
   it('Should create a new data processing (Consent) without technicalName', () => {
-    const name = `name-${Math.random().toString(36).substring(2, 10)}`;
-    const purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickConsent();
-    ProcessingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    cy.contains(name);
-    cy.contains(purpose);
-    cy.contains('CONSENT');
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickConsent();
+    processingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+    verifyDataProcessingInformations(
+      processingActivitiesPage.name,
+      processingActivitiesPage.purpose,
+      'CONSENT',
+    );
   });
 
   it('Should create a new data processing (Consent) with technicalName', () => {
-    const name = `name-${Math.random().toString(36).substring(2, 10)}`;
-    const purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
-    const technichalName = `technichalName-${Math.random().toString(36).substring(2, 10)}`;
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickConsent();
-    ProcessingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnAdvancedInformation();
-    ProcessingActivitiesPage.typeProcessingActivitiesTechnicalName(technichalName);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    cy.contains(name);
-    cy.contains(purpose);
-    cy.contains('CONSENT');
-    cy.contains(technichalName);
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickConsent();
+    processingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
+    processingActivitiesPage.createNewDataProcessingWithTechnicalName();
+    verifyDataProcessingInformations(
+      processingActivitiesPage.name,
+      processingActivitiesPage.purpose,
+      'CONSENT',
+      processingActivitiesPage.technicalName,
+    );
   });
 
   it('Should create a new data processing (PublicInterestOrExerciseOfOfficialAuthority) without technicalName', () => {
-    const name = `name-${Math.random().toString(36).substring(2, 10)}`;
-    const purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickPublicInterestOrExerciseOfOfficialAuthority();
-    ProcessingActivitiesPage.legalBasisField
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickPublicInterestOrExerciseOfOfficialAuthority();
+    processingActivitiesPage.legalBasisField
       .invoke('attr', 'value')
       .should('eq', 'PUBLIC_INTEREST_OR_EXERCISE_OF_OFFICIAL_AUTHORITY');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    cy.contains(name);
-    cy.contains(purpose);
-    cy.contains('PUBLIC_INTEREST_OR_EXERCISE_OF_OFFICIAL_AUTHORITY');
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+    verifyDataProcessingInformations(
+      processingActivitiesPage.name,
+      processingActivitiesPage.purpose,
+      'PUBLIC_INTEREST_OR_EXERCISE_OF_OFFICIAL_AUTHORITY',
+    );
   });
 
   it('Should create a two new data processing (LegitimateInterest) with the same name and purpose', () => {
-    const name = `name-${Math.random().toString(36).substring(2, 10)}`;
-    const purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickLegalObligation();
-    ProcessingActivitiesPage.legalBasisField
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickLegalObligation();
+    processingActivitiesPage.legalBasisField
       .invoke('attr', 'value')
       .should('eq', 'LEGAL_OBLIGATION');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickLegalObligation();
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    cy.get('.ant-table-row > :nth-child(2)')
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickLegalObligation();
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName(
+      processingActivitiesPage.name,
+      processingActivitiesPage.purpose,
+    );
+    processingActivitiesPage.namesColumn
       .filter((index, elt) => {
-        return elt.innerText.includes(name);
+        return elt.innerText.includes(processingActivitiesPage.name);
       })
       .should('have.length', 2);
-    // cy.get('.ant-table-row > :nth-child(2)').eq(-2).then(($txt1) => {
-    //   const txt1 = $txt1.text();
-    //   cy.get('.ant-table-row > :nth-child(2)').eq(-1).invoke('text').should('eq', txt1);
-    // })
   });
 
   it('Should edit a data processing', () => {
-    const name = `name-${Math.random().toString(36).substring(2, 10)}`;
-    const purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
+    const processingActivitiesPage = new ProcessingActivitiesPage();
     const name_ed = `name_ed-${Math.random().toString(36).substring(2, 10)}`;
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickConsent();
-    ProcessingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    ProcessingActivitiesPage.btnSettingsProcessing.first().click();
-    ProcessingActivitiesPage.clickBtnEdit();
-    ProcessingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name_ed);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    cy.contains(name_ed);
-    cy.contains(purpose);
-    cy.contains('CONSENT');
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickConsent();
+    processingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+    processingActivitiesPage.btnSettingsProcessing.first().click();
+    processingActivitiesPage.clickBtnEdit();
+    processingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
+    processingActivitiesPage.typeProcessingActivitiesName(name_ed);
+    processingActivitiesPage.clickBtnSaveProcessing();
+    verifyDataProcessingInformations(name_ed, processingActivitiesPage.purpose, 'CONSENT');
   });
 
   it('Should verify the data processing s token', () => {
-    const name = `name-${Math.random().toString(36).substring(2, 10)}`;
-    const purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickConsent();
-    ProcessingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    cy.get('.ant-table-row > :nth-child(6)')
-      .eq(0)
-      .then($token => {
-        const token = $token.text();
-        ProcessingActivitiesPage.btnSettingsProcessing.first().click();
-        ProcessingActivitiesPage.clickBtnEdit();
-        ProcessingActivitiesPage.clickBtnAdvancedInformation();
-        ProcessingActivitiesPage.processingActivitiesTokenField
-          .invoke('attr', 'value')
-          .should('eq', token);
-        ProcessingActivitiesPage.processingActivitiesTokenField.should('be.disabled');
-      });
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickConsent();
+    processingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+    processingActivitiesPage.tokensColumn.eq(0).then($token => {
+      const token = $token.text();
+      processingActivitiesPage.btnSettingsProcessing.first().click();
+      processingActivitiesPage.clickBtnEdit();
+      processingActivitiesPage.clickBtnAdvancedInformation();
+      processingActivitiesPage.processingActivitiesTokenField
+        .invoke('attr', 'value')
+        .should('eq', token);
+      processingActivitiesPage.processingActivitiesTokenField.should('be.disabled');
+    });
   });
 
   it('Should archive a data processing', () => {
-    const name = `name-${Math.random().toString(36).substring(2, 10)}`;
-    const purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickConsent();
-    ProcessingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    cy.get('.ant-table-row > :nth-child(1)')
-      .eq(0)
-      .then($id => {
-        const id = $id.text();
-        ProcessingActivitiesPage.btnSettingsProcessing.first().click();
-        ProcessingActivitiesPage.clickBtnArchive();
-        cy.contains(id).should('not.exist');
-      });
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickConsent();
+    processingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+    processingActivitiesPage.idColumn.eq(0).then($id => {
+      const id = $id.text();
+      processingActivitiesPage.btnSettingsProcessing.first().click();
+      processingActivitiesPage.clickBtnArchive();
+      cy.contains(id).should('not.exist');
+    });
   });
 
   it('Should delete a data processing', () => {
-    const name = `name-${Math.random().toString(36).substring(2, 10)}`;
-    const purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
-    ProcessingActivitiesPage.clickBtnNewDataProcessing();
-    ProcessingActivitiesPage.clickConsent();
-    ProcessingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
-    ProcessingActivitiesPage.typeProcessingActivitiesName(name);
-    ProcessingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
-    ProcessingActivitiesPage.clickBtnSaveProcessing();
-    cy.get('.ant-table-row > :nth-child(6)')
-      .eq(0)
-      .then($token => {
-        const token = $token.text();
-        ProcessingActivitiesPage.btnSettingsProcessing.first().click();
-        ProcessingActivitiesPage.clickBtnDelete();
-        ProcessingActivitiesPage.clickBtnConfirmDelete();
-        cy.get('.ant-modal-content').should('not.be.visible');
-        cy.contains(token).should('not.exist');
-      });
+    const processingActivitiesPage = new ProcessingActivitiesPage();
+    processingActivitiesPage.clickBtnNewDataProcessing();
+    processingActivitiesPage.clickConsent();
+    processingActivitiesPage.legalBasisField.invoke('attr', 'value').should('eq', 'CONSENT');
+    processingActivitiesPage.createNewDataProcessingWithoutTechnicalName();
+    processingActivitiesPage.tokensColumn.eq(0).then($token => {
+      const token = $token.text();
+      processingActivitiesPage.btnSettingsProcessing.first().click();
+      processingActivitiesPage.clickBtnDelete();
+      processingActivitiesPage.clickBtnConfirmDelete();
+      processingActivitiesPage.deletePopUp.should('not.be.visible');
+      cy.contains(token).should('not.exist');
+    });
   });
 });

@@ -3,6 +3,17 @@ import Page from './../../Page';
 import OrganisationMenu from './OrganisationMenu';
 
 class ProcessingActivitiesPage extends Page {
+  name: string;
+  purpose: string;
+  technicalName: string;
+
+  constructor() {
+    super();
+    this.name = `name-${Math.random().toString(36).substring(2, 10)}`;
+    this.purpose = `purpose-${Math.random().toString(36).substring(2, 10)}`;
+    this.technicalName = `technicalName-${Math.random().toString(36).substring(2, 10)}`;
+  }
+
   goToProcessingActivitiesPage() {
     HeaderMenu.clickSettingsIcon();
     OrganisationMenu.clickProcessingActivities();
@@ -72,6 +83,30 @@ class ProcessingActivitiesPage extends Page {
     return cy.get('.mcs-table-body');
   }
 
+  get idColumn() {
+    return cy.get('.ant-table-row > :nth-child(1)');
+  }
+
+  get namesColumn() {
+    return cy.get('.ant-table-row > :nth-child(2)');
+  }
+
+  get purposeColumn() {
+    return cy.get('.ant-table-row > :nth-child(3)');
+  }
+
+  get legalBasisColumn() {
+    return cy.get('.ant-table-row > :nth-child(4)');
+  }
+
+  get technicalNamesColumn() {
+    return cy.get('.ant-table-row > :nth-child(5)');
+  }
+
+  get tokensColumn() {
+    return cy.get('.ant-table-row > :nth-child(6)');
+  }
+
   get dropdownActions() {
     return cy.get('mcs-dropdown-actions');
   }
@@ -86,6 +121,10 @@ class ProcessingActivitiesPage extends Page {
 
   get btnDelete() {
     return cy.contains('Delete');
+  }
+
+  get deletePopUp() {
+    return cy.get('.ant-modal-content');
   }
 
   clickBtnNewDataProcessing() {
@@ -106,18 +145,6 @@ class ProcessingActivitiesPage extends Page {
 
   clickLegitimateInterest() {
     this.legitimateInterest.click();
-  }
-
-  typeProcessingActivitiesName(name: string) {
-    this.processingActivitiesNameField.clear().type(name);
-  }
-
-  typeProcessingActivitiesPurpose(purpose: string) {
-    this.processingActivitiesPurposeField.clear().type(purpose);
-  }
-
-  typeProcessingActivitiesTechnicalName(technicalName: string) {
-    this.processingActivitiesTechnicalNameField.clear().type(technicalName);
   }
 
   clickBtnSaveProcessing() {
@@ -151,6 +178,55 @@ class ProcessingActivitiesPage extends Page {
   clickBtnCancelDelete() {
     cy.contains('Cancel').click();
   }
+
+  typeProcessingActivitiesName(name: string = this.name) {
+    this.name = name;
+    this.processingActivitiesNameField.clear().type(name);
+  }
+
+  typeProcessingActivitiesPurpose(purpose: string = this.purpose) {
+    this.purpose = purpose;
+    this.processingActivitiesPurposeField.clear().type(purpose);
+  }
+
+  typeProcessingActivitiesTechnicalName(technicalName: string = this.technicalName) {
+    this.technicalName = technicalName;
+    this.processingActivitiesTechnicalNameField.clear().type(technicalName);
+  }
+
+  createNewDataProcessingWithoutTechnicalName(
+    name: string = this.name,
+    purpose: string = this.purpose,
+  ) {
+    this.name = name;
+    this.purpose = purpose;
+    this.typeProcessingActivitiesName(name);
+    this.typeProcessingActivitiesPurpose(purpose);
+    this.clickBtnSaveProcessing();
+  }
+
+  createNewDataProcessingWithTechnicalName(
+    name: string = this.name,
+    purpose: string = this.purpose,
+    technicalName: string = this.technicalName,
+  ) {
+    this.name = name;
+    this.purpose = purpose;
+    this.technicalName = technicalName;
+    this.typeProcessingActivitiesName(name);
+    this.typeProcessingActivitiesPurpose(purpose);
+    this.clickBtnAdvancedInformation();
+    this.typeProcessingActivitiesTechnicalName(technicalName);
+    this.clickBtnSaveProcessing();
+  }
+
+  createNewRandomDataProcessingWithoutTechnicalName() {
+    this.createNewDataProcessingWithoutTechnicalName();
+  }
+
+  createNewRandomDataProcessingWithTechnicalName() {
+    this.createNewDataProcessingWithTechnicalName();
+  }
 }
 
-export default new ProcessingActivitiesPage();
+export default ProcessingActivitiesPage;
