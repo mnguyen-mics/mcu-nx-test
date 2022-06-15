@@ -14,7 +14,7 @@ class ProcessingActivitiesPage extends Page {
     this.technicalName = `technicalName-${Math.random().toString(36).substring(2, 10)}`;
   }
 
-  goToProcessingActivitiesPage() {
+  goToPage() {
     HeaderMenu.clickSettingsIcon();
     OrganisationMenu.clickProcessingActivities();
   }

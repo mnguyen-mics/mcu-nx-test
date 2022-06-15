@@ -9,7 +9,7 @@ describe('This test should test the settingsMainMenu functions', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       HeaderMenu.switchOrg(data.organisationName);
     });
-    new ProcessingActivitiesPage().goToProcessingActivitiesPage();
+    new ProcessingActivitiesPage().goToPage();
   });
 
   function verifyDataProcessingInformations(
