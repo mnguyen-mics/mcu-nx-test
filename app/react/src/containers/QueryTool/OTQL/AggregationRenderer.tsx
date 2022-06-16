@@ -1,12 +1,11 @@
 import * as React from 'react';
 import {
   BarChartOutlined,
-  HomeOutlined,
   PieChartOutlined,
   RadarChartOutlined,
   TableOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Table, Select, Card, Button as AntButton, Modal, Input } from 'antd';
+import { Table, Select, Card, Button as AntButton, Modal, Input } from 'antd';
 import {
   OTQLMetric,
   OTQLAggregations,
@@ -17,7 +16,7 @@ import {
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { IChartService } from '../../../services/ChartsService';
 import { compose } from 'recompose';
-import { Button, McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
@@ -296,6 +295,8 @@ class AggregationRenderer extends React.Component<Props, State> {
   };
 
   handleChartTypeChange = (value: chartType) => {
+    const { rootAggregations } = this.props;
+    const { aggregationsPath } = this.state;
     const hasDateHistogram = this.hasDateHistogram();
     const defaultSelectedOptions = getQuickOptionsForChartType(value, hasDateHistogram).reduce(
       (acc, option) => {
@@ -303,10 +304,19 @@ class AggregationRenderer extends React.Component<Props, State> {
       },
       {},
     );
-    this.setState({
-      selectedChart: value,
-      selectedQuickOptions: defaultSelectedOptions,
-    });
+    this.setState(
+      {
+        selectedChart: value,
+        selectedQuickOptions: defaultSelectedOptions,
+      },
+      () => {
+        // on chart type change we also want to keep buckets view path
+        if (isOTQLAggregations(rootAggregations)) {
+          const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
+          this.updateAggregatePath(aggregationsPath, this.getDefaultView(aggregations));
+        }
+      },
+    );
   };
 
   private async applyTransformations(_chartType: ChartType, _dataset: AbstractDatasetTree) {
@@ -606,6 +616,8 @@ class AggregationRenderer extends React.Component<Props, State> {
           displayedDataset.metadata = {
             seriesTitles: [PIE_Y_KEY],
           };
+        } else if (selectedChart === 'table') {
+          displayedDataset.dataset = viewBuckets?.buckets;
         }
       } else if (aggregateData) {
         displayedDataset = JSON.parse(JSON.stringify(aggregateData));
@@ -617,6 +629,7 @@ class AggregationRenderer extends React.Component<Props, State> {
           key: 'table',
           display: (
             <Card bordered={false}>
+              {this.renderGoToRootButton()}
               <ManagedChart
                 chartConfig={{
                   title: '',
@@ -628,14 +641,17 @@ class AggregationRenderer extends React.Component<Props, State> {
                   },
                   type: 'table',
                 }}
-                formattedData={{
-                  metadata: {
-                    seriesTitles: ['count'],
-                  },
-                  ...datasetOptions,
-                  ...displayedDataset,
-                  type: 'aggregate',
-                }}
+                // TODO: improve typings in ADV library!
+                formattedData={
+                  {
+                    metadata: {
+                      seriesTitles: ['count'],
+                    },
+                    ...datasetOptions,
+                    ...displayedDataset,
+                    type: 'aggregate',
+                  } as any
+                }
                 loading={false}
                 stillLoading={false}
               />
@@ -678,6 +694,7 @@ class AggregationRenderer extends React.Component<Props, State> {
           key: 'radar',
           display: (
             <Card bordered={false} className='mcs-otqlChart_content_radar'>
+              {this.renderGoToRootButton()}
               <ManagedChart
                 chartConfig={{
                   title: '',
@@ -708,6 +725,7 @@ class AggregationRenderer extends React.Component<Props, State> {
           key: 'pie',
           display: (
             <Card bordered={false} className='mcs-otqlChart_content_pie'>
+              {this.renderGoToRootButton()}
               <ManagedChart
                 chartConfig={{
                   title: '',
@@ -886,36 +904,17 @@ class AggregationRenderer extends React.Component<Props, State> {
     } else return;
   };
 
-  getBreadcrumb = (aggregations: OTQLAggregations | AggregateDataset) => {
+  renderGoToRootButton = () => {
     const { aggregationsPath } = this.state;
-
-    if (aggregationsPath.length === 0) return null;
-
-    const goToRoot = () => this.updateAggregatePath([], this.getDefaultView(aggregations));
-
+    const goToRoot = () => {
+      this.updateAggregatePath([], '0').then(() => this.updateAggregatePath([], '0'));
+    };
     return (
-      <Breadcrumb style={{ marginBottom: 14 }} className='mcs-breadcrumb'>
-        <Breadcrumb.Item>
-          <Button onClick={goToRoot}>
-            <HomeOutlined />
-          </Button>
-        </Breadcrumb.Item>
-        {aggregationsPath.map((path, index) => {
-          const isLast = index === aggregationsPath.length - 1;
-          const pathToStr = `${path.aggregationBucket.field_name} @${path.aggregationBucket.type} { ${path.bucket.key} }`;
-          const goToPath = () => {
-            this.updateAggregatePath(
-              aggregationsPath.slice(0, index + 1),
-              this.getDefaultView(path.bucket.aggregations!),
-            );
-          };
-          return (
-            <Breadcrumb.Item key={index}>
-              {isLast ? pathToStr : <Button onClick={goToPath}>{pathToStr}</Button>}
-            </Breadcrumb.Item>
-          );
-        })}
-      </Breadcrumb>
+      aggregationsPath.length >= 1 && (
+        <button className='mcs-otqlChart_backButton' onClick={goToRoot}>
+          Back
+        </button>
+      )
     );
   };
 
@@ -1018,8 +1017,6 @@ class AggregationRenderer extends React.Component<Props, State> {
           }
           onCancel={onDeleteModalClose}
         />
-
-        {this.getBreadcrumb(aggregations)}
         <div style={{ marginBottom: 14 }}>
           {showSelect && isOTQLAggregations(aggregations) && (
             <div>
