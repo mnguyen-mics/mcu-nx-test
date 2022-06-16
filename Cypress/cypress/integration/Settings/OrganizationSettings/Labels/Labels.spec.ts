@@ -44,8 +44,10 @@ describe('Labels test', () => {
     const editedLabel = `label-${Math.random().toString(36).substring(2, 10)}`;
     labelsPage.addNewLabel();
     cy.wait(200);
-    labelsPage.arrowDropDownMenu.last().click();
-    labelsPage.addNewLabel(editedLabel);
+    labelsPage.clickLastArrowDropDownMenu();
+    labelsPage.clickBtnEdit();
+    labelsPage.typeNewLabelField(editedLabel);
+    labelsPage.clickBtnSave();
     cy.wait(200);
     labelsPage.labelsTable.last().should('not.contain', labelsPage.label);
     labelsPage.labelsTable.last().should('contain', editedLabel);
@@ -55,7 +57,7 @@ describe('Labels test', () => {
     const labelsPage = new LabelsPage();
     labelsPage.addNewLabel();
     cy.wait(200);
-    labelsPage.arrowDropDownMenu.last().click();
+    labelsPage.clickLastArrowDropDownMenu();
     labelsPage.clickBtnArchive();
     labelsPage.clickBtnOKConfirmPopUp();
     cy.wait(200);

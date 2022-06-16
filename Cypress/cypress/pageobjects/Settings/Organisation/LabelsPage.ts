@@ -67,6 +67,10 @@ class LabelsPage extends Page {
     this.btnNewLabel.click();
   }
 
+  clickLastArrowDropDownMenu() {
+    this.arrowDropDownMenu.last().click();
+  }
+
   clickBtnEdit() {
     this.btnEdit.click();
   }
