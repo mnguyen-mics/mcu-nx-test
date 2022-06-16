@@ -860,7 +860,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
     return (
       <Layout>
-        {renderActionBar && queryToUse === 'string' && renderActionBar(queryToUse, datamartId)}
+        {renderActionBar && renderActionBar(queryToUse as string, datamartId)}
         <Layout>
           <Content className='mcs-content-container'>
             {schemaLoading ? (
