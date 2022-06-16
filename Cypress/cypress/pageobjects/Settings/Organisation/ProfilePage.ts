@@ -3,7 +3,11 @@ import Page from '../../Page';
 import OrganisationMenu from './OrganisationMenu';
 
 class ProfilePage extends Page {
-  goToProfilePage() {
+  constructor() {
+    super();
+  }
+
+  goToPage() {
     HeaderMenu.clickSettingsIcon();
     OrganisationMenu.clickProfile();
   }
@@ -29,4 +33,4 @@ class ProfilePage extends Page {
   }
 }
 
-export default new ProfilePage();
+export default ProfilePage;
