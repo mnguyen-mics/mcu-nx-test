@@ -111,11 +111,14 @@ class UserListPage extends React.Component<Props, State> {
       });
   };
 
-  getUserDrawerTitle = () => {
+  getUserDrawerTitle = (existingUser: boolean) => {
     return (
       <FormattedMessage
         id='settings.organisation.users.userFormTitle'
-        defaultMessage='Organisation > User > Edit user'
+        defaultMessage={`Organisation > User > {modifType} user`}
+        values={{
+          modifType: existingUser ? 'Edit' : 'Add',
+        }}
       />
     );
   };
@@ -443,7 +446,7 @@ class UserListPage extends React.Component<Props, State> {
                 className='mcs-userEdit_drawer'
                 width='800'
                 bodyStyle={{ padding: '0' }}
-                title={this.getUserDrawerTitle()}
+                title={this.getUserDrawerTitle(!!user)}
                 placement={'right'}
                 closable={true}
                 onClose={this.handleDrawer(false)}
