@@ -20,6 +20,7 @@ import UserRoleForm from '../Edit/UserRoleForm';
 import { UserCreationWithRoleResource as UserResource } from '../../../../../models/directory/UserResource';
 import { IUserRolesService } from '../../../../../services/UserRolesService';
 import _ from 'lodash';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 
 const { Content } = Layout;
 
@@ -39,7 +40,10 @@ export interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  InjectedNotificationProps &
+  InjectedWorkspaceProps;
 
 class UserListPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IOrganisationService)
@@ -314,17 +318,30 @@ class UserListPage extends React.Component<Props, State> {
     });
   };
 
+  hasRightsToAccessRoles = () => {
+    const {
+      workspace: { role },
+    } = this.props;
+
+    if (role === 'COMMUNITY_ADMIN') return true;
+    else return false;
+  };
+
   getUsersOptions = () => {
-    return [
+    const userOptions = [
       {
         value: 'users',
         label: 'Users',
       },
-      {
+    ];
+
+    if (this.hasRightsToAccessRoles())
+      userOptions.push({
         value: 'user_roles',
         label: 'Roles',
-      },
-    ];
+      });
+
+    return userOptions;
   };
 
   handleChange = (value: UserDisplay) => {
@@ -476,4 +493,9 @@ class UserListPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(withRouter, injectIntl, injectNotifications)(UserListPage);
+export default compose<Props, {}>(
+  withRouter,
+  injectIntl,
+  injectNotifications,
+  injectWorkspace,
+)(UserListPage);
