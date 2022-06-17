@@ -146,8 +146,7 @@
   margin-right: 10px;
 }
 
-.mcs-contextualTargetingDashboard_contextualTargetingTab {
-  padding: 20px 60px;
+.mcs-contextualTargetingDashboard_contextualTargetingChartContainer {
   min-height: 500px;
   .mcs-contextualTargetingDashboard_noCtStep {
     text-align: center;
@@ -163,28 +162,66 @@
       margin-bottom: 25px;
     }
   }
-  .mcs-contextualTargetingDashboard_draftStep {
-    .mcs-contextualTargetingDashboard_graph {
-      text-align: center;
-      background-color: @border-color-base;
-      height: 300px;
-      line-height: 300px;
-    }
-  }
-  .mcs-contextualTargetingDashboard_settingsCard {
-    background-color: white;
+  .mcs-contextualTargetingDashboard_settingsCol {
+    position: relative;
     border-radius: @border-radius-base;
-    .mcs-contextualTargetingDashboard_settingsCardContainer {
-      padding: 15px;
-    }
-    .mcs-contextualTargetingDashboard_settingsCardButton {
-      background-color: @primary-color;
+    margin-left: 40px;
+    height: 100%;
+    .mcs-contextualTargetingDashboard_liveCard {
+      background-color: #00ab67;
       color: white;
-      padding: 10px;
-      text-align: center;
-      &:hover {
-        cursor: pointer;
+      .mcs-contextualTargetingDashboard_liveCard_title {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .mcs-contextualTargetingDashboard_liveCard_duration {
+        font-size: 23px;
+      }
+    }
+    .mcs-contextualTargetingDashboard_settingsCardContainer {
+      position: absolute;
+      bottom: 0px;
+      margin-bottom: 40px;
+      width: 100%;
+      .mcs-contextualTargetingDashboard_liveEditionCard {
+        background-color: #00ab67;
+        color: white;
+        margin-bottom: 0px;
+        .mcs-contextualTargetingDashboard_liveEditionCard_title {
+          font-size: 14px;
+          font-weight: 500;
+        }
+      }
+      .mcs-contextualTargetingDashboard_settingsCardContainer_stats {
+        background-color: white;
+        padding: 15px;
+        .mcs-contextualTargetingDashboard_settingsCardContainer_stats_volumeRatioValue {
+        }
+        .mcs-contextualTargetingDashboard_settingsCardContainer_stats_liftValue {
+          margin-left: 10px;
+          font-size: 11px;
+          font-style: italic;
+          color: grey;
+        }
+      }
+      .mcs-contextualTargetingDashboard_settingsCardButton {
+        background-color: @info-color;
+        border-radius: @border-radius-base;
+        color: white;
+        padding: 10px;
+        width: 100%;
+        text-align: center;
+        &:hover {
+          cursor: pointer;
+        }
+        &:disabled {
+          background-color: white;
+          color: grey;
+        }
       }
     }
   }
+}
+.mcs-contextualTargetingDashboard_contextualTargetingTableContainer {
+  width: 100%;
 }

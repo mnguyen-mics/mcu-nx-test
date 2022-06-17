@@ -5,6 +5,7 @@ export interface ContextualTargetingResource {
   segment_id: string;
   volume_ratio?: number;
   status: ContextualTargetingStatus;
+  live_activation_ts?: number;
   last_lift_computation_ts?: number;
   created_ts: number;
   created_by: string;

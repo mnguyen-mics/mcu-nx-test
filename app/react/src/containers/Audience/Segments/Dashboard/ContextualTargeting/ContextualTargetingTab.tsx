@@ -1,4 +1,5 @@
 import {
+  AreaChartSlider,
   Card,
   EmptyChart,
   LoadingChart,
@@ -8,9 +9,8 @@ import { messages } from './messages';
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Button, Col, Row, Slider, Statistic, Steps } from 'antd';
+import { Button, Col, Row, Statistic, Steps } from 'antd';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { fetchUrls } from './domain';
 import {
   ContextualTargetingResource,
   ContextualTargetingStatus,
@@ -21,13 +21,20 @@ import { TYPES } from '../../../../../constants/types';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';
+import Papa from 'papaparse';
+import { IDataFileService } from '@mediarithmics-private/advanced-components';
+import { RouteComponentProps, withRouter } from 'react-router';
 
-export interface UrlResource {
-  id: string;
-  url: string;
-  number_of_events: number;
-  number_of_user_points: number;
+export interface ContextualKeyResource {
+  contextual_key: string;
+  occurrences_in_segment_count: number;
   lift: number;
+}
+
+interface ChartDataResource extends DataPoint {
+  lift: number;
+  reach: number;
 }
 
 interface ContextualTargetingTabProps {
@@ -37,25 +44,34 @@ interface ContextualTargetingTabProps {
 
 const { Step } = Steps;
 
-type Props = ContextualTargetingTabProps & InjectedNotificationProps & InjectedIntlProps;
+const stepNumber = 100;
+
+type Props = ContextualTargetingTabProps &
+  InjectedNotificationProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 interface State {
   contextualTargeting?: ContextualTargetingResource;
   isLoading: boolean;
-  initialUrls: UrlResource[];
-  urls: UrlResource[];
-  isLoadingUrls: boolean;
-  totalUrls: number;
+  sortedContextualKeys?: ContextualKeyResource[];
+  chartData?: ChartDataResource[];
+  targetedContextualKeyResources?: ContextualKeyResource[];
+  isLoadingContextualKeys: boolean;
   sliderValue: number;
-  totalOfUserPointsInUrls: number;
+  totalPageViewVolume?: number;
+  targetedPageViewVolume?: number;
+  isLiveEditing: boolean;
 }
 
 class ContextualTargetingTab extends React.Component<Props, State> {
   @lazyInject(TYPES.IContextualTargetingService)
   private _contextualTargetingService: IContextualTargetingService;
+  @lazyInject(TYPES.IDataFileService)
+  private _dataFileService: IDataFileService;
 
   private refreshContextualTargetingInterval = setInterval(() => {
-    if (this.getContextualTargetingStatus() === 'INIT') {
+    if (this.state.contextualTargeting?.status === 'INIT') {
       this.getContextualTargeting();
     }
   }, 10000);
@@ -64,75 +80,170 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
-      isLoadingUrls: true,
-      initialUrls: [],
-      urls: [],
-      totalUrls: 0,
-      sliderValue: 3,
-      totalOfUserPointsInUrls: 0,
+      isLoadingContextualKeys: true,
+      sliderValue: 0,
+      isLiveEditing: false,
     };
   }
 
   componentDidMount() {
-    this.getContextualTargeting();
-    this.mockUrls();
+    this.getContextualTargeting().then(ct => {
+      if (ct && ct.status !== 'INIT') this.initLiftData();
+    });
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { contextualTargeting } = this.state;
+    if (
+      contextualTargeting !== prevState.contextualTargeting &&
+      prevState.contextualTargeting?.status === 'INIT' &&
+      contextualTargeting?.status === 'DRAFT'
+    )
+      this.initLiftData();
   }
 
   componentWillUnmount() {
     clearInterval(this.refreshContextualTargetingInterval);
   }
 
-  getContextualTargeting = () => {
+  getContextualTargeting = (): Promise<ContextualTargetingResource | undefined> => {
     const { segmentId } = this.props;
 
-    this._contextualTargetingService
+    return this._contextualTargetingService
       .getContextualTargetings(segmentId)
       .then(res => {
         this.setState({
           contextualTargeting: res.data[0],
           isLoading: false,
         });
+        return res.data[0];
       })
       .catch(err => {
         this.props.notifyError(err);
         this.setState({
           isLoading: false,
         });
+        return undefined;
       });
   };
 
-  mockUrls = () => {
+  initLiftData = () => {
+    const {
+      segmentId,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+    const { contextualTargeting } = this.state;
     this.setState({
-      isLoadingUrls: true,
+      isLoadingContextualKeys: true,
     });
-    return fetchUrls().then((res: UrlResource[]) => {
-      const urls = res.filter(u => u.lift > this.state.sliderValue);
+    return this._dataFileService
+      .getDatafileData(
+        `mics://data_file/tenants/${organisationId}/audience_segments/${segmentId}/contextual_targetings/${contextualTargeting?.id}/lift_computation.csv`,
+      )
+      .then((res: Blob) => {
+        res.text().then((resAsText: string) => {
+          const contextualKeys = this.parseCsv(resAsText).filter(
+            ck => ck.contextual_key && ck.lift && ck.occurrences_in_segment_count,
+          );
+          const sortedContextualKeys = contextualKeys.sort((cka, ckb) => ckb.lift - cka.lift);
+          const chartData = this.buildChartData(sortedContextualKeys);
+
+          const totalPageViewVolume = sortedContextualKeys.reduce((acc, ck) => {
+            if (ck.occurrences_in_segment_count) return acc + ck.occurrences_in_segment_count;
+            else return acc;
+          }, 0);
+
+          let sliderValue: number;
+          if (contextualTargeting) {
+            const val = chartData.find(
+              data =>
+                contextualTargeting.volume_ratio &&
+                data.reach > (contextualTargeting.volume_ratio * totalPageViewVolume) / 1000000,
+            );
+            val ? (sliderValue = val.lift) : (sliderValue = chartData[19].lift);
+          } else sliderValue = chartData[19].lift;
+
+          const targetedContextualKeys = sortedContextualKeys.filter(ck => ck.lift >= sliderValue);
+
+          const targetedPageViewVolume = targetedContextualKeys.reduce((acc, ck) => {
+            return acc + ck.occurrences_in_segment_count;
+          }, 0);
+          this.setState({
+            sortedContextualKeys: sortedContextualKeys,
+            chartData: chartData,
+            sliderValue: sliderValue,
+            targetedContextualKeyResources: targetedContextualKeys,
+            isLoadingContextualKeys: false,
+            totalPageViewVolume: totalPageViewVolume,
+            targetedPageViewVolume: targetedPageViewVolume,
+          });
+        });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          isLoadingContextualKeys: false,
+        });
+      });
+  };
+
+  parseCsv = (csvText: string): ContextualKeyResource[] => {
+    return Papa.parse(csvText, {
+      header: true,
+      dynamicTyping: true,
+    }).data as ContextualKeyResource[];
+  };
+
+  buildChartData = (sortedContextualKeys: ContextualKeyResource[]) => {
+    const chartData = [];
+    const liftMax = sortedContextualKeys[0].lift;
+    const liftMin = sortedContextualKeys[sortedContextualKeys.length - 1].lift;
+    const liftStep = (liftMax - liftMin) / stepNumber;
+    let cumulativeReach = 0;
+    for (let i = 0; i < stepNumber; i++) {
+      cumulativeReach += sortedContextualKeys
+        .filter(ck => ck.lift > liftMax - liftStep * (i + 1) && ck.lift <= liftMax - liftStep * i)
+        .reduce((acc, ck) => acc + ck.occurrences_in_segment_count, 0);
+      chartData[i] = { lift: liftMax - liftStep * (i + 1), reach: cumulativeReach / 1000000 };
+    }
+    return chartData;
+  };
+
+  onPublishContextualTargeting = () => {
+    const { segmentId } = this.props;
+    const { contextualTargeting } = this.state;
+    this._contextualTargetingService
+      .publishContextualTargeting(segmentId, contextualTargeting!.id, this.getTargetedVolumeRatio())
+      .then(res =>
+        this.setState({
+          contextualTargeting: res.data,
+          isLiveEditing: false,
+        }),
+      )
+      .catch(err => {
+        this.props.notifyError(err);
+      });
+  };
+
+  onSliderChange = (point: DataPoint) => {
+    if (point) {
+      const contextualKeys = this.state.sortedContextualKeys?.filter(url => url.lift >= point.lift);
+      const targetedPageViewVolume = contextualKeys?.reduce((acc, ck) => {
+        return acc + ck.occurrences_in_segment_count;
+      }, 0);
+
       this.setState({
-        initialUrls: urls,
-        urls: urls,
-        totalUrls: urls.length,
-        isLoadingUrls: false,
-        totalOfUserPointsInUrls: urls.reduce((acc, v) => {
-          return acc + v.number_of_user_points;
-        }, 0),
+        sliderValue: point.lift,
+        targetedContextualKeyResources: contextualKeys,
+        targetedPageViewVolume: targetedPageViewVolume,
       });
-    });
+    }
   };
 
-  onPublishSiteTag = () => {
-    //
-  };
-
-  onSliderChange = (value: number) => {
-    const urls = this.state.initialUrls.filter(url => url.lift > value);
-    this.setState({
-      sliderValue: value,
-      urls: urls,
-      totalUrls: urls.length,
-      totalOfUserPointsInUrls: urls.reduce((acc, v) => {
-        return acc + v.number_of_user_points;
-      }, 0),
-    });
+  tipFormater = (selected: DataPoint, index?: number) => {
+    return <div>{Math.round(this.getTargetedVolumeRatio() * 100) + '% of total events'}</div>;
   };
 
   onClick = () => {
@@ -163,12 +274,8 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       });
   };
 
-  getContextualTargetingStatus = () => {
-    const { contextualTargeting } = this.state;
-    return contextualTargeting ? contextualTargeting.status : undefined;
-  };
-
   getStepIndex = (status?: ContextualTargetingStatus) => {
+    const { isLiveEditing } = this.state;
     switch (status) {
       case undefined:
         return -1;
@@ -179,13 +286,14 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       case 'PUBLISHED':
         return 2;
       case 'LIVE':
-        return 2;
+        if (isLiveEditing) return 1;
+        else return 2;
       case 'LIVE_PUBLISHED':
         return 2;
     }
   };
 
-  renderNoCtStepTab = () => {
+  renderNoCtStep = () => {
     const { intl } = this.props;
     return (
       <div className='mcs-contextualTargetingDashboard_noCtStep'>
@@ -200,7 +308,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     );
   };
 
-  renderInitializationStepTab = () => {
+  renderInitializationStep = () => {
     const { intl } = this.props;
     return (
       <div className='mcs-contextualTargetingDashboard_initializationStep'>
@@ -213,20 +321,71 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     );
   };
 
-  renderDraftStepTab = () => {
+  renderDraftStepChart = () => {
+    const {
+      chartData,
+      targetedContextualKeyResources,
+      sliderValue,
+      contextualTargeting,
+      isLiveEditing,
+    } = this.state;
+
+    const sliderIndex = chartData?.findIndex(data => sliderValue > data.lift);
+
+    return chartData && targetedContextualKeyResources && sliderIndex ? (
+      <Card className='mcs-contextualTargetingDashboard_graph'>
+        <AreaChartSlider
+          data={chartData}
+          initialValue={sliderIndex}
+          xAxis={{
+            key: 'lift',
+            labelFormat: '{value}',
+            title: 'Lift',
+            subtitle: 'Users in this segment consult this content x times more than other people',
+            reversed: true,
+          }}
+          yAxis={{
+            key: 'reach',
+            labelFormat: '{value}M',
+            title: 'Reach',
+            subtitle: '# Page views in the last 30 days',
+          }}
+          color={'#00a1df'}
+          onChange={this.onSliderChange}
+          tipFormatter={this.tipFormater}
+          disabled={
+            (contextualTargeting?.status === 'LIVE' && !isLiveEditing) ||
+            contextualTargeting?.status === 'LIVE_PUBLISHED' ||
+            contextualTargeting?.status === 'PUBLISHED'
+          }
+        />
+      </Card>
+    ) : (
+      <LoadingChart />
+    );
+  };
+
+  renderStepChartComponant = () => {
+    const { contextualTargeting } = this.state;
+
+    if (!contextualTargeting) {
+      return this.renderNoCtStep();
+    } else if (contextualTargeting.status === 'INIT') {
+      return this.renderInitializationStep();
+    } else {
+      return this.renderDraftStepChart();
+    }
+  };
+
+  renderStepTableComponant = () => {
     const { intl } = this.props;
-    const { urls, isLoadingUrls, sliderValue } = this.state;
-    const marks = {
-      0: 0,
-      2: 2,
-      4: 4,
-      6: 6,
-      8: 8,
-    };
-    const dataColumnsDefinition: Array<DataColumnDefinition<UrlResource>> = [
+    const { isLoadingContextualKeys, targetedContextualKeyResources, contextualTargeting } =
+      this.state;
+
+    const dataColumnsDefinition: Array<DataColumnDefinition<ContextualKeyResource>> = [
       {
-        title: intl.formatMessage(messages.url),
-        key: 'url',
+        title: intl.formatMessage(messages.content),
+        key: 'contextual_key',
         isVisibleByDefault: true,
         isHideable: false,
       },
@@ -238,94 +397,177 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       },
       {
         title: intl.formatMessage(messages.numberOfEvents),
-        key: 'number_of_events',
+        key: 'occurrences_in_segment_count',
         isVisibleByDefault: true,
         isHideable: false,
       },
     ];
 
-    return (
-      <div className='mcs-contextualTargetingDashboard_draftStep'>
-        <div className='mcs-contextualTargetingDashboard_graph'>graph</div>
-        <Slider
-          marks={marks}
-          defaultValue={3}
-          max={9}
-          value={sliderValue}
-          onChange={this.onSliderChange}
+    return contextualTargeting?.status !== 'INIT' && targetedContextualKeyResources ? (
+      <Card
+        title={intl.formatMessage(messages.targetedUrls)}
+        className='mcs-contextualTargetingDashboard_contextualTargetingTableContainer'
+      >
+        <TableViewFilters
+          dataSource={targetedContextualKeyResources}
+          loading={isLoadingContextualKeys}
+          columns={dataColumnsDefinition}
         />
-        <Card title={intl.formatMessage(messages.targetedUrls)}>
-          <TableViewFilters
-            dataSource={urls}
-            loading={isLoadingUrls}
-            columns={dataColumnsDefinition}
-          />
+      </Card>
+    ) : (
+      <div />
+    );
+  };
+
+  getTargetedVolumeRatio = () => {
+    const { targetedPageViewVolume, totalPageViewVolume } = this.state;
+    return targetedPageViewVolume && totalPageViewVolume
+      ? targetedPageViewVolume / totalPageViewVolume
+      : 0;
+  };
+
+  renderTargetedVolumeRatio = () => {
+    const { sliderValue } = this.state;
+    return (
+      <div>
+        <span className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_volumeRatioValue'>
+          {Math.round(this.getTargetedVolumeRatio() * 100) + '%'}
+        </span>
+        <span className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_liftValue'>
+          {`(Lift = ${sliderValue.toFixed(1)})`}
+        </span>
+      </div>
+    );
+  };
+
+  liveEditionMode = () => {
+    this.setState({
+      isLiveEditing: true,
+    });
+  };
+
+  renderStepStatsCard = () => {
+    const {
+      contextualTargeting,
+      sortedContextualKeys,
+      targetedPageViewVolume,
+      targetedContextualKeyResources,
+      isLiveEditing,
+    } = this.state;
+    const { intl } = this.props;
+
+    const liveDuration =
+      contextualTargeting &&
+      contextualTargeting.live_activation_ts &&
+      new Date(Date.now() - contextualTargeting.live_activation_ts).getDay();
+
+    const liveCard =
+      contextualTargeting?.status === 'LIVE' &&
+      contextualTargeting?.live_activation_ts &&
+      !isLiveEditing ? (
+        <Card className='mcs-contextualTargetingDashboard_liveCard'>
+          <div className='mcs-contextualTargetingDashboard_liveCard_title'>LIVE</div>
+          <div className='mcs-contextualTargetingDashboard_liveCard_duration'>
+            {liveDuration + ' days ago'}
+          </div>
         </Card>
+      ) : (
+        <div />
+      );
+
+    const stepIndex = this.getStepIndex(contextualTargeting?.status);
+
+    const steps = (contextualTargeting?.status !== 'LIVE' ||
+      (contextualTargeting?.status === 'LIVE' && isLiveEditing)) && (
+      <Steps direction='vertical' current={stepIndex}>
+        <Step
+          title={intl.formatMessage(messages.stepOneTitle)}
+          description={intl.formatMessage(messages.stepOneDescription)}
+        />
+        <Step
+          title={intl.formatMessage(messages.stepTwoTitle)}
+          description={intl.formatMessage(messages.stepTwoDescription)}
+        />
+        <Step
+          title={intl.formatMessage(messages.stepThreeTitle)}
+          description={intl.formatMessage(messages.stepThreeDescription)}
+        />
+      </Steps>
+    );
+    const isButtonDisable =
+      contextualTargeting &&
+      (contextualTargeting.status === 'PUBLISHED' ||
+        contextualTargeting.status === 'LIVE_PUBLISHED');
+
+    const stats = stepIndex >= 1 && sortedContextualKeys && (
+      <div className='mcs-contextualTargetingDashboard_settingsCardContainer'>
+        {contextualTargeting &&
+          ((contextualTargeting.status === 'LIVE' && isLiveEditing) ||
+            contextualTargeting.status === 'LIVE_PUBLISHED') && (
+            <Card className='mcs-contextualTargetingDashboard_liveEditionCard'>
+              <div className='mcs-contextualTargetingDashboard_liveEditionCard_title'>LIVE</div>
+            </Card>
+          )}
+        <div className='mcs-contextualTargetingDashboard_settingsCardContainer_stats'>
+          <Statistic
+            title={intl.formatMessage(messages.targetedRatio)}
+            valueRender={this.renderTargetedVolumeRatio}
+          />
+          <Statistic
+            title={intl.formatMessage(messages.numberOfTargetedContent)}
+            value={targetedContextualKeyResources ? targetedContextualKeyResources.length : 0}
+          />
+          <Statistic
+            title={intl.formatMessage(messages.targetedVolume)}
+            value={targetedPageViewVolume}
+          />
+        </div>
+
+        <Button
+          className='mcs-contextualTargetingDashboard_settingsCardButton'
+          onClick={
+            contextualTargeting?.status === 'DRAFT' ||
+            (contextualTargeting?.status === 'LIVE' && isLiveEditing)
+              ? this.onPublishContextualTargeting
+              : this.liveEditionMode
+          }
+          disabled={isButtonDisable}
+        >
+          {isButtonDisable
+            ? intl.formatMessage(messages.settingsCardButtonInProgress)
+            : contextualTargeting?.status === 'DRAFT' ||
+              (contextualTargeting?.status === 'LIVE' && isLiveEditing)
+            ? intl.formatMessage(messages.settingsCardButtonActivation)
+            : intl.formatMessage(messages.settingsCardButtonEdition)}
+        </Button>
+      </div>
+    );
+
+    return (
+      <div className='mcs-contextualTargetingDashboard_settingsCol'>
+        {liveCard}
+        {steps}
+        {stats}
       </div>
     );
   };
 
   render() {
-    const { intl } = this.props;
-    const { sliderValue, totalUrls, totalOfUserPointsInUrls, isLoading } = this.state;
+    const { isLoading } = this.state;
+    const stepChartComponant = this.renderStepChartComponant();
+    const stepStatsCard = this.renderStepStatsCard();
+    const stepTableComponant = this.renderStepTableComponant();
 
-    const contextualTargetingStatus = this.getContextualTargetingStatus();
-    const stepIndex = this.getStepIndex(contextualTargetingStatus);
-
-    let stepTabComp;
-
-    if (isLoading) {
-      stepTabComp = <LoadingChart />;
-    } else if (!contextualTargetingStatus) {
-      stepTabComp = this.renderNoCtStepTab();
-    } else if (contextualTargetingStatus === 'INIT') {
-      stepTabComp = this.renderInitializationStepTab();
-    } else {
-      stepTabComp = this.renderDraftStepTab();
-    }
-
-    return (
-      <Row className='mcs-contextualTargetingDashboard_contextualTargetingTab'>
-        <Col span={19}>{stepTabComp}</Col>
-        <Col span={5}>
-          <Steps direction='vertical' current={this.getStepIndex(contextualTargetingStatus)}>
-            <Step
-              title={intl.formatMessage(messages.stepOneTitle)}
-              description={intl.formatMessage(messages.stepOneDescription)}
-            />
-            <Step
-              title={intl.formatMessage(messages.stepTwoTitle)}
-              description={intl.formatMessage(messages.stepTwoDescription)}
-            />
-            <Step
-              title={intl.formatMessage(messages.stepThreeTitle)}
-              description={intl.formatMessage(messages.stepThreeDescription)}
-            />
-          </Steps>
-          {stepIndex >= 1 && (
-            <div className='mcs-contextualTargetingDashboard_settingsCard'>
-              <div className='mcs-contextualTargetingDashboard_settingsCardContainer'>
-                <Statistic title={intl.formatMessage(messages.selectedLift)} value={sliderValue} />
-                <Statistic
-                  title={intl.formatMessage(messages.numberOfTargetedUrls)}
-                  value={totalUrls}
-                />
-                <Statistic
-                  title={intl.formatMessage(messages.numberOfVisitors)}
-                  value={totalOfUserPointsInUrls}
-                />
-              </div>
-
-              <div
-                className='mcs-contextualTargetingDashboard_settingsCardButton'
-                onClick={this.onPublishSiteTag}
-              >
-                {intl.formatMessage(messages.settingsCardButton)}
-              </div>
-            </div>
-          )}
-        </Col>
-      </Row>
+    return isLoading ? (
+      <LoadingChart />
+    ) : (
+      <React.Fragment>
+        <Row className='mcs-contextualTargetingDashboard_contextualTargetingChartContainer'>
+          <Col span={19}>{stepChartComponant}</Col>
+          <Col span={5}>{stepStatsCard}</Col>
+        </Row>
+        <Row>{stepTableComponant}</Row>
+      </React.Fragment>
     );
   }
 }
@@ -333,4 +575,5 @@ class ContextualTargetingTab extends React.Component<Props, State> {
 export default compose<Props, ContextualTargetingTabProps>(
   injectIntl,
   injectNotifications,
+  withRouter,
 )(ContextualTargetingTab);

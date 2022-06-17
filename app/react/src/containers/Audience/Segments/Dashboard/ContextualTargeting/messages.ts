@@ -15,7 +15,7 @@ export const messages = defineMessages({
   },
   InitializationTabSubText: {
     id: 'audience.segment.dashboard.contextualTargeting.InitializationTabSubText',
-    defaultMessage: 'We will let you know when this is done',
+    defaultMessage: 'We will refresh this page when this is done',
   },
   stepOneTitle: {
     id: 'audience.segment.dashboard.contextualTargeting.stepOneTitle',
@@ -49,9 +49,9 @@ export const messages = defineMessages({
     id: 'audience.segment.dashboard.contextualTargeting.id',
     defaultMessage: 'Id',
   },
-  url: {
-    id: 'audience.segment.dashboard.contextualTargeting.url',
-    defaultMessage: 'URL',
+  content: {
+    id: 'audience.segment.dashboard.contextualTargeting.content',
+    defaultMessage: 'Content',
   },
   lift: {
     id: 'audience.segment.dashboard.contextualTargeting.lift',
@@ -59,26 +59,34 @@ export const messages = defineMessages({
   },
   numberOfEvents: {
     id: 'audience.segment.dashboard.contextualTargeting.numberOfEvents',
-    defaultMessage: 'Number of events',
+    defaultMessage: 'Number of page views',
   },
   targetedUrls: {
     id: 'audience.segment.dashboard.contextualTargeting.targetedUrls',
     defaultMessage: 'Targeted URLs',
   },
-  selectedLift: {
-    id: 'audience.segment.dashboard.contextualTargeting.selectedLift',
-    defaultMessage: 'Selected Lift',
+  targetedRatio: {
+    id: 'audience.segment.dashboard.contextualTargeting.targetedRatio',
+    defaultMessage: 'Targeted page views ratio',
   },
-  numberOfTargetedUrls: {
-    id: 'audience.segment.dashboard.contextualTargeting.numberOfTargetedUrls',
-    defaultMessage: '# Targeted URLs',
+  numberOfTargetedContent: {
+    id: 'audience.segment.dashboard.contextualTargeting.numberOfTargetedContent',
+    defaultMessage: '# Targeted Content',
   },
-  numberOfVisitors: {
-    id: 'audience.segment.dashboard.contextualTargeting.numberOfVisitors',
-    defaultMessage: '# Visitors on those URLs (last 30 days)',
+  targetedVolume: {
+    id: 'audience.segment.dashboard.contextualTargeting.targetedVolume',
+    defaultMessage: '# Page views on this content (last 30 days)',
   },
-  settingsCardButton: {
-    id: 'audience.segment.dashboard.contextualTargeting.settingsCardButton',
-    defaultMessage: 'Publish site tag with these settings',
+  settingsCardButtonActivation: {
+    id: 'audience.segment.dashboard.contextualTargeting.settingsCardButtonActivation',
+    defaultMessage: 'Activate theses settings',
+  },
+  settingsCardButtonEdition: {
+    id: 'audience.segment.dashboard.contextualTargeting.settingsCardButtonEdition',
+    defaultMessage: 'Edit theses settings',
+  },
+  settingsCardButtonInProgress: {
+    id: 'audience.segment.dashboard.contextualTargeting.settingsCardButtonInProgress',
+    defaultMessage: 'Activation in progress',
   },
 });
