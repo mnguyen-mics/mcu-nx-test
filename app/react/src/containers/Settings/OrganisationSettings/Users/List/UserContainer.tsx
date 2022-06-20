@@ -280,6 +280,10 @@ class UserContainer extends React.Component<Props, State> {
     } else return;
   }
 
+  generateEnding = (nb: number): string => {
+    return nb <= 1 ? '' : 's';
+  };
+
   buildHeader(
     organisationName: string,
     orgUsersNb: number,
@@ -288,10 +292,13 @@ class UserContainer extends React.Component<Props, State> {
     const { userDisplay } = this.props;
     const renderHeaderText = () => {
       if (userDisplay === 'users') {
-        return ` (${orgUsersNb} users)`;
+        return ` (${orgUsersNb} user${this.generateEnding(orgUsersNb)})`;
       } else {
-        const inheritedText = inheritedUsersNb !== 0 ? `, ${inheritedUsersNb} roles inherited` : '';
-        return ` (${orgUsersNb} roles defined${inheritedText})`;
+        const inheritedText =
+          inheritedUsersNb !== 0
+            ? `, ${inheritedUsersNb} role${this.generateEnding(inheritedUsersNb)} inherited`
+            : '';
+        return ` (${orgUsersNb} role${this.generateEnding(orgUsersNb)} defined${inheritedText})`;
       }
     };
     return (

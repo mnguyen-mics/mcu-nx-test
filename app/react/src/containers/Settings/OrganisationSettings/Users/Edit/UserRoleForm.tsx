@@ -30,8 +30,14 @@ interface State {
     id?: string;
     isCommunity?: boolean;
   };
+  prevOrgInput: {
+    value?: string;
+    id?: string;
+    isCommunity?: boolean;
+  };
   roleInput: string;
   userOrganisation?: OrganisationResource;
+  submittedWithoutOrg: boolean;
 }
 
 interface MapStateToProps {
@@ -66,7 +72,9 @@ class UserRoleForm extends React.Component<Props, State> {
     this.state = {
       userInput: {},
       orgInput: {},
+      prevOrgInput: {},
       roleInput: 'READER',
+      submittedWithoutOrg: false,
     };
   }
   componentDidMount() {
@@ -122,7 +130,7 @@ class UserRoleForm extends React.Component<Props, State> {
 
   save = () => {
     const { intl } = this.props;
-    const { user, userInput, orgInput, roleInput } = this.state;
+    const { user, userInput, orgInput, roleInput, submittedWithoutOrg } = this.state;
     // edition
     if (user) {
       const userId = userInput?.id || user.id;
@@ -135,6 +143,15 @@ class UserRoleForm extends React.Component<Props, State> {
       this.props.save(userInput.id, orgInput.id, roleInput);
     } else {
       message.error(intl.formatMessage(messages.selectAvailableValue), 3);
+      if (orgInput.id === undefined) {
+        this.setState({
+          submittedWithoutOrg: true,
+        });
+      } else if (submittedWithoutOrg) {
+        this.setState({
+          submittedWithoutOrg: false,
+        });
+      }
     }
   };
 
@@ -177,9 +194,30 @@ class UserRoleForm extends React.Component<Props, State> {
     ) : null;
   };
 
+  // Here we control the organisation field change after selection.
+  // If user modified the name of selected org, we consider the org is not selected
+  // If user removed his modifications, we return the previously selected organisation
+  onOrgChange = (value: string) => {
+    const { orgInput, prevOrgInput } = this.state;
+    if (orgInput.value) {
+      if (orgInput.value !== value) {
+        this.setState({
+          orgInput: {},
+          prevOrgInput: orgInput,
+        });
+      }
+    } else if (prevOrgInput.value && prevOrgInput.value === value) {
+      this.setState({
+        orgInput: prevOrgInput,
+        prevOrgInput: {},
+        submittedWithoutOrg: false,
+      });
+    }
+  };
+
   render() {
     const { intl } = this.props;
-    const { user, userInput, orgInput, roleInput } = this.state;
+    const { user, userInput, orgInput, roleInput, submittedWithoutOrg } = this.state;
 
     const filterOption =
       (hasValue: boolean) => (inputValue: string, option: { label: string; value: string }) => {
@@ -208,9 +246,14 @@ class UserRoleForm extends React.Component<Props, State> {
         </Form.Item>
         <Form.Item label={intl.formatMessage(messages.organisation)}>
           <AutoComplete
-            className='mcs-userForm_select'
+            className={
+              submittedWithoutOrg
+                ? 'mcs-userForm_select mcs-userForm_selectWrong'
+                : 'mcs-userForm_select'
+            }
             options={this.getOrganisations()}
             onSelect={this.onOrgSelect}
+            onChange={this.onOrgChange}
             filterOption={filterOption(false)}
             disabled={!!user?.id}
             placeholder={intl.formatMessage(messages.selectOrganisation)}

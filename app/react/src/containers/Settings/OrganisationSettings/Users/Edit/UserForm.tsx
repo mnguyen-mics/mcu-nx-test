@@ -16,6 +16,11 @@ interface State {
     value?: string;
     id?: string;
   };
+  prevOrgInput: {
+    value?: string;
+    id?: string;
+  };
+  submittedWithoutOrg: boolean;
 }
 
 interface MapStateToProps {
@@ -43,6 +48,8 @@ class UserForm extends React.Component<Props, State> {
         organisation_id: '',
       },
       orgInput: {},
+      prevOrgInput: {},
+      submittedWithoutOrg: false,
     };
   }
   componentDidMount() {
@@ -83,7 +90,7 @@ class UserForm extends React.Component<Props, State> {
 
   save = () => {
     const { intl } = this.props;
-    const { user, orgInput } = this.state;
+    const { user, orgInput, submittedWithoutOrg } = this.state;
     if (user.first_name && user.last_name && user.email && orgInput.id) {
       const userResource: Partial<UserResource> = {
         ...user,
@@ -92,6 +99,15 @@ class UserForm extends React.Component<Props, State> {
       this.props.save(userResource);
     } else {
       message.error(intl.formatMessage(messages.formNotComplete), 3);
+      if (orgInput.id === undefined) {
+        this.setState({
+          submittedWithoutOrg: true,
+        });
+      } else if (submittedWithoutOrg) {
+        this.setState({
+          submittedWithoutOrg: false,
+        });
+      }
     }
   };
 
@@ -101,15 +117,38 @@ class UserForm extends React.Component<Props, State> {
         value: value,
         id: optionData.key,
       },
+      submittedWithoutOrg: false,
     });
+  };
+
+  // Here we control the organisation field change after selection.
+  // If user modified the name of selected org, we consider the org is not selected
+  // If user removed his modifications, we return the previously selected organisation
+  onOrgChange = (value: string) => {
+    const { orgInput, prevOrgInput } = this.state;
+    if (orgInput.value) {
+      if (orgInput.value !== value) {
+        this.setState({
+          orgInput: {},
+          prevOrgInput: orgInput,
+        });
+      }
+    } else if (prevOrgInput.value && prevOrgInput.value === value) {
+      this.setState({
+        orgInput: prevOrgInput,
+        prevOrgInput: {},
+        submittedWithoutOrg: false,
+      });
+    }
   };
 
   render() {
     const { intl } = this.props;
-    const { user, orgInput } = this.state;
+    const { user, orgInput, submittedWithoutOrg } = this.state;
     const filterOption = (inputValue: string, option: { label: string; value: string }) => {
       return option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1;
     };
+
     return (
       <Form layout='vertical'>
         <FormSection
@@ -154,10 +193,15 @@ class UserForm extends React.Component<Props, State> {
           className='mcs-userForm_section'
         />
         <AutoComplete
-          className='mcs-userForm_select'
+          className={
+            submittedWithoutOrg
+              ? 'mcs-userForm_select mcs-userForm_selectWrong'
+              : 'mcs-userForm_select'
+          }
           options={this.getOrganisations()}
           searchValue={this.getOrganisations().find(o => o.key === user?.organisation_id)?.label}
           onSelect={this.onOrgSelect}
+          onChange={this.onOrgChange}
           filterOption={filterOption}
           placeholder={intl.formatMessage(messages.selectOrganisation)}
         >
