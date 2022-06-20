@@ -619,6 +619,60 @@ export const dataFileContent = [
   { key: 'Dimension 3', value: 300 },
 ];
 
+export const dataFileContentSegmentIdToken = (segmentId: string) => {
+  return {
+    [segmentId]: [
+      { key: 'Dimension 1', value: 100 },
+      { key: 'Dimension 2', value: 200 },
+      { key: 'Dimension 3', value: 300 },
+    ],
+  };
+};
+
+export const dataFileSourceContentSegmentIdToken = (organisationId: string, segmentId: string) => {
+  return {
+    sections: [
+      {
+        title: 'First Section',
+        cards: [
+          {
+            x: 0,
+            y: 0,
+            w: 12,
+            h: 3,
+            layout: 'horizontal',
+            charts: [
+              {
+                title: 'Pie',
+                type: 'pie',
+                dataset: {
+                  type: 'data_file',
+                  uri: `mics://data_file/tenants/${organisationId}/dashboard-${segmentId}-1.json`,
+                  JSON_path: `$.${segmentId}`,
+                },
+                options: {
+                  legend: {
+                    enabled: true,
+                    position: 'right',
+                  },
+                  xKey: 'key',
+                  format: 'count',
+                  yKeys: [
+                    {
+                      key: 'value',
+                      message: 'count',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+};
+
 export const dataFileSourceContent = (organisationId: string) => {
   return {
     sections: [

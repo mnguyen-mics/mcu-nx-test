@@ -1,6 +1,6 @@
-import Page from './../Page';
+import Page from './Page';
 
-class SettingsMenu extends Page {
+class LeftMenu extends Page {
   get settingsMainMenuContainer() {
     return cy.get('.mcs-settingsMainMenu_container');
   }
@@ -84,6 +84,15 @@ class SettingsMenu extends Page {
   clickDataStudioMenu() {
     cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
   }
+
+  goToSegmentsPage() {
+    cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
+  }
+
+  goToHomePage = () => {
+    cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.home').click();
+  };
 }
 
-export default new SettingsMenu();
+export default new LeftMenu();

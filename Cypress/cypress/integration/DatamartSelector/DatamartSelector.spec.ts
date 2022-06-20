@@ -1,5 +1,5 @@
 import faker from 'faker';
-import LeftMenu from '../components/LeftMenu';
+import LeftMenu from '../../pageobjects/LeftMenu';
 
 describe('Should test the datamart selector', () => {
   const datamartName = faker.random.word();

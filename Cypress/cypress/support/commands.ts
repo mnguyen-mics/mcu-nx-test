@@ -70,11 +70,11 @@ Cypress.Commands.add('executeQuery', (accessToken, datamartId, queryText) => {
   });
 });
 
-Cypress.Commands.add('putDataFile', (accessToken, organisationId, fileContent) => {
+Cypress.Commands.add('putDataFile', (accessToken, organisationId, fileContent, route) => {
   return cy.request({
     url: `${Cypress.env(
       'apiDomain',
-    )}/v1/data_file/data?uri=mics://data_file/tenants/${organisationId}/dashboard-1.json`,
+    )}/v1/data_file/data?uri=mics://data_file/tenants/${organisationId}/${route}`,
     method: 'PUT',
     headers: { Authorization: accessToken, 'Content-Type': 'multipart/form-data' },
     encoding: 'utf-8',
