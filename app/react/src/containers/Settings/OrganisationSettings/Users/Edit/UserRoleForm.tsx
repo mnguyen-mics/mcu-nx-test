@@ -225,6 +225,8 @@ class UserRoleForm extends React.Component<Props, State> {
         return option[property].toUpperCase().indexOf(inputValue.toUpperCase()) !== -1;
       };
 
+    const roleOrgId = user && user.role ? user.role.organisation_id : '';
+
     return (
       <Form layout='vertical'>
         <Form.Item label={intl.formatMessage(messages.user)}>
@@ -252,13 +254,14 @@ class UserRoleForm extends React.Component<Props, State> {
                 : 'mcs-userForm_select'
             }
             options={this.getOrganisations()}
+            searchValue={this.getOrganisations().find(o => o.key === user?.organisation_id)?.label}
             onSelect={this.onOrgSelect}
             onChange={this.onOrgChange}
             filterOption={filterOption(false)}
             disabled={!!user?.id}
             placeholder={intl.formatMessage(messages.selectOrganisation)}
           >
-            <Input.Search value={orgInput.value} />
+            <Input.Search value={orgInput.value || roleOrgId} />
           </AutoComplete>
         </Form.Item>
         <Form.Item label={intl.formatMessage(messages.role)}>
