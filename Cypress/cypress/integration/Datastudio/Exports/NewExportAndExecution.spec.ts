@@ -23,7 +23,7 @@ describe('Check DataStudio Export Page', () => {
 
   it('Create an export', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      const exportName = `Test Export Activities`;
+      const exportName = `Test Export Activities ${Math.random().toString(36).substring(2, 10)}`;
 
       // Go to data Studio menu
       cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
@@ -56,6 +56,7 @@ describe('Check DataStudio Export Page', () => {
 
       // Type enter on text field
       cy.get('.mcs-search-input').type('{enter}');
+      cy.wait(100);
 
       // Click on the link of the export created
       cy.get('.mcs-campaigns-link').click();
