@@ -249,6 +249,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                       : q,
                   ),
                   chartItem: tab.chartItem,
+                  error: null,
                 };
               } else return tab;
             }),
