@@ -145,7 +145,7 @@ class Monitoring extends React.Component<Props, State> {
             organisationId,
             selectedDatamart,
             identifierType,
-            identifierId,
+            decodeURIComponent(identifierId),
             queryString.parse(search).compartmentId as string,
           )
           .then(monitoringData => {
