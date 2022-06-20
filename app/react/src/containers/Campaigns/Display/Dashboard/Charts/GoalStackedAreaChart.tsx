@@ -141,7 +141,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     return attributionId;
   };
 
-  componentWillUpdate(nextProps: JoinedProps, nextState: GoalStackedAreaChartState) {
+  UNSAFE_componentWillUpdate(nextProps: JoinedProps, nextState: GoalStackedAreaChartState) {
     const {
       goal: nextGoal,
       location: { search: nextSearch, pathname: nextPathname },

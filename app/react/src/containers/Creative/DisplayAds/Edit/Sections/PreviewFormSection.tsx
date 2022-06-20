@@ -6,7 +6,7 @@ import { getFormInitialValues } from 'redux-form';
 import { compose } from 'recompose';
 import { Spin } from 'antd';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
-const Dimensions = require('react-dimensions');
+import Dimensions from 'react-dimensions';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;

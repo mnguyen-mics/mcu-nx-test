@@ -34,18 +34,10 @@ module.exports = merge(common, {
     rules: [
       {
         test: /\.tsx?$/,
-        include: paths.reactAppSrc,
-        use: [
-          {
-            loader: 'babel-loader',
-          },
-          {
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true,
-            },
-          },
-        ],
+        exclude: /node_modules/,
+        use: {
+          loader: 'swc-loader',
+        },
       },
     ],
   },

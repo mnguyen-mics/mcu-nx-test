@@ -306,9 +306,8 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
   fetchGeonames = (value: string = '') => {
     const { hiddenGeonameIds } = this.props;
     const { country } = this.state;
-    let countryCode;
     const foundCountry = allCountries.find(c => c.name === country);
-    countryCode = foundCountry ? foundCountry.code : 'FR';
+    const countryCode = foundCountry ? foundCountry.code : 'FR';
 
     this.setState({ fetchingGeonames: true });
     this._geonameService

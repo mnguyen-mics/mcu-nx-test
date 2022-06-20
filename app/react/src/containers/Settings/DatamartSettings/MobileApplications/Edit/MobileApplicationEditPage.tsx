@@ -425,18 +425,12 @@ class EditMobileAppPage extends React.Component<Props, State> {
 
     const generateSavingPromise = (): Promise<any> => {
       if (mobileApplicationFormData.mobileapplication.id) {
-        const type: 'MOBILE_APPLICATION' = 'MOBILE_APPLICATION';
-        const mbApp = {
-          ...mobileApplicationFormData.mobileapplication,
-          type: type,
-        };
         // TODO: use ChannelService.updateChannel when available
         return this._channelService
-          .updateMobileApplication(
-            datamartId,
-            mobileApplicationFormData.mobileapplication.id,
-            mbApp,
-          )
+          .updateMobileApplication(datamartId, mobileApplicationFormData.mobileapplication.id, {
+            ...mobileApplicationFormData.mobileapplication,
+            type: 'MOBILE_APPLICATION',
+          })
           .then(channel => {
             Promise.all(generateAllPromises(channel.data));
           });

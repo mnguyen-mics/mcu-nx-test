@@ -1,4 +1,3 @@
-/* eslint-disable no-before-define */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */

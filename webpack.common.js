@@ -1,9 +1,9 @@
 const webpack = require('webpack');
 const path = require('path');
-const pkg = require('./package.json');
 const paths = require('./paths');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VersionPlugin = require('./VersionPlugin.js');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -14,31 +14,11 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
-        include: paths.reactAppSrc,
-        use: {
-          loader: 'eslint-loader',
-          options: {
-            failOnError: true,
-          },
-        },
-        enforce: 'pre',
-      },
-      {
-        test: /\.tsx?$/,
-        include: paths.reactAppSrc,
-        use: {
-          loader: 'tslint-loader',
-          options: {
-            failOnError: true,
-          },
-        },
-        enforce: 'pre',
-      },
-      {
         test: /\.jsx?$/,
-        include: paths.reactAppSrc,
-        loader: 'babel-loader',
+        exclude: /node_modules/,
+        use: {
+          loader: 'swc-loader',
+        },
       },
       {
         test: /\.less$/,
@@ -111,6 +91,7 @@ module.exports = {
   },
 
   plugins: [
+    new ESLintPlugin(),
     new VersionPlugin({ path: path.resolve('app') }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
