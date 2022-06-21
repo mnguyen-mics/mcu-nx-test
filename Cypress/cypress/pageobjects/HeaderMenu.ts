@@ -68,7 +68,11 @@ class HeaderMenu extends Page {
   }
 
   clickOrgSwitchSearchView() {
-    this.orgSwitchSearchView.click({ force: true });
+    this.orgSwitchSearchView.first().click({ force: true });
+  }
+
+  clickOrgIdSwitchSearchView(orgName: string) {
+    this.orgSwitchSearchView.contains(orgName).first().click({ force: true });
   }
 
   clickBtnApps() {
@@ -120,6 +124,12 @@ class HeaderMenu extends Page {
     this.typeOrgSwitchSearchInput(organisationName);
     cy.wait(500);
     this.clickOrgSwitchSearchView();
+  }
+
+  switchOrgWithCreatedUser(organisationId: string) {
+    this.clickOrgSwitchComponent();
+    cy.wait(500);
+    this.clickOrgIdSwitchSearchView(organisationId);
   }
 }
 
