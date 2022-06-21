@@ -236,7 +236,7 @@ class UserListPage extends React.Component<Props, State> {
           deleteUserRole();
         },
       });
-    })
+    });
   };
 
   saveUserRole = (
@@ -325,9 +325,8 @@ class UserListPage extends React.Component<Props, State> {
     const {
       workspace: { role },
     } = this.props;
-
-    if (role === 'COMMUNITY_ADMIN') return true;
-    else return false;
+    if (role === 'READER' || role === 'EDITOR' || role === 'ORGANISATION_ADMIN') return false;
+    else return true;
   };
 
   getUsersOptions = () => {
