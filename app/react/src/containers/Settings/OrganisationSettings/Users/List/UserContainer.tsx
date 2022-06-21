@@ -113,9 +113,9 @@ class UserContainer extends React.Component<Props, State> {
         const filteredUsers = filterValue
           ? users.filter(
               u =>
-                u.first_name.toLocaleLowerCase().includes(filterValue) ||
-                u.last_name.toLocaleLowerCase().includes(filterValue) ||
-                u.email.toLocaleLowerCase().includes(filterValue),
+                u.first_name.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase()) ||
+                u.last_name.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase()) ||
+                u.email.toLocaleLowerCase().includes(filterValue.toLocaleLowerCase()),
             )
           : users;
         const nextPromises: Array<Promise<any>> =
