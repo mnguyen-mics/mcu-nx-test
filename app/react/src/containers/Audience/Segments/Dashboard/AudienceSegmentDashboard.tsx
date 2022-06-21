@@ -47,6 +47,7 @@ import {
   DatamartUsersAnalyticsWrapperProps,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
 import ContextualTargetingTab from './ContextualTargeting/ContextualTargetingTab';
+import CohortLookalikeCalibration from './Lookalike/CohortLookalikeCalibration/CohortLookalikeCalibration';
 
 interface State {
   loading: boolean;
@@ -242,7 +243,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   buildItems = () => {
     const { intl, segment, datamarts } = this.props;
     const { dashboard } = this.state;
-
     const items = [
       {
         title: intl.formatMessage(messages.overview),
@@ -314,6 +314,19 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     ];
 
     return config;
+  };
+
+  getCohortLookalikeCalibration = () => {
+    const { segment, hasFeature } = this.props;
+
+    if (
+      segment?.type === 'USER_LOOKALIKE_BY_COHORTS' &&
+      hasFeature('audience-segments-cohort-lookalike')
+    ) {
+      return <CohortLookalikeCalibration cohortLookalikeSegment={segment} />;
+    }
+
+    return undefined;
   };
 
   render() {
@@ -415,6 +428,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
                 <FeedCardList />
               </div>
             }
+            cohortLookalikeCalibration={this.getCohortLookalikeCalibration()}
             DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
             DashboardWrapper={DashboardWrapper}
             contextualTargetingTab={

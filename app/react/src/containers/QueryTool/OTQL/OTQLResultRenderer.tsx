@@ -17,18 +17,14 @@ import {
 } from '@mediarithmics-private/advanced-components';
 import { CountRenderer } from './CountRenderer';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
-import { SerieQueryModel } from './OTQLRequest';
+import { McsTabsItem } from './QueryToolTabsContainer';
 
 export interface OTQLResultRendererProps {
-  result: OTQLResult | AggregateDataset | null;
-  loading?: boolean;
-  aborted?: boolean;
+  tab: McsTabsItem;
   query?: string;
   datamartId: string;
-  showChartLegend?: boolean;
-  serieQueries: SerieQueryModel[];
   onSaveChart?: () => void;
+  onDeleteChart: () => void;
 }
 
 type Props = OTQLResultRendererProps &
@@ -39,28 +35,27 @@ type Props = OTQLResultRendererProps &
 class OTQLResultRenderer extends React.Component<Props> {
   render() {
     const {
-      result,
-      loading,
-      aborted,
+      tab,
       colors,
       query,
       datamartId,
       match: {
         params: { organisationId },
       },
-      showChartLegend,
-      serieQueries,
+      onDeleteChart,
       onSaveChart,
     } = this.props;
 
+    const result = tab.queryResult;
+
     let content: React.ReactNode;
-    if (loading) {
+    if (tab.runningQuery) {
       content = (
-        <div className='text-center'>
+        <div className='text-center m-t-20'>
           <Spin size='large' />
         </div>
       );
-    } else if (aborted) {
+    } else if (tab.queryAborted) {
       content = (
         <div className='text-center'>
           <FormattedMessage
@@ -78,11 +73,12 @@ class OTQLResultRenderer extends React.Component<Props> {
         <div>
           <AggregationRenderer
             rootAggregations={aggregations}
+            tab={tab}
             query={query}
             datamartId={datamartId}
             organisationId={organisationId}
-            showChartLegend={showChartLegend}
             onSaveChart={onSaveChart}
+            onDeleteChart={onDeleteChart}
           />
         </div>
       );
@@ -91,12 +87,12 @@ class OTQLResultRenderer extends React.Component<Props> {
         <div>
           <AggregationRenderer
             rootAggregations={result}
+            tab={tab}
             query={query}
             datamartId={datamartId}
             organisationId={organisationId}
-            showChartLegend={showChartLegend}
-            serieQueries={serieQueries}
             onSaveChart={onSaveChart}
+            onDeleteChart={onDeleteChart}
           />
         </div>
       );
@@ -104,15 +100,6 @@ class OTQLResultRenderer extends React.Component<Props> {
       content = (
         <div>
           <pre>{JSON.stringify(result.rows, null, 2)}</pre>
-        </div>
-      );
-    } else {
-      content = (
-        <div className='text-center'>
-          <FormattedMessage
-            id='queryTool.otql-result-renderer-empty'
-            defaultMessage='Empty Result'
-          />
         </div>
       );
     }

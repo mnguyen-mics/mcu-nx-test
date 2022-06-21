@@ -373,7 +373,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
 export default compose<Props, ObjectNodeWidgetProps>(
   DropTarget(
     () => {
-      // TODO Dynamicall generate Field or FIELD || OBJECT if the node can have a related object or not
+      // TODO Dynamicall generate Field or FIELD || OBJECT if the node can have a related object or not
       return ['field', 'object'];
     },
     addinTarget,

@@ -23,7 +23,7 @@ import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import OTQLRequest, { SerieQueryModel } from './OTQLRequest';
+import QueryToolTab, { SerieQueryModel } from './QueryToolTab';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import ChartsSearchPanel from '../ChartsSearchPanel';
 import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
@@ -31,6 +31,13 @@ import { getChartDataset } from './utils/ChartOptionsUtils';
 import { IChartDatasetService } from '@mediarithmics-private/advanced-components';
 import _ from 'lodash';
 import cuid from 'cuid';
+import {
+  ChartResource,
+  ChartSource,
+  isChartSource,
+  SerieDataset,
+} from '../../../models/chart/Chart';
+import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 
 const messages = defineMessages({
   queryToSave: {
@@ -46,7 +53,7 @@ const messages = defineMessages({
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
-interface McsTabsItem {
+export interface McsTabsItem {
   className?: string;
   title: React.ReactChild;
   display?: JSX.Element;
@@ -54,16 +61,17 @@ interface McsTabsItem {
   closable: boolean;
   serieQueries: SerieQueryModel[];
   runningQuery: boolean;
-  queryResult: OTQLResult | null;
+  queryResult: OTQLResult | AggregateDataset | null;
   queryAborted: boolean;
   error?: any;
   precision: QueryPrecisionMode;
   evaluateGraphQl: boolean;
   useCache: boolean;
   showChartLegend?: boolean;
+  chartItem?: ChartResource;
 }
 
-export interface OTQLConsoleContainerProps {
+export interface QueryToolTabsContainerProps {
   datamartId: string;
   renderActionBar?: (query: string, datamartId: string) => React.ReactNode;
   query?: string;
@@ -81,15 +89,16 @@ interface State {
   tabs: McsTabsItem[];
   activeKey: string;
   chartsSearchPanelKey: string;
+  selectedChart?: ChartResource;
 }
 
-type Props = OTQLConsoleContainerProps &
+type Props = QueryToolTabsContainerProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps &
   InjectedFeaturesProps;
 
-class OTQLConsoleContainer extends React.Component<Props, State> {
+class QueryToolTabsContainer extends React.Component<Props, State> {
   asyncQuery: CancelablePromise<DataResponse<OTQLResult>>;
 
   @lazyInject(TYPES.IQueryService)
@@ -145,7 +154,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     return editionMode && query ? query : DEFAULT_OTQL_QUERY;
   };
 
-  fetchObjectTypes = (datamartId: string) => {
+  fetchObjectTypes = async (datamartId: string) => {
     this.setState({
       schemaLoading: true,
       noLiveSchemaFound: false,
@@ -239,6 +248,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                         }
                       : q,
                   ),
+                  chartItem: tab.chartItem,
+                  error: null,
                 };
               } else return tab;
             }),
@@ -260,7 +271,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     } else {
       const tabQuery = tabs.find(tab => tab.key === activeKey);
       if (tabQuery) {
-        this.fetchQuerySeriesDataset(tabQuery.serieQueries);
+        this.fetchQuerySeriesDataset(tabQuery);
       }
     }
   };
@@ -426,7 +437,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     });
   };
 
-  fetchQuerySeriesDataset = (serieQueries: SerieQueryModel[]) => {
+  fetchQuerySeriesDataset = async (tabQuery: McsTabsItem) => {
     const {
       datamartId,
       match: {
@@ -434,14 +445,12 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       },
     } = this.props;
     const { tabs, activeKey } = this.state;
-    // TODO: improve typing of fetchDataset
-    // in ADV library
+    // TODO: improve typings of 'sources' and chart configs in ADV library
     const getSources = () => {
-      return serieQueries.map(serieQuery => {
+      return tabQuery.serieQueries.map(serieQuery => {
         if (isSerieQueryModel(serieQuery)) {
           if (typeof serieQuery.queryModel === 'string') {
             return getChartDataset(
-              'table',
               {
                 query_text: serieQuery.queryModel,
                 type: 'otql',
@@ -455,7 +464,6 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
               type: 'to-list',
               sources: serieQuery.queryModel.map(queryListModel => {
                 return getChartDataset(
-                  'table',
                   {
                     query_text: queryListModel.query,
                     type: 'otql',
@@ -473,7 +481,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     return this._chartDatasetService
       .fetchDataset(datamartId, organisationId, {
         title: '',
-        type: 'table',
+        type: tabQuery.chartItem?.type || 'table',
         dataset: {
           type: 'join',
           sources: getSources(),
@@ -541,7 +549,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     });
   };
 
-  onSeriesChanged = (newSeries: SerieQueryModel[]) => {
+  onSeriesChange = (newSeries: SerieQueryModel[]) => {
     const { tabs, activeKey } = this.state;
     this.setState({
       tabs: tabs?.map(tab => {
@@ -661,6 +669,152 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     });
   };
 
+  onDeleteChart = () => {
+    const { activeKey, tabs } = this.state;
+    this.setState(
+      {
+        tabs: tabs.filter(t => t.key !== activeKey),
+      },
+      () => {
+        this.add();
+      },
+    );
+  };
+
+  setNewSerieQueries = (serieQueries: SerieQueryModel[], chartItem: ChartResource) => {
+    const { tabs, activeKey } = this.state;
+    const newTabs = tabs.map(tab => {
+      if (activeKey === tab.key) {
+        return {
+          ...tab,
+          title: chartItem.title,
+          serieQueries: serieQueries,
+          chartItem: chartItem,
+        };
+      } else return tab;
+    });
+
+    this.setState(
+      {
+        tabs: newTabs,
+      },
+      () => {
+        this.runQuery();
+      },
+    );
+  };
+
+  onChartItemClick = async (chartItem: ChartResource) => {
+    const { datamartId, notifyError } = this.props;
+
+    const dataset = chartItem.content.dataset;
+    if (isChartSource(dataset)) {
+      this._queryService
+        .getQuery(datamartId, dataset.query_id)
+        .then(res => {
+          this.setNewSerieQueries(
+            [
+              {
+                id: cuid(),
+                name: chartItem.title || '',
+                inputVisible: false,
+                queryModel: res.data.query_text,
+              },
+            ],
+            chartItem,
+          );
+        })
+        .catch(err => {
+          notifyError(err);
+        });
+    } else {
+      const newSerieQueries: SerieQueryModel[] = [];
+
+      const queryPromises: Array<
+        Promise<{ query_text: string; name: string } | Array<ChartSource | SerieDataset>>
+      > = dataset.sources.map(s => {
+        if (isChartSource(s)) {
+          return this._queryService.getQuery(datamartId, s.query_id).then(res => {
+            return Promise.resolve({
+              query_text: res.data.query_text,
+              name: s.series_title || '',
+            });
+          });
+        } else return Promise.resolve(s.sources);
+      });
+      await Promise.all(queryPromises)
+        .then(queryResponses => {
+          queryResponses.forEach((res, i) => {
+            if (Array.isArray(res)) {
+              const subQueryPromises = res
+                .filter(source => isChartSource(source))
+                .map(s => {
+                  const source = s as ChartSource;
+                  return this._queryService.getQuery(datamartId, source.query_id).then(queryRes => {
+                    return Promise.resolve({
+                      query_text: queryRes.data.query_text,
+                      name: source.series_title,
+                    });
+                  });
+                });
+              return Promise.all(subQueryPromises)
+                .then(subResponse => {
+                  newSerieQueries.push({
+                    id: cuid(),
+                    name: `Serie ${i}`,
+                    inputVisible: false,
+                    queryModel: subResponse.map((source, j) => {
+                      return {
+                        id: cuid(),
+                        name: source.name || `Dimension ${j}`,
+                        inputVisible: false,
+                        query: source.query_text,
+                      };
+                    }),
+                  });
+                  return newSerieQueries;
+                })
+                .catch(err => {
+                  notifyError(err);
+                });
+            } else {
+              newSerieQueries.push({
+                id: cuid(),
+                name: res.name || '',
+                inputVisible: false,
+                queryModel: res.query_text,
+              });
+              return newSerieQueries;
+            }
+          });
+          return newSerieQueries;
+        })
+        .then(newSerieQueriesResponse => {
+          this.setNewSerieQueries(newSerieQueriesResponse, chartItem);
+        })
+        .catch(err => {
+          notifyError(err);
+        });
+    }
+  };
+  onQueryParamsChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) => {
+    const { tabs, activeKey } = this.state;
+    const newTabs = tabs.map(tab => {
+      if (activeKey === tab.key) {
+        return {
+          ...tab,
+          evaluateGraphQl: eg,
+          useCache: c,
+          precision: p,
+        };
+      } else return tab;
+    });
+
+    this.setState({
+      tabs: newTabs,
+    });
+  };
+
   render() {
     const {
       match: {
@@ -678,13 +832,13 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     const { schemaLoading, activeKey, tabs, noLiveSchemaFound, rawSchema, chartsSearchPanelKey } =
       this.state;
 
-    const queryToUse = this.getStringFirstQuery();
-
     const currentTab = tabs.length > 0 ? tabs.find(t => t.key === activeKey) : undefined;
+
+    const queryToUse = currentTab?.serieQueries[0]?.queryModel;
 
     let startType = 'UserPoint';
 
-    if (rawSchema) {
+    if (rawSchema && typeof queryToUse === 'string') {
       const foundType = rawSchema.find(ot => {
         const matchResult = queryToUse?.match(/FROM(?:\W*)(\w+)/i);
         if (!matchResult || matchResult.length === 0) return false;
@@ -699,7 +853,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       <Row>
         {currentTab &&
           currentTab.serieQueries.length === 1 &&
-          !isQueryListModel(currentTab.serieQueries[0].queryModel) &&
+          typeof queryToUse === 'string' &&
           renderSaveAsButton &&
           renderSaveAsButton(queryToUse, datamartId)}
       </Row>
@@ -707,7 +861,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
     return (
       <Layout>
-        {renderActionBar && renderActionBar(queryToUse, datamartId)}
+        {renderActionBar &&
+          typeof queryToUse === 'string' &&
+          renderActionBar(queryToUse, datamartId)}
         <Layout>
           <Content className='mcs-content-container'>
             {schemaLoading ? (
@@ -740,7 +896,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                       />
                     )}
                     <div className={'mcs-OTQLConsoleContainer_tab_content'}>
-                      <OTQLRequest
+                      <QueryToolTab
                         datamartId={this.props.datamartId}
                         query={
                           editionMode && query?.includes('where')
@@ -748,26 +904,20 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                             : this.getStringFirstQuery()
                         }
                         editionMode={editionMode}
-                        serieQueries={tab.serieQueries}
+                        tab={tab}
                         runQuery={this.runQuery}
                         onInputChange={this.onInputChange}
                         updateNameModel={this.updateNameModel}
                         updateQueryModel={this.updateQueryModel}
                         displaySerieInput={this.displaySerieInput}
-                        onSeriesChanged={this.onSeriesChanged}
-                        showChartLegend={tab.showChartLegend}
-                        error={tab.error}
-                        queryAborted={tab.queryAborted}
-                        queryResult={tab.queryResult}
-                        precision={tab.precision}
-                        runningQuery={tab.runningQuery}
-                        useCache={tab.useCache}
+                        onSeriesChange={this.onSeriesChange}
                         noLiveSchemaFound={noLiveSchemaFound}
-                        evaluateGraphQl={tab.evaluateGraphQl}
                         rawSchema={rawSchema}
                         dismissError={this.dismissError}
                         abortQuery={this.abortQuery}
                         onSaveChart={this.onSaveChart}
+                        onDeleteChart={this.onDeleteChart}
+                        onQueryParamsChange={this.onQueryParamsChange}
                       />
 
                       {hasFeature('datastudio-query_tool-charts_loader') && (
@@ -779,6 +929,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                             <ChartsSearchPanel
                               key={chartsSearchPanelKey}
                               organisationId={organisationId}
+                              onItemClick={this.onChartItemClick}
                             />
                           </Tabs.TabPane>
                         </Tabs>
@@ -797,9 +948,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, OTQLConsoleContainerProps>(
+export default compose<Props, QueryToolTabsContainerProps>(
   injectIntl,
   withRouter,
   injectNotifications,
   injectFeatures,
-)(OTQLConsoleContainer);
+)(QueryToolTabsContainer);

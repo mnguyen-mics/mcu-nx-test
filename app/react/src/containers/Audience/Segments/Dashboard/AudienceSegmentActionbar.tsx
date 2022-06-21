@@ -318,7 +318,11 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
 
     let actionButton = null;
 
-    if (segment && (segment as AudienceSegmentResource).type === 'USER_LOOKALIKE') {
+    if (
+      segment &&
+      (segment as AudienceSegmentResource).type === 'USER_LOOKALIKE' &&
+      (segment as UserLookalikeSegment).lookalike_algorithm !== 'COHORT_OVERLAP'
+    ) {
       switch ((segment as UserLookalikeSegment).status) {
         case 'DRAFT':
           actionButton = (

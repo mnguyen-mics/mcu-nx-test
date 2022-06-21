@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
 import * as React from 'react';
 import lodash from 'lodash';
 import { injectDrawer } from './index';

@@ -136,6 +136,19 @@ class AdvancedSegmentBuilder extends React.Component<Props, State> {
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
+
+    const { objectTypes } = this.props;
+    const model = new DiagramModel();
+    model.setLocked(true);
+    const rootNode = new PlusNodeModel();
+    rootNode.root = true;
+    const rootNodePosition = this.getRootNodePosition();
+    rootNode.x = rootNodePosition.x;
+    rootNode.y = rootNodePosition.y;
+
+    this.buildModelTree(this.props.query, rootNode, objectTypes, model);
+
+    this.engine.setDiagramModel(model);
   }
 
   componentWillUnmount() {
@@ -263,21 +276,6 @@ class AdvancedSegmentBuilder extends React.Component<Props, State> {
       };
     });
   };
-
-  componentWillMount() {
-    const { objectTypes } = this.props;
-    const model = new DiagramModel();
-    model.setLocked(true);
-    const rootNode = new PlusNodeModel();
-    rootNode.root = true;
-    const rootNodePosition = this.getRootNodePosition();
-    rootNode.x = rootNodePosition.x;
-    rootNode.y = rootNodePosition.y;
-
-    this.buildModelTree(this.props.query, rootNode, objectTypes, model);
-
-    this.engine.setDiagramModel(model);
-  }
 
   componentDidUpdate(previousProps: Props) {
     const { query, objectTypes } = this.props;

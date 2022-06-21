@@ -14,7 +14,7 @@ module.exports = merge(common, {
   },
 
   output: {
-    filename: '[name].[hash].js',
+    filename: '[name].[contenthash].js',
     path: paths.appDistPath,
     publicPath: paths.publicDistPath,
   },
@@ -23,8 +23,10 @@ module.exports = merge(common, {
     rules: [
       {
         test: /\.tsx?$/,
-        include: paths.reactAppSrc,
-        use: ['babel-loader', 'ts-loader'],
+        exclude: /node_modules/,
+        use: {
+          loader: 'swc-loader',
+        },
       },
     ],
   },

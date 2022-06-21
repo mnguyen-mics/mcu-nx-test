@@ -297,7 +297,6 @@ const hasDateFormatTransformation = (quickOptions: any) => {
 };
 
 export const getChartDataset = (
-  _chartType: chartType,
   dataset: WrappedAbstractDataset | AbstractSource,
   isDataset: boolean,
   chartProps: any,

@@ -87,6 +87,11 @@ class ChannelsTable extends React.Component<Props> {
 
     const dataColumns: Array<DataColumnDefinition<ChannelResourceShapeWithAnalytics>> = [
       {
+        title: formatMessage(messages.channelId),
+        key: 'id',
+        isHideable: false,
+      },
+      {
         title: formatMessage(messages.channelName),
         key: 'name',
         isHideable: false,

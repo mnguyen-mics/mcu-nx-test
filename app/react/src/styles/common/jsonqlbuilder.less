@@ -538,7 +538,7 @@
     position: absolute;
     right: 0px;
     margin-right: -1px;
-    top: -12px;
+    top: 10px;
     color: @info-color;
     border-color: @info-color;
     background: #e8f7fc;
@@ -575,6 +575,18 @@
   border: none;
 }
 
+.mcs-otqlInputEditor_delete_button {
+  background: none;
+  border: none;
+  color: @error-color;
+  &:hover,
+  &:active,
+  &:focus {
+    background: none;
+    color: @error-color;
+  }
+}
+
 .mcs-otqlChart_items_share_button {
   position: absolute;
   right: 120px;
@@ -609,102 +621,6 @@
   }
 }
 
-.mcs-otqlInputEditor_serieQuery {
-  .mcs-timelineStepBuilder_step:hover {
-    .mcs-otqlInputEditor_clear_button {
-      opacity: 1;
-    }
-  }
-  .mcs-timelineStepBuilder_step {
-    background-color: #ffffff00;
-    box-shadow: none;
-    .mcs-card-header {
-      margin-top: -10px;
-    }
-    .mcs-otqlInputEditor_settings_button {
-      font-size: 15px;
-      position: absolute;
-      left: 60px;
-    }
-    .mcs-otqlInputEditor_clear_button {
-      opacity: 0;
-      border: 0px;
-      transition: 0.3s;
-      height: 32px;
-      vertical-align: middle;
-      padding: 0px 15px 0px 15px;
-    }
-
-    .mcs-otqlInputEditor_run_button {
-      padding: 0px 15px 0px 15px;
-      height: 32px;
-      vertical-align: middle;
-      background: @info-color;
-      border: none;
-    }
-
-    .mcs-otqlInputEditor_run_button.ant-btn-primary[disabled] {
-      color: rgba(0, 0, 0, 0.25);
-      border-color: #e0e1e1;
-      background: #dcdcdc;
-    }
-    .mcs-otqlInputEditor_abort_button {
-      padding: 0px 15px 0px 15px;
-      height: 32px;
-      vertical-align: middle;
-      background: @info-color;
-      border: none;
-    }
-    .ant-card-body {
-      padding: 0px 24px 10px 24px;
-    }
-  }
-  .mcs-otqlInputEditor_newSubSerieQuery {
-    border: none;
-    background: none;
-    box-shadow: none;
-    position: absolute;
-    padding: 0px;
-    color: @text-color;
-    bottom: -19px;
-  }
-  .mcs-timelineStepBuilder_steps {
-    width: 100%;
-    padding: 0px;
-  }
-  .mcs-timelineStepBuilder_addStepBlock {
-    padding: 0px 20px 0px 0px;
-  }
-  .mcs-timelineStepBuilder_step_bullet {
-    left: -10px !important;
-    bottom: -30px !important;
-    &:after {
-      content: '+';
-      color: white;
-      font-size: 18px;
-      top: 5px;
-      left: 5px;
-      position: absolute;
-    }
-  }
-  .mcs-timelineStepBuilder_stepHeader {
-    position: relative;
-    left: -25px;
-    top: -5px;
-    width: calc(100% + 25px);
-  }
-  .mcs-timelineStepBuilder_step_body {
-    .mcs-timelineStepBuilder_step_body {
-      .mcs-otqlInputEditor_editor {
-        margin-left: -25px;
-      }
-    }
-  }
-  .timelineStepBuilder_removeStepBtn {
-    margin: 5px 0px;
-  }
-}
-
 .mcs-otqlInputEditor_card:hover {
   .mcs-otqlInputEditor_clear_button {
     opacity: 1;
@@ -714,95 +630,11 @@
   .mcs-card-header {
     margin-top: -10px;
   }
-  .mcs-otqlInputEditor_settings_button {
-    font-size: 15px;
-    position: absolute;
-    left: 60px;
-  }
-  .mcs-otqlInputEditor_clear_button {
-    opacity: 0;
-    border: 0px;
-    transition: 0.3s;
-    height: 32px;
-    vertical-align: middle;
-    padding: 0px 15px 0px 15px;
-  }
-
-  .mcs-otqlInputEditor_run_button {
-    padding: 0px 15px 0px 15px;
-    height: 32px;
-    vertical-align: middle;
-    background: @info-color;
-    border: none;
-  }
 
   .mcs-otqlInputEditor_run_button.ant-btn-primary[disabled] {
     color: rgba(0, 0, 0, 0.25);
     border-color: #e0e1e1;
     background: #dcdcdc;
-  }
-  .mcs-otqlInputEditor_abort_button {
-    padding: 0px 15px 0px 15px;
-    height: 32px;
-    vertical-align: middle;
-    background: @info-color;
-    border: none;
-  }
-}
-
-.mcs-otqlInputEditor_serieQuery {
-  .mcs-otqlInputEditor_deleteSerie,
-  .mcs-otqlInputEditor_settings_button {
-    float: right;
-    margin-right: 20px;
-    font-size: 20px;
-  }
-  .mcs-otqlInputEditor_deleteSerie {
-    margin-top: 20px;
-  }
-  .mcs-otqlInputEditor_settings_button {
-    margin-top: 10px;
-  }
-  .mcs-otqlInputEditor_serieButtons {
-    padding: 0px 0px;
-    .mcs-otqlInputEditor_newSerieButton,
-    .mcs-otqlInputEditor_newSerieButton:hover,
-    .mcs-otqlInputEditor_newSerieButton:active,
-    .mcs-otqlInputEditor_newSerieButton:focus,
-    .mcs-otqlInputEditor_run_button,
-    .mcs-otqlInputEditor_abort_button {
-      font-family: @font-family-medium;
-      font-size: 12px;
-      font-weight: 500;
-      color: @info-color;
-      background: none;
-      padding: 10px 236px;
-      border-radius: 3px;
-      border: solid 1px #d3dbe1;
-      width: 100%;
-      margin-bottom: 15px;
-      box-shadow: 0;
-    }
-    .mcs-otqlInputEditor_run_button,
-    .mcs-otqlInputEditor_abort_button {
-      color: white;
-      background-color: @info-color;
-      margin-left: 0px;
-      margin-top: 10px;
-    }
-    .mcs-otqlInputEditor_run_button {
-      background-color: @info-color;
-    }
-    .mcs-otqlInputEditor_abort_button {
-      background-color: @primary-color;
-    }
-  }
-  .mcs-card {
-    background-color: #f0f3f5;
-    margin-bottom: 0px;
-  }
-  .mcs-timelineStepBuilder_mainStep {
-    margin-top: 60px;
   }
 }
 
@@ -852,6 +684,19 @@
   display: flex;
   flex-direction: 'row';
   align-items: 'center';
+}
+
+.mcs-otqlChart_backButton {
+  float: right;
+  width: 44px;
+  height: 30px;
+  background-color: rgb(247, 247, 247);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  color: @text-color;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 }
 
 .mcs-otqlChart_items_input {
@@ -941,6 +786,7 @@
 .mcs-otqlQuery_container {
   flex: 3;
   width: 80%;
+  padding-right: 10px;
 }
 
 .mcs-OTQLConsoleContainer_tabs_createdQueryMessage {
@@ -986,13 +832,4 @@
       }
     }
   }
-}
-
-.mcs-otqlInputEditor_stepNameInput {
-  margin: 5px 0px;
-}
-
-.mcs-otqlInputEditor_stepNameButton {
-  margin: 5px 0px;
-  font-weight: bold;
 }

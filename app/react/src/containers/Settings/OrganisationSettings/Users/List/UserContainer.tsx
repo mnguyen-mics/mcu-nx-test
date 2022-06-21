@@ -1,6 +1,5 @@
 import { OrganisationResource } from '@mediarithmics-private/advanced-components/lib/models/organisation/organisation';
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
-import { IOrganisationService } from '@mediarithmics-private/advanced-components/lib/services/OrganisationService';
 import { Loading, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import {
   ActionsColumnDefinition,
@@ -25,6 +24,7 @@ import UserResource from '../../../../../models/directory/UserResource';
 import _ from 'lodash';
 import { Tooltip } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
+import { IOrganisationService } from '../../../../../services/OrganisationService';
 
 export interface UserContainerProps {
   communityId: string;
@@ -280,6 +280,10 @@ class UserContainer extends React.Component<Props, State> {
     } else return;
   }
 
+  generateEnding = (nb: number): string => {
+    return nb <= 1 ? '' : 's';
+  };
+
   buildHeader(
     organisationName: string,
     orgUsersNb: number,
@@ -288,10 +292,13 @@ class UserContainer extends React.Component<Props, State> {
     const { userDisplay } = this.props;
     const renderHeaderText = () => {
       if (userDisplay === 'users') {
-        return ` (${orgUsersNb} users)`;
+        return ` (${orgUsersNb} user${this.generateEnding(orgUsersNb)})`;
       } else {
-        const inheritedText = inheritedUsersNb !== 0 ? `, ${inheritedUsersNb} roles inherited` : '';
-        return ` (${orgUsersNb} roles defined${inheritedText})`;
+        const inheritedText =
+          inheritedUsersNb !== 0
+            ? `, ${inheritedUsersNb} role${this.generateEnding(inheritedUsersNb)} inherited`
+            : '';
+        return ` (${orgUsersNb} role${this.generateEnding(orgUsersNb)} defined${inheritedText})`;
       }
     };
     return (
@@ -322,35 +329,44 @@ class UserContainer extends React.Component<Props, State> {
 
   buildBody(orgUsers: UserResourceWithRole[], organisationId?: string): React.ReactNode {
     const { userDisplay, intl } = this.props;
-    const sorter = (a: UserResourceWithRole, b: UserResourceWithRole) => a.id.localeCompare(b.id);
+    const idSorter = (a: UserResourceWithRole, b: UserResourceWithRole) => a.id.localeCompare(b.id);
+    const firstNameSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
+      a.first_name.localeCompare(b.first_name);
+    const lastNameSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
+      a.last_name.localeCompare(b.last_name);
+    const emailSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
+      a.email.localeCompare(b.email);
+    const roleSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
+      b.role && a.role ? a.role.role.localeCompare(b.role.role) : a.id.localeCompare(b.id);
+
     let dataColumns: Array<DataColumnDefinition<UserResourceWithRole>> = [
       {
         title: 'Id',
         key: 'id',
         isHideable: false,
         render: (text: string) => text,
-        sorter: sorter,
+        sorter: idSorter,
       },
       {
         title: 'First name',
         key: 'first_name',
         isHideable: false,
         render: (text: string) => text,
-        sorter: sorter,
+        sorter: firstNameSorter,
       },
       {
         title: 'Last name',
         key: 'last_name',
         isHideable: false,
         render: (text: string) => text,
-        sorter: sorter,
+        sorter: lastNameSorter,
       },
       {
         title: 'Email',
         key: 'email',
         isHideable: false,
         render: (text: string) => text,
-        sorter: sorter,
+        sorter: emailSorter,
       },
     ];
 
@@ -373,7 +389,7 @@ class UserContainer extends React.Component<Props, State> {
               )}
             </span>
           ),
-          sorter: sorter,
+          sorter: roleSorter,
         })
         .filter(c => c.key !== 'id');
       dataColumns.unshift({

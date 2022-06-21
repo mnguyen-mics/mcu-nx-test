@@ -48,7 +48,7 @@ else
 fi
 RANDOM=$$
 DEV_MAIL="dev@mediarithmics.com"
-DEV_PWD='kpkQrULCeVVGKtKL4gYFUExcX5mxzAdscTdv7Qu4'
+DEV_PWD='DQ69uA8wSmSYrL22ELW7btSZbwhRwhRuZt7TTuzk4P'
 SNAPSHOTS_PORT=$(( ( RANDOM % 60000 )  + 5000 ))
 
 set -u

@@ -35,8 +35,6 @@ type Props<StepsProperties> = {
   rendering: TimelineStepBuilderRendering<StepsProperties>;
   stepManagement: StepManagement<StepsProperties>;
   maxSteps: number;
-  editionMode?: boolean;
-  mainStep?: boolean;
 };
 
 export default class TimelineStepBuilder<StepsProperties> extends React.Component<
@@ -91,7 +89,6 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
   render() {
     const {
       steps,
-      editionMode,
       rendering: {
         shouldRenderTimeline,
         renderHeaderTimeline,
@@ -105,7 +102,6 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
         shouldDisplayNumbersInBullet,
       },
       maxSteps,
-      mainStep,
     } = this.props;
 
     const shouldRenderLine = shouldRenderTimeline === undefined || shouldRenderTimeline;
@@ -123,13 +119,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
           </div>
           {steps.map((step, index) => {
             return (
-              <Card
-                key={step.id}
-                className={`mcs-timelineStepBuilder_step ${
-                  mainStep && index !== 0 ? 'mcs-timelineStepBuilder_mainStep' : ''
-                }`}
-                bordered={false}
-              >
+              <Card key={step.id} className={`mcs-timelineStepBuilder_step`} bordered={false}>
                 <div className={'mcs-timelineStepBuilder_step_body'}>
                   {steps.length > 1 && shouldRenderArrows && (
                     <div className={'mcs-timelineStepBuilder_step_reorderBtn'}>
@@ -197,7 +187,7 @@ export default class TimelineStepBuilder<StepsProperties> extends React.Componen
             <div className={this.computeTimelineEndClassName(steps.length)}>
               {renderFooterTimeline?.()}
             </div>
-            {steps.length < maxSteps && !editionMode && (
+            {steps.length < maxSteps && (
               <Button className={'mcs-timelineStepBuilder_addStepBtn'} onClick={this.addStep}>
                 <FormattedMessage
                   {...(getAddStepText?.() || {

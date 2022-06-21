@@ -1,4 +1,4 @@
-#### version 2.0
+#### Version 2.1
 
 # Process_Codage
 
@@ -19,7 +19,7 @@ Cypress also provides the flexibility to implement the automation framework usin
 For the implementation part of the Page Object Model, as a first step, we will need to create a PageClass, it's a class which contains web element's locators and methods to interact with web elements.
 To achieve this, create a new file (class) under `Cypress/Cypress/pageobjects` directory that will be used in the test files.
 
-For each page created a `goToxxxPage()` function must be coded.
+For each page created a `goToPage()` function must be coded.
 
 The reason for not creating the page classes under Integration folder is because when you run your test cases, it runs all the test cases present under Integration folder and your page classes have no test cases so it skips these files and then it is shown as Skipped in the report which might confuse people. So its better to keep it somewhere else.
 
@@ -39,8 +39,6 @@ The tree structure is the one you see when browsing the pages. For each page dis
 ----+ Organisation
 ------+ Users
 --------+ UsersPage.ts
---------+ NewUserPage.ts
---------+ EditUserPage.ts
 ```
 
 ### File naming policy
@@ -59,4 +57,3 @@ The classes added in `Cypress/Cypress/pageobjects` must follow this naming rules
 ## Liens utiles
 
 [Best Practices Cypress](https://docs.cypress.io/guides/references/best-practices#Organizing-Tests-Logging-In-Controlling-State)<br/>
-[](https:)

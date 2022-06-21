@@ -128,6 +128,7 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
     queryLanguage?: QueryLanguage,
   ): Promise<DataResponse<AudienceSegmentShape> | void> {
     switch (audienceSegmentFormData.audienceSegment.type) {
+      case 'USER_LOOKALIKE_BY_COHORTS':
       case 'USER_LOOKALIKE':
         return this.createOrUpdateAudienceSegmentUserLookAlike(
           organisationId,
