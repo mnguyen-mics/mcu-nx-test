@@ -7,7 +7,7 @@ import { injectable } from 'inversify';
 import UserRoleResource from '../models/directory/UserRoleResource';
 
 export interface IUserRolesService {
-  getUserRoles: (userId: string) => Promise<DataListResponse<UserRoleResource>>;
+  getUserRoles: (userId: string, options?: object) => Promise<DataListResponse<UserRoleResource>>;
   createUserRole: (
     userId: string,
     body: Partial<UserRoleResource>,
@@ -17,9 +17,9 @@ export interface IUserRolesService {
 
 @injectable()
 export class UserRolesService implements IUserRolesService {
-  getUserRoles(userId: string): Promise<DataListResponse<UserRoleResource>> {
+  getUserRoles(userId: string, options?: object): Promise<DataListResponse<UserRoleResource>> {
     const endpoint = `users/${userId}/user_roles`;
-    return ApiService.getRequest(endpoint);
+    return ApiService.getRequest(endpoint, options);
   }
   createUserRole(
     userId: string,

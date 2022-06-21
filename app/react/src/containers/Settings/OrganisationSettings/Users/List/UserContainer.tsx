@@ -100,7 +100,7 @@ class UserContainer extends React.Component<Props, State> {
     } = this.props;
     const promises: Array<Promise<DataListResponse<any>>> = [
       this._organisationService.getOrganisations(communityId),
-      this._communityService.getCommunityUsers(communityId),
+      this._communityService.getCommunityUsers(communityId, { max_results: 500 }),
     ];
 
     this.setState({
@@ -121,7 +121,9 @@ class UserContainer extends React.Component<Props, State> {
         const nextPromises: Array<Promise<any>> =
           userDisplay === 'user_roles'
             ? filteredUsers.map(async user => {
-                const rolesRes = await this._userRolesService.getUserRoles(user.id);
+                const rolesRes = await this._userRolesService.getUserRoles(user.id, {
+                  max_results: 500,
+                });
                 if (rolesRes.data.length >= 1) {
                   return rolesRes.data.map(role => {
                     // The reason why we put role's org id instead of user's org id here is because :
