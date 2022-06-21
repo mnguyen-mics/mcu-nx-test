@@ -187,6 +187,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       status: filter.status && filter.status.length > 0 ? filter.status : undefined,
       artifact_id:
         filter.artifactId && filter.artifactId.length > 0 ? filter.artifactId : undefined,
+      version_id: filter.versionId > 0 ? filter.versionId : undefined,
     };
   };
 

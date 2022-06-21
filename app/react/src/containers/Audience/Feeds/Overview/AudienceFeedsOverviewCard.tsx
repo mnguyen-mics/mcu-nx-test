@@ -121,28 +121,30 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
       });
   }
 
-  goToFeedsTable = (artifactId: string, status: string, feedType: string) => () => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      history,
-      location: { search: currentSearch },
-    } = this.props;
+  goToFeedsTable =
+    (artifactId: string, status: string, feedType: string, versionId: string) => () => {
+      const {
+        match: {
+          params: { organisationId },
+        },
+        history,
+        location: { search: currentSearch },
+      } = this.props;
 
-    const params = {
-      artifactId: [artifactId],
-      status: [status],
-      feedType: [feedType],
+      const params = {
+        artifactId: [artifactId],
+        status: [status],
+        feedType: [feedType],
+        versionId: [versionId],
+      };
+
+      const nextLocation = {
+        pathname: `/v2/o/${organisationId}/audience/feeds/list`,
+        search: updateSearch(currentSearch, params, FEEDS_SEARCH_SETTINGS),
+      };
+
+      return history.push(nextLocation);
     };
-
-    const nextLocation = {
-      pathname: `/v2/o/${organisationId}/audience/feeds/list`,
-      search: updateSearch(currentSearch, params, FEEDS_SEARCH_SETTINGS),
-    };
-
-    return history.push(nextLocation);
-  };
 
   getIconType = (status: IconColor) => {
     switch (status) {
@@ -197,7 +199,12 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
                     message={metricStatusMessages[typedStatus]}
                     metricValue={aggregatesByStatus[typedStatus] || '0'}
                     tooltipMessage={tooltipStatusMessages[typedStatus]}
-                    onClick={this.goToFeedsTable(artifactId || '', status, feedType)}
+                    onClick={this.goToFeedsTable(
+                      artifactId || '',
+                      status,
+                      feedType,
+                      pluginVersionId,
+                    )}
                   />
                 );
               })}

@@ -29,6 +29,19 @@ const artifactIdSearchSetting = {
   isValid: (query: Index<string>) => !query.artifactId || query.artifactId.split(',').length > 0,
 };
 
+const versionIdSearchSetting = {
+  paramName: 'versionId',
+  defaultValue: [],
+  deserialize: (query: Index<string>) => {
+    if (query.versionId) {
+      return query.versionId.split(',');
+    }
+    return [];
+  },
+  serialize: (value: string[]) => value.join(','),
+  isValid: (query: Index<string>) => !query.versionId || query.versionId.split(',').length > 0,
+};
+
 const statusSearchSetting = {
   paramName: 'status',
   defaultValue: [],
@@ -46,5 +59,6 @@ export const FEEDS_SEARCH_SETTINGS: SearchSetting[] = [
   ...PAGINATION_SEARCH_SETTINGS,
   feedTypeSearchSetting,
   artifactIdSearchSetting,
+  versionIdSearchSetting,
   statusSearchSetting,
 ];
