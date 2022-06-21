@@ -329,35 +329,44 @@ class UserContainer extends React.Component<Props, State> {
 
   buildBody(orgUsers: UserResourceWithRole[], organisationId?: string): React.ReactNode {
     const { userDisplay, intl } = this.props;
-    const sorter = (a: UserResourceWithRole, b: UserResourceWithRole) => a.id.localeCompare(b.id);
+    const idSorter = (a: UserResourceWithRole, b: UserResourceWithRole) => a.id.localeCompare(b.id);
+    const firstNameSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
+      a.first_name.localeCompare(b.first_name);
+    const lastNameSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
+      a.last_name.localeCompare(b.last_name);
+    const emailSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
+      a.email.localeCompare(b.email);
+    const roleSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
+      b.role && a.role ? a.role.role.localeCompare(b.role.role) : a.id.localeCompare(b.id);
+
     let dataColumns: Array<DataColumnDefinition<UserResourceWithRole>> = [
       {
         title: 'Id',
         key: 'id',
         isHideable: false,
         render: (text: string) => text,
-        sorter: sorter,
+        sorter: idSorter,
       },
       {
         title: 'First name',
         key: 'first_name',
         isHideable: false,
         render: (text: string) => text,
-        sorter: sorter,
+        sorter: firstNameSorter,
       },
       {
         title: 'Last name',
         key: 'last_name',
         isHideable: false,
         render: (text: string) => text,
-        sorter: sorter,
+        sorter: lastNameSorter,
       },
       {
         title: 'Email',
         key: 'email',
         isHideable: false,
         render: (text: string) => text,
-        sorter: sorter,
+        sorter: emailSorter,
       },
     ];
 
@@ -380,7 +389,7 @@ class UserContainer extends React.Component<Props, State> {
               )}
             </span>
           ),
-          sorter: sorter,
+          sorter: roleSorter,
         })
         .filter(c => c.key !== 'id');
       dataColumns.unshift({
