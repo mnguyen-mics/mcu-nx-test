@@ -240,6 +240,10 @@ export default defineMessages({
     id: 'menu.organisation.settings',
     defaultMessage: 'Profile',
   },
+  identityProvidersTitle: {
+    id: 'menu.organisation.identity_providers',
+    defaultMessage: 'Identity Providers',
+  },
   mlAlgorithmsSettingsTitle: {
     id: 'menu.organisation.ml-algorithms',
     defaultMessage: 'ML Algorithms',

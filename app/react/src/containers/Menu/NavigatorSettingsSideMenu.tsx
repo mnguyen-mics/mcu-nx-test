@@ -15,6 +15,10 @@ import {
 } from '../../routes/domain';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import {
+  InjectedWorkspaceProps,
+  injectWorkspace,
+} from '@mediarithmics-private/advanced-components';
 
 const basePath = '/v2/o/:organisationId(\\d+)';
 
@@ -30,7 +34,8 @@ interface RouteProps {
 
 type Props = NavigatorSettingsSideMenuProps &
   RouteComponentProps<RouteProps> &
-  InjectedFeaturesProps;
+  InjectedFeaturesProps &
+  InjectedWorkspaceProps;
 
 interface NavigatorSettingsSideMenuState {
   inlineOpenKeys: string[];
@@ -96,7 +101,9 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
   };
 
   getAvailableItems() {
-    const { hasFeature } = this.props;
+    const { hasFeature, workspace } = this.props;
+
+    const isCommunity = workspace.organisation_id === workspace.community_id;
 
     const checkIfHasAtLeastOneFeature = (item: NavigatorMultipleLevelMenuDefinition): boolean => {
       return item.subMenuItems.reduce((acc, val) => {
@@ -109,7 +116,10 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
     return settingsDefinitions.reduce((acc, item) => {
       if (item.type === 'multi' && checkIfHasAtLeastOneFeature(item)) {
         const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
-          hasFeature(subMenuItem.requiredFeature, subMenuItem.requireDatamart),
+          hasFeature(subMenuItem.requiredFeature, subMenuItem.requireDatamart) &&
+          subMenuItem.communityOnly
+            ? isCommunity
+            : true,
         );
         return [...acc, { ...item, subMenuItems }];
       }
@@ -124,7 +134,10 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
       },
       location: { pathname },
       hasFeature,
+      workspace,
     } = this.props;
+
+    const isCommunity = workspace.organisation_id === workspace.community_id;
 
     const baseUrl = `/v2/o/${organisationId}`;
 
@@ -149,7 +162,9 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
       currentOpenMenu.type === 'multi' &&
       currentOpenMenu.subMenuItems &&
       currentOpenMenu.subMenuItems.map(itemDef => {
-        return hasFeature(itemDef.requiredFeature, itemDef.requireDatamart) ? (
+        const isCommunityForDisplay = itemDef.communityOnly ? isCommunity : true;
+        return hasFeature(itemDef.requiredFeature, itemDef.requireDatamart) &&
+          isCommunityForDisplay ? (
           <Menu.Item key={itemDef.path} className={'mcs-antd-menu-item'}>
             <Link
               to={`${baseUrl}${itemDef.path}`}
@@ -243,4 +258,5 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
 export default compose<Props, NavigatorSettingsSideMenuProps>(
   withRouter,
   injectFeatures,
+  injectWorkspace,
 )(NavigatorSettingsSideMenu);

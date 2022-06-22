@@ -46,6 +46,7 @@ import EditUserRolePage from '../containers/Settings/OrganisationSettings/UserRo
 import AudienceFeatureEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/AudienceFeatureEditPage';
 import StandardSegmentBuilderEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/StandardSegmentBuilderEditPage';
 import UserListPageContainer from '../containers/Settings/OrganisationSettings/Users/List/UserListPageContainer';
+import IdentityProviders from '../containers/Settings/OrganisationSettings/IdentityProviders/IdentityProviders';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -406,6 +407,15 @@ export const settingsDefinition: NavigatorDefinition = {
     editComponent: ProcessingEditPage,
     requiredFeature: 'datamart-user_choices',
   },
+
+  // Identity providers
+  settingsOrganisationIdentityProviderList: {
+    path: '/settings/organisation/identity_providers',
+    layout: 'settings',
+    contentComponent: IdentityProviders,
+    requiredFeature: 'organisationSettings-settings',
+  },
+
   /*
   ACCOUNT SETTINGS
   
