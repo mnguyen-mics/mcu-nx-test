@@ -1,11 +1,8 @@
 import faker from 'faker';
 import HeaderMenu from '../../../../pageobjects/HeaderMenu';
 import UsersPage from '../../../../pageobjects/Settings/Organisation/Users/UsersPage';
-import {
-  createUserQuery,
-  createSubOrganisationQuery,
-  OrganisationQuery,
-} from '../../../helpers/OrganisationHelper';
+import { createSubOrganisationQuery, OrganisationQuery } from '../../../helpers/OrganisationHelper';
+import { createUserQuery } from '../../../helpers/UserHelper';
 
 describe('Users test', () => {
   let subOrg1: OrganisationQuery;
@@ -43,12 +40,13 @@ describe('Users test', () => {
   beforeEach(() => {
     cy.restoreLocalStorageCache();
     window.localStorage.setItem('features', '["new-userSettings"]');
-    cy.intercept('GET', '**/users').as('getUsers');
+
     cy.logout();
     cy.visit('/');
     cy.login();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       HeaderMenu.switchOrg(data.organisationName);
+      cy.intercept('GET', `**/communities/${data.organisationId}/users**`).as('getUsers');
     });
   });
 
@@ -355,8 +353,7 @@ describe('Users test', () => {
     });
   });
 
-  //https://mediarithmics.atlassian.net/browse/MICS-13547
-  it.skip('Should sort users', () => {
+  it('Should sort users', () => {
     const usersPage = new UsersPage();
 
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
@@ -366,8 +363,18 @@ describe('Users test', () => {
         newOrganisationName,
         data.organisationId,
       );
-      await createUserQuery(data.accessToken, newOrg.id, usersPage.firstName.toUpperCase());
-      await createUserQuery(data.accessToken, newOrg.id, new UsersPage().firstName.toLowerCase());
+      await createUserQuery(
+        data.accessToken,
+        newOrg.id,
+        usersPage.firstName.toUpperCase(),
+        usersPage.lastName.toUpperCase(),
+      );
+      await createUserQuery(
+        data.accessToken,
+        newOrg.id,
+        new UsersPage().firstName.toLowerCase(),
+        new UsersPage().lastName.toLowerCase(),
+      );
       for (let i = 0; i < 3; i++) {
         await createUserQuery(data.accessToken, newOrg.id);
       }

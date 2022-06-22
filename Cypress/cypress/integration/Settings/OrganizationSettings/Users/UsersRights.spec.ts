@@ -2,12 +2,11 @@ import HeaderMenu from '../../../../pageobjects/HeaderMenu';
 import UsersPage from '../../../../pageobjects/Settings/Organisation/Users/UsersPage';
 import faker from 'faker';
 import {
-  createUserQuery,
   createOrganisationQuery,
   createSubOrganisationQuery,
   OrganisationQuery,
-  createUserAndLoginWithIt,
 } from '../../../helpers/OrganisationHelper';
+import { createUserQuery, createUserAndLoginWithIt } from '../../../helpers/UserHelper';
 
 describe('Users test', () => {
   let subOrg1: OrganisationQuery;
@@ -41,7 +40,7 @@ describe('Users test', () => {
   beforeEach(() => {
     cy.restoreLocalStorageCache();
     window.localStorage.setItem('features', '["new-userSettings"]');
-    cy.intercept('GET', '**/users').as('getUsers');
+    cy.intercept('GET', '**/users**').as('getUsers');
     cy.logout();
     cy.visit('/');
   });
