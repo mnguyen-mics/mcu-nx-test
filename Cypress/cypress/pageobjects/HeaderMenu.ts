@@ -77,7 +77,6 @@ class HeaderMenu extends Page {
 
   clickOrgIdSwitchSearchView(orgName: string) {
     this.orgSwitchSearchView.contains(orgName).first().click({ force: true });
-
   }
 
   clickBtnApps() {
