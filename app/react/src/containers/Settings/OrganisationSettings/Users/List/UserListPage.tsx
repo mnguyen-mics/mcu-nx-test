@@ -214,25 +214,28 @@ class UserListPage extends React.Component<Props, State> {
             });
           });
     };
-    Modal.confirm({
-      title: formatMessage(messages.modalUserRoleDeleteTitle),
-      content: (
-        <FormattedMessage
-          id='settings.organisation.users.modalUserRoleDeleteDescription'
-          defaultMessage='You are about to definitively delete the {role} role for {userName} on organisation {orgName}. All inherited roles will also be deleted. Are you sure you want to continue ?'
-          values={{
-            userName: <b>{`${user.first_name} ${user.last_name}`}</b>,
-            orgName: <b>{user.organisation_id}</b>,
-            role: <b>{user.role?.role}</b>,
-          }}
-        />
-      ),
-      icon: <ExclamationCircleOutlined />,
-      okText: 'OK',
-      cancelText: formatMessage(messages.modalCancel),
-      onOk() {
-        deleteUserRole();
-      },
+
+    this._organisationService.getOrganisation(user.organisation_id).then(org => {
+      Modal.confirm({
+        title: formatMessage(messages.modalUserRoleDeleteTitle),
+        content: (
+          <FormattedMessage
+            id='settings.organisation.users.modalUserRoleDeleteDescription'
+            defaultMessage='You are about to definitively delete the {role} role for {userName} on organisation {orgName}. All inherited roles will also be deleted. Are you sure you want to continue ?'
+            values={{
+              userName: <b>{`${user.first_name} ${user.last_name}`}</b>,
+              orgName: <b>{org.data.name}</b>,
+              role: <b>{user.role?.role}</b>,
+            }}
+          />
+        ),
+        icon: <ExclamationCircleOutlined />,
+        okText: 'OK',
+        cancelText: formatMessage(messages.modalCancel),
+        onOk() {
+          deleteUserRole();
+        },
+      });
     });
   };
 
@@ -322,9 +325,8 @@ class UserListPage extends React.Component<Props, State> {
     const {
       workspace: { role },
     } = this.props;
-
-    if (role === 'COMMUNITY_ADMIN') return true;
-    else return false;
+    if (role === 'READER' || role === 'EDITOR' || role === 'ORGANISATION_ADMIN') return false;
+    else return true;
   };
 
   getUsersOptions = () => {

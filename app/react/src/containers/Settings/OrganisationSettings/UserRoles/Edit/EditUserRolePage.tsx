@@ -100,7 +100,7 @@ class EditUserPage extends React.Component<Props, State> {
 
     this.setState({ loading: true });
     this._userRolesService
-      .getUserRoles(userId)
+      .getUserRoles(userId, { max_results: 500 })
       .then(response => {
         return response.data.find((role: UserRoleResource) => role.id === roleId);
       })
