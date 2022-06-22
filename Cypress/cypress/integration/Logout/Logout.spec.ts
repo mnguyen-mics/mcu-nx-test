@@ -1,5 +1,5 @@
 import Header from '../../pageobjects/HeaderMenu';
-import LoginPageKeycloak from '../../pageobjects/LoginPage';
+import LoginPage from '../../pageobjects/LoginPage';
 
 describe('Should test logout on the new NavBar', () => {
   beforeEach(() => {
@@ -12,9 +12,10 @@ describe('Should test logout on the new NavBar', () => {
   });
 
   it('Logout after clicking the logout button', () => {
+    const loginPageKeycloak = new LoginPage(Cypress.env('apiToken'));
     Header.header.should('be.visible');
     Header.clickUserIcon();
     Header.clickBtnLogout();
-    LoginPageKeycloak.formLogin.should('be.visible');
+    loginPageKeycloak.formLogin.should('be.visible');
   });
 });

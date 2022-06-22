@@ -1,8 +1,7 @@
-import loginPageKeycloak from '../../pageobjects/LoginPage';
-import Keycloak from '../../utils/Keycloak';
+import LoginPage from '../../pageobjects/LoginPage';
 
 describe('Should test keycloak update password', () => {
-  const keycloak = new Keycloak();
+  before(() => {});
 
   beforeEach(() => {
     cy.logout();
@@ -13,16 +12,68 @@ describe('Should test keycloak update password', () => {
     cy.clearLocalStorage();
   });
 
-  it('Should check password rotation', () => {
+  it('Verify that password validity expired', () => {
     cy.visit('/').then(async () => {
-      const passwordRequirements = await keycloak.getPasswordRequirements(Cypress.env('apiToken'));
+      const loginPageKeycloak = new LoginPage(Cypress.env('apiToken'));
+      const email = 'test@mediarithmics.com';
+      const bastion = Cypress.env('virtualPlatformName') + '.mics-sandbox.com';
+      const ssh_options =
+        '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ProxyCommand="ssh -W %h:%p ' +
+        bastion +
+        '"';
+      const hostname = '10.0.1.7';
+      cy.exec(
+        'scp ' +
+          ssh_options +
+          ' cypress/integration/Keycloak/sql_insert_user.sh ' +
+          hostname +
+          ':~/tmp.sh',
+        { timeout: 20000 },
+      );
+      cy.exec('ssh ' + ssh_options + ' ' + hostname + ' "chmod +x ~/tmp.sh && ~/tmp.sh"', {
+        timeout: 20000,
+      });
+
+      loginPageKeycloak.login(email);
+
+      // Should check the password rotation of one year
+      loginPageKeycloak.alertSuccess.should(
+        'contain',
+        'You need to change your password to activate your account',
+      );
+    });
+  });
+
+  it('Verify the password policy', () => {
+    cy.visit('/').then(async () => {
+      //const passwordRequirements = await keycloak.getPasswordRequirements(Cypress.env('apiToken'));
+      const loginPageKeycloak = new LoginPage(Cypress.env('apiToken'));
+      const passwordRequirements = await loginPageKeycloak.apiPasswordRequirements;
       const minDigitCount = passwordRequirements.data.min_digit_count;
       const minSpecialCharsCount = passwordRequirements.data.min_special_chars_count;
       const differentLetterCaseNeeded = passwordRequirements.data.different_lettre_case_needed;
       const minLength = passwordRequirements.data.min_length;
       const forbidPopularPasswords = passwordRequirements.data.forbid_popular_passwords;
 
-      const email = 'mckongkong@mediarithmics.com';
+      const email = 'test@mediarithmics.com';
+      const bastion = Cypress.env('virtualPlatformName') + '.mics-sandbox.com';
+      const ssh_options =
+        '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ProxyCommand="ssh -W %h:%p ' +
+        bastion +
+        '"';
+      const hostname = '10.0.1.7';
+      cy.exec(
+        'scp ' +
+          ssh_options +
+          ' cypress/integration/Keycloak/sql_insert_user.sh ' +
+          hostname +
+          ':~/tmp.sh',
+        { timeout: 20000 },
+      );
+      cy.exec('ssh ' + ssh_options + ' ' + hostname + ' "chmod +x ~/tmp.sh && ~/tmp.sh"', {
+        timeout: 20000,
+      });
+
       loginPageKeycloak.login(email);
 
       // Should check the password rotation of one year
@@ -95,6 +146,39 @@ describe('Should test keycloak update password', () => {
       // cy.get('#password-confirm').type('{selectall}{backspace}' + Cypress.env('devPwd'));
       // cy.get('#kc-form-buttons').click();
       // cy.get('.alert-error-newlines').should('be.visible');
+    });
+  });
+
+  it('Verify that a expired password can be changed', () => {
+    cy.visit('/').then(async () => {
+      const loginPageKeycloak = new LoginPage(Cypress.env('apiToken'));
+      const email = 'test@mediarithmics.com';
+      const bastion = Cypress.env('virtualPlatformName') + '.mics-sandbox.com';
+      const ssh_options =
+        '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ProxyCommand="ssh -W %h:%p ' +
+        bastion +
+        '"';
+      const hostname = '10.0.1.7';
+
+      cy.exec(
+        'scp ' +
+          ssh_options +
+          ' cypress/integration/Keycloak/sql_insert_user.sh ' +
+          hostname +
+          ':~/tmp.sh',
+        { timeout: 20000 },
+      );
+      cy.exec('ssh ' + ssh_options + ' ' + hostname + ' "chmod +x ~/tmp.sh && ~/tmp.sh"', {
+        timeout: 20000,
+      });
+
+      loginPageKeycloak.login(email);
+
+      // Should check the password rotation of one year
+      loginPageKeycloak.alertSuccess.should(
+        'contain',
+        'You need to change your password to activate your account',
+      );
 
       // Insert a valid password
       const password = 'qsdfjdsqN7@kfeu';
@@ -103,7 +187,14 @@ describe('Should test keycloak update password', () => {
       loginPageKeycloak.getPasswordRequirements(false).should('have.length', 0);
       loginPageKeycloak.btnSubmitPassword.should('be.enabled');
       loginPageKeycloak.clickBtnSubmitPassword();
-      cy.url().should('contains', Cypress.config().baseUrl + '/#/v2/o/1/campaigns');
+
+      cy.wait(3000);
+      cy.reload();
+
+      cy.url({ timeout: 10000 }).should(
+        'contains',
+        Cypress.config().baseUrl + '/#/v2/o/1/campaigns',
+      );
 
       // Logout
       cy.logout();

@@ -1,4 +1,4 @@
-import loginPageKeycloak from '../../pageobjects/LoginPage';
+import LoginPage from '../../pageobjects/LoginPage';
 import faker from 'faker';
 
 describe('Should get timeout after 5 login attempts', () => {
@@ -15,7 +15,8 @@ describe('Should get timeout after 5 login attempts', () => {
     cy.clearLocalStorage();
   });
 
-  it.skip('Should get a timeout after 5 login attempts', () => {
+  it('Should get a timeout after 5 login attempts', () => {
+    const loginPageKeycloak = new LoginPage(Cypress.env('apiToken'));
     const email = 'toto@mediarithmics.com';
     loginPageKeycloak.typeEmail(email);
     loginPageKeycloak.clickBtnSignIn();
