@@ -162,6 +162,11 @@ declare namespace Cypress {
 
     executeQuery(accessToken: string, datamartId: string, queryText: string): Chainable<any>;
 
-    putDataFile(accessToken: string, organisationId: string, fileContent: any): Chainable<any>;
+    putDataFile(
+      accessToken: string,
+      organisationId: string,
+      fileContent: any,
+      route: string,
+    ): Chainable<any>;
   }
 }

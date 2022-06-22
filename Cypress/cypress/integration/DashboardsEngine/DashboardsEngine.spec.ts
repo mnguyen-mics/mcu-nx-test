@@ -1,10 +1,12 @@
 import faker from 'faker';
 import DashboardFilter from '../components/DashboardFilter';
-import LeftMenu from '../components/LeftMenu';
+import LeftMenu from '../../pageobjects/LeftMenu';
 import {
   compartmentFilterContent,
   dataFileContent,
+  dataFileContentSegmentIdToken,
   dataFileSourceContent,
+  dataFileSourceContentSegmentIdToken,
   differentChartsContent,
   drawerChartDetails,
   getDecoratosTransformationContent,
@@ -768,7 +770,12 @@ describe('dashboards engine Tests', () => {
         [],
         [],
       ).then(dashboardResponse => {
-        cy.putDataFile(data.accessToken, data.organisationId, dataFileContent).then(() => {
+        cy.putDataFile(
+          data.accessToken,
+          data.organisationId,
+          dataFileContent,
+          'dashboard-1.json',
+        ).then(() => {
           cy.request({
             url: `${Cypress.env('apiDomain')}/v1/dashboards/${
               dashboardResponse.body.data.id
@@ -921,6 +928,100 @@ describe('dashboards engine Tests', () => {
             cy.get('.mcs-otqlChart_content_bar')
               .should('contain', 'Dimension Test')
               .and('contain', 'count: 6');
+          });
+        });
+      });
+    });
+  });
+
+  it('the {segment_id} token shouldnt work in the home page', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createDashboard(data.accessToken, data.organisationId, 'tempo', ['home'], [], []);
+      cy.createDashboard(
+        data.accessToken,
+        data.organisationId,
+        'Segment Id Token',
+        ['home'],
+        [],
+        [],
+      ).then(dashboardResponse => {
+        cy.putDataFile(
+          data.accessToken,
+          data.organisationId,
+          dataFileContentSegmentIdToken('test'),
+          'dashboard-1.json',
+        ).then(() => {
+          cy.request({
+            url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+              dashboardResponse.body.data.id
+            }/content`,
+            method: 'PUT',
+            headers: { Authorization: data.accessToken },
+            body: dataFileSourceContentSegmentIdToken(data.organisationId, 'test'),
+          }).then(() => {
+            cy.switchOrg(data.organisationName);
+            LeftMenu.goToHomePage();
+            cy.contains('Segment Id Token').click();
+            cy.get('.mcs-chart_content_container').first().should('not.contain', '200');
+          });
+        });
+      });
+    });
+  });
+
+  it('test the {segment_id} token on the segments dashboards', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createDashboard(
+        data.accessToken,
+        data.organisationId,
+        'Segment Id Token',
+        ['segments'],
+        [],
+        [],
+      ).then(dashboardResponse => {
+        cy.request({
+          url: `${Cypress.env('apiDomain')}/v1/audience_segments?organisation_id=${
+            data.organisationId
+          }`,
+          method: 'POST',
+          headers: { Authorization: data.accessToken },
+          body: {
+            datamart_id: data.datamartId,
+            type: 'USER_LIST',
+            name: 'First segment token test',
+            persisted: 'true',
+            feed_type: 'FILE_IMPORT',
+          },
+        }).then(segmentResponse => {
+          const firstSegmentId = segmentResponse.body.data.id;
+          cy.putDataFile(
+            data.accessToken,
+            data.organisationId,
+            dataFileContentSegmentIdToken(firstSegmentId),
+            `dashboard-${firstSegmentId}-1.json`,
+          ).then(() => {
+            cy.request({
+              url: `${Cypress.env('apiDomain')}/v1/dashboards/${
+                dashboardResponse.body.data.id
+              }/content`,
+              method: 'PUT',
+              headers: { Authorization: data.accessToken },
+              body: dataFileSourceContentSegmentIdToken(data.organisationId, firstSegmentId),
+            }).then(() => {
+              cy.switchOrg(data.organisationName);
+              LeftMenu.goToSegmentsPage();
+              cy.contains('First segment token test').click();
+              cy.contains('Segment Id Token').click();
+              cy.wait(1000);
+              cy.get('.mcs-chart_content_container')
+                .first()
+                .should('contain', '200')
+                .and('contain', '100')
+                .and('contain', '300')
+                .and('contain', 'Dimension 1')
+                .and('contain', 'Dimension 2')
+                .and('contain', 'Dimension 3');
+            });
           });
         });
       });
