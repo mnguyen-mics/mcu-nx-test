@@ -902,7 +902,7 @@ describe('dashboards engine Tests', () => {
                 'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
                 { force: true, parseSpecialCharSequences: false },
               );
-            cy.get('.mcs-otqlInputEditor_newSubSerieQuery').click();
+            cy.get('.mcs-otqlSeries_newValue').click();
             cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
               .eq(1)
               .type('{selectall}{backspace}{backspace}', {
