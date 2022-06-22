@@ -47,6 +47,10 @@ class HeaderMenu extends Page {
     return cy.get('.mcs_appMenu');
   }
 
+  get organisationName() {
+    return cy.get('.mcs-organisationListSwitcher_orgName');
+  }
+
   clickSettingsIcon() {
     this.settingsIcon.click();
   }
@@ -68,7 +72,7 @@ class HeaderMenu extends Page {
   }
 
   clickOrgSwitchSearchView() {
-    this.orgSwitchSearchView.click({ force: true });
+    this.orgSwitchSearchView.first().click({ force: true });
   }
 
   clickBtnApps() {
