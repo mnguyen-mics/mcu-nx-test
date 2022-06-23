@@ -20,6 +20,10 @@ class LabelsPage extends Page {
   }
 
   get labelsTable() {
+    return cy.get('.ant-table-container');
+  }
+
+  get labelsTableRows() {
     return cy.get('.ant-table-row');
   }
 
@@ -67,8 +71,8 @@ class LabelsPage extends Page {
     this.btnNewLabel.click();
   }
 
-  clickLastArrowDropDownMenu() {
-    this.arrowDropDownMenu.last().click();
+  clickDropDownArrowLabel(label: string) {
+    return this.labelsTableRows.contains(label).parent().find('.mcs-chevron').click();
   }
 
   clickBtnEdit() {
