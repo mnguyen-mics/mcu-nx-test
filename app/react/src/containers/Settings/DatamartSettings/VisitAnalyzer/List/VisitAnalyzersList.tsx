@@ -129,10 +129,10 @@ class VisitAnalyzersList extends Component<
 
     Modal.confirm({
       icon: <ExclamationCircleOutlined />,
-      title: formatMessage(messages.visitAnalyzerArchiveTitle),
-      content: formatMessage(messages.visitAnalyzerArchiveMessage),
-      okText: formatMessage(messages.visitAnalyzerArchiveOk),
-      cancelText: formatMessage(messages.visitAnalyzerArchiveCancel),
+      title: formatMessage(messages.activityAnalyzerArchiveTitle),
+      content: formatMessage(messages.activityAnalyzerArchiveMessage),
+      okText: formatMessage(messages.activityAnalyzerArchiveOk),
+      cancelText: formatMessage(messages.activityAnalyzerArchiveCancel),
       onOk: () => {
         this.archiveVisitAnalyzer(visitAnalyzer.id).then(() => {
           if (data.length === 1 && filter.currentPage !== 1) {
@@ -165,7 +165,7 @@ class VisitAnalyzersList extends Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/visit_analyzers/${visitAnalyzer.id}/edit`,
+      `/v2/o/${organisationId}/settings/datamart/activity_analyzers/${visitAnalyzer.id}/edit`,
     );
   };
 
@@ -202,7 +202,7 @@ class VisitAnalyzersList extends Component<
         render: (text: string, record: VisitAnalyzer) => (
           <Link
             className='mcs-campaigns-link'
-            to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${record.id}/edit`}
+            to={`/v2/o/${organisationId}/settings/datamart/activity_analyzers/${record.id}/edit`}
           >
             {text}
           </Link>
@@ -247,7 +247,7 @@ class VisitAnalyzersList extends Component<
     };
 
     const onClick = () =>
-      history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`);
+      history.push(`/v2/o/${organisationId}/settings/datamart/activity_analyzers/create`);
 
     const buttons = [
       <Button
@@ -256,7 +256,7 @@ class VisitAnalyzersList extends Component<
         className='mcs-VisitAnalyzersList_creation_button'
         onClick={onClick}
       >
-        <FormattedMessage {...messages.newVisitAnalyzer} />
+        <FormattedMessage {...messages.newActivityAnalyzer} />
       </Button>,
     ];
 
@@ -264,7 +264,7 @@ class VisitAnalyzersList extends Component<
       <div>
         <div className='mcs-card-header mcs-card-title'>
           <span className='mcs-card-title'>
-            <FormattedMessage {...messages.visitAnalyzer} />
+            <FormattedMessage {...messages.activityAnalyzer} />
           </span>
           <span className='mcs-card-button'>{buttons}</span>
         </div>

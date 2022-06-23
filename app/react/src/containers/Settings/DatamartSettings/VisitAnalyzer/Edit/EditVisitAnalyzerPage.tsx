@@ -29,7 +29,7 @@ const VisitAnalyzerPluginContent = GenericPluginContent as React.ComponentClass<
 
 interface VisitAnalyzerRouteParam {
   organisationId: string;
-  visitAnalyzerId?: string;
+  activityAnalyzerId?: string;
 }
 
 type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> &
@@ -47,7 +47,7 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
         params: { organisationId },
       },
     } = this.props;
-    const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/visit_analyzers`;
+    const attributionModelUrl = `/v2/o/${organisationId}/settings/datamart/activity_analyzers`;
     history.push(attributionModelUrl);
   };
 
@@ -58,7 +58,7 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
       },
       history,
     } = this.props;
-    history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers`);
+    history.push(`/v2/o/${organisationId}/settings/datamart/activity_analyzers`);
   };
 
   createPluginInstance = (
@@ -85,12 +85,12 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
       intl: { formatMessage },
       fieldValidators: { isRequired },
       match: {
-        params: { visitAnalyzerId, organisationId },
+        params: { activityAnalyzerId, organisationId },
       },
     } = this.props;
 
     const breadcrumbPaths = (visitAnalyzer?: VisitAnalyzer) => [
-      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/activity_analyzers`}>
         {formatMessage(messages.listTitle)}
       </Link>,
       visitAnalyzer
@@ -140,7 +140,7 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
         listSubTitle={messages.listSubTitle}
         breadcrumbPaths={breadcrumbPaths}
         pluginInstanceService={this._visitAnalyzerService}
-        pluginInstanceId={visitAnalyzerId}
+        pluginInstanceId={activityAnalyzerId}
         createPluginInstance={this.createPluginInstance}
         onSaveOrCreatePluginInstance={this.onSaveOrCreatePluginInstance}
         onClose={this.redirect}

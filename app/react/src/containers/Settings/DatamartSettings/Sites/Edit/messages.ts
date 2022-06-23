@@ -48,7 +48,7 @@ export default defineMessages({
   },
   sectionVisitAnalyzer: {
     id: 'settings.site.form.section.visitAnalyzer.title',
-    defaultMessage: 'Visit Analyzers',
+    defaultMessage: 'Activity Analyzers',
   },
   sectionProcessingActivitiesTitle: {
     id: 'settings.site.form.section.processingActivities.title',
