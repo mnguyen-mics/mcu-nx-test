@@ -15,6 +15,12 @@ export interface IContextualTargetingService {
     segmentId: string,
     body: Partial<ContextualTargetingResource>,
   ) => Promise<DataResponse<ContextualTargetingResource>>;
+
+  publishContextualTargeting: (
+    segmentId: string,
+    contextualTargetingId: string,
+    volumeRatio: number,
+  ) => Promise<DataResponse<ContextualTargetingResource>>;
 }
 
 @injectable()
@@ -30,5 +36,20 @@ export class ContextualTargetingService implements IContextualTargetingService {
     body: Partial<ContextualTargetingResource>,
   ): Promise<DataResponse<ContextualTargetingResource>> {
     return ApiService.postRequest(`audience_segments/${segmentId}/contextual_targetings`, body);
+  }
+
+  publishContextualTargeting(
+    segmentId: string,
+    contextualTargetingId: string,
+    volumeRatio: number,
+  ): Promise<DataResponse<ContextualTargetingResource>> {
+    const body = {
+      type: 'PUBLISH',
+      volume_ratio: volumeRatio,
+    };
+    return ApiService.postRequest(
+      `audience_segments/${segmentId}/contextual_targetings/${contextualTargetingId}/actions`,
+      body,
+    );
   }
 }
