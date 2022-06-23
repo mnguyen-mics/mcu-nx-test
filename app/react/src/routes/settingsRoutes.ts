@@ -262,23 +262,23 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
-  // visit analyzer
-  settingsDatamartVisitAnalyzerList: {
-    path: '/settings/datamart/visit_analyzers',
+  // Activity analyzer
+  settingsDatamartActivityAnalyzerList: {
+    path: '/settings/datamart/activity_analyzers',
     layout: 'settings',
     contentComponent: VisitAnalyzerContent,
     requiredFeature: 'datamartSettings-visit_analyzers',
     requireDatamart: true,
   },
-  settingsDatamartVisitAnalyzerEdition: {
-    path: '/settings/datamart/visit_analyzers/:visitAnalyzerId(\\d+)/edit',
+  settingsDatamartActivityAnalyzerEdition: {
+    path: '/settings/datamart/activity_analyzers/:activityAnalyzerId(\\d+)/edit',
     layout: 'edit',
     editComponent: CreateEditVisitAnalyzer,
     requiredFeature: 'datamartSettings-visit_analyzers',
     requireDatamart: true,
   },
-  settingsDatamartVisitAnalyzerCreation: {
-    path: '/settings/datamart/visit_analyzers/create',
+  settingsDatamartActivityAnalyzerCreation: {
+    path: '/settings/datamart/activity_analyzers/create',
     layout: 'edit',
     editComponent: CreateEditVisitAnalyzer,
     requiredFeature: 'datamartSettings-visit_analyzers',

@@ -49,38 +49,38 @@ const messages = defineMessages({
   },
   addStepButton: {
     id: 'settings.form.activityAnalyzer.addStep',
-    defaultMessage: 'Add a Visit Analyzer',
+    defaultMessage: 'Add a Activity Analyzer',
   },
   sectionSubtitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.subtitle',
     defaultMessage:
-      'Add Visit Analyzers to your property. They are run in sequences. A Visit Analyzer is a custom plugin that helps you enhance or modify data before storing it in your datamart.',
+      'Add Activity Analyzers to your property. They are run in sequences. A Activity Analyzer is a custom plugin that helps you enhance or modify data before storing it in your datamart.',
   },
   sectionTitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.title',
-    defaultMessage: 'Visit Analyzers',
+    defaultMessage: 'Activity Analyzers',
   },
   sectionEmptyVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.empty',
-    defaultMessage: 'There is no Visit Analyzer selected yet!',
+    defaultMessage: 'There is no Activity Analyzer selected yet!',
   },
   newVisitAnalyzerSelection: {
     id: 'settings.form.activityAnalyzer.new',
-    defaultMessage: 'New Visit Analyzer',
+    defaultMessage: 'New Activity Analyzer',
   },
   sectionGeneralErrorRecoveryStrategyHelperSTORE_WITH_ERROR_ID: {
     id: 'settings.form.activityAnalyzer.error-recovery-strategy.STORE_WITH_ERROR_ID',
     defaultMessage:
-      'Store With Error Id: If the Visit Analyzer failed, the activity will be sent to the next Visit Analyzer without any modification of this one.',
+      'Store With Error Id: If the Activity Analyzer failed, the activity will be sent to the next Activity Analyzer without any modification of this one.',
   },
   sectionGeneralErrorRecoveryStrategyHelperSTORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS: {
     id: 'settings.form.activityAnalyzer.error-recovery-strategy.STORE_WITH_ERROR_ID_AND_SKIP_UPCOMING_ANALYZERS',
     defaultMessage:
-      'Store With Error Id And Skip Upcoming Analyzers: If the Visit Analyzer failed, the activity will be saved without any modification of this one.',
+      'Store With Error Id And Skip Upcoming Analyzers: If the Activity Analyzer failed, the activity will be saved without any modification of this one.',
   },
   sectionGeneralErrorRecoveryStrategyHelperDROP: {
     id: 'settings.form.activityAnalyzer.error-recovery-strategy.DROP',
-    defaultMessage: 'Drop: If the Visit Analyzer failed, the activity won’t be saved.',
+    defaultMessage: 'Drop: If the Activity Analyzer failed, the activity won’t be saved.',
   },
 });
 

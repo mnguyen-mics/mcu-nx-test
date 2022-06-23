@@ -2,19 +2,19 @@ import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   listTitle: {
-    id: 'visitanalyzer.edit.list.title',
-    defaultMessage: 'Visit Analyzers',
+    id: 'activityanalyzer.edit.list.title',
+    defaultMessage: 'Activity Analyzers',
   },
   listSubTitle: {
-    id: 'visitanalyzer.edit.list.subtitle',
-    defaultMessage: 'New Visit Analyzer',
+    id: 'activityanalyzer.edit.list.subtitle',
+    defaultMessage: 'New Activity Analyzer',
   },
   visitAnalyzerBreadcrumb: {
-    id: 'visitanalyzer.create.breadcrumb.newtitle',
-    defaultMessage: 'New Visit Analyzer',
+    id: 'activityanalyzer.create.breadcrumb.newtitle',
+    defaultMessage: 'New Activity Analyzer',
   },
   visitAnalyzerEditBreadcrumb: {
-    id: 'visitanalyzer.create.breadcrumb.editTitle',
+    id: 'activityanalyzer.create.breadcrumb.editTitle',
     defaultMessage: 'Edit {name}',
   },
   sectionGeneralErrorRecoveryStrategy: {
@@ -24,6 +24,6 @@ export default defineMessages({
   sectionGeneralErrorRecoveryStrategyHelper: {
     id: 'plugin.edit.section.general.button.error-recovery-strategy-helper',
     defaultMessage:
-      'Store With Error Id: If the Visit Analyzer failed, the activity will be sent to the next Visit Analyzer without any modification of this one. Store With Error Id And Skip Upcoming Analyzers: If the Visit Analyzer failed, the activity will be saved without any modification of this one. Drop: If the Visit Analyzer failed, the activity won’t be saved.',
+      'Store With Error Id: If the Activity Analyzer failed, the activity will be sent to the next Activity Analyzer without any modification of this one. Store With Error Id And Skip Upcoming Analyzers: If the Activity Analyzer failed, the activity will be saved without any modification of this one. Drop: If the Activity Analyzer failed, the activity won’t be saved.',
   },
 });

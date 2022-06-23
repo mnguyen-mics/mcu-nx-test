@@ -39,9 +39,9 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
     },
     {
       ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartVisitAnalyzerList,
+        settingsDefinition.settingsDatamartActivityAnalyzerList,
       ),
-      translation: messages.visitAnalyzerSettingsTitle,
+      translation: messages.activityAnalyzerSettingsTitle,
     },
     {
       ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsDatamartMlFunctionList),

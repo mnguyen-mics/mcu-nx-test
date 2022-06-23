@@ -1,53 +1,53 @@
 import { defineMessages } from 'react-intl';
 
 export default defineMessages({
-  visitAnalyzer: {
-    id: 'settings.visitAnalyzer.breadcrumb.title',
-    defaultMessage: 'Visit Analyzers',
+  activityAnalyzer: {
+    id: 'settings.activityAnalyzer.breadcrumb.title',
+    defaultMessage: 'Activity Analyzers',
   },
-  newVisitAnalyzer: {
-    id: 'settings.visitAnalyzer.actionbar.button.new',
-    defaultMessage: 'New Visit Analyzer',
+  newActivityAnalyzer: {
+    id: 'settings.activityAnalyzer.actionbar.button.new',
+    defaultMessage: 'New Activity Analyzer',
   },
-  visitAnalyzerArchiveTitle: {
-    id: 'settings.visitAnalyzer.modal.archive.title',
-    defaultMessage: 'Are you sure you want to archive this Visit Analyzer?',
+  activityAnalyzerArchiveTitle: {
+    id: 'settings.activityAnalyzer.modal.archive.title',
+    defaultMessage: 'Are you sure you want to archive this Activity Analyzer?',
   },
-  visitAnalyzerArchiveMessage: {
-    id: 'settings.visitAnalyzer.modal.archive.message',
+  activityAnalyzerArchiveMessage: {
+    id: 'settings.activityAnalyzer.modal.archive.message',
     defaultMessage:
-      'By archiving this Visit Analyzer it will stop campaigns using it. Are you sure?',
+      'By archiving this Activity Analyzer it will stop campaigns using it. Are you sure?',
   },
-  visitAnalyzerArchiveOk: {
-    id: 'settings.visitAnalyzer.modal.archive.ok',
+  activityAnalyzerArchiveOk: {
+    id: 'settings.activityAnalyzer.modal.archive.ok',
     defaultMessage: 'Archive Now',
   },
-  visitAnalyzerArchiveCancel: {
-    id: 'settings.visitAnalyzer.modal.archive.cancel',
+  activityAnalyzerArchiveCancel: {
+    id: 'settings.activityAnalyzer.modal.archive.cancel',
     defaultMessage: 'Cancel',
   },
   name: {
-    id: 'settings.visitAnalyzer.list.column.name',
+    id: 'settings.activityAnalyzer.list.column.name',
     defaultMessage: 'Name',
   },
   processor: {
-    id: 'settings.visitAnalyzer.list.column.processor',
-    defaultMessage: 'Visit Analyser Processor',
+    id: 'settings.activityAnalyzer.list.column.processor',
+    defaultMessage: 'Activity Analyser Processor',
   },
   provider: {
-    id: 'settings.visitAnalyzer.list.column.provider',
+    id: 'settings.activityAnalyzer.list.column.provider',
     defaultMessage: 'Provider',
   },
   empty: {
-    id: 'settings.visitAnalyzer.list.empty',
-    defaultMessage: 'There is no Visit Analyzer List created yet! Click on New to get started',
+    id: 'settings.activityAnalyzer.list.empty',
+    defaultMessage: 'There is no Activity Analyzer List created yet! Click on New to get started',
   },
   edit: {
-    id: 'settings.visitAnalyzer.list.actionColumn.edit',
+    id: 'settings.activityAnalyzer.list.actionColumn.edit',
     defaultMessage: 'Edit',
   },
   archive: {
-    id: 'settings.visitAnalyzer.list.actionColumn.archive',
+    id: 'settings.activityAnalyzer.list.actionColumn.archive',
     defaultMessage: 'Archive',
   },
 });

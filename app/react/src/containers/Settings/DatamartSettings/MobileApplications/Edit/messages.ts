@@ -15,7 +15,7 @@ export default defineMessages({
   },
   sectionVisitAnalyzerTitle: {
     id: 'settings.mobileapp.form.visitAnalayzer.title',
-    defaultMessage: 'Visit Analyzers',
+    defaultMessage: 'Activity Analyzers',
   },
   sectionEventRulesTitle: {
     id: 'settings.mobileapp.form.section.eventRules.title',
