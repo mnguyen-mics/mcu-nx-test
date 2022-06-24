@@ -73,6 +73,10 @@ export const messages = defineMessages({
     id: 'settings.organisation.users.filterOnUser',
     defaultMessage: 'Filter on User',
   },
+  filterOnUserTooltip: {
+    id: 'settings.organisation.users.filterOnUser.tooltip',
+    defaultMessage: 'Type at least 3 characters',
+  },
   userInformation: {
     id: 'settings.organisation.users.information',
     defaultMessage: 'User Information',
@@ -92,7 +96,7 @@ export const messages = defineMessages({
   organisationDescription: {
     id: 'settings.organisation.users.organisationDescription',
     defaultMessage:
-      'The organisation will be used for login purposes only. User rights and privileges will be assigned through user roles',
+      'The organisation will be used for login purposes only. User rights and privileges will be assigned through roles',
   },
   modalCancel: {
     id: 'settings.organisation.users.modalCancel',
@@ -147,5 +151,9 @@ export const messages = defineMessages({
   homeUser: {
     id: 'settings.organisation.users.homeUser',
     defaultMessage: 'This user is defined on this organisation.',
+  },
+  noData: {
+    id: 'settings.organisation.users.noData',
+    defaultMessage: 'No Data',
   },
 });

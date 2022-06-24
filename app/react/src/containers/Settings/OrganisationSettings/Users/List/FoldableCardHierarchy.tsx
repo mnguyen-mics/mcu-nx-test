@@ -5,7 +5,7 @@ import FoldableCard, { FoldableCardProps } from './FoldableCard';
 
 export interface FoldableCardHierarchyResource {
   foldableCard: FoldableCardProps;
-  children?: FoldableCardHierarchyResource[];
+  children: FoldableCardHierarchyResource[];
 }
 
 export interface FoldableCardHierarchyProps {
@@ -15,51 +15,46 @@ export interface FoldableCardHierarchyProps {
 }
 
 export default class FoldableCardHierarchy extends React.Component<FoldableCardHierarchyProps> {
-  buildFoldableCardHierachy() {
-    const recusiveBuildFoldableCardHierachy = (
-      currentNode: FoldableCardHierarchyResource,
-    ): React.ReactNode => {
-      const childrenNodes = [];
+  recusiveBuildFoldableCardHierachy = (
+    currentNode: FoldableCardHierarchyResource,
+  ): React.ReactNode => {
+    const nbChildren = currentNode.children.length;
 
-      if (currentNode.children) {
-        for (let index = 0; index < currentNode.children.length; index++) {
-          childrenNodes.push(
-            <Timeline.Item
-              key={`mcs-foldable-card-timelineItem-${index}`}
-              className={
-                'mcs-foldable-card-timeline' +
-                (index === currentNode.children.length - 1
-                  ? ' mcs-foldable-card-timeline-last'
-                  : '')
-              }
-              dot={
-                <div className='mcs-foldable-card-timeline-dash-container'>
-                  <hr className='mcs-foldable-card-timeline-dash' />
-                </div>
-              }
-            >
-              <div className='mcs-foldable-card-children-container'>
-                {recusiveBuildFoldableCardHierachy(currentNode.children[index])}
+    const childrenNodes = currentNode.children.map(
+      (childNode: FoldableCardHierarchyResource, i) => {
+        return (
+          <Timeline.Item
+            key={`mcs-foldable-card-timelineItem-${i}`}
+            className={
+              'mcs-foldable-card-timeline' +
+              (i === nbChildren - 1 ? ' mcs-foldable-card-timeline-last' : '')
+            }
+            dot={
+              <div className='mcs-foldable-card-timeline-dash-container'>
+                <hr className='mcs-foldable-card-timeline-dash' />
               </div>
-            </Timeline.Item>,
-          );
-        }
-      }
-
-      return (
-        <div className='mcs-foldableCardHierachy_container'>
-          <FoldableCard {...currentNode.foldableCard} />
-          <div className='mcs-foldable-card-children-container-first'>{childrenNodes}</div>
-        </div>
-      );
-    };
-
-    const { hierachy } = this.props;
-
-    return hierachy ? recusiveBuildFoldableCardHierachy(hierachy) : <div />;
-  }
+            }
+          >
+            <div className='mcs-foldable-card-children-container'>
+              {this.recusiveBuildFoldableCardHierachy(childNode)}
+            </div>
+          </Timeline.Item>
+        );
+      },
+    );
+    return (
+      <Timeline className='mcs-foldableCardHierachy_container'>
+        <FoldableCard {...currentNode.foldableCard} />
+        <div className='mcs-foldable-card-children-container-first'>{childrenNodes}</div>
+      </Timeline>
+    );
+  };
 
   render() {
-    return <Content>{this.buildFoldableCardHierachy()}</Content>;
+    const { hierachy } = this.props;
+
+    return (
+      <Content>{hierachy ? this.recusiveBuildFoldableCardHierachy(hierachy) : <div />}</Content>
+    );
   }
 }

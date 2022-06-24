@@ -22,7 +22,7 @@ import { RouterProps, UserDisplay } from './UserListPage';
 import { messages } from './messages';
 import UserResource from '../../../../../models/directory/UserResource';
 import _ from 'lodash';
-import { Tooltip } from 'antd';
+import { Empty, Tooltip } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 
@@ -257,18 +257,16 @@ class UserContainer extends React.Component<Props, State> {
         (a: UserResourceWithRole, b: UserResourceWithRole) =>
           a.last_name.localeCompare(b.last_name),
       );
+      const nbOrgUsers = sortedUsers.length;
       return {
         foldableCard: {
           isDefaultActive:
             organisation?.id === currentOrganisationId ||
             organisation?.id === user?.organisation_id,
-          header: this.buildHeader(
-            organisation?.name || '',
-            orgUsers ? orgUsers.length : 0,
-            parentOrgUsers.length,
-          ),
+          header: this.buildHeader(organisation?.name || '', nbOrgUsers, parentOrgUsers.length),
           body: this.buildBody(sortedUsers, organisation?.id),
           organisationId: organisation?.id,
+          noDataCard: nbOrgUsers === 0,
         },
         children: children,
       };
@@ -331,6 +329,8 @@ class UserContainer extends React.Component<Props, State> {
 
   buildBody(orgUsers: UserResourceWithRole[], organisationId?: string): React.ReactNode {
     const { userDisplay, intl } = this.props;
+    if (orgUsers.length === 0)
+      return <Empty className='mcs-foldable-card-empty' image={Empty.PRESENTED_IMAGE_SIMPLE} />;
     const idSorter = (a: UserResourceWithRole, b: UserResourceWithRole) => a.id.localeCompare(b.id);
     const firstNameSorter = (a: UserResourceWithRole, b: UserResourceWithRole) =>
       a.first_name.localeCompare(b.first_name);
