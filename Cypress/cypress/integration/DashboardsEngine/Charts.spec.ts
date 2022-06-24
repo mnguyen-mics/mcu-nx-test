@@ -1,3 +1,5 @@
+import faker from 'faker';
+
 describe('Charts Tests', () => {
   beforeEach(() => {
     cy.login();
@@ -25,7 +27,7 @@ describe('Charts Tests', () => {
           'test_charts_1',
           'test_charts_2',
         ).then(() => {
-          //cy.wait(30000);
+          cy.wait(30000);
           cy.executeQuery(
             data.accessToken,
             data.datamartId,
@@ -34,7 +36,12 @@ describe('Charts Tests', () => {
             cy.switchOrg(data.organisationName);
             cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
             cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
+            cy.get('.mcs-OTQLConsoleContainer_tabs')
+              .find('.ant-tabs-nav-add')
+              .eq(1)
+              .click({ force: true });
             cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
+              .eq(1)
               .type('{selectall}{backspace}{backspace}', {
                 force: true,
               })
@@ -42,73 +49,53 @@ describe('Charts Tests', () => {
                 'SELECT {nature @map} FROM ActivityEvent where nature = "test_charts_1" or nature = "test_charts_2"',
                 { force: true, parseSpecialCharSequences: false },
               );
-            cy.get('.mcs-otqlInputEditor_run_button').click();
+            cy.get('.mcs-otqlInputEditor_run_button').eq(1).click();
+            // cy.get('.mcs-otqlInputEditor_save_button').should('not.be.visible'); // To validate with pm
+            cy.get('.mcs-otqlChart_icons_bar').click();
+            cy.get('.mcs-otqlInputEditor_save_button').should('be.visible');
+            cy.get('.mcs-otqlInputEditor_save_button').click();
+            const chartName = faker.random.words(2);
+            cy.get('.mcs-aggregationRenderer_chart_name').type(chartName);
+            cy.get('.mcs-aggregationRenderer_charts_submit').click();
             cy.wait(1000);
-            cy.request({
-              url: `${Cypress.env('apiDomain')}/v1/charts`,
-              method: 'POST',
-              headers: { Authorization: data.accessToken },
-              body: {
-                title: 'test',
-                type: 'test',
-                content: {
-                  title: 'Index First',
-                  type: 'bars',
-                  dataset: {
-                    type: 'index',
-                    sources: [
-                      {
-                        type: 'otql',
-                        series_title: 'datamart',
-                        query_id: '`${queryId}`',
-                      },
-                      {
-                        type: 'otql',
-                        series_title: 'segment',
-                        query_id: '`${queryId}`',
-                      },
-                    ],
-                    options: {
-                      minimum_percentage: 0,
-                    },
-                  },
-                  options: {
-                    format: 'index',
-                    legend: {
-                      position: 'bottom',
-                      enabled: true,
-                    },
-                    bigBars: true,
-                    stacking: false,
-                    plotLineValue: 100,
-                  },
-                },
-                organisation_id: `${data.organisationId}`,
-              },
-            });
-            cy.contains('Charts').click();
+            cy.get('.mcs-OTQLConsoleContainer_right-tab').eq(1).contains('Charts').click();
             cy.get('.mcs-charts-search-panel')
-              .should('contain', 'test')
+              .should('contain', chartName)
               .and('contain', 'Modified by dev')
               .and('contain', '0 days ago');
-
-            cy.get('.mcs-charts-search-panel_search-bar').find('input').type('te{enter}');
+            const notSavedName = faker.random.words(2);
+            cy.get('.mcs-charts-search-panel_search-bar')
+              .find('input')
+              .type(`${notSavedName}{enter}`);
             cy.get('.mcs-charts-search-panel')
-              .should('contain', 'test')
-              .and('contain', 'Modified by dev')
-              .and('contain', '0 days ago');
-            cy.get('.mcs-charts-search-panel_search-bar').find('input').clear().type('sk{enter}');
-            cy.get('.mcs-charts-search-panel')
-              .should('not.contain', 'test')
+              .should('not.contain', chartName)
               .and('not.contain', 'Modified by dev')
               .and('not.contain', '0 days ago');
+            cy.get('.mcs-charts-search-panel_search-bar')
+              .find('input')
+              .clear()
+              .type(`${chartName}{enter}`);
+            cy.get('.mcs-charts-search-panel')
+              .should('contain', chartName)
+              .and('contain', 'Modified by dev')
+              .and('contain', '0 days ago');
+            cy.reload();
+            cy.get('.mcs-OTQLConsoleContainer_tabs')
+              .find('.ant-tabs-nav-add')
+              .eq(1)
+              .click({ force: true });
+            cy.get('.mcs-OTQLConsoleContainer_right-tab').eq(1).contains('Charts').click();
+            cy.contains(chartName).should('be.visible');
+            cy.wait(2000);
+            cy.contains(chartName).click();
+            // Wait https://mediarithmics.atlassian.net/browse/MICS-13664 to be solved to complete test
           });
         });
       });
     });
   });
 
-  it.only('test the charts on the query tool', () => {
+  it('test the charts on the query tool', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,

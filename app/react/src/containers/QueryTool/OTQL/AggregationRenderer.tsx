@@ -973,7 +973,12 @@ class AggregationRenderer extends React.Component<Props, State> {
           visible={isSaveModalVisible}
           footer={
             <React.Fragment>
-              <AntButton key='back' size='large' onClick={onSaveModalClose}>
+              <AntButton
+                key='back'
+                size='large'
+                onClick={onSaveModalClose}
+                className='mcs-aggregationRenderer_charts_return'
+              >
                 Return
               </AntButton>
               <AntButton
@@ -981,6 +986,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                 key='submit'
                 type='primary'
                 size='large'
+                className='mcs-aggregationRenderer_charts_submit'
                 onClick={handleSaveChart}
               >
                 Submit
@@ -991,6 +997,7 @@ class AggregationRenderer extends React.Component<Props, State> {
         >
           <Input
             value={tab.chartItem?.type ? tab.title.toString() : chartToSaveName}
+            className='mcs-aggregationRenderer_chart_name'
             placeholder='Chart name'
             onChange={editChartName}
           />
@@ -1009,6 +1016,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                 key='submit'
                 type='primary'
                 size='large'
+                className='mcs-aggregationRenderer_delete_chart'
                 onClick={handleDeleteChart}
               >
                 Delete
