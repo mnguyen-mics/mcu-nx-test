@@ -1,5 +1,36 @@
 import { postRequest } from './ApiHelper';
 
+export interface UserQuery {
+  first_name: string;
+  last_name: string;
+  email: string;
+  organisation_id: string;
+  community_id: string;
+  id: string;
+  last_password_update: string;
+  locale: string;
+}
+
+export async function createUserQuery(
+  access_token: string,
+  organisationId: string,
+  firstName: string = `fn-${Math.random().toString(36).substring(2, 10)}`,
+  lastName: string = `ln-${Math.random().toString(36).substring(2, 10)}`,
+  email: string = `email.-${Math.random().toString(36).substring(2, 10)}@test.com`,
+  communityId: string = organisationId,
+): Promise<UserQuery> {
+  const endpoint = 'users';
+  const body = {
+    first_name: firstName,
+    last_name: lastName,
+    email: email,
+    organisation_id: organisationId,
+  };
+  return postRequest(endpoint, access_token, body).then(({ data: user }) => {
+    return user;
+  });
+}
+
 export interface OrganisationQuery {
   administrator_id: string;
   community_id: string;

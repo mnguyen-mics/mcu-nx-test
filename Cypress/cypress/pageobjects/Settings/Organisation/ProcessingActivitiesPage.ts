@@ -44,7 +44,7 @@ class ProcessingActivitiesPage extends Page {
   }
 
   get legitimateInterest() {
-    return cy.get('mcs-menu-list').eq(4);
+    return cy.get('.mcs-menu-list').eq(4);
   }
 
   get legalBasisField() {
@@ -108,7 +108,7 @@ class ProcessingActivitiesPage extends Page {
   }
 
   get dropdownActions() {
-    return cy.get('mcs-dropdown-actions');
+    return cy.get('.mcs-dropdown-actions');
   }
 
   get btnEdit() {
