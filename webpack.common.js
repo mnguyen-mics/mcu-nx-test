@@ -4,6 +4,7 @@ const paths = require('./paths');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VersionPlugin = require('./VersionPlugin.js');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -72,6 +73,10 @@ module.exports = {
   },
 
   optimization: {
+    minimizer: [
+      `...`, // need to keep this otherwise it doesn't minify js anymore
+      new CssMinimizerPlugin(),
+    ],
     splitChunks: {
       cacheGroups: {
         vendor: {
