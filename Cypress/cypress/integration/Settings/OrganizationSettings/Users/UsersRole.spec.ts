@@ -1,10 +1,7 @@
 import HeaderMenu from '../../../../pageobjects/HeaderMenu';
 import RolesPage from '../../../../pageobjects/Settings/Organisation/Users/RolesPage';
-import {
-  createUserQuery,
-  createSubOrganisationQuery,
-  OrganisationQuery,
-} from '../../../helpers/OrganisationHelper';
+import { createSubOrganisationQuery, OrganisationQuery } from '../../../helpers/OrganisationHelper';
+import { createUserQuery } from '../../../helpers/UserHelper';
 
 describe('Users test', () => {
   let subOrg1: OrganisationQuery;

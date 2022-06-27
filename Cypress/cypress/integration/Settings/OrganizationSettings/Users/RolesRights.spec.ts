@@ -3,12 +3,11 @@ import RolesPage from '../../../../pageobjects/Settings/Organisation/Users/Roles
 import faker from 'faker';
 import OrganisationMenu from '../../../../pageobjects/Settings/Organisation/OrganisationMenu';
 import {
-  createUserQuery,
   createOrganisationQuery,
   createSubOrganisationQuery,
   OrganisationQuery,
 } from '../../../helpers/OrganisationHelper';
-import { createUserAndLoginWithIt } from '../../../helpers/UserHelper';
+import { createUserQuery, createUserAndLoginWithIt } from '../../../helpers/UserHelper';
 
 describe('Users roles test', () => {
   let subOrg1: OrganisationQuery;

@@ -33,6 +33,8 @@ interface State {
   isUserRoleDrawerVisible: boolean;
   user?: UserResource;
   filterValue: string;
+  nextFilterValue: string;
+  lastFilterChangeTime?: number;
   displayInheritedRole: boolean;
 }
 
@@ -63,6 +65,7 @@ class UserListPage extends React.Component<Props, State> {
       isUserDrawerVisible: false,
       isUserRoleDrawerVisible: false,
       filterValue: '',
+      nextFilterValue: '',
       displayInheritedRole: true,
     };
   }
@@ -104,6 +107,7 @@ class UserListPage extends React.Component<Props, State> {
           isLoadingOrganisation: false,
           organisation: res.data,
           filterValue: '',
+          nextFilterValue: '',
           user: user ? user : this.state.user,
         });
       })
@@ -369,9 +373,21 @@ class UserListPage extends React.Component<Props, State> {
   };
 
   handleFilter = (e: any) => {
+    const refreshDelay = 1000;
     this.setState({
-      filterValue: e.target.value,
+      nextFilterValue: e.target.value,
+      lastFilterChangeTime: new Date().getTime(),
     });
+
+    setInterval(() => {
+      const { lastFilterChangeTime, nextFilterValue } = this.state;
+      const now = new Date().getTime();
+      if (lastFilterChangeTime && now - lastFilterChangeTime >= refreshDelay) {
+        this.setState({
+          filterValue: nextFilterValue,
+        });
+      }
+    }, refreshDelay);
   };
 
   onSwitchChange = (checked: boolean) => {
@@ -396,6 +412,7 @@ class UserListPage extends React.Component<Props, State> {
       isUserRoleDrawerVisible,
       user,
       filterValue,
+      nextFilterValue,
       displayInheritedRole,
     } = this.state;
 
@@ -424,7 +441,7 @@ class UserListPage extends React.Component<Props, State> {
                 className='mcs-primary mcs-userSettings_userSelect mcs-userSettings_userFilter'
                 onChange={this.handleFilter}
                 placeholder={intl.formatMessage(messages.filterOnUser)}
-                value={filterValue}
+                value={nextFilterValue}
                 suffix={<FilterOutlined />}
                 size='small'
               />
