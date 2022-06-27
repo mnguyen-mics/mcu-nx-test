@@ -40,6 +40,7 @@ describe('This test should check that the audience feature forms are working pro
         },
       );
       cy.get('.mcs-audienceFeature_update_query').click();
+      cy.wait(5000);
       cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
       cy.get('.mcs-audienceFeature_table')
         .should('contain', 'creation_date = $test')
@@ -96,9 +97,10 @@ describe('This test should check that the audience feature forms are working pro
           parseSpecialCharSequences: false,
         });
       cy.get('.mcs-audienceFeature_update_query').click();
+      cy.wait(5000);
       cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
       cy.get('.mcs-audienceFeature_table')
-        .should('contain', 'creation_date > $test and creation_date < $test2')
+        .should('contain', 'id = $id')
         .and('contain', 'Test Audience Feature Form - Edit');
 
       // Delete an audience feature
@@ -139,6 +141,7 @@ describe('This test should check that the audience feature forms are working pro
         parseSpecialCharSequences: false,
       });
       cy.get('.mcs-audienceFeature_update_query').click({ force: true });
+      cy.wait(5000);
       cy.get('.mcs-form_saveButton_audienceFeatureForm').click({ force: true });
       cy.wait(2000);
       cy.url().should('contain', '/create');
