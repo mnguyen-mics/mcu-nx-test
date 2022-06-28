@@ -11,7 +11,7 @@
 //
 import faker from 'faker';
 import 'cypress-file-upload';
-import loginPageKeycloak from '../pageobjects/LoginPage';
+import LoginPage from '../pageobjects/LoginPage';
 
 before(() => {
   cy.initTestContext();
@@ -25,6 +25,7 @@ Cypress.Commands.add(
   (email = `${Cypress.env('devMail')}`, password = `${Cypress.env('devPwd')}`) => {
     cy.logout();
     cy.visit('/');
+    const loginPageKeycloak = new LoginPage(Cypress.env('apiToken'));
     loginPageKeycloak.login(email, password);
   },
 );
