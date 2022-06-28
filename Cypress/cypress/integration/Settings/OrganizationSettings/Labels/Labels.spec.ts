@@ -1,3 +1,4 @@
+import moment from 'moment';
 import HeaderMenu from '../../../../pageobjects/HeaderMenu';
 import LabelsPage from '../../../../pageobjects/Settings/Organisation/LabelsPage';
 
@@ -20,7 +21,7 @@ describe('Labels test', () => {
 
   it('Should create a new Label', () => {
     const labelsPage = new LabelsPage();
-    const dateNow = new Date().toLocaleDateString();
+    const dateNow = moment(new Date()).format('DD/MM/YYYY');
     labelsPage.clickBtnNewLabel();
     labelsPage.typeNewLabelField();
     labelsPage.clickBtnSave();
