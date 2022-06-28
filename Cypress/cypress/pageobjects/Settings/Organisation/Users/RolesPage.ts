@@ -3,7 +3,7 @@ import Page from '../../../Page';
 import OrganisationMenu from '../OrganisationMenu';
 
 class RolesPage extends Page {
-  goToRolesPage() {
+  goToPage() {
     HeaderMenu.clickSettingsIcon();
     OrganisationMenu.clickUsers();
     this.rolesPage.click();
@@ -14,6 +14,11 @@ class RolesPage extends Page {
     return cy.get('.ant-select-dropdown-placement-bottomLeft').contains('Roles');
   }
 
+  get usersPage() {
+    cy.get('.ant-select-selection-item').click();
+    return cy.get('.ant-select-dropdown-placement-bottomLeft').contains('Users');
+  }
+
   get btnAddRole() {
     return cy.get('.mcs-userSettings_addAUser');
   }
@@ -22,28 +27,12 @@ class RolesPage extends Page {
     return cy.get('.mcs-userRoleList_dropDownMenu');
   }
 
-  clickBtnAddRole() {
-    return this.btnAddRole.click();
-  }
-
-  clickUserDropDownMenu() {
-    return this.userDropDownMenu.click();
-  }
-
   get bntEditRole() {
     return cy.get('.mcs-userRoleList_dropDownMenu--edit');
   }
 
   get btnDeleteRole() {
     return cy.get('.mcs-userRoleList_dropDownMenu--delete');
-  }
-
-  clickBtnEditRole() {
-    this.bntEditRole.click();
-  }
-
-  clickBtnDeleteRole() {
-    this.btnDeleteRole.click();
   }
 
   get firstNamesColumn() {
@@ -98,80 +87,28 @@ class RolesPage extends Page {
     );
   }
 
-  clickCardToggle(id: string) {
-    return cy.get(`#mcs-foldable-card-${id}`).click();
-  }
-
-  homeIconColumnInCard(id: string) {
-    return this.clickCardToggle(id).find('.ant-table-row > :nth-child(1)');
-  }
-
-  firstNamesColumnInCard(id: string) {
-    return this.clickCardToggle(id).find('.ant-table-row > :nth-child(2)');
-  }
-
-  lastNamesColumnInCard(id: string) {
-    return this.clickCardToggle(id).find('.ant-table-row > :nth-child(3)');
-  }
-
-  emailsColumnInCard(id: string) {
-    return this.clickCardToggle(id).find('.ant-table-row > :nth-child(4)');
-  }
-
-  rolesColumnInCard(id: string) {
-    return this.clickCardToggle(id).find('.ant-table-row > :nth-child(5)');
-  }
-
   get filterField() {
     return cy.get('.mcs-userSettings_userFilter');
-  }
-
-  typeFilter(filter: string) {
-    this.filterField.type(filter);
   }
 
   get displayInheritedRoleToggle() {
     return cy.get('.mcs-userSettings_switch');
   }
 
-  clickDisplayInheritedRoleToggle() {
-    this.displayInheritedRoleToggle.click();
-  }
-
   get confirmDeletePopUp() {
     return cy.get('.ant-modal-body');
-  }
-
-  clickCancelOnComfirmDeletePopUp() {
-    cy.contains('Cancel').click();
-  }
-
-  clickOKOnComfirmDeletePopUp() {
-    cy.contains('OK').click();
   }
 
   get userSearchField() {
     return cy.get('#rc_select_2');
   }
 
-  typeUserSearch(user: string) {
-    this.userSearchField.type(user);
-  }
-
   get organisationDropDown() {
     return cy.get('#rc_select_3');
   }
 
-  clickOrganisationDropDown() {
-    this.organisationDropDown.click();
-  }
-
   get organisationsAvailableMenu() {
     return cy.get('#rc_select_3');
-  }
-
-  typeOrganisationWithName(organisation: string) {
-    this.organisationsAvailableMenu.type(organisation);
   }
 
   get readerRoleRadioBtn() {
@@ -190,6 +127,110 @@ class RolesPage extends Page {
     return cy.get(':nth-child(4) > .ant-radio-wrapper > .ant-radio');
   }
 
+  get btnSave() {
+    return cy.get('.ant-form > .ant-btn-primary').contains('Save');
+  }
+
+  get closeEditBtn() {
+    return cy.get('.anticon-close');
+  }
+
+  get errorPopUp() {
+    return cy.get('.ant-notification-notice-error');
+  }
+
+  get firstElement() {
+    return cy.get('.rc-virtual-list-holder-inner');
+  }
+
+  get pageEdit() {
+    return cy.get('.ant-drawer-body');
+  }
+
+  clickBtnAddRole() {
+    return this.btnAddRole.click();
+  }
+
+  clickUserDropDownMenu() {
+    return this.userDropDownMenu.click();
+  }
+
+  clickBtnEditRole() {
+    this.bntEditRole.click();
+  }
+
+  clickBtnDeleteRole() {
+    this.btnDeleteRole.click();
+  }
+
+  cardToggle(id: string) {
+    return cy.get(`#mcs-foldable-card-${id}`);
+  }
+
+  cardWithId(id: string) {
+    return cy.get(`#mcs-foldable-card-${id}`);
+  }
+
+  clickCardToggle(id: string) {
+    return cy.get(`#mcs-foldable-card-${id}`).click();
+  }
+
+  homeIconColumnInCard(id: string) {
+    return this.cardToggle(id).find('.ant-table-row > :nth-child(1)');
+  }
+
+  firstNamesColumnInCard(id: string) {
+    return this.cardToggle(id).find('.ant-table-row > :nth-child(2)');
+  }
+
+  lastNamesColumnInCard(id: string) {
+    return this.cardToggle(id).find('.ant-table-row > :nth-child(3)');
+  }
+
+  emailsColumnInCard(id: string) {
+    return this.cardToggle(id).find('.ant-table-row > :nth-child(4)');
+  }
+
+  rolesColumnInCard(id: string) {
+    return this.cardToggle(id).find('.ant-table-row > :nth-child(5)');
+  }
+
+  typeFilter(filter: string) {
+    this.filterField.type(filter);
+  }
+
+  clickDisplayInheritedRoleToggle() {
+    this.displayInheritedRoleToggle.click();
+  }
+
+  clickCancelOnComfirmDeletePopUp() {
+    cy.contains('Cancel').click();
+  }
+
+  clickOKOnComfirmDeletePopUp() {
+    cy.contains('OK').click();
+  }
+
+  typeUserSearch(user: string) {
+    this.userSearchField.type(user);
+  }
+
+  clickOrganisationDropDown() {
+    this.organisationDropDown.click();
+  }
+
+  typeOrganisationWithName(organisation: string) {
+    this.organisationsAvailableMenu.type(organisation);
+  }
+
+  clickBtnSave() {
+    this.btnSave.click();
+  }
+
+  clickCloseEditBtn() {
+    this.closeEditBtn.click();
+  }
+
   clickBtnEditorRole() {
     this.editorRoleRadioBtn.click();
   }
@@ -204,22 +245,6 @@ class RolesPage extends Page {
 
   clickCommunityAdminRoleBtn() {
     this.communityAdminRoleRadioBtn.click();
-  }
-
-  get btnSave() {
-    return cy.get('.ant-form > .ant-btn-primary').contains('Save');
-  }
-
-  clickBtnSave() {
-    this.btnSave.click();
-  }
-
-  get closeEditBtn() {
-    return cy.get('.anticon-close');
-  }
-
-  clickCloseEditBtn() {
-    this.closeEditBtn.click();
   }
 }
 

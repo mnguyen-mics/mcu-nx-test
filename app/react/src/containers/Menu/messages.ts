@@ -90,9 +90,9 @@ export default defineMessages({
     id: 'menu.library.AttributionModel',
     defaultMessage: 'Attribution Models',
   },
-  libraryVisitAnalyzer: {
-    id: 'menu.library.VisitAnalyzer',
-    defaultMessage: 'Visit Analyzers',
+  libraryActivityAnalyzer: {
+    id: 'menu.library.activityAnalyzer',
+    defaultMessage: 'Activity Analyzers',
   },
   libraryEmailRouter: {
     id: 'menu.library.EmailRouter',
@@ -180,9 +180,9 @@ export default defineMessages({
     id: 'menu.datamart.compartments',
     defaultMessage: 'Compartments',
   },
-  visitAnalyzerSettingsTitle: {
-    id: 'menu.datamart.visit_analyzer',
-    defaultMessage: 'Visit Analyzers',
+  activityAnalyzerSettingsTitle: {
+    id: 'menu.datamart.activity_analyzer',
+    defaultMessage: 'Activity Analyzers',
   },
   mlFunctionSettingsTitle: {
     id: 'menu.datamart.ml_functions',

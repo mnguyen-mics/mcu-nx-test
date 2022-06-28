@@ -4,12 +4,14 @@ import LabelsPage from '../../../../pageobjects/Settings/Organisation/LabelsPage
 describe('Labels test', () => {
   beforeEach(() => {
     cy.restoreLocalStorageCache();
-    cy.login();
     cy.visit('/');
+    cy.login();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.intercept('GET', `**/labels?organisation_id=${data.organisationId}**`).as('getLabels');
       HeaderMenu.switchOrg(data.organisationName);
     });
     new LabelsPage().goToPage();
+    cy.wait('@getLabels');
   });
 
   afterEach(() => {
@@ -19,12 +21,11 @@ describe('Labels test', () => {
   it('Should create a new Label', () => {
     const labelsPage = new LabelsPage();
     const dateNow = new Date().toLocaleDateString();
-
     labelsPage.clickBtnNewLabel();
     labelsPage.typeNewLabelField();
     labelsPage.clickBtnSave();
-    cy.wait(200);
-    labelsPage.labelsTable.last().should('contain', labelsPage.label).and('contain', dateNow);
+    cy.wait('@getLabels');
+    labelsPage.labelsTableRows.should('contain', labelsPage.label).and('contain', dateNow);
   });
 
   it('Should not be able to create a new Label with an already existing name', () => {
@@ -43,24 +44,32 @@ describe('Labels test', () => {
     const labelsPage = new LabelsPage();
     const editedLabel = `label-${Math.random().toString(36).substring(2, 10)}`;
     labelsPage.addNewLabel();
-    cy.wait(200);
-    labelsPage.clickLastArrowDropDownMenu();
+    cy.wait('@getLabels');
+    labelsPage.clickDropDownArrowLabel(labelsPage.label);
     labelsPage.clickBtnEdit();
     labelsPage.typeNewLabelField(editedLabel);
     labelsPage.clickBtnSave();
-    cy.wait(200);
-    labelsPage.labelsTable.last().should('not.contain', labelsPage.label);
-    labelsPage.labelsTable.last().should('contain', editedLabel);
+    cy.wait('@getLabels');
+    cy.get('.ant-spin-dot-spin')
+      .should('not.exist')
+      .then(() => {
+        labelsPage.labelsTable.should('not.contain', labelsPage.label);
+        labelsPage.labelsTable.should('contain', editedLabel);
+      });
   });
 
   it('Should archive a Label', () => {
     const labelsPage = new LabelsPage();
     labelsPage.addNewLabel();
-    cy.wait(200);
-    labelsPage.clickLastArrowDropDownMenu();
+    cy.wait('@getLabels');
+    labelsPage.clickDropDownArrowLabel(labelsPage.label);
     labelsPage.clickBtnArchive();
     labelsPage.clickBtnOKConfirmPopUp();
-    cy.wait(200);
-    labelsPage.labelsTable.should('not.contain', labelsPage.label);
+    cy.wait('@getLabels');
+    cy.get('.ant-spin-dot-spin')
+      .should('not.exist')
+      .then(() => {
+        labelsPage.labelsTable.should('not.contain', labelsPage.label);
+      });
   });
 });

@@ -13,7 +13,7 @@ describe('Should test the visit analyzers', () => {
       cy.switchOrg(data.organisationName);
       cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
-      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.visit_analyzer').click();
+      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.activity_analyzer').click();
       cy.get('.mcs-VisitAnalyzersList_creation_button').click();
       cy.contains('default').click();
       const visitAnalyzerName = faker.random.words(2);
@@ -42,7 +42,7 @@ describe('Should test the visit analyzers', () => {
       cy.switchOrg(data.organisationName);
       cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
-      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.visit_analyzer').click();
+      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.activity_analyzer').click();
       cy.get('.mcs-VisitAnalyzersList_creation_button').click();
       cy.contains('default').click();
       const visitAnalyzerName = faker.random.words(2);
@@ -57,7 +57,7 @@ describe('Should test the visit analyzers', () => {
       cy.switchOrg(data.organisationName);
       cy.get('.mcs-header_actions_settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
-      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.visit_analyzer').click();
+      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.activity_analyzer').click();
       cy.get('.mcs-VisitAnalyzersList_creation_button').click();
       cy.contains('default').click();
       const firstVisitAnalyzerName = faker.random.word();
