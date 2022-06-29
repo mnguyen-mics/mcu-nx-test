@@ -85,7 +85,7 @@ describe('Roles rights test', () => {
     });
   });
 
-  it('Should have access to the users role (ORGANISATION_ADMIN)', () => {
+  it('Should not have access to the users role (ORGANISATION_ADMIN)', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       const newOrganisationName: string = faker.random.words(3);
       console.log(newOrganisationName);

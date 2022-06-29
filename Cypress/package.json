@@ -19,6 +19,7 @@
     "@types/faker": "^4.1.10",
     "@types/fs-extra": "^9.0.2",
     "allure-commandline": "^2.17.2",
+    "clipboardy": "^2.0.0",
     "cypress": "^9.7.0",
     "cypress-file-upload": "^4.1.1",
     "elliptic": "6.5.4",

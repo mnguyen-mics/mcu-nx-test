@@ -263,7 +263,7 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
     const q = 'SELECT { segment_scores { scores { score @min } } } FROM UserPoint';
 
     return this._queryService
-      .runOTQLQuery(datamartId, q, {
+      .runOTQLQuery(datamartId, q, 'DASHBOARD', 'STANDARD_SEGMENT_BUILDER_DASHBOARD', {
         use_cache: true,
       })
       .then(otqlResultResp => {
@@ -282,7 +282,7 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
     const q = 'SELECT { segment_scores { scores { score @max } } } FROM UserPoint';
 
     return this._queryService
-      .runOTQLQuery(datamartId, q, {
+      .runOTQLQuery(datamartId, q, 'DASHBOARD', 'STANDARD_SEGMENT_BUILDER_DASHBOARD', {
         use_cache: true,
       })
       .then(otqlResultResp => {
@@ -311,7 +311,7 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
     }" } OR segment_scores { scores { score >=  ${-value}} } `;
 
     this._queryService
-      .runOTQLQuery(datamartId, q1, {
+      .runOTQLQuery(datamartId, q1, 'DASHBOARD', 'STANDARD_SEGMENT_BUILDER_DASHBOARD', {
         use_cache: true,
       })
       .then(otqlResultResp => {
@@ -319,7 +319,7 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
       })
       .then(result1 => {
         this._queryService
-          .runOTQLQuery(datamartId, q2, {
+          .runOTQLQuery(datamartId, q2, 'DASHBOARD', 'STANDARD_SEGMENT_BUILDER_DASHBOARD', {
             use_cache: true,
           })
           .then(otqlResultResp => {

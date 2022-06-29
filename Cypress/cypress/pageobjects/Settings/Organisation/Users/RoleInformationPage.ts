@@ -8,12 +8,12 @@ class RoleInformationPage extends Page {
 
   @logGetter()
   get userSearchField() {
-    return cy.get('#rc_select_2');
+    return cy.get('.ant-form').find('.ant-input').eq(0);
   }
 
   @logGetter()
   get organisationDropDown() {
-    return cy.get('#rc_select_3');
+    return cy.get('.ant-form').find('.ant-input').eq(1);
   }
 
   @logGetter()
@@ -94,6 +94,27 @@ class RoleInformationPage extends Page {
   @logFunction()
   clickCommunityAdminRoleBtn() {
     this.communityAdminRoleRadioBtn.click();
+  }
+
+  @logFunction()
+  clickOnRole(role: string) {
+    switch (role) {
+      case 'reader':
+        this.clickBtnReaderRole();
+        break;
+      case 'editor':
+        this.clickBtnEditorRole();
+        break;
+      case 'organisation_admin':
+        this.clickBtnOrganisationAdminRole();
+        break;
+      case 'communityy_admin':
+        this.clickCommunityAdminRoleBtn();
+        break;
+
+      default:
+        break;
+    }
   }
 }
 

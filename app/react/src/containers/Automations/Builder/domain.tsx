@@ -925,7 +925,7 @@ export const getEventsNames = (
   };
 
   return queryService
-    .runJSONOTQLQuery(datamartId, query, { use_cache: true })
+    .runJSONOTQLQuery(datamartId, query, 'AUTOMATION', 'AUTOMATION_BUILDER', { use_cache: true })
     .then(oTQLDataResponse => {
       if (isAggregateResult(oTQLDataResponse.data.rows)) {
         return oTQLDataResponse.data.rows[0];
@@ -979,7 +979,7 @@ export const getDatamartPredefinedEventNames = (
   const query = `select {${validObjectType.objectTypeQueryName}{${validObjectType.fieldName}@map(limit:500)}} from UserPoint `;
 
   return queryService
-    .runOTQLQuery(datamartId, query, { use_cache: true })
+    .runOTQLQuery(datamartId, query, 'AUTOMATION', 'AUTOMATION_BUILDER', { use_cache: true })
     .then(oTQLDataResponse => {
       if (isAggregateResult(oTQLDataResponse.data.rows)) {
         return oTQLDataResponse.data.rows[0];

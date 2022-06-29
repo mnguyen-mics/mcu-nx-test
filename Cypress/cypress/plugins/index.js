@@ -1,4 +1,5 @@
 /// <reference types="@shelex/cypress-allure-plugin" />
+import * as clipboardy from 'clipboardy';
 const wp = require('@cypress/webpack-preprocessor');
 const { initPlugin } = require('cypress-plugin-snapshots/plugin');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
@@ -12,6 +13,11 @@ module.exports = (on, config) => {
   initPlugin(on, config);
 
   on('file:preprocessor', wp(options));
+  on('task', {
+    getClipboard() {
+      return clipboardy.readSync();
+    },
+  });
   allureWriter(on, config);
   return config;
 };

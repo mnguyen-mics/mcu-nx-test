@@ -283,7 +283,9 @@ class AdvancedSegmentBuilderContainer extends React.Component<Props, State> {
     )} FROM UserPoint`;
 
     return this._queryService
-      .runOTQLQuery(datamartId, otqlQuery, { use_cache: true })
+      .runOTQLQuery(datamartId, otqlQuery, 'DASHBOARD', 'ADVANCED_SEGMENT_BUILDER_DASHBOARD', {
+        use_cache: true,
+      })
       .then(d => {
         if (isAggregateResult(d.data.rows)) {
           return d.data.rows[0];
@@ -321,7 +323,12 @@ class AdvancedSegmentBuilderContainer extends React.Component<Props, State> {
       },
     });
     this._queryService
-      .runJSONOTQLQuery(datamartId, queryDocument)
+      .runJSONOTQLQuery(
+        datamartId,
+        queryDocument,
+        'DASHBOARD',
+        'ADVANCED_SEGMENT_BUILDER_DASHBOARD',
+      )
       .then(res => {
         this.setState({
           queryResult: {

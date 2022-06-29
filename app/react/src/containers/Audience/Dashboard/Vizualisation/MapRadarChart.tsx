@@ -11,6 +11,8 @@ import {
 import {
   injectThemeColors,
   InjectedThemeColorsProps,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -39,6 +41,8 @@ import {
 export interface MapBarChartProps {
   title?: string;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   queryId: string;
   data?: OTQLResult;
   datamartId: string;
@@ -176,7 +180,7 @@ class MapBarChart extends React.Component<Props, State> {
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-    const { precision } = this.props;
+    const { precision, queryExecutionSource, queryExecutionSubSource } = this.props;
     const promise: Promise<void | QueryResource> = shouldCompare
       ? this._queryService
           .getQuery(datamartId, chartQueryId)
@@ -191,7 +195,7 @@ class MapBarChart extends React.Component<Props, State> {
     const getResultPromise = (q?: QueryResource | void): Promise<void | OTQLResult> =>
       q
         ? this._queryService
-            .runOTQLQuery(datamartId, q.query_text, {
+            .runOTQLQuery(datamartId, q.query_text, queryExecutionSource, queryExecutionSubSource, {
               use_cache: true,
               precision: precision,
             })
@@ -214,10 +218,16 @@ class MapBarChart extends React.Component<Props, State> {
       .then(([q0, q1]) => {
         return Promise.all([
           this._queryService
-            .runOTQLQuery(datamartId, q0.query_text, {
-              use_cache: true,
-              precision: precision,
-            })
+            .runOTQLQuery(
+              datamartId,
+              q0.query_text,
+              queryExecutionSource,
+              queryExecutionSubSource,
+              {
+                use_cache: true,
+                precision: precision,
+              },
+            )
             .then(resp => {
               return resp.data;
             }),

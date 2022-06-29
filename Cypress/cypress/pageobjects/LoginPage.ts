@@ -8,7 +8,6 @@ class LoginPage extends Page {
     super();
     this.apiPasswordRequirements = this.getApiPasswordRequirements(accessToken);
   }
-  // getters
 
   @logGetter()
   get alertError() {
@@ -124,8 +123,6 @@ class LoginPage extends Page {
   get validPasswordRequirements() {
     return this.passwordRequirements.find('.valid');
   }
-
-  // helpers
 
   @logFunction()
   async getApiPasswordRequirements(accessToken: string) {

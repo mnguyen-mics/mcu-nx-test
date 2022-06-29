@@ -52,19 +52,31 @@ describe('Roles test', () => {
     cy.clearLocalStorage();
   });
 
-  it('Should add a user role', () => {
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+  function createUserAndAddRole() {
+    cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       const rolesPage = new RolesPage();
-      const fn = `fn-${Math.random().toString(36).substring(2, 10)}`;
-      const ln = `ln-${Math.random().toString(36).substring(2, 10)}`;
-      createUserQuery(data.accessToken, subOrg1.id, fn, ln);
+      const user = await createUserQuery(data.accessToken, subOrg1.id);
       rolesPage.clickBtnAddRole();
-      const nameUser = `${fn}` + ' ' + `${ln}`;
+      const nameUser = `${user.first_name}` + ' ' + `${user.last_name}`;
       rolesPage.roleInformationPage.typeUserSearch(nameUser);
       rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
-      const organisationName = `child_1_of_${data.organisationName}`;
-      rolesPage.roleInformationPage.typeOrganisationWithName(organisationName);
-      rolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
+      rolesPage.roleInformationPage.typeOrganisationWithName(subOrg1.name);
+      rolesPage.firstElement.contains(new RegExp('^' + subOrg1.name + '$', 'g')).click();
+      rolesPage.roleInformationPage.clickBtnEditorRole();
+      rolesPage.roleInformationPage.clickBtnSave();
+    });
+  }
+
+  it('Should add a user role', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
+      const rolesPage = new RolesPage();
+      const user = await createUserQuery(data.accessToken, subOrg1.id);
+      rolesPage.clickBtnAddRole();
+      const nameUser = `${user.first_name}` + ' ' + `${user.last_name}`;
+      rolesPage.roleInformationPage.typeUserSearch(nameUser);
+      rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
+      rolesPage.roleInformationPage.typeOrganisationWithName(subOrg1.name);
+      rolesPage.firstElement.contains(new RegExp('^' + subOrg1.name + '$', 'g')).click();
       rolesPage.roleInformationPage.clickBtnEditorRole();
       rolesPage.roleInformationPage.clickBtnSave();
     });
@@ -72,20 +84,7 @@ describe('Roles test', () => {
 
   it('Should edit a user role', () => {
     const rolesPage = new RolesPage();
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      const fn = `fn-${Math.random().toString(36).substring(2, 10)}`;
-      const ln = `ln-${Math.random().toString(36).substring(2, 10)}`;
-      createUserQuery(data.accessToken, subOrg1.id, fn, ln);
-      rolesPage.clickBtnAddRole();
-      const nameUser = `${fn}` + ' ' + `${ln}`;
-      rolesPage.roleInformationPage.typeUserSearch(nameUser);
-      rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
-      const organisationName = `child_1_of_${data.organisationName}`;
-      rolesPage.roleInformationPage.typeOrganisationWithName(organisationName);
-      rolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
-      rolesPage.roleInformationPage.clickBtnEditorRole();
-      rolesPage.roleInformationPage.clickBtnSave();
-    });
+    createUserAndAddRole();
     cy.wait(20000);
     rolesPage.clickCardToggle(subOrg1.id);
     rolesPage.rolesColumnInCard(subOrg1.id).first();
@@ -103,6 +102,8 @@ describe('Roles test', () => {
 
   it('Should delete a user role / verify the inheritance (we cant delete an inherited role in a children organisation, just a edited one or delete it in the parent organisation)', () => {
     const rolesPage = new RolesPage();
+    createUserAndAddRole();
+    cy.wait(10000);
     rolesPage.clickCardToggle(subOrg1.id);
     rolesPage
       .emailsColumnInCard(subOrg1.id)
@@ -120,6 +121,8 @@ describe('Roles test', () => {
 
   it('Should verify the inheritance', () => {
     const rolesPage = new RolesPage();
+    createUserAndAddRole();
+    cy.wait(10000);
     rolesPage.clickCardToggle(subOrg1.id);
     rolesPage
       .rolesColumnInCard(subOrg1.id)
@@ -143,6 +146,8 @@ describe('Roles test', () => {
 
   it('Should not have a lower role in the children organisation than the parent organisation', () => {
     const rolesPage = new RolesPage();
+    createUserAndAddRole();
+    cy.wait(10000);
     rolesPage.clickCardToggle(subOrg1.id);
     rolesPage
       .rolesColumnInCard(subOrg1.id)
@@ -167,6 +172,8 @@ describe('Roles test', () => {
 
   it('Display inherited role (test the edited role)', () => {
     const rolesPage = new RolesPage();
+    createUserAndAddRole();
+    cy.wait(10000);
     rolesPage.clickCardToggle(subOrg1.id);
     rolesPage
       .firstNamesColumnInCard(subOrg1.id)
@@ -233,35 +240,36 @@ describe('Roles test', () => {
 
   it('Should verifiy that we cant add a Community admin role to user in the children organisation', () => {
     const rolesPage = new RolesPage();
+    createUserAndAddRole();
+    cy.wait(10000);
     rolesPage.clickCardToggle(subOrg1.id);
-    rolesPage.rolesColumnInCard(subOrg1.id).first();
-
-    rolesPage.userDropDownMenu.first().click();
-    rolesPage.clickBtnEditRole();
-    rolesPage.roleInformationPage.communityAdminRoleRadioBtn.should('not.exist');
-    rolesPage.roleInformationPage.clickCloseEditBtn();
+    rolesPage
+      .rolesColumnInCard(subOrg1.id)
+      .first()
+      .then(() => {
+        rolesPage.userDropDownMenu.first().click();
+        rolesPage.clickBtnEditRole();
+        rolesPage.roleInformationPage.communityAdminRoleRadioBtn.should('not.exist');
+        rolesPage.roleInformationPage.clickCloseEditBtn();
+      });
   });
 
   it('Should verify that the home icon exist the organisation where the user was created', () => {
     const rolesPage = new RolesPage();
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/users`,
-        method: 'POST',
-        headers: { Authorization: data.accessToken },
-        body: {
-          first_name: `fn-${Math.random().toString(36).substring(2, 10)}`,
-          last_name: `ln-${Math.random().toString(36).substring(2, 10)}`,
-          email: `email.-${Math.random().toString(36).substring(2, 10)}@test.com`,
-          role: 'ORGANISATION_ADMIN',
-          organisation_id: data.organisationId,
-          community_id: data.organisation_id,
-        },
-      }).then(organisationId => {
-        rolesPage.clickCardToggle(subOrg1.id);
-        rolesPage.homeIconColumnInCard(subOrg1.id);
-        rolesPage.homeIcon.should('be.visible');
-      });
+    cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
+      const user = await createUserQuery(data.accessToken, subOrg1.id);
+      rolesPage.clickBtnAddRole();
+      const nameUser = `${user.first_name}` + ' ' + `${user.last_name}`;
+      rolesPage.roleInformationPage.typeUserSearch(nameUser);
+      rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
+      rolesPage.roleInformationPage.typeOrganisationWithName(subOrg1.name);
+      rolesPage.firstElement.contains(new RegExp('^' + subOrg1.name + '$', 'g')).click();
+      rolesPage.roleInformationPage.clickBtnOrganisationAdminRole();
+      rolesPage.roleInformationPage.clickBtnSave();
     });
+    cy.wait(10000);
+    rolesPage.clickCardToggle(subOrg1.id);
+    rolesPage.homeIconColumnInCard(subOrg1.id);
+    rolesPage.homeIcon.should('be.visible');
   });
 });

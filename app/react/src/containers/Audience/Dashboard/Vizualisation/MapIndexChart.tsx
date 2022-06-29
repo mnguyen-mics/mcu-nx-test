@@ -10,6 +10,8 @@ import {
 import {
   injectThemeColors,
   InjectedThemeColorsProps,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -36,6 +38,8 @@ import {
 export interface MapIndexChartProps {
   title?: string;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   data?: OTQLResult;
   queryId: string;
   datamartId: string;
@@ -161,15 +165,17 @@ class MapIndexChart extends React.Component<Props, State> {
     }));
   };
 
-  getResultPromise = (datamartId: string, q: QueryResource): Promise<void | OTQLResult> =>
-    this._queryService
-      .runOTQLQuery(datamartId, q.query_text, {
+  getResultPromise = (datamartId: string, q: QueryResource): Promise<void | OTQLResult> => {
+    const { queryExecutionSource, queryExecutionSubSource } = this.props;
+    return this._queryService
+      .runOTQLQuery(datamartId, q.query_text, queryExecutionSource, queryExecutionSubSource, {
         use_cache: true,
         precision: this.props.precision,
       })
       .then(resp => {
         return resp.data;
       });
+  };
 
   getQueryWithoutWhere = (q: QueryResource): QueryResource => {
     const queryWithoutWhere = {

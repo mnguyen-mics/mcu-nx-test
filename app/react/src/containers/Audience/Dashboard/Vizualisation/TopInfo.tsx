@@ -16,6 +16,10 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import {
+  QueryExecutionSource,
+  QueryExecutionSubSource,
+} from '@mediarithmics-private/advanced-components';
 
 export interface TopInfoProps {
   queryId: string;
@@ -23,6 +27,8 @@ export interface TopInfoProps {
   title: string;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   precision?: QueryPrecisionMode;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
 }
 
 interface State {
@@ -72,7 +78,7 @@ class TopInfo extends React.Component<Props, State> {
     datamartId: string,
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
-    const { precision } = this.props;
+    const { precision, queryExecutionSource, queryExecutionSubSource } = this.props;
     this.setState({ error: false, loading: true });
     return this._queryService
       .getQuery(datamartId, chartQueryId)
@@ -86,7 +92,7 @@ class TopInfo extends React.Component<Props, State> {
       .then(q => {
         const query = q.query_text;
         return this._queryService
-          .runOTQLQuery(datamartId, query, {
+          .runOTQLQuery(datamartId, query, queryExecutionSource, queryExecutionSubSource, {
             use_cache: true,
             precision: precision,
           })

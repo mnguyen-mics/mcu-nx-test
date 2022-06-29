@@ -1,6 +1,7 @@
 import faker from 'faker';
 import HeaderMenu from '../../../../pageobjects/HeaderMenu';
 import UsersPage from '../../../../pageobjects/Settings/Organisation/Users/UsersPage';
+import RolesPage from '../../../../pageobjects/Settings/Organisation/Users/RolesPage';
 import { createSubOrganisationQuery, OrganisationQuery } from '../../../helpers/OrganisationHelper';
 import { createUserQuery } from '../../../helpers/UserHelper';
 
@@ -56,6 +57,7 @@ describe('Users test', () => {
 
   it('Should add a new user in the top organisation', () => {
     const usersPage = new UsersPage();
+    const rolesPage = new RolesPage();
     usersPage.goToPage();
     cy.wait('@getUsers');
 
@@ -69,6 +71,28 @@ describe('Users test', () => {
         .contains(new RegExp('^' + data.organisationName + '$', 'g'))
         .click();
       usersPage.userInformationPage.clickBtnSaveUser();
+      cy.wait('@getUsers');
+
+      cy.wait('@getUsers');
+      rolesPage.roleInformationPage.userSearchField
+        .should('be.disabled')
+        .and('have.value', `${usersPage.firstName} ${usersPage.lastName}`);
+      rolesPage.roleInformationPage.organisationDropDown
+        .should('be.disabled')
+        .and('have.value', data.organisationName);
+      rolesPage.roleInformationPage.readerRoleRadioBtn.find('input').should('be.checked');
+      rolesPage.roleInformationPage.clickBtnSave();
+      cy.wait('@getUsers');
+      rolesPage.firstNamesColumnInCard(data.organisationId).should('contain', usersPage.firstName);
+      rolesPage
+        .firstNamesColumnInCard(data.organisationId)
+        .contains(usersPage.firstName)
+        .parent()
+        .should('contain', usersPage.lastName)
+        .and('contain', usersPage.email)
+        .and('contain', 'READER');
+
+      rolesPage.usersPage.click();
       cy.wait('@getUsers');
 
       usersPage.idsHeaderInCard(data.organisationId).click();
@@ -87,6 +111,7 @@ describe('Users test', () => {
 
   it('Should add a new user in a child organisation', () => {
     const usersPage = new UsersPage();
+    const rolesPage = new RolesPage();
     usersPage.goToPage();
     cy.wait('@getUsers');
 
@@ -101,6 +126,29 @@ describe('Users test', () => {
     usersPage.userInformationPage.clickBtnSaveUser();
     cy.wait('@getUsers');
 
+    cy.wait('@getUsers');
+    rolesPage.roleInformationPage.userSearchField
+      .should('be.disabled')
+      .and('have.value', `${usersPage.firstName} ${usersPage.lastName}`);
+    rolesPage.roleInformationPage.organisationDropDown
+      .should('be.disabled')
+      .and('have.value', subOrg1.name);
+    rolesPage.roleInformationPage.readerRoleRadioBtn.find('input').should('be.checked');
+    rolesPage.roleInformationPage.clickBtnEditorRole();
+    rolesPage.roleInformationPage.clickBtnSave();
+    cy.wait('@getUsers');
+    rolesPage.firstNamesColumnInCard(subOrg1.id).should('contain', usersPage.firstName);
+    rolesPage
+      .firstNamesColumnInCard(subOrg1.id)
+      .contains(usersPage.firstName)
+      .parent()
+      .should('contain', usersPage.lastName)
+      .and('contain', usersPage.email)
+      .and('contain', 'EDITOR');
+    rolesPage.usersPage.click();
+    cy.wait('@getUsers');
+
+    usersPage.clickCardToggle(subOrg1.id);
     usersPage.idsHeaderInCard(subOrg1.id).click();
 
     usersPage.firstNamesColumnInCard(subOrg1.id).last().should('contain', usersPage.firstName);
@@ -283,8 +331,7 @@ describe('Users test', () => {
     });
   });
 
-  //https://mediarithmics.atlassian.net/browse/MICS-13546
-  it.skip('Should filter users', () => {
+  it('Should filter users', () => {
     const usersPage = new UsersPage();
 
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
@@ -308,11 +355,8 @@ describe('Users test', () => {
       usersPage.goToPage();
       cy.wait('@getUsers');
 
-      usersPage.clickCardToggle(subOrg1.id);
-      usersPage.clickCardToggle(subOrg1_1.id);
-      usersPage.clickCardToggle(subOrg2.id);
-
       usersPage.typeUserFilter('filter');
+      cy.wait('@getUsers');
 
       usersPage.clickCardToggle(subOrg1.id);
       usersPage.clickCardToggle(subOrg1_1.id);
@@ -326,6 +370,7 @@ describe('Users test', () => {
       usersPage.firstNamesColumns.should('not.contain', user5.first_name);
 
       usersPage.userFilter.clear();
+      cy.wait('@getUsers');
 
       usersPage.clickCardToggle(subOrg1.id);
       usersPage.clickCardToggle(subOrg1_1.id);
@@ -339,6 +384,7 @@ describe('Users test', () => {
       usersPage.firstNamesColumns.should('contain', user5.first_name);
 
       usersPage.typeUserFilter('Filter');
+      cy.wait('@getUsers');
 
       usersPage.clickCardToggle(subOrg1.id);
       usersPage.clickCardToggle(subOrg1_1.id);

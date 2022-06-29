@@ -16,7 +16,8 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { OrganisationResource } from '../../../../../models/organisation/organisation';
 import { isNull } from 'lodash';
-import { ICommunityService } from '../../../../../services/CommunityServices';
+import { IUsersService } from '../../../../../services/UsersService';
+import { UserWithRole } from '../../UserRoles/domain';
 
 interface State {
   user?: Partial<UserCreationWithRoleResource>;
@@ -38,6 +39,7 @@ interface State {
   roleInput: string;
   userOrganisation?: OrganisationResource;
   submittedWithoutOrg: boolean;
+  organisations: OrganisationResource[];
 }
 
 interface MapStateToProps {
@@ -63,10 +65,11 @@ type Props = UserRoleFormProps &
   InjectedIntlProps;
 
 class UserRoleForm extends React.Component<Props, State> {
-  @lazyInject(TYPES.ICommunityService)
-  private _communityService: ICommunityService;
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
+  @lazyInject(TYPES.IUsersService)
+  private _usersService: IUsersService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -75,10 +78,30 @@ class UserRoleForm extends React.Component<Props, State> {
       prevOrgInput: {},
       roleInput: 'READER',
       submittedWithoutOrg: false,
+      organisations: [],
     };
   }
   componentDidMount() {
-    const { user, organisation, notifyError } = this.props;
+    const {
+      user,
+      organisation,
+      notifyError,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    if (organisation) this.fetchOrganisations(organisation.community_id);
+    else
+      this._organisationService
+        .getOrganisation(organisationId)
+        .then(org => {
+          this.fetchOrganisations(org.data.community_id);
+        })
+        .catch(err => {
+          notifyError(err);
+        });
+
     if (user) {
       this._organisationService
         .getOrganisation(user.organisation_id)
@@ -92,19 +115,55 @@ class UserRoleForm extends React.Component<Props, State> {
         .catch(err => {
           notifyError(err);
         });
-    } else if (organisation?.community_id) {
-      this._communityService
-        .getCommunityUsers(organisation.community_id)
-        .then(res => {
-          this.setState({
-            users: res.data,
-          });
-        })
-        .catch(err => {
-          notifyError(err);
-        });
+    } else {
+      this.fetchUsers();
     }
   }
+
+  fetchOrganisations = (communityId: string) => {
+    const { notifyError } = this.props;
+    this._organisationService
+      .getOrganisations(communityId)
+      .then(orgs => {
+        this.setState({
+          organisations: orgs.data,
+        });
+      })
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
+  fetchUsers = () => {
+    const { connectedUser, notifyError } = this.props;
+    const promises = connectedUser?.workspaces.map(ws => {
+      if (!ws.administrator_id)
+        return this._usersService
+          .getUsersWithUserRole(ws.community_id, { max_results: 500 })
+          .then(response => {
+            return response.data;
+          });
+      else return Promise.resolve([]);
+    });
+
+    Promise.all(promises)
+      .then(res => {
+        this.setState({
+          users: this.deduplicateUsersArray(res.flatMap(x => x)),
+        });
+      })
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
+  deduplicateUsersArray = (users: UserWithRole[]) => {
+    const usersMap = new Map();
+    users.forEach(usr => {
+      usersMap.set(usr.id, usr);
+    });
+    return Array.from(usersMap.values());
+  };
 
   onOrgSelect = (value: string, optionData: any) => {
     this.setState({
@@ -117,13 +176,13 @@ class UserRoleForm extends React.Component<Props, State> {
   };
 
   getOrganisations = () => {
-    const { connectedUser } = this.props;
-    return connectedUser?.workspaces.map(ws => {
+    const { organisations } = this.state;
+    return organisations.map(org => {
       return {
-        label: ws.organisation_name,
-        value: ws.organisation_name,
-        key: ws.organisation_id,
-        isCommunity: !ws.administrator_id,
+        label: org.name,
+        value: org.name,
+        key: org.id,
+        isCommunity: !org.administrator_id,
       };
     });
   };
@@ -229,13 +288,17 @@ class UserRoleForm extends React.Component<Props, State> {
       };
 
     const roleOrgId = user && user.role ? user.role.organisation_id : '';
+    const disabledInputs = !!user?.id;
 
     return (
       <Form layout='vertical'>
         <Form.Item label={intl.formatMessage(messages.user)}>
           <AutoComplete
             options={this.getUserOptions()}
-            disabled={!!user?.id}
+            searchValue={
+              disabledInputs && user ? `${user.first_name} ${user.last_name}` : undefined
+            }
+            disabled={disabledInputs}
             placeholder={
               user?.id
                 ? `${user.first_name} ${user.last_name}`
@@ -261,7 +324,7 @@ class UserRoleForm extends React.Component<Props, State> {
             onSelect={this.onOrgSelect}
             onChange={this.onOrgChange}
             filterOption={filterOption(false)}
-            disabled={!!user?.id}
+            disabled={disabledInputs}
             placeholder={intl.formatMessage(messages.selectOrganisation)}
           >
             <Input.Search value={orgInput.value || roleOrgId} />

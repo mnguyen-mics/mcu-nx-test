@@ -7,10 +7,8 @@ import {
 } from '@ant-design/icons';
 import { Table, Select, Card, Button as AntButton, Modal, Input } from 'antd';
 import {
-  OTQLMetric,
   OTQLAggregations,
   OTQLBucket,
-  OTQLBuckets,
   isOTQLAggregations,
   isAggregateDataset,
 } from '../../../models/datamart/graphdb/OTQLResult';
@@ -57,6 +55,10 @@ import {
 import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
 import { omit } from 'lodash';
 import { McsTabsItem } from './QueryToolTabsContainer';
+import {
+  OTQLBuckets,
+  OTQLMetric,
+} from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -1041,7 +1043,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                       <Select.Option
                         key={index.toString()}
                         value={index.toString()}
-                      >{`${bucket.field_name} @${bucket.type}`}</Select.Option>
+                      >{`${bucket.field_name} @${bucket.bucket_type}`}</Select.Option>
                     ))}
                   </Select.OptGroup>
                 )}

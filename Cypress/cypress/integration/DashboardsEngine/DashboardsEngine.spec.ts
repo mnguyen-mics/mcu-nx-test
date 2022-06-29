@@ -1,6 +1,8 @@
 import faker from 'faker';
 import DashboardFilter from '../components/DashboardFilter';
 import LeftMenu from '../../pageobjects/LeftMenu';
+import HomePage from '../../pageobjects/Home/HomePage';
+import QueryToolPage from '../../pageobjects/DataStudio/QueryToolPage';
 import {
   compartmentFilterContent,
   dataFileContent,
@@ -14,6 +16,8 @@ import {
   otqlResponseStub,
   standardSegmentDashboardContent,
 } from './DashboardContents';
+import DatamartsPage from '../../pageobjects/Settings/Datamart/DatamartsPage';
+import BuildersPage from '../../pageobjects/Audience/BuildersPage';
 
 describe('dashboards engine Tests', () => {
   beforeEach(() => {
@@ -25,6 +29,7 @@ describe('dashboards engine Tests', () => {
   });
 
   it('should test that a dashboard with empty content shouldnt be displayed', () => {
+    const homePage = new HomePage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
       cy.createDashboard(
@@ -35,13 +40,69 @@ describe('dashboards engine Tests', () => {
         [],
         [],
       ).then(() => {
-        LeftMenu.goToHomePage();
-        cy.get('.mcs-content-container').should('not.contain', 'Empty Dashboard');
+        homePage.goToPage();
+        homePage.dashboardPageContainer.should('not.contain', 'Empty Dashboard');
+      });
+    });
+  });
+
+  it('test the charts on the query tool', () => {
+    const queryToolPage = new QueryToolPage();
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'first channel',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
+        cy.prepareActivitiesForDashboards(
+          data.accessToken,
+          data.datamartId,
+          channel.body.data.id,
+          'test_query_tool_1',
+          'test_query_tool_2',
+        ).then(() => {
+          cy.wait(30000);
+          cy.executeQuery(
+            data.accessToken,
+            data.datamartId,
+            'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+          ).then(() => {
+            cy.switchOrg(data.organisationName);
+            queryToolPage.goToPage();
+            queryToolPage.typeQuerry(
+              'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+            );
+            queryToolPage.clickBtnRun();
+            queryToolPage.clickBarIcon();
+            cy.wait(1000);
+            queryToolPage.chartContainer.eq(1).trigger('mouseover');
+            queryToolPage.barContent.should('contain', 'count: 3');
+            queryToolPage.clickPercentageOption();
+            queryToolPage.barContent.should('contain', 'count: 50% (3)');
+            queryToolPage.clickIndexOption();
+            queryToolPage.barContent.should('contain', 'count: 3');
+            queryToolPage.clickRadarIcon();
+            cy.wait(1000);
+            queryToolPage.radarContent;
+            queryToolPage.clickPieIcon();
+            cy.wait(1000);
+            queryToolPage.pieContent;
+            queryToolPage.typeQuerry(
+              'SELECT @count{nature} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+            );
+            queryToolPage.clickBtnRun();
+            queryToolPage.resultMetrics.should('contain', '6');
+          });
+        });
       });
     });
   });
 
   it.skip('should test the different possible charts on a dashboard', () => {
+    const homePage = new HomePage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -87,11 +148,11 @@ describe('dashboards engine Tests', () => {
                   body: differentChartsContent(queryId),
                 }).then(() => {
                   cy.switchOrg(data.organisationName);
-                  LeftMenu.goToHomePage();
-                  cy.contains('Charts types dashboard').click();
+                  homePage.goToPage();
+                  homePage.clickChartsTypesDashboard();
                   cy.wait(10000);
-                  cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
-                  cy.get('.mcs-card_content').eq(1).toMatchImageSnapshot();
+                  homePage.sectionDashboard.eq(0).toMatchImageSnapshot();
+                  homePage.sectionDashboard.eq(1).toMatchImageSnapshot();
                 });
               });
             });
@@ -102,6 +163,7 @@ describe('dashboards engine Tests', () => {
   });
 
   it.skip('should test the index transformation', () => {
+    const homePage = new HomePage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -147,11 +209,11 @@ describe('dashboards engine Tests', () => {
                   body: indexTransformationContent(queryId),
                 }).then(() => {
                   cy.switchOrg(data.organisationName);
-                  LeftMenu.goToHomePage();
-                  cy.contains('Index Transformation').click();
+                  homePage.goToPage();
+                  homePage.clickIndexTransformation();
                   cy.wait(10000);
-                  cy.get('.mcs-card_content').eq(0).toMatchImageSnapshot();
-                  cy.get('.mcs-card_content').eq(1).toMatchImageSnapshot();
+                  homePage.sectionDashboard.eq(0).toMatchImageSnapshot();
+                  homePage.sectionDashboard.eq(1).toMatchImageSnapshot();
                 });
               });
             });
@@ -162,6 +224,8 @@ describe('dashboards engine Tests', () => {
   });
 
   it('should test the dashboard engine on the audience builder', () => {
+    const datamartsPage = new DatamartsPage();
+    const buildersPage = new BuildersPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -208,30 +272,27 @@ describe('dashboards engine Tests', () => {
                 }).then(() => {
                   cy.switchOrg(data.organisationName);
                   const standardSegmentBuilderName = faker.random.words(2);
-                  cy.get('.mcs-header_actions_settings').click();
-                  cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
-                  cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
+                  datamartsPage.goToPage();
                   cy.contains(data.datamartName).click();
-                  cy.get('.mcs-tabs_tab--segmentBuilder').click();
-                  cy.get('.mcs-standardSegmentBuilder_creation_button').click();
-                  cy.get('.mcs-standardSegmentBuilderName').type(standardSegmentBuilderName);
-                  cy.get('.mcs-form_saveButton_standardSegmentBuilderForm').click();
+                  datamartsPage.clickStandardSegmentBuilder();
+                  datamartsPage.clickBtnNewStandardSegmentBuilder();
+                  datamartsPage.typeStandardSegmentBuilderName(standardSegmentBuilderName);
+                  datamartsPage.clickBtnSave();
                   cy.wait(1000);
                   cy.goToHome(data.organisationId);
-                  cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-                  cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+                  buildersPage.goToPage();
                   cy.wait(3000);
                   cy.url().then(url => {
                     if (url.match(/.*segment-builder-selector$/g)) {
-                      cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+                      buildersPage.standardSegmentBuilder.trigger('mouseover');
                       // Wait for the dropdown to appear
                       cy.wait(3000);
-                      cy.get('.mcs-standardSegmentBuilder_dropdownContainer').then($element => {
+                      buildersPage.standardSegmentBuilder.then($element => {
                         if ($element.find('.mcs-menu-list').length > 0) {
                           console.log($element.find('.mcs-menu-list').length);
                           cy.contains(standardSegmentBuilderName).click();
                         } else {
-                          cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+                          buildersPage.standardSegmentBuilder.click();
                         }
                       });
                     }
@@ -252,7 +313,7 @@ describe('dashboards engine Tests', () => {
                         body: standardSegmentDashboardContent(queryId),
                       }).then(() => {
                         cy.reload();
-                        cy.get('.mcs-standardSegmentBuilder_liveDashboard')
+                        buildersPage.liveDashboard
                           .should('contain', 'Standard Segment Builder First Dashboard')
                           .and('contain', 'Standard Segment Builder Second Dashboard');
                         cy.createDashboard(
@@ -272,7 +333,7 @@ describe('dashboards engine Tests', () => {
                             body: standardSegmentDashboardContent(queryId),
                           }).then(() => {
                             cy.reload();
-                            cy.get('.mcs-dashboardPage_content')
+                            buildersPage.dashboardPageContent
                               .should('contain', 'Standard Segment Builder First Dashboard')
                               .and('contain', 'Standard Segment Builder Second Dashboard')
                               .and('not.contain', 'Standard Segment Builder Third Dashboard');
@@ -285,7 +346,7 @@ describe('dashboards engine Tests', () => {
                               [],
                             ).then(() => {
                               cy.reload();
-                              cy.get('.mcs-dashboardPage_content')
+                              buildersPage.dashboardPageContent
                                 .should('contain', 'Standard Segment Builder First Dashboard')
                                 .and('contain', 'Standard Segment Builder Second Dashboard')
                                 .and('not.contain', 'Standard Segment Builder Third Dashboard')
@@ -305,74 +366,8 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it.skip('test the charts on the query tool', () => {
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.createChannel(
-        data.accessToken,
-        data.datamartId,
-        'first channel',
-        'test.com',
-        false,
-        'SITE',
-      ).then(channel => {
-        cy.prepareActivitiesForDashboards(
-          data.accessToken,
-          data.datamartId,
-          channel.body.data.id,
-          'test_query_tool_1',
-          'test_query_tool_2',
-        ).then(() => {
-          cy.wait(30000);
-          cy.executeQuery(
-            data.accessToken,
-            data.datamartId,
-            'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
-          ).then(() => {
-            cy.switchOrg(data.organisationName);
-            cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
-            cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
-            cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
-              .type('{selectall}{backspace}{backspace}', {
-                force: true,
-              })
-              .type(
-                'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
-                { force: true, parseSpecialCharSequences: false },
-              );
-            cy.get('.mcs-otqlInputEditor_run_button').click();
-            cy.get('.mcs-otqlChart_icons_bar').click();
-            cy.wait(1000);
-            cy.get('.mcs-chart_content_container').eq(1).trigger('mouseover');
-            cy.get('.mcs-otqlChart_content_bar').should('contain', 'count: 3');
-            cy.get('.mcs-otqlChart_items_quick_option').eq(1).click();
-            cy.get('.mcs-chartOptions_percentage').click();
-            cy.get('.mcs-otqlChart_content_bar').should('contain', 'count: 50% (3)');
-            cy.get('.mcs-otqlChart_items_quick_option').eq(1).click();
-            cy.get('.mcs-chartOptions_index').click();
-            cy.get('.mcs-otqlChart_content_bar').should('contain', 'count: 3');
-            cy.get('.mcs-otqlChart_icons_radar').click();
-            cy.wait(1000);
-            cy.get('.mcs-otqlChart_content_radar');
-            cy.get('.mcs-otqlChart_icons_pie').click();
-            cy.wait(1000);
-            cy.get('.mcs-otqlChart_content_pie');
-            cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
-              .type('{selectall}{backspace}{backspace}', {
-                force: true,
-              })
-              .type(
-                'SELECT @count{nature} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
-                { force: true, parseSpecialCharSequences: false },
-              );
-            cy.get('.mcs-otqlInputEditor_run_button').click();
-            cy.get('.mcs-otqlChart_resultMetrics').should('contain', '6');
-          });
-        });
-      });
-    });
-  });
-
-  it.skip('should test the raw data and query drawer for a chart', () => {
+  it('should test the raw data and query drawer for a chart', () => {
+    const homePage = new HomePage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -418,12 +413,12 @@ describe('dashboards engine Tests', () => {
                   body: drawerChartDetails(queryId),
                 }).then(() => {
                   cy.switchOrg(data.organisationName);
-                  LeftMenu.goToHomePage();
+                  homePage.goToPage();
                   cy.contains('Drawer Charts Details').click();
                   cy.wait(3000);
-                  cy.contains('Bars').click();
-                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Bars');
-                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                  homePage.clickBtnBars();
+                  homePage.dataInformationPage.dataInfoTitle.should('contain', 'Bars');
+                  homePage.dataInformationPage.dataInfoQuery
                     .should('have.length', 1)
                     .find('textarea')
                     .invoke('val')
@@ -432,29 +427,29 @@ describe('dashboards engine Tests', () => {
                         'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
                       );
                     });
-                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                  homePage.dataInformationPage.dataInfoSectionTitle
                     .should('contain', 'test_drawer')
                     .and('contain', 'test_drawer_2')
                     .and('contain', '3');
-                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
-                  cy.get('.mcs-close').click();
+                  homePage.dataInformationPage.clickExportToCSV();
+                  homePage.dataInformationPage.clickBtnClose();
                   cy.contains('Metric').click();
-                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Metric');
-                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                  homePage.dataInformationPage.dataInfoTitle.should('contain', 'Metric');
+                  homePage.dataInformationPage.dataInfoQuery
                     .should('have.length', 1)
                     .find('textarea')
                     .invoke('val')
                     .then(value => {
                       expect(value).to.contain('"expression": "users"');
                     });
-                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                  homePage.dataInformationPage.dataInfoSectionTitle
                     .should('contain', 'count')
                     .and('contain', '1');
-                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
-                  cy.get('.mcs-close').click();
+                  homePage.dataInformationPage.clickExportToCSV();
+                  homePage.dataInformationPage.clickBtnClose();
                   cy.contains('Pie').click();
-                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Pie');
-                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                  homePage.dataInformationPage.dataInfoTitle.should('contain', 'Pie');
+                  homePage.dataInformationPage.dataInfoQuery
                     .should('have.length', 1)
                     .find('textarea')
                     .invoke('val')
@@ -463,15 +458,15 @@ describe('dashboards engine Tests', () => {
                         'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
                       );
                     });
-                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                  homePage.dataInformationPage.dataInfoSectionTitle
                     .should('contain', 'test_drawer')
                     .and('contain', 'test_drawer_2')
                     .and('contain', '3');
-                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
-                  cy.get('.mcs-close').click();
+                  homePage.dataInformationPage.clickExportToCSV();
+                  homePage.dataInformationPage.clickBtnClose();
                   cy.contains('Index First').click();
-                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Index First');
-                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                  homePage.dataInformationPage.dataInfoTitle.should('contain', 'Index First');
+                  homePage.dataInformationPage.dataInfoQuery
                     .should('have.length', 2)
                     .find('textarea')
                     .eq(0)
@@ -481,7 +476,7 @@ describe('dashboards engine Tests', () => {
                         'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
                       );
                     });
-                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                  homePage.dataInformationPage.dataInfoQuery
                     .should('have.length', 2)
                     .find('textarea')
                     .eq(1)
@@ -491,7 +486,7 @@ describe('dashboards engine Tests', () => {
                         'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
                       );
                     });
-                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                  homePage.dataInformationPage.dataInfoSectionTitle
                     .should('contain', 'test_drawer')
                     .and('contain', 'test_drawer_2')
                     .and('contain', '3')
@@ -499,11 +494,11 @@ describe('dashboards engine Tests', () => {
                     .and('contain', 'datamart-count')
                     .and('contain', '100')
                     .and('contain', '50');
-                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
-                  cy.get('.mcs-close').click();
+                  homePage.dataInformationPage.clickExportToCSV();
+                  homePage.dataInformationPage.clickBtnClose();
                   cy.contains('Index Hidden Axis').click();
-                  cy.get('.mcs-chartMetaDataInfo_title').should('contain', 'Index Hidden Axis');
-                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                  homePage.dataInformationPage.dataInfoTitle.should('contain', 'Index Hidden Axis');
+                  homePage.dataInformationPage.dataInfoQuery
                     .should('have.length', 2)
                     .find('textarea')
                     .eq(0)
@@ -513,7 +508,7 @@ describe('dashboards engine Tests', () => {
                         'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
                       );
                     });
-                  cy.get('.mcs-chartMetaDataInfo_query_item')
+                  homePage.dataInformationPage.dataInfoQuery
                     .should('have.length', 2)
                     .find('textarea')
                     .eq(1)
@@ -523,7 +518,7 @@ describe('dashboards engine Tests', () => {
                         'SELECT {nature @map} FROM ActivityEvent where nature = "test_drawer" or nature = "test_drawer_2"',
                       );
                     });
-                  cy.get('.mcs-chartMetaDataInfo_section_title')
+                  homePage.dataInformationPage.dataInfoSectionTitle
                     .should('contain', 'test_drawer')
                     .and('contain', 'test_drawer_2')
                     .and('contain', '3')
@@ -531,8 +526,8 @@ describe('dashboards engine Tests', () => {
                     .and('contain', 'datamart-count')
                     .and('contain', '100')
                     .and('contain', '50');
-                  cy.get('.mcs-chartMetaDataInfo_section_button').eq(1).click();
-                  cy.get('.mcs-close').click();
+                  homePage.dataInformationPage.clickExportToCSV();
+                  homePage.dataInformationPage.clickBtnClose();
                 });
               });
             });
@@ -543,6 +538,7 @@ describe('dashboards engine Tests', () => {
   });
 
   it('should test the get-decorators transformation', () => {
+    const homePage = new HomePage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -597,9 +593,9 @@ describe('dashboards engine Tests', () => {
                     body: getDecoratosTransformationContent(queryId),
                   }).then(() => {
                     cy.switchOrg(data.organisationName);
-                    LeftMenu.goToHomePage();
+                    homePage.goToPage();
                     cy.contains('Get-Decorators Transformation').click();
-                    cy.get('.mcs-card_content')
+                    homePage.sectionDashboard
                       .should('contain', 'first channel')
                       .and('contain', 'second channel');
                   });
@@ -613,6 +609,7 @@ describe('dashboards engine Tests', () => {
   });
 
   it('should test that when we change the org the home page refreshes', () => {
+    const homePage = new HomePage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createDashboard(
         data.accessToken,
@@ -631,16 +628,18 @@ describe('dashboards engine Tests', () => {
           body: getDecoratosTransformationContent('00'),
         }).then(() => {
           cy.switchOrg(data.organisationName);
-          LeftMenu.goToHomePage();
-          cy.get('.mcs-homePage_dashboard_page_wrapper').should('contain', 'Change organisation');
+          homePage.goToPage();
+          homePage.dashboardPageWrapper.should('contain', 'Change organisation');
           cy.switchOrg('dogfooding');
-          cy.get('.mcs-content-container').should('not.contain', 'Change organisation');
+          homePage.dashboardPageContainer.should('not.contain', 'Change organisation');
         });
       });
     });
   });
 
   it('should test the dashboard filter', () => {
+    const homePage = new HomePage();
+    const queryToolPage = new QueryToolPage();
     const dashboardFilter = new DashboardFilter();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
@@ -696,14 +695,14 @@ describe('dashboards engine Tests', () => {
                     body: compartmentFilterContent(queryId),
                   }).then(() => {
                     cy.switchOrg(data.organisationName);
-                    LeftMenu.goToHomePage();
+                    homePage.goToPage();
                     cy.contains('Dashboard Filter').click();
-                    cy.get('.mcs-chart_content_container')
+                    queryToolPage.chartContainer
                       .first()
                       .should('contain', channel.body.data.id)
                       .and('contain', secondChannel.body.data.id);
                     dashboardFilter.applyFilters(['Channel 1']);
-                    cy.get('.mcs-chart_content_container')
+                    queryToolPage.chartContainer
                       .first()
                       .should('contain', channel.body.data.id)
                       .and('not.contain', secondChannel.body.data.id);
@@ -717,7 +716,9 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it.skip('should test the loading dashboard experience', () => {
+  it('should test the loading dashboard experience', () => {
+    const homePage = new HomePage();
+    const queryToolPage = new QueryToolPage();
     cy.intercept({ pathname: /.*\/otql.*/, method: 'POST' }, req => {
       req.reply({
         statusCode: 200,
@@ -750,10 +751,12 @@ describe('dashboards engine Tests', () => {
             body: compartmentFilterContent(queryResponse.body.data.id),
           }).then(() => {
             cy.switchOrg(data.organisationName);
-            LeftMenu.goToHomePage();
-            cy.contains('Loading Experience').click();
+            cy.intercept('**/dashboards**').as('dashboard');
+            homePage.goToPage();
+            cy.wait('@dashboard');
             cy.wait(10000);
-            cy.get('.mcs-chart_content_container').should('contain', 'Still loading');
+            homePage.clickLoadingExperience();
+            queryToolPage.chartContainer.should('contain', 'Still loading');
           });
         });
       });
@@ -761,6 +764,8 @@ describe('dashboards engine Tests', () => {
   });
 
   it('should test the data file data source', () => {
+    const homePage = new HomePage();
+    const queryToolPage = new QueryToolPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createDashboard(
         data.accessToken,
@@ -785,9 +790,9 @@ describe('dashboards engine Tests', () => {
             body: dataFileSourceContent(data.organisationId),
           }).then(() => {
             cy.switchOrg(data.organisationName);
-            LeftMenu.goToHomePage();
+            homePage.goToPage();
             cy.contains('Data File Source Dashboard').click();
-            cy.get('.mcs-chart_content_container')
+            queryToolPage.chartContainer
               .first()
               .should('contain', '200')
               .and('contain', '100')
@@ -802,6 +807,8 @@ describe('dashboards engine Tests', () => {
   });
 
   it('test the join transformation on the query tool', () => {
+    const homePage = new HomePage();
+    const queryToolPage = new QueryToolPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -825,50 +832,34 @@ describe('dashboards engine Tests', () => {
             'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
           ).then(() => {
             cy.switchOrg(data.organisationName);
-            cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
-            cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
-            cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
-              .type('{selectall}{backspace}{backspace}', {
-                force: true,
-              })
-              .type(
-                'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
-                { force: true, parseSpecialCharSequences: false },
-              );
-            cy.get('.mcs-otqlInputEditor_run_button').click();
-            cy.get('.mcs-otqlChart_icons_bar').click();
+            queryToolPage.goToPage();
+            queryToolPage.typeQuerry(
+              'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
+            );
+            queryToolPage.clickBtnRun();
+            queryToolPage.clickBarIcon();
             cy.wait(1000);
-            cy.get('.mcs-chart_content_container').eq(1).trigger('mouseover');
-            cy.get('.mcs-otqlChart_content_bar').should('contain', 'count: 3');
-            cy.get('.mcs-otqlChart_items_quick_option').eq(1).click();
-            cy.get('.mcs-chartOptions_percentage').click();
-            cy.get('.mcs-otqlChart_content_bar').should('contain', 'count: 50% (3)');
-            cy.get('.mcs-otqlChart_items_quick_option').eq(1).click();
-            cy.get('.mcs-chartOptions_index').click();
-            cy.get('.mcs-otqlChart_content_bar').should('contain', 'count: 3');
-            cy.get('.mcs-otqlChart_icons_radar').click();
+            queryToolPage.chartContainer.eq(1).trigger('mouseover');
+            queryToolPage.barContent.should('contain', 'count: 3');
+            queryToolPage.clickPercentageOption();
+            queryToolPage.barContent.should('contain', 'count: 50% (3)');
+            queryToolPage.clickIndexOption();
+            queryToolPage.barContent.should('contain', 'count: 3');
+            queryToolPage.clickRadarIcon();
             cy.wait(1000);
-            cy.get('.mcs-otqlChart_content_radar');
-            cy.get('.mcs-otqlChart_icons_pie').click();
+            queryToolPage.radarContent;
+            queryToolPage.clickPieIcon();
             cy.wait(1000);
-            cy.get('.mcs-otqlChart_content_pie');
-            cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
-            cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
-              .eq(1)
-              .type('{selectall}{backspace}{backspace}', {
-                force: true,
-              })
-              .type(
-                'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
-                { force: true, parseSpecialCharSequences: false },
-              );
-            cy.get('.mcs-otqlInputEditor_run_button').click();
-            cy.get('.mcs-otqlChart_icons_bar').click();
+            queryToolPage.pieContent;
+            homePage.clickBtnAddStep();
+            queryToolPage.typeQuerry(
+              'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
+            );
+            queryToolPage.clickBtnRun();
+            queryToolPage.clickBarIcon();
             cy.wait(1000);
-            cy.get('.mcs-chart_content_container').eq(1).trigger('mouseover');
-            cy.get('.mcs-otqlChart_content_bar')
-              .should('contain', 'Series 1: 3')
-              .and('contain', 'Series 2: 3');
+            queryToolPage.chartContainer.eq(1).trigger('mouseover');
+            queryToolPage.barContent.should('contain', 'Series 1: 3').and('contain', 'Series 2: 3');
           });
         });
       });
@@ -876,6 +867,8 @@ describe('dashboards engine Tests', () => {
   });
 
   it('should test the to-list transformation on the query tool', () => {
+    const homePage = new HomePage();
+    const queryToolPage = new QueryToolPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -899,17 +892,11 @@ describe('dashboards engine Tests', () => {
             'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
           ).then(() => {
             cy.switchOrg(data.organisationName);
-            cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
-            cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
-            cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
-              .type('{selectall}{backspace}{backspace}', {
-                force: true,
-              })
-              .type(
-                'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
-                { force: true, parseSpecialCharSequences: false },
-              );
-            cy.get('.mcs-otqlSeries_newValue').click();
+            queryToolPage.goToPage();
+            queryToolPage.typeQuerry(
+              'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
+            );
+            homePage.clickBtnNewValue();
             cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
               .eq(1)
               .type('{selectall}{backspace}{backspace}', {
@@ -919,15 +906,13 @@ describe('dashboards engine Tests', () => {
                 'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
                 { force: true, parseSpecialCharSequences: false },
               );
-            cy.get('.mcs-otqlInputEditor_stepNameButton').eq(1).click();
-            cy.get('.mcs-otqlInputEditor_stepNameInput').clear().type('Dimension Test{enter}');
-            cy.get('.mcs-otqlInputEditor_run_button').click();
-            cy.get('.mcs-otqlChart_icons_bar').click();
+            homePage.clickBtnStepName();
+            homePage.typeNameStep('Dimension Test{enter}');
+            queryToolPage.clickBtnRun();
+            queryToolPage.clickBarIcon();
             cy.wait(1000);
-            cy.get('.mcs-chart_content_container').eq(1).trigger('mouseover');
-            cy.get('.mcs-otqlChart_content_bar')
-              .should('contain', 'Dimension Test')
-              .and('contain', 'count: 6');
+            queryToolPage.chartContainer.eq(1).trigger('mouseover');
+            queryToolPage.barContent.should('contain', 'Dimension Test').and('contain', 'count: 6');
           });
         });
       });
@@ -935,6 +920,8 @@ describe('dashboards engine Tests', () => {
   });
 
   it('the {segment_id} token shouldnt work in the home page', () => {
+    const homePage = new HomePage();
+    const queryToolPage = new QueryToolPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createDashboard(data.accessToken, data.organisationId, 'tempo', ['home'], [], []);
       cy.createDashboard(
@@ -960,9 +947,9 @@ describe('dashboards engine Tests', () => {
             body: dataFileSourceContentSegmentIdToken(data.organisationId, 'test'),
           }).then(() => {
             cy.switchOrg(data.organisationName);
-            LeftMenu.goToHomePage();
+            homePage.goToPage();
             cy.contains('Segment Id Token').click();
-            cy.get('.mcs-chart_content_container').first().should('not.contain', '200');
+            queryToolPage.chartContainer.first().should('not.contain', '200');
           });
         });
       });
@@ -970,6 +957,7 @@ describe('dashboards engine Tests', () => {
   });
 
   it('test the {segment_id} token on the segments dashboards', () => {
+    const queryToolPage = new QueryToolPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createDashboard(
         data.accessToken,
@@ -1013,7 +1001,7 @@ describe('dashboards engine Tests', () => {
               cy.contains('First segment token test').click();
               cy.contains('Segment Id Token').click();
               cy.wait(1000);
-              cy.get('.mcs-chart_content_container')
+              queryToolPage.chartContainer
                 .first()
                 .should('contain', '200')
                 .and('contain', '100')

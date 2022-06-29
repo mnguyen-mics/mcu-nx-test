@@ -3,6 +3,7 @@ import HeaderMenu from '../../../HeaderMenu';
 import OrganisationMenu from '../OrganisationMenu';
 import UserInformationPage from './UserInformationPage';
 import ConfirmDeletePopUp from './ConfirmDeletePopUp';
+import RolesPage from './RolesPage';
 import { logFunction, logGetter } from '../../../log/LoggingDecorator';
 
 class UsersPage extends Page {
@@ -223,6 +224,23 @@ class UsersPage extends Page {
       .contains(new RegExp('^' + org + '$', 'g'))
       .click();
     this.userInformationPage.clickBtnSaveUser();
+  }
+
+  @logFunction()
+  addUserAndItsRole(
+    org: string,
+    role: string = 'reader',
+    email: string = this.email,
+    firstName: string = this.firstName,
+    lastName: string = this.lastName,
+  ) {
+    const rolesPage = new RolesPage();
+    this.addUser(org, email, firstName, lastName);
+    cy.wait(500);
+    rolesPage.roleInformationPage.clickOnRole(role);
+    rolesPage.roleInformationPage.clickBtnSave();
+    cy.wait(500);
+    rolesPage.usersPage.click();
   }
 }
 

@@ -108,6 +108,8 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
         query: 'SELECT @count{} FROM UserPoint where ' + associatedQuery,
         queryEditorClassName: 'mcs-audienceFeature_edit_form_query_builder',
         editionMode: true,
+        queryExecutionSource: 'DASHBOARD',
+        queryExecutionSubSource: 'STANDARD_SEGMENT_BUILDER_DASHBOARD',
       },
     });
   };
