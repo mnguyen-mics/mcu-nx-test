@@ -1,5 +1,5 @@
-import faker from 'faker';
-
+import LeftMenu from '../../../../pageobjects/LeftMenu';
+import ProcessingActivitiesPage from '../../../../pageobjects/Settings/Organisation/ProcessingActivitiesPage';
 describe('This test should check that the audience segments forms are working properly', () => {
   beforeEach(() => {
     cy.login();
@@ -7,7 +7,10 @@ describe('This test should check that the audience segments forms are working pr
       cy.switchOrg(data.organisationName);
     });
   });
-  const processingActivitesTypes = [
+
+  const processingActivitiesPage = new ProcessingActivitiesPage();
+
+  const processingActivitiesTypes = [
     'Consent',
     'Contractual performance',
     'Legal obligation',
@@ -19,13 +22,14 @@ describe('This test should check that the audience segments forms are working pr
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
     });
-    cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
+    LeftMenu.goToSegmentsPage();
+    cy.intercept('**keywords=Test%20Audience%20Segment%20Form&type=USER_LIST**').as(
+      'audience_segments',
+    );
     cy.get('.mcs-audienceSegmentsTable_search_bar')
       .type('Test Audience Segment Form{enter}')
       .then(() => {
-        //Wait 5 seconds after typing enter to prevent dead DOM elements
-        cy.wait(5000);
+        cy.wait('@audience_segments');
         cy.get('.mcs-audienceSegmentTable_dropDownMenu')
           .should('be.visible')
           .each(dropdownArrow => {
@@ -48,26 +52,26 @@ describe('This test should check that the audience segments forms are working pr
 
   const createProcessingActivities = (
     type: string,
-    processingName: string,
-    processingPurpose: string,
-    processingTechnicalName: string,
+    name: string,
+    purpose: string,
+    technicalName: string,
   ) => {
-    cy.get('.mcs-header_actions_settings').click();
-    cy.get('.mcs-settingsMainMenu_menu\\.organisation\\.title').click();
-    cy.get('.mcs-settingsSideMenu_menu\\.organisation\\.processings').click();
-    cy.contains('New Data Processing').click();
+    processingActivitiesPage.goToPage();
+    processingActivitiesPage.clickBtnNewDataProcessing();
     cy.get('.mcs-menu-list-content-title').each(title => {
       if (title.text() == type) {
         cy.wrap(title).click();
         return false;
       }
     });
-    cy.get('.mcs-processingActivities_nameField').type(processingName);
-    cy.get('.mcs-processingActivities_purposeField').type(processingPurpose);
-    cy.get('.mcs-settings').click();
-    cy.get('.mcs-processingActivities_technicalNameField').type(processingTechnicalName);
-    cy.get('.mcs-form_saveButton_processingForm').click();
-    cy.get('.mcs-processingsList_processingTable').should('contain', processingName);
+    processingActivitiesPage.typeProcessingActivitiesName(name);
+    processingActivitiesPage.typeProcessingActivitiesPurpose(purpose);
+    processingActivitiesPage.clickBtnAdvancedInformation();
+    processingActivitiesPage.typeProcessingActivitiesTechnicalName(technicalName);
+    cy.intercept('**/processings?**').as('processingTable');
+    processingActivitiesPage.clickBtnSaveProcessing();
+    cy.wait('@processingTable');
+    processingActivitiesPage.namesColumn.should('contain', name);
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
     });
@@ -78,57 +82,48 @@ describe('This test should check that the audience segments forms are working pr
   });
 
   it('Should create and delete User List Segment', () => {
+    const processingActivitiesPage = new ProcessingActivitiesPage();
     const randomProcessingActivitiesType =
-      processingActivitesTypes[Math.floor(Math.random() * processingActivitesTypes.length)];
-    const processingName = faker.random.word();
-    const processingPurpose = faker.random.word();
-    const processingTechnicalName = faker.random.word();
+      processingActivitiesTypes[Math.floor(Math.random() * processingActivitiesTypes.length)];
     createProcessingActivities(
       randomProcessingActivitiesType,
-      processingName,
-      processingPurpose,
-      processingTechnicalName,
+      processingActivitiesPage.name,
+      processingActivitiesPage.purpose,
+      processingActivitiesPage.technicalName,
     );
 
-    cy.contains('Audience').click();
-    cy.contains('Segments').click();
-    cy.createSegmentFromUI('User List', processingName);
+    LeftMenu.goToSegmentsPage();
+    cy.createSegmentFromUI('User List', processingActivitiesPage.name);
     deleteSegment();
   });
 
   it('should create and delete user pixel segment', () => {
+    const processingActivitiesPage = new ProcessingActivitiesPage();
     const randomProcessingActivitiesType =
-      processingActivitesTypes[Math.floor(Math.random() * processingActivitesTypes.length)];
-    const processingName = faker.random.word();
-    const processingPurpose = faker.random.word();
-    const processingTechnicalName = faker.random.word();
+      processingActivitiesTypes[Math.floor(Math.random() * processingActivitiesTypes.length)];
     createProcessingActivities(
       randomProcessingActivitiesType,
-      processingName,
-      processingPurpose,
-      processingTechnicalName,
+      processingActivitiesPage.name,
+      processingActivitiesPage.purpose,
+      processingActivitiesPage.technicalName,
     );
-    cy.contains('Audience').click();
-    cy.contains('Segments').click({ force: true });
-    cy.createSegmentFromUI('User Pixel', processingName);
+    LeftMenu.goToSegmentsPage();
+    cy.createSegmentFromUI('User Pixel', processingActivitiesPage.name);
     deleteSegment();
   });
 
   it('should create user expert query segment', () => {
+    const processingActivitiesPage = new ProcessingActivitiesPage();
     const randomProcessingActivitiesType =
-      processingActivitesTypes[Math.floor(Math.random() * processingActivitesTypes.length)];
-    const processingName = faker.random.word();
-    const processingPurpose = faker.random.word();
-    const processingTechnicalName = faker.random.word();
+      processingActivitiesTypes[Math.floor(Math.random() * processingActivitiesTypes.length)];
     createProcessingActivities(
       randomProcessingActivitiesType,
-      processingName,
-      processingPurpose,
-      processingTechnicalName,
+      processingActivitiesPage.name,
+      processingActivitiesPage.purpose,
+      processingActivitiesPage.technicalName,
     );
-    cy.contains('Audience').click();
-    cy.contains('Segments').click({ force: true });
-    cy.createSegmentFromUI('User Expert Query', processingName);
+    LeftMenu.goToSegmentsPage();
+    cy.createSegmentFromUI('User Expert Query', processingActivitiesPage.name);
     deleteSegment();
   });
 });
