@@ -8,7 +8,7 @@ import {
 } from '../../../helpers/OrganisationHelper';
 import { createUserQuery, createUserAndLoginWithIt } from '../../../helpers/UserHelper';
 
-describe('Users test', () => {
+describe('Users Rights test', () => {
   let subOrg1: OrganisationQuery;
   let subOrg1_1: OrganisationQuery;
   let subOrg2: OrganisationQuery;

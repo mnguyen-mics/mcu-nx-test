@@ -9,7 +9,7 @@ import {
 } from '../../../helpers/OrganisationHelper';
 import { createUserQuery, createUserAndLoginWithIt } from '../../../helpers/UserHelper';
 
-describe('Users roles test', () => {
+describe('Roles rights test', () => {
   let subOrg1: OrganisationQuery;
 
   before(() => {
