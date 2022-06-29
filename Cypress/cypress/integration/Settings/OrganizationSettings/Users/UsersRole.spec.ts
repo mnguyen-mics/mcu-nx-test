@@ -3,7 +3,7 @@ import RolesPage from '../../../../pageobjects/Settings/Organisation/Users/Roles
 import { createSubOrganisationQuery, OrganisationQuery } from '../../../helpers/OrganisationHelper';
 import { createUserQuery } from '../../../helpers/UserHelper';
 
-describe('Users test', () => {
+describe('Roles test', () => {
   let subOrg1: OrganisationQuery;
   let subOrg1_1: OrganisationQuery;
   let subOrg2: OrganisationQuery;
