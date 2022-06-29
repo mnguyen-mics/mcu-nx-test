@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Button, Layout, Select, Drawer, Modal, Switch, Input } from 'antd';
+import { Button, Layout, Select, Drawer, Modal, Switch, Input, Tooltip } from 'antd';
 import { messages } from './messages';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -287,18 +287,23 @@ class UserListPage extends React.Component<Props, State> {
 
   saveUser = (user: UserResource) => {
     const { notifyError } = this.props;
-    let promise;
-    if (user.id) {
-      promise = this._usersService.updateUser(user.id, user.organisation_id, user);
-    } else {
-      promise = this._usersService.createUser(user.organisation_id, user);
-    }
-    promise
-      .then(() => {
-        this.setState({
-          isUserDrawerVisible: false,
-        });
-        this.refreshAndScrollToElement(user);
+    const { userDisplay } = this.state;
+    const previousUser = !!user.id;
+    (previousUser
+      ? this._usersService.updateUser(user.id, user.organisation_id, user)
+      : this._usersService.createUser(user.organisation_id, user)
+    )
+      .then(res => {
+        this.setState(
+          {
+            isUserDrawerVisible: false,
+            userDisplay: previousUser ? userDisplay : 'user_roles',
+          },
+          () => {
+            this.refreshAndScrollToElement(res.data);
+            if (!previousUser) this.editUserRole(res.data, res.data.organisation_id);
+          },
+        );
       })
       .catch(err => {
         notifyError(err);
@@ -437,14 +442,20 @@ class UserListPage extends React.Component<Props, State> {
                 value={userDisplay}
                 placeholder={this.getUsersOptions()[0].value}
               />
-              <Input
-                className='mcs-primary mcs-userSettings_userSelect mcs-userSettings_userFilter'
-                onChange={this.handleFilter}
-                placeholder={intl.formatMessage(messages.filterOnUser)}
-                value={nextFilterValue}
-                suffix={<FilterOutlined />}
-                size='small'
-              />
+              <Tooltip
+                trigger={['focus']}
+                title={intl.formatMessage(messages.filterOnUserTooltip)}
+                placement='top'
+              >
+                <Input
+                  className='mcs-primary mcs-userSettings_userSelect mcs-userSettings_userFilter'
+                  onChange={this.handleFilter}
+                  placeholder={intl.formatMessage(messages.filterOnUser)}
+                  value={nextFilterValue}
+                  suffix={<FilterOutlined />}
+                  size='small'
+                />
+              </Tooltip>
               {userDisplay === 'user_roles' && (
                 <React.Fragment>
                   {intl.formatMessage(messages.displayInheritedRole)}
