@@ -54,9 +54,7 @@
     "react-dnd-html5-backend": "^5.0.1",
     "react-dom": "17.0.2",
     "react-grid-layout": "^1.2.0",
-    "react-hot-loader": "^4.13.0",
     "react-intl": "^2.7.2",
-    "react-lazyload": "^3.2.0",
     "react-map-gl": "3.3.9",
     "react-redux": "^5.1.1",
     "react-router": "^4.3.1",
@@ -76,8 +74,7 @@
     "snakecase-keys": "^5.1.2",
     "storm-react-diagrams": "^5.2.1",
     "whatwg-fetch": "^3.5.0",
-    "xlsx": "^0.17.0",
-    "yup": "^0.29.1"
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@swc/core": "^1.2.203",
@@ -96,7 +93,6 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-grid-layout": "^0.16.6",
     "@types/react-intl": "^2.3.13",
-    "@types/react-lazyload": "^3.1.1",
     "@types/react-map-gl": "3.3.3",
     "@types/react-redux": "^7.1.22",
     "@types/react-router": "^4.4.1",
@@ -105,7 +101,6 @@
     "@types/recompose": "^0.24.7",
     "@types/redux-actions": "^2.6.1",
     "@types/redux-form": "7.4.12",
-    "@types/yup": "^0.29.7",
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
     "copy-webpack-plugin": "^4.6.0",
