@@ -72,6 +72,7 @@ describe('Users roles test', () => {
   });
 
   it('Should have access to the users role (COMMUNITY_ADMIN)', () => {
+    const rolesPage = new RolesPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       const newOrganisationName: string = faker.random.words(3);
       console.log(newOrganisationName);
@@ -80,7 +81,7 @@ describe('Users roles test', () => {
       await createUserAndLoginWithIt(data.organisationId, 'COMMUNITY_ADMIN');
       HeaderMenu.switchOrgWithCreatedUser(data.organisationId);
 
-      RolesPage.goToPage();
+      rolesPage.goToPage();
     });
   });
 
@@ -101,6 +102,7 @@ describe('Users roles test', () => {
   });
 
   it('Community admin can add role to an other user in its childs organisations and edit it', () => {
+    const rolesPage = new RolesPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       const fn = `fn-${Math.random().toString(36).substring(2, 10)}`;
       const ln = `ln-${Math.random().toString(36).substring(2, 10)}`;
@@ -108,23 +110,23 @@ describe('Users roles test', () => {
       await createUserQuery(data.accessToken, subOrg1.id, fn, ln);
 
       HeaderMenu.switchOrgWithCreatedUser(data.organisationId);
-      RolesPage.goToPage();
-      RolesPage.usersPage.click();
-      RolesPage.rolesPage.click();
+      rolesPage.goToPage();
+      rolesPage.usersPage.click();
+      rolesPage.rolesPage.click();
       cy.wait(20000);
-      RolesPage.clickBtnAddRole();
+      rolesPage.clickBtnAddRole();
       const nameUser = `${fn}` + ' ' + `${ln}`;
       cy.get('#rc_select_1').type(nameUser);
-      RolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
+      rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
       const organisationName = `child_1_of_${data.organisationName}`;
       cy.get('#rc_select_2').type(organisationName);
-      RolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
-      RolesPage.clickBtnEditorRole();
-      RolesPage.clickBtnSave();
+      rolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
+      rolesPage.roleInformationPage.clickBtnEditorRole();
+      rolesPage.roleInformationPage.clickBtnSave();
       cy.wait(15000);
-      RolesPage.clickCardToggle(subOrg1.id);
-      RolesPage.rolesColumnInCard(subOrg1.id).should('contain', 'EDITOR');
-      RolesPage.clickCardToggle(subOrg1.id);
+      rolesPage.clickCardToggle(subOrg1.id);
+      rolesPage.rolesColumnInCard(subOrg1.id).should('contain', 'EDITOR');
+      rolesPage.clickCardToggle(subOrg1.id);
       cy.get(
         `#mcs-foldable-card-${subOrg1.id} > .ant-collapse > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box > :nth-child(1)`,
       )
@@ -132,18 +134,19 @@ describe('Users roles test', () => {
         .parent()
         .find('.mcs-chevron')
         .click();
-      RolesPage.clickBtnEditRole();
-      RolesPage.pageEdit.within(() => {
-        RolesPage.clickBtnReaderRole();
-        RolesPage.clickBtnSave();
+      rolesPage.clickBtnEditRole();
+      rolesPage.pageEdit.within(() => {
+        rolesPage.roleInformationPage.clickBtnReaderRole();
+        rolesPage.roleInformationPage.clickBtnSave();
       });
       cy.wait(15000);
-      RolesPage.clickCardToggle(subOrg1.id);
-      RolesPage.rolesColumnInCard(subOrg1.id).should('contain', 'READER');
+      rolesPage.clickCardToggle(subOrg1.id);
+      rolesPage.rolesColumnInCard(subOrg1.id).should('contain', 'READER');
     });
   });
 
   it('Community admin can add role to an other user in its organisation and edit it', () => {
+    const rolesPage = new RolesPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       const fn = `fn-${Math.random().toString(36).substring(2, 10)}`;
       const ln = `ln-${Math.random().toString(36).substring(2, 10)}`;
@@ -151,21 +154,21 @@ describe('Users roles test', () => {
       await createUserQuery(data.accessToken, data.organisationId, fn, ln);
 
       HeaderMenu.switchOrgWithCreatedUser(data.organisationId);
-      RolesPage.goToPage();
+      rolesPage.goToPage();
       cy.wait(20000);
-      RolesPage.clickBtnAddRole();
+      rolesPage.clickBtnAddRole();
       const nameUser = `${fn}` + ' ' + `${ln}`;
       cy.get('#rc_select_1').type(nameUser);
-      RolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
+      rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
       const organisationName = `${data.organisationName}`;
       cy.get('#rc_select_2').type(organisationName);
-      RolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
-      RolesPage.clickBtnEditorRole();
-      RolesPage.clickBtnSave();
+      rolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
+      rolesPage.roleInformationPage.clickBtnEditorRole();
+      rolesPage.roleInformationPage.clickBtnSave();
       cy.wait(15000);
-      RolesPage.clickCardToggle(data.organisationId);
-      RolesPage.rolesColumnInCard(data.organisationId).should('contain', 'EDITOR');
-      RolesPage.clickCardToggle(data.organisationId);
+      rolesPage.clickCardToggle(data.organisationId);
+      rolesPage.rolesColumnInCard(data.organisationId).should('contain', 'EDITOR');
+      rolesPage.clickCardToggle(data.organisationId);
       cy.get(
         `#mcs-foldable-card-${data.organisationId} > .ant-collapse > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box > :nth-child(1)`,
       )
@@ -173,14 +176,14 @@ describe('Users roles test', () => {
         .parent()
         .find('.mcs-chevron')
         .click();
-      RolesPage.clickBtnEditRole();
-      RolesPage.pageEdit.within(() => {
-        RolesPage.clickBtnReaderRole();
-        RolesPage.clickBtnSave();
+      rolesPage.clickBtnEditRole();
+      rolesPage.pageEdit.within(() => {
+        rolesPage.roleInformationPage.clickBtnReaderRole();
+        rolesPage.roleInformationPage.clickBtnSave();
       });
       cy.wait(15000);
-      RolesPage.clickCardToggle(data.organisationId);
-      RolesPage.rolesColumnInCard(data.organisationId).should('contain', 'READER');
+      rolesPage.clickCardToggle(data.organisationId);
+      rolesPage.rolesColumnInCard(data.organisationId).should('contain', 'READER');
     });
   });
 });

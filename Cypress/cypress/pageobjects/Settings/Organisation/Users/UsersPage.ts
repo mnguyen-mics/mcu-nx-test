@@ -1,17 +1,23 @@
 import Page from '../../../Page';
 import HeaderMenu from '../../../HeaderMenu';
 import OrganisationMenu from '../OrganisationMenu';
+import UserInformationPage from './UserInformationPage';
+import ConfirmDeletePopUp from './ConfirmDeletePopUp';
 
 class UsersPage extends Page {
   firstName: string;
   lastName: string;
   email: string;
+  userInformationPage: UserInformationPage;
+  confirmDeletePopUp: ConfirmDeletePopUp;
 
   constructor() {
     super();
     this.firstName = `fn-${Math.random().toString(36).substring(2, 10)}`;
     this.lastName = `ln-${Math.random().toString(36).substring(2, 10)}`;
     this.email = `email.-${Math.random().toString(36).substring(2, 10)}@test.com`;
+    this.userInformationPage = new UserInformationPage(this.firstName, this.lastName, this.email);
+    this.confirmDeletePopUp = new ConfirmDeletePopUp();
   }
 
   goToPage() {
@@ -29,34 +35,6 @@ class UsersPage extends Page {
 
   get userFilter() {
     return cy.get('.mcs-userSettings_userFilter').find('.ant-input');
-  }
-
-  get firstNameField() {
-    return cy.get('.mcs-userForm_input').eq(0);
-  }
-
-  get lastNameField() {
-    return cy.get('.mcs-userForm_input').eq(1);
-  }
-
-  get emailField() {
-    return cy.get('.mcs-userForm_input').eq(2);
-  }
-
-  get organisationField() {
-    return cy.get('.mcs-userForm_select').find('input');
-  }
-
-  get btnOrganisationFieldSearch() {
-    return cy.get('.ant-input-search-button');
-  }
-
-  get btnSaveUser() {
-    return cy.get('.mcs-saveButton');
-  }
-
-  get organisationSelectionDropDown() {
-    return cy.get('.ant-select-item-option');
   }
 
   get idsColumns() {
@@ -107,18 +85,6 @@ class UsersPage extends Page {
     return cy.get('.ant-notification-notice-error');
   }
 
-  get confirmDeletePopUp() {
-    return cy.get('.ant-modal-confirm-body-wrapper');
-  }
-
-  get btnOKConfirmDeletePopUp() {
-    return this.confirmDeletePopUp.contains('OK');
-  }
-
-  get btnCancelConfirmPopUp() {
-    return this.confirmDeletePopUp.contains('Cancel');
-  }
-
   clickBtnAddUser() {
     this.btnAddUser.click();
   }
@@ -137,34 +103,6 @@ class UsersPage extends Page {
 
   cardNbUsers(id: string) {
     return this.cardWithId(id).find('.mcs-userRoleList_cardSubtitle');
-  }
-
-  typeFirstName(firstName: string = this.firstName) {
-    this.firstNameField.clear().type(firstName);
-  }
-
-  typeLastName(lastName: string = this.lastName) {
-    this.lastNameField.clear().type(lastName);
-  }
-
-  typeEmail(email: string = this.email) {
-    this.emailField.clear().type(email);
-  }
-
-  clickOrganisationField() {
-    this.organisationField.click();
-  }
-
-  typeOrganisation(organisation: string) {
-    this.organisationField.clear().type(organisation);
-  }
-
-  clickBtnOrganisationFieldSearch() {
-    this.btnOrganisationFieldSearch.click();
-  }
-
-  clickBtnSaveUser() {
-    this.btnSaveUser.click();
   }
 
   idsColumnInCard(id: string) {
@@ -231,14 +169,6 @@ class UsersPage extends Page {
     this.btnDeleteUser.click();
   }
 
-  clickBtnOKConfirmDeletePopUp() {
-    this.btnOKConfirmDeletePopUp.click();
-  }
-
-  clickBtnCancelConfirmPopUp() {
-    this.btnCancelConfirmPopUp.click();
-  }
-
   addUser(
     org: string,
     email: string = this.email,
@@ -246,12 +176,14 @@ class UsersPage extends Page {
     lastName: string = this.lastName,
   ) {
     this.clickBtnAddUser();
-    this.typeFirstName(firstName);
-    this.typeLastName(lastName);
-    this.typeEmail(email);
-    this.typeOrganisation(org);
-    this.organisationSelectionDropDown.contains(new RegExp('^' + org + '$', 'g')).click();
-    this.clickBtnSaveUser();
+    this.userInformationPage.typeFirstName(firstName);
+    this.userInformationPage.typeLastName(lastName);
+    this.userInformationPage.typeEmail(email);
+    this.userInformationPage.typeOrganisation(org);
+    this.userInformationPage.organisationSelectionDropDown
+      .contains(new RegExp('^' + org + '$', 'g'))
+      .click();
+    this.userInformationPage.clickBtnSaveUser();
   }
 }
 
