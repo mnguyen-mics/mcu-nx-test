@@ -30,11 +30,7 @@ import {
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { UserListSection } from './Sections/list';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import {
-  QueryLanguage,
-  DatamartResource,
-  QueryTranslationRequest,
-} from '../../../../models/datamart/DatamartResource';
+import { QueryLanguage, DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { FormSection, FieldCtor } from '../../../../components/Form';
 import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
@@ -49,9 +45,6 @@ import {
   UserQuerySegment,
   UserQuerySegmentEditor,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { IQueryService } from '../../../../services/QueryService';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
 import { connect } from 'react-redux';
 
 export const FORM_ID = 'audienceSegmentForm';
@@ -97,9 +90,6 @@ type Props = InjectedFormProps<AudienceSegmentFormProps> &
   NormalizerProps;
 
 class EditAudienceSegmentForm extends React.Component<Props> {
-  @lazyInject(TYPES.IQueryService)
-  private _queryService: IQueryService;
-
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
       <div>
@@ -220,8 +210,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       hasFeature,
       initialProcessingSelectionsForWarning,
       audienceSegmentFormData,
-      queryLanguage,
-      segmentEditor,
     } = this.props;
 
     const type = segmentType
@@ -236,20 +224,6 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       message: messages.audienceSegmentSaveButton,
       onClose: close,
     };
-
-    const query = audienceSegmentFormData.query;
-    if (type === 'USER_QUERY' && queryLanguage === 'JSON_OTQL' && datamart && query) {
-      actionBarProps.convert2Otql = () => {
-        const queryTranslationRequest: QueryTranslationRequest = {
-          input_query_language: query.query_language,
-          input_query_language_subtype:
-            segmentEditor === 'STANDARD_SEGMENT_BUILDER' ? 'PARAMETRIC' : undefined,
-          input_query_text: query.query_text,
-          output_query_language: 'OTQL',
-        };
-        return this._queryService.translateQuery(datamart.id, queryTranslationRequest);
-      };
-    }
 
     const sections: McsFormSection[] = [];
     sections.push({

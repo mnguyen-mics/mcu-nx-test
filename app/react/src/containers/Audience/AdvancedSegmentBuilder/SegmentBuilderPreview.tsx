@@ -18,6 +18,9 @@ import { UserQuerySegmentEditor } from '../../../models/audiencesegment/Audience
 import StandardSegmentBuilderPreview, {
   StandardSegmentBuilderPreviewProps,
 } from '../StandardSegmentBuilder/StandardSegmentBuilderPreview';
+import Convert2Otql from '../../QueryTool/SaveAs/Convet2Otql';
+import { QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
+import { IQueryService } from '../../../services/QueryService';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
 export interface SegmentBuilderPreviewProps {
@@ -33,12 +36,34 @@ export interface SegmentBuilderPreviewProps {
 
 type Props = SegmentBuilderPreviewProps & InjectedIntlProps & InjectedDrawerProps;
 
-class SegmentBuilderPreview extends React.Component<Props> {
+interface State {
+  conversionModalVisible: boolean;
+  currentQuery: string;
+}
+
+class SegmentBuilderPreview extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      conversionModalVisible: false,
+      currentQuery: '',
+    };
+  }
+
   @lazyInject(TYPES.IStandardSegmentBuilderQueryService)
   private _standardSegmentBuilderQueryService: IStandardSegmentBuilderQueryService;
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   openEditor = () => {
     const { intl, value, segmentEditor, datamartId } = this.props;
+
+    const openConversionModal = (query: any) => () => {
+      this.setState({
+        conversionModalVisible: true,
+        currentQuery: JSON.stringify(query),
+      });
+    };
 
     const createActionBar = (onSave: () => void, onClose: () => void, query: any) => {
       return (
@@ -60,6 +85,12 @@ class SegmentBuilderPreview extends React.Component<Props> {
             <FormattedMessage
               id='queryTool.jsonql.querytool.query.edit.update'
               defaultMessage='Update'
+            />
+          </Button>
+          <Button onClick={openConversionModal(query)}>
+            <FormattedMessage
+              id='form.layout.queryTool.query-builder.actionbar.convert'
+              defaultMessage='Convert to OTQL'
             />
           </Button>
           <McsIcon
@@ -130,35 +161,65 @@ class SegmentBuilderPreview extends React.Component<Props> {
   };
 
   render() {
-    const { context, queryHasChanged, intl } = this.props;
+    const { context, queryHasChanged, intl, datamartId, segmentEditor } = this.props;
 
-    return context === 'AUTOMATION_BUILDER' ? (
-      <div onClick={this.openEditor} className='boolean-menu-item'>
-        {this.props.intl.formatMessage({
-          id: 'jsonql.button.query.edit',
-          defaultMessage: 'Edit Query',
-        })}
-      </div>
-    ) : (
-      <div className='text-center m-t-20'>
-        {queryHasChanged && (
-          <Alert
-            message={
-              <div>
-                <McsIcon type={'warning'} />
-                {intl.formatMessage(messages.queryHasChanged)}
-              </div>
-            }
-            type={'warning'}
+    const closeConversionModal = () => this.setState({ conversionModalVisible: false });
+
+    const query = this.state.currentQuery;
+    const convert2Otql = () => {
+      const queryTranslationRequest: QueryTranslationRequest = {
+        input_query_language: 'JSON_OTQL',
+        input_query_language_subtype:
+          segmentEditor === 'STANDARD_SEGMENT_BUILDER' ? 'PARAMETRIC' : undefined,
+        input_query_text: query,
+        output_query_language: 'OTQL',
+      };
+      return this._queryService.translateQuery(datamartId, queryTranslationRequest);
+    };
+
+    return (
+      <div>
+        {context === 'AUTOMATION_BUILDER' ? (
+          <div onClick={this.openEditor} className='boolean-menu-item'>
+            {this.props.intl.formatMessage({
+              id: 'jsonql.button.query.edit',
+              defaultMessage: 'Edit Query',
+            })}
+          </div>
+        ) : (
+          <div className='text-center m-t-20'>
+            {queryHasChanged && (
+              <Alert
+                message={
+                  <div>
+                    <McsIcon type={'warning'} />
+                    {intl.formatMessage(messages.queryHasChanged)}
+                  </div>
+                }
+                type={'warning'}
+              />
+            )}
+            <br />
+            <Button
+              className='mcs-editAudienceSegmentForm_editQueryButton'
+              onClick={this.openEditor}
+            >
+              {this.props.intl.formatMessage({
+                id: 'jsonql.button.query.edit',
+                defaultMessage: 'Edit Query',
+              })}
+            </Button>
+          </div>
+        )}
+        {this.state.conversionModalVisible && (
+          <Convert2Otql
+            onOk={closeConversionModal}
+            onCancel={closeConversionModal}
+            footer={null}
+            visible={this.state.conversionModalVisible}
+            convertQuery={convert2Otql}
           />
         )}
-        <br />
-        <Button className='mcs-editAudienceSegmentForm_editQueryButton' onClick={this.openEditor}>
-          {this.props.intl.formatMessage({
-            id: 'jsonql.button.query.edit',
-            defaultMessage: 'Edit Query',
-          })}
-        </Button>
       </div>
     );
   }
