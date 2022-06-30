@@ -1,7 +1,7 @@
-(function(){
+(function () {
   'use strict';
 
- const defaultFeatures = [
+  const defaultFeatures = [
     'audience-segments',
     'audience-builders',
     'audience-feeds',
@@ -52,21 +52,20 @@
     'datastudio-query_tool-charts_loader',
   ];
 
-
- var MCS_CONSTANTS = {
-    'NAVIGATOR_URL' : 'https://navigator.mediarithmics.local',
-    'COMPUTING_CONSOLE_URL' : 'https://computing-console.mediarithmics.local',
-    'API_URL' : 'https://api.mediarithmics.local',
-    'ASSETS_URL' : 'https://assets.mediarithmics.local',
-    'FEATURES' : defaultFeatures,
-    'SITE_NAME' : 'mediarithmics | navigator',
-    'PLATFORM_ADMIN_URL' : 'http://localhost:3000',
-    'DEVELOPER_CONSOLE_URL' : 'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
-    'USE_GTAG': false,
-    'GTAG_ID': 'G-123',
-    'ENABLE_KEYCLOAK': false,
+  var MCS_CONSTANTS = {
+    NAVIGATOR_URL: 'https://navigator.mediarithmics.local',
+    COMPUTING_CONSOLE_URL: 'https://computing-console.mediarithmics.local',
+    API_URL: 'https://api.mediarithmics.local',
+    ASSETS_URL: 'https://assets.mediarithmics.local',
+    FEATURES: defaultFeatures,
+    SITE_NAME: 'mediarithmics | navigator',
+    PLATFORM_ADMIN_URL: 'http://localhost:3000',
+    DEVELOPER_CONSOLE_URL:
+      'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
+    USE_GTAG: false,
+    GTAG_ID: 'G-123',
+    ENABLE_KEYCLOAK: false,
   };
 
- window.MCS_CONSTANTS = MCS_CONSTANTS;
-
+  window.MCS_CONSTANTS = MCS_CONSTANTS;
 })();
