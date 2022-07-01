@@ -61,14 +61,14 @@ describe('Users test', () => {
 
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       usersPage.clickBtnAddUser();
-      usersPage.typeFirstName();
-      usersPage.typeLastName();
-      usersPage.typeEmail();
-      usersPage.typeOrganisation(data.organisationName);
-      usersPage.organisationSelectionDropDown
+      usersPage.userInformationPage.typeFirstName();
+      usersPage.userInformationPage.typeLastName();
+      usersPage.userInformationPage.typeEmail();
+      usersPage.userInformationPage.typeOrganisation(data.organisationName);
+      usersPage.userInformationPage.organisationSelectionDropDown
         .contains(new RegExp('^' + data.organisationName + '$', 'g'))
         .click();
-      usersPage.clickBtnSaveUser();
+      usersPage.userInformationPage.clickBtnSaveUser();
       cy.wait('@getUsers');
 
       usersPage.idsHeaderInCard(data.organisationId).click();
@@ -91,14 +91,14 @@ describe('Users test', () => {
     cy.wait('@getUsers');
 
     usersPage.clickBtnAddUser();
-    usersPage.typeFirstName();
-    usersPage.typeLastName();
-    usersPage.typeEmail();
-    usersPage.typeOrganisation(subOrg1.name);
-    usersPage.organisationSelectionDropDown
+    usersPage.userInformationPage.typeFirstName();
+    usersPage.userInformationPage.typeLastName();
+    usersPage.userInformationPage.typeEmail();
+    usersPage.userInformationPage.typeOrganisation(subOrg1.name);
+    usersPage.userInformationPage.organisationSelectionDropDown
       .contains(new RegExp('^' + subOrg1.name + '$', 'g'))
       .click();
-    usersPage.clickBtnSaveUser();
+    usersPage.userInformationPage.clickBtnSaveUser();
     cy.wait('@getUsers');
 
     usersPage.idsHeaderInCard(subOrg1.id).click();
@@ -115,14 +115,14 @@ describe('Users test', () => {
     const email = 'email-not-valid';
 
     usersPage.clickBtnAddUser();
-    usersPage.typeFirstName();
-    usersPage.typeLastName();
-    usersPage.typeEmail(email);
-    usersPage.typeOrganisation(subOrg1.name);
-    usersPage.organisationSelectionDropDown
+    usersPage.userInformationPage.typeFirstName();
+    usersPage.userInformationPage.typeLastName();
+    usersPage.userInformationPage.typeEmail(email);
+    usersPage.userInformationPage.typeOrganisation(subOrg1.name);
+    usersPage.userInformationPage.organisationSelectionDropDown
       .contains(new RegExp('^' + subOrg1.name + '$', 'g'))
       .click();
-    usersPage.clickBtnSaveUser();
+    usersPage.userInformationPage.clickBtnSaveUser();
 
     usersPage.errorPopUp.should('contain', 'Email is invalid');
   });
@@ -141,23 +141,23 @@ describe('Users test', () => {
           const email = $cellEmail.text();
 
           usersPage.clickBtnAddUser();
-          usersPage.typeFirstName();
-          usersPage.typeLastName();
-          usersPage.typeEmail(email);
+          usersPage.userInformationPage.typeFirstName();
+          usersPage.userInformationPage.typeLastName();
+          usersPage.userInformationPage.typeEmail(email);
 
-          usersPage.typeOrganisation(data.organisationName);
-          usersPage.organisationSelectionDropDown
+          usersPage.userInformationPage.typeOrganisation(data.organisationName);
+          usersPage.userInformationPage.organisationSelectionDropDown
             .contains(new RegExp('^' + subOrg1.name + '$', 'g'))
             .click();
-          usersPage.clickBtnSaveUser();
+          usersPage.userInformationPage.clickBtnSaveUser();
           usersPage.errorPopUp.should('contain', 'Email already exists');
 
           usersPage.errorPopUp.should('not.exist');
-          usersPage.typeOrganisation(data.organisationName);
-          usersPage.organisationSelectionDropDown
+          usersPage.userInformationPage.typeOrganisation(data.organisationName);
+          usersPage.userInformationPage.organisationSelectionDropDown
             .contains(new RegExp('^' + subOrg2.name + '$', 'g'))
             .click();
-          usersPage.clickBtnSaveUser();
+          usersPage.userInformationPage.clickBtnSaveUser();
           usersPage.errorPopUp.should('contain', 'Email already exists');
         });
     });
@@ -185,9 +185,9 @@ describe('Users test', () => {
             usersPage.clickFirstUserDropDownMenuCard(subOrg1.id);
             usersPage.clickBtnEditUser();
 
-            usersPage.typeFirstName();
-            usersPage.typeLastName();
-            usersPage.clickBtnSaveUser();
+            usersPage.userInformationPage.typeFirstName();
+            usersPage.userInformationPage.typeLastName();
+            usersPage.userInformationPage.clickBtnSaveUser();
             cy.wait('@getUsers');
             usersPage.clickIdsHeaderInCard(subOrg1.id);
 
@@ -217,8 +217,8 @@ describe('Users test', () => {
     usersPage.clickFirstUserDropDownMenuCard(subOrg1.id);
     usersPage.btnEditUser.click();
 
-    usersPage.typeEmail();
-    usersPage.btnSaveUser.click();
+    usersPage.userInformationPage.typeEmail();
+    usersPage.userInformationPage.btnSaveUser.click();
 
     usersPage.errorPopUp.should(
       'contain',
@@ -236,13 +236,13 @@ describe('Users test', () => {
     usersPage.clickBtnEditUser();
 
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      usersPage.typeOrganisation(subOrg1_1.name);
-      usersPage.organisationSelectionDropDown
+      usersPage.userInformationPage.typeOrganisation(subOrg1_1.name);
+      usersPage.userInformationPage.organisationSelectionDropDown
         .contains(new RegExp('^' + subOrg1_1.name + '$', 'g'))
         .click();
     });
 
-    usersPage.clickBtnSaveUser();
+    usersPage.userInformationPage.clickBtnSaveUser();
 
     usersPage.errorPopUp.should('contain', 'Organisation id and user id are not compatible');
   });
@@ -269,7 +269,7 @@ describe('Users test', () => {
 
               usersPage.clickFirstUserDropDownMenuCard(data.organisationId);
               usersPage.clickBtnDeleteUser();
-              usersPage.clickBtnOKConfirmDeletePopUp();
+              usersPage.confirmDeletePopUp.clickBtnOK();
               cy.wait('@getUsers');
 
               usersPage

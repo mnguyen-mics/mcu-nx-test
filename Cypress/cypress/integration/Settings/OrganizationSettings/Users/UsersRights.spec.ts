@@ -63,14 +63,17 @@ describe('Users Rights test', () => {
       usersPage.goToPage();
 
       usersPage.clickBtnAddUser();
-      usersPage.typeFirstName();
-      usersPage.typeLastName();
-      usersPage.typeEmail();
-      usersPage.clickOrganisationField();
-      usersPage.organisationSelectionDropDown.should('have.length', 4);
-      usersPage.typeOrganisation(newOrganisationName);
+      usersPage.userInformationPage.typeFirstName();
+      usersPage.userInformationPage.typeLastName();
+      usersPage.userInformationPage.typeEmail();
+      usersPage.userInformationPage.clickOrganisationField();
+      usersPage.userInformationPage.organisationSelectionDropDown.should('have.length', 4);
+      usersPage.userInformationPage.typeOrganisation(newOrganisationName);
       cy.wait(100);
-      usersPage.organisationSelectionDropDown.should('not.contain', newOrganisationName);
+      usersPage.userInformationPage.organisationSelectionDropDown.should(
+        'not.contain',
+        newOrganisationName,
+      );
     });
   });
 

@@ -44,7 +44,7 @@ describe('Roles test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       HeaderMenu.switchOrg(data.organisationName);
     });
-    RolesPage.goToPage();
+    new RolesPage().goToPage();
     cy.wait(20000);
   });
 
@@ -54,136 +54,151 @@ describe('Roles test', () => {
 
   it('Should add a user role', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      const rolesPage = new RolesPage();
       const fn = `fn-${Math.random().toString(36).substring(2, 10)}`;
       const ln = `ln-${Math.random().toString(36).substring(2, 10)}`;
       createUserQuery(data.accessToken, subOrg1.id, fn, ln);
-      RolesPage.clickBtnAddRole();
+      rolesPage.clickBtnAddRole();
       const nameUser = `${fn}` + ' ' + `${ln}`;
-      RolesPage.typeUserSearch(nameUser);
-      RolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
+      rolesPage.roleInformationPage.typeUserSearch(nameUser);
+      rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
       const organisationName = `child_1_of_${data.organisationName}`;
-      RolesPage.typeOrganisationWithName(organisationName);
-      RolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
-      RolesPage.clickBtnEditorRole();
-      RolesPage.clickBtnSave();
+      rolesPage.roleInformationPage.typeOrganisationWithName(organisationName);
+      rolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
+      rolesPage.roleInformationPage.clickBtnEditorRole();
+      rolesPage.roleInformationPage.clickBtnSave();
     });
   });
 
   it('Should edit a user role', () => {
+    const rolesPage = new RolesPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const fn = `fn-${Math.random().toString(36).substring(2, 10)}`;
       const ln = `ln-${Math.random().toString(36).substring(2, 10)}`;
       createUserQuery(data.accessToken, subOrg1.id, fn, ln);
-      RolesPage.clickBtnAddRole();
+      rolesPage.clickBtnAddRole();
       const nameUser = `${fn}` + ' ' + `${ln}`;
-      RolesPage.typeUserSearch(nameUser);
-      RolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
+      rolesPage.roleInformationPage.typeUserSearch(nameUser);
+      rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
       const organisationName = `child_1_of_${data.organisationName}`;
-      RolesPage.typeOrganisationWithName(organisationName);
-      RolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
-      RolesPage.clickBtnEditorRole();
-      RolesPage.clickBtnSave();
+      rolesPage.roleInformationPage.typeOrganisationWithName(organisationName);
+      rolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
+      rolesPage.roleInformationPage.clickBtnEditorRole();
+      rolesPage.roleInformationPage.clickBtnSave();
     });
     cy.wait(20000);
-    RolesPage.clickCardToggle(subOrg1.id);
-    RolesPage.rolesColumnInCard(subOrg1.id).first();
+    rolesPage.clickCardToggle(subOrg1.id);
+    rolesPage.rolesColumnInCard(subOrg1.id).first();
 
-    RolesPage.userDropDownMenu.first().click();
-    RolesPage.clickBtnEditRole();
+    rolesPage.userDropDownMenu.first().click();
+    rolesPage.clickBtnEditRole();
 
-    RolesPage.pageEdit.within(() => {
-      RolesPage.clickBtnEditorRole();
-      RolesPage.clickBtnSave();
+    rolesPage.pageEdit.within(() => {
+      rolesPage.roleInformationPage.clickBtnEditorRole();
+      rolesPage.roleInformationPage.clickBtnSave();
     });
 
-    RolesPage.rolesColumnInCard(subOrg1.id).first().should('contain', 'EDITOR');
+    rolesPage.rolesColumnInCard(subOrg1.id).first().should('contain', 'EDITOR');
   });
 
   it('Should delete a user role / verify the inheritance (we cant delete an inherited role in a children organisation, just a edited one or delete it in the parent organisation)', () => {
-    RolesPage.clickCardToggle(subOrg1.id);
-    RolesPage.emailsColumnInCard(subOrg1.id)
+    const rolesPage = new RolesPage();
+    rolesPage.clickCardToggle(subOrg1.id);
+    rolesPage
+      .emailsColumnInCard(subOrg1.id)
       .first()
       .then($email => {
         const email = $email.text();
-        RolesPage.userDropDownMenu.first().click();
-        RolesPage.clickBtnDeleteRole();
-        RolesPage.clickOKOnComfirmDeletePopUp();
+        rolesPage.userDropDownMenu.first().click();
+        rolesPage.clickBtnDeleteRole();
+        rolesPage.confirmDeletePopUp.clickBtnOK();
         cy.wait(500);
-        RolesPage.confirmDeletePopUp.should('not.exist');
-        RolesPage.emailsColumnInCard(subOrg1.id).contains(email).should('not.exist');
+        rolesPage.confirmDeletePopUp.popUp.should('not.exist');
+        rolesPage.emailsColumnInCard(subOrg1.id).contains(email).should('not.exist');
       });
   });
 
   it('Should verify the inheritance', () => {
-    RolesPage.clickCardToggle(subOrg1.id);
-    RolesPage.rolesColumnInCard(subOrg1.id)
+    const rolesPage = new RolesPage();
+    rolesPage.clickCardToggle(subOrg1.id);
+    rolesPage
+      .rolesColumnInCard(subOrg1.id)
       .first()
       .then($role => {
         const role = $role.text();
-        RolesPage.rolesColumnInCard(subOrg1.id).should('contain', role);
-        RolesPage.clickCardToggle(subOrg1_1.id);
-        RolesPage.rolesColumnInCard(subOrg1_1.id)
+        rolesPage.rolesColumnInCard(subOrg1.id).should('contain', role);
+        rolesPage.clickCardToggle(subOrg1_1.id);
+        rolesPage
+          .rolesColumnInCard(subOrg1_1.id)
           .first()
           .then($roleInChild => {
             const roleInChild = $roleInChild.text();
 
-            RolesPage.rolesColumnInCard(subOrg1_1.id).should('contain', roleInChild);
-            RolesPage.rolesColumnInCard(subOrg1_1.id).should('contain', role);
+            rolesPage.rolesColumnInCard(subOrg1_1.id).should('contain', roleInChild);
+            rolesPage.rolesColumnInCard(subOrg1_1.id).should('contain', role);
             cy.get('.mcs-userRoleList_inherited').contains('Inherited').should('be.visible');
           });
       });
   });
 
   it('Should not have a lower role in the children organisation than the parent organisation', () => {
-    RolesPage.clickCardToggle(subOrg1.id);
-    RolesPage.rolesColumnInCard(subOrg1.id)
+    const rolesPage = new RolesPage();
+    rolesPage.clickCardToggle(subOrg1.id);
+    rolesPage
+      .rolesColumnInCard(subOrg1.id)
       .first()
       .then($role => {
         const role = $role.text();
-        RolesPage.rolesColumnInCard(subOrg1.id).should('contain', role);
-        RolesPage.clickCardToggle(subOrg1_1.id);
-        RolesPage.rolesColumnInCard(subOrg1_1.id)
+        rolesPage.rolesColumnInCard(subOrg1.id).should('contain', role);
+        rolesPage.clickCardToggle(subOrg1_1.id);
+        rolesPage
+          .rolesColumnInCard(subOrg1_1.id)
           .first()
           .then($roleInChild => {
             const roleInChild = $roleInChild.text();
-            RolesPage.userDropDownMenu.first().click();
-            RolesPage.clickBtnEditRole();
-            RolesPage.clickBtnEditorRole();
-            RolesPage.clickBtnSave();
-            RolesPage.rolesColumnInCard(subOrg1_1.id).should('contain', roleInChild);
+            rolesPage.userDropDownMenu.first().click();
+            rolesPage.clickBtnEditRole();
+            rolesPage.roleInformationPage.clickBtnEditorRole();
+            rolesPage.roleInformationPage.clickBtnSave();
+            rolesPage.rolesColumnInCard(subOrg1_1.id).should('contain', roleInChild);
           });
       });
   });
 
   it('Display inherited role (test the edited role)', () => {
-    RolesPage.clickCardToggle(subOrg1.id);
-    RolesPage.firstNamesColumnInCard(subOrg1.id)
+    const rolesPage = new RolesPage();
+    rolesPage.clickCardToggle(subOrg1.id);
+    rolesPage
+      .firstNamesColumnInCard(subOrg1.id)
       .first()
       .then($name => {
         const name = $name.text();
-        RolesPage.firstNamesColumnInCard(subOrg1.id).should('contain', name);
-        RolesPage.clickCardToggle(subOrg1_1.id);
-        RolesPage.firstNamesColumnInCard(subOrg1_1.id)
+        rolesPage.firstNamesColumnInCard(subOrg1.id).should('contain', name);
+        rolesPage.clickCardToggle(subOrg1_1.id);
+        rolesPage
+          .firstNamesColumnInCard(subOrg1_1.id)
           .first()
           .then($nameInChild => {
             const nameInChild = $nameInChild.text();
-            RolesPage.firstNamesColumnInCard(subOrg1_1.id).should('contain', nameInChild);
+            rolesPage.firstNamesColumnInCard(subOrg1_1.id).should('contain', nameInChild);
           });
       });
 
-    RolesPage.clickDisplayInheritedRoleToggle();
-    RolesPage.clickCardToggle(subOrg1.id);
-    RolesPage.firstNamesColumnInCard(subOrg1.id)
+    rolesPage.clickDisplayInheritedRoleToggle();
+    rolesPage.clickCardToggle(subOrg1.id);
+    rolesPage
+      .firstNamesColumnInCard(subOrg1.id)
       .first()
       .then($name => {
         const name = $name.text();
 
-        RolesPage.firstNamesColumnInCard(subOrg1.id).should('contain', name);
-        RolesPage.clickCardToggle(subOrg1_1.id).should('not.contain', name);
+        rolesPage.firstNamesColumnInCard(subOrg1.id).should('contain', name);
+        rolesPage.clickCardToggle(subOrg1_1.id).should('not.contain', name);
       });
   });
 
   it('Should verifiy that we can add a Community admin role to user in the parent organisation', () => {
+    const rolesPage = new RolesPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/users`,
@@ -198,35 +213,37 @@ describe('Roles test', () => {
           community_id: data.organisation_id,
         },
       }).then(user => {
-        RolesPage.usersPage.click();
-        RolesPage.rolesPage.click();
+        rolesPage.usersPage.click();
+        rolesPage.rolesPage.click();
 
-        RolesPage.clickBtnAddRole();
+        rolesPage.clickBtnAddRole();
 
         const nameUser = `${user.body.data.first_name}` + ' ' + `${user.body.data.last_name}`;
-        RolesPage.typeUserSearch(nameUser);
-        RolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
+        rolesPage.roleInformationPage.typeUserSearch(nameUser);
+        rolesPage.firstElement.contains(new RegExp('^' + nameUser + '$', 'g')).click();
         const organisationName = data.organisationName;
-        RolesPage.typeOrganisationWithName(organisationName);
-        RolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
+        rolesPage.roleInformationPage.typeOrganisationWithName(organisationName);
+        rolesPage.firstElement.contains(new RegExp('^' + organisationName + '$', 'g')).click();
       });
     });
 
-    RolesPage.clickCommunityAdminRoleBtn();
-    RolesPage.clickBtnSave();
+    rolesPage.roleInformationPage.clickCommunityAdminRoleBtn();
+    rolesPage.roleInformationPage.clickBtnSave();
   });
 
-  it('Should Should verifiy that we cant add a Community admin role to user in the children organisation', () => {
-    RolesPage.clickCardToggle(subOrg1.id);
-    RolesPage.rolesColumnInCard(subOrg1.id).first();
+  it('Should verifiy that we cant add a Community admin role to user in the children organisation', () => {
+    const rolesPage = new RolesPage();
+    rolesPage.clickCardToggle(subOrg1.id);
+    rolesPage.rolesColumnInCard(subOrg1.id).first();
 
-    RolesPage.userDropDownMenu.first().click();
-    RolesPage.clickBtnEditRole();
-    RolesPage.communityAdminRoleRadioBtn.should('not.exist');
-    RolesPage.clickCloseEditBtn();
+    rolesPage.userDropDownMenu.first().click();
+    rolesPage.clickBtnEditRole();
+    rolesPage.roleInformationPage.communityAdminRoleRadioBtn.should('not.exist');
+    rolesPage.roleInformationPage.clickCloseEditBtn();
   });
 
   it('Should verify that the home icon exist the organisation where the user was created', () => {
+    const rolesPage = new RolesPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/users`,
@@ -241,9 +258,9 @@ describe('Roles test', () => {
           community_id: data.organisation_id,
         },
       }).then(organisationId => {
-        RolesPage.clickCardToggle(subOrg1.id);
-        RolesPage.homeIconColumnInCard(subOrg1.id);
-        RolesPage.homeIcon.should('be.visible');
+        rolesPage.clickCardToggle(subOrg1.id);
+        rolesPage.homeIconColumnInCard(subOrg1.id);
+        rolesPage.homeIcon.should('be.visible');
       });
     });
   });
