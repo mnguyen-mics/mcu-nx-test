@@ -121,6 +121,7 @@ class UserContainer extends React.Component<Props, State> {
         const nextPromises: Array<Promise<any>> =
           userDisplay === 'user_roles'
             ? filteredUsers.map(async user => {
+                //TODO: replace multi-requests by a single call (too much HTTP requests)
                 const rolesRes = await this._userRolesService.getUserRoles(user.id, {
                   max_results: 500,
                 });
