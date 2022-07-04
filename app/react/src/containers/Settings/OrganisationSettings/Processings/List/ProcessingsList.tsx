@@ -8,12 +8,8 @@ import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchH
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { TYPES } from '../../../../../constants/types';
-import {
-  DataListResponse,
-  DataResponse,
-} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
+import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { OrganisationResource } from '../../../../../models/organisation/organisation';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { compose } from 'recompose';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
@@ -39,7 +35,6 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedIntlProps;
 
 interface ProcessingPageState {
-  communityId?: string;
   loading: boolean;
   isVisibleCommunityModal: boolean;
   isVisibleDeleteModal: boolean;
@@ -73,35 +68,19 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
     return !(role === 'EDITOR' || role === 'READER');
   };
 
-  fetchCommunityId = (organisationId: string): Promise<string> => {
-    const communityId = this._organisationService
-      .getOrganisation(organisationId)
-      .then((res: DataResponse<OrganisationResource>) => {
-        const comId = res.data.community_id;
-        this.setState({
-          communityId: comId,
-        });
-        return comId;
-      });
-    return communityId;
-  };
-
   fetchProcessings = (organisationId: string, filter: Filters) => {
     const { notifyError } = this.props;
-    const { communityId } = this.state;
 
     this.setState({ loading: true }, () => {
-      const communityIdF: Promise<string> = communityId
-        ? Promise.resolve(communityId)
-        : this.fetchCommunityId(organisationId);
-
-      communityIdF
-        .then(comId => {
+      this._organisationService
+        .getOrganisation(organisationId)
+        .then(res => res.data.community_id)
+        .then(communityId => {
           const options = {
             ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
           };
           return this._organisationService
-            .getProcessings(comId, options)
+            .getProcessings(communityId, options)
             .then((results: DataListResponse<ProcessingResource>) => {
               this.setState({
                 loading: false,
