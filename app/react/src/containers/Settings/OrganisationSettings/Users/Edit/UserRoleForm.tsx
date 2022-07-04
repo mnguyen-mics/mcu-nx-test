@@ -288,13 +288,17 @@ class UserRoleForm extends React.Component<Props, State> {
       };
 
     const roleOrgId = user && user.role ? user.role.organisation_id : '';
+    const disabledInputs = !!user?.id;
 
     return (
       <Form layout='vertical'>
         <Form.Item label={intl.formatMessage(messages.user)}>
           <AutoComplete
             options={this.getUserOptions()}
-            disabled={!!user?.id}
+            searchValue={
+              disabledInputs && user ? `${user.first_name} ${user.last_name}` : undefined
+            }
+            disabled={disabledInputs}
             placeholder={
               user?.id
                 ? `${user.first_name} ${user.last_name}`
@@ -320,7 +324,7 @@ class UserRoleForm extends React.Component<Props, State> {
             onSelect={this.onOrgSelect}
             onChange={this.onOrgChange}
             filterOption={filterOption(false)}
-            disabled={!!user?.id}
+            disabled={disabledInputs}
             placeholder={intl.formatMessage(messages.selectOrganisation)}
           >
             <Input.Search value={orgInput.value || roleOrgId} />

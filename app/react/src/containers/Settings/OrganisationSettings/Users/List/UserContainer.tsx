@@ -272,10 +272,17 @@ class UserContainer extends React.Component<Props, State> {
         children: children,
       };
     };
-    let orga = organisations?.find(currentOrg => currentOrg.id === currentOrganisationId);
-    while (orga?.administrator_id) {
-      orga = organisations?.find(parentOrg => parentOrg.id === orga?.administrator_id);
-    }
+    const findBaseOrgaRec = (
+      orgId: string,
+      previousOrg?: OrganisationResource,
+    ): OrganisationResource | undefined => {
+      const foundOrga = organisations?.find(org => org.id === orgId);
+
+      return foundOrga?.administrator_id && foundOrga?.administrator_id !== orgId
+        ? findBaseOrgaRec(foundOrga.administrator_id, foundOrga)
+        : foundOrga || previousOrg;
+    };
+    const orga = findBaseOrgaRec(currentOrganisationId);
     if (orga) {
       return recursiveBuildHierarchy(orga);
     } else return;
@@ -467,6 +474,7 @@ class UserContainer extends React.Component<Props, State> {
 
   render() {
     const { userHierarchy, loading } = this.state;
+
     return loading ? (
       <Loading isFullScreen={true} />
     ) : (
