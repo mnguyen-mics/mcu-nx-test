@@ -181,32 +181,26 @@ class LoginPage extends Page {
 
   @logFunction()
   typeConfirmPassword(password: string) {
-    cy.log('typeConfirmPassword(' + password + ')');
     this.confirmPasswordField.clear().type(password);
   }
 
   @logFunction()
   typeEmail(email: string) {
-    cy.log('typeEmail(' + email + ')');
     this.emailField.clear().type(email);
   }
 
   @logFunction()
   typeNewPassword(password: string) {
-    cy.log('typeNewPassword(' + password + ')');
     this.newPasswordField.clear().type(password);
   }
 
   @logFunction()
   typePassword(password: string) {
-    cy.log('typePassword');
     this.passwordField.clear().type(password);
   }
 
   @logFunction()
   login(email: string = Cypress.env('devMail'), password: string = Cypress.env('devPwd')) {
-    cy.log('login(email=' + email + ')');
-
     cy.intercept('**/campaigns?organisation_id=1**').as('load');
     this.typeEmail(email);
     this.clickBtnSignIn();
@@ -218,7 +212,6 @@ class LoginPage extends Page {
 
   @logFunction()
   updatePassword(password: string) {
-    cy.log('updatePassword');
     this.typeNewPassword(password);
     this.typeConfirmPassword(password);
     this.clickBtnSubmitPassword();
@@ -226,7 +219,6 @@ class LoginPage extends Page {
 
   @logFunction()
   getPasswordRequirements(isValid?: boolean) {
-    cy.log('getPasswordRequirements');
     switch (isValid) {
       case true:
         return this.validPasswordRequirements;
