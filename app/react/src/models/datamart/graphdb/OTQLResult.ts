@@ -1,4 +1,8 @@
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+import {
+  OTQLBuckets,
+  OTQLMetric,
+} from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
 import { QueryListModel, SerieQueryModel } from '../../../containers/QueryTool/OTQL/QueryToolTab';
 
 export interface OTQLResult {
@@ -22,22 +26,6 @@ export interface OTQLBucket {
   key: string;
   count: number;
   aggregations: OTQLAggregations | null;
-}
-
-export interface OTQLMetric {
-  name: string;
-  fieldName: string;
-  path: string | null;
-  type: string;
-  value: any;
-}
-
-export interface OTQLBuckets {
-  name: string;
-  field_name: string;
-  path: string | null;
-  type: string;
-  buckets: OTQLBucket[];
 }
 
 export interface OTQLAggregations {
