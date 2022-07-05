@@ -29,6 +29,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 export interface ContextualKeyResource {
   contextual_key: string;
   occurrences_in_segment_count: number;
+  occurrences_in_datamart_count: number;
   lift: number;
 }
 
@@ -145,13 +146,13 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       .then((res: Blob) => {
         res.text().then((resAsText: string) => {
           const contextualKeys = this.parseCsv(resAsText).filter(
-            ck => ck.contextual_key && ck.lift && ck.occurrences_in_segment_count,
+            ck => ck.contextual_key && ck.lift && ck.occurrences_in_datamart_count,
           );
           const sortedContextualKeys = contextualKeys.sort((cka, ckb) => ckb.lift - cka.lift);
           const chartData = this.buildChartData(sortedContextualKeys);
 
           const totalPageViewVolume = sortedContextualKeys.reduce((acc, ck) => {
-            if (ck.occurrences_in_segment_count) return acc + ck.occurrences_in_segment_count;
+            if (ck.occurrences_in_datamart_count) return acc + ck.occurrences_in_datamart_count;
             else return acc;
           }, 0);
 
@@ -168,7 +169,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
           const targetedContextualKeys = sortedContextualKeys.filter(ck => ck.lift >= sliderValue);
 
           const targetedPageViewVolume = targetedContextualKeys.reduce((acc, ck) => {
-            return acc + ck.occurrences_in_segment_count;
+            return acc + ck.occurrences_in_datamart_count;
           }, 0);
           this.setState({
             sortedContextualKeys: sortedContextualKeys,
@@ -205,7 +206,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     for (let i = 0; i < stepNumber; i++) {
       cumulativeReach += sortedContextualKeys
         .filter(ck => ck.lift > liftMax - liftStep * (i + 1) && ck.lift <= liftMax - liftStep * i)
-        .reduce((acc, ck) => acc + ck.occurrences_in_segment_count, 0);
+        .reduce((acc, ck) => acc + ck.occurrences_in_datamart_count, 0);
       chartData[i] = { lift: liftMax - liftStep * (i + 1), reach: cumulativeReach / 1000000 };
     }
     return chartData;
@@ -231,7 +232,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     if (point) {
       const contextualKeys = this.state.sortedContextualKeys?.filter(url => url.lift >= point.lift);
       const targetedPageViewVolume = contextualKeys?.reduce((acc, ck) => {
-        return acc + ck.occurrences_in_segment_count;
+        return acc + ck.occurrences_in_datamart_count;
       }, 0);
 
       this.setState({
@@ -397,7 +398,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       },
       {
         title: intl.formatMessage(messages.numberOfEvents),
-        key: 'occurrences_in_segment_count',
+        key: 'occurrences_in_datamart_count',
         isVisibleByDefault: true,
         isHideable: false,
       },
