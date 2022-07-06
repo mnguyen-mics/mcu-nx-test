@@ -93,6 +93,18 @@ class LeftMenu extends Page {
   goToHomePage = () => {
     cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.home').click();
   };
+
+  clickDataStudioQuerryTool() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
+  }
+
+  clickMyDatamart() {
+    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
+  }
+
+  clickAudienceBuilder() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+  }
 }
 
 export default new LeftMenu();
