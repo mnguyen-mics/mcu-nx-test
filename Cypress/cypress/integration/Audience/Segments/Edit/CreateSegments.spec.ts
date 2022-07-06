@@ -23,13 +23,10 @@ describe('This test should check that the audience segments forms are working pr
       cy.goToHome(data.organisationId);
     });
     LeftMenu.goToSegmentsPage();
-    cy.intercept('**keywords=Test%20Audience%20Segment%20Form&type=USER_LIST**').as(
-      'audience_segments',
-    );
     cy.get('.mcs-audienceSegmentsTable_search_bar')
       .type('Test Audience Segment Form{enter}')
       .then(() => {
-        cy.wait('@audience_segments');
+        cy.wait(5000);
         cy.get('.mcs-audienceSegmentTable_dropDownMenu')
           .should('be.visible')
           .each(dropdownArrow => {
