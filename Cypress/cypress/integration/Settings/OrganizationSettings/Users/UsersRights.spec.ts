@@ -90,9 +90,9 @@ describe('Users Rights test', () => {
 
       usersPage.cardWithId(subOrg1.id);
 
-      usersPage.addUser(subOrg1.name, new UsersPage().email);
+      usersPage.addUserAndItsRole(subOrg1.name, undefined, new UsersPage().email);
       cy.wait('@getUsers');
-      usersPage.addUser(subOrg1_1.name, new UsersPage().email);
+      usersPage.addUserAndItsRole(subOrg1_1.name, undefined, new UsersPage().email);
       cy.wait('@getUsers');
       usersPage.addUser(subOrg2.name, new UsersPage().email);
       usersPage.errorPopUp.should('be.visible');
