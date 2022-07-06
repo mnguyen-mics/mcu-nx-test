@@ -70,7 +70,7 @@ function hasSubBuckets(rows: OTQLAggregationResult[]) {
 }
 
 function hasMultipleSeries(rows: OTQLResultRowsShape) {
-  return !!(Object.keys(rows[0]).length > 2);
+  return Object.keys(rows[0] || []).length > 2;
 }
 
 export function isOTQLResult(result: OTQLResult | AggregateDataset): result is OTQLResult {
