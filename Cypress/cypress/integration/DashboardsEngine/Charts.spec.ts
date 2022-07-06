@@ -133,17 +133,18 @@ describe('Charts Tests', () => {
             cy.get('.mcs-otqlInputEditor_run_button').click();
             cy.get('.mcs-otqlChart_icons_bar').click();
             cy.wait(1000);
-            cy.intercept('**/queries').as('queries');
             cy.get('.mcs-otqlChart_items_share_button').click();
-            cy.wait('@queries');
-            cy.window().then(async win => {
-              const text = await win.navigator.clipboard.readText();
-              expect(text).to.contain('"title": "",');
-              expect(text).to.contain('"type": "bars');
-              expect(text).to.contain('"format": "count"');
-              expect(text).to.contain('"type": "bar"');
-              expect(text).to.contain('"type": "OTQL"');
-            });
+            cy.task('getClipboard')
+              .should('contain', '"title": ""')
+              .and('contain', '"type": "bars"')
+              .and('contain', '"options":')
+              .and('contain', '"legend": {')
+              .and('contain', '"enabled": true,')
+              .and('contain', '"position": "bottom"')
+              .and('contain', '"format": "count"')
+              .and('contain', '"query_id":')
+              .and('contain', '"type": "OTQL"')
+              .and('contain', '"dataset"');
           });
         });
       });
