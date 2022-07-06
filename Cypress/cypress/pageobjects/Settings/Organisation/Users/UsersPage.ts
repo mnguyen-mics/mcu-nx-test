@@ -3,6 +3,7 @@ import HeaderMenu from '../../../HeaderMenu';
 import OrganisationMenu from '../OrganisationMenu';
 import UserInformationPage from './UserInformationPage';
 import ConfirmDeletePopUp from './ConfirmDeletePopUp';
+import RolesPage from './RolesPage';
 
 class UsersPage extends Page {
   firstName: string;
@@ -184,6 +185,25 @@ class UsersPage extends Page {
       .contains(new RegExp('^' + org + '$', 'g'))
       .click();
     this.userInformationPage.clickBtnSaveUser();
+  }
+
+  addUserAndItsRole(
+    org: string,
+    role: string = 'reader',
+    email: string = this.email,
+    firstName: string = this.firstName,
+    lastName: string = this.lastName,
+  ) {
+    const rolesPage = new RolesPage();
+
+    this.addUser(org, email, firstName, lastName);
+    cy.wait(500);
+    rolesPage.roleInformationPage.clickOnRole(role);
+    // rolesPage.roleInformationPage.clickOnRole(role);
+    // cy.wait(3000)
+    rolesPage.roleInformationPage.clickBtnSave();
+    cy.wait(500);
+    rolesPage.usersPage.click();
   }
 }
 
