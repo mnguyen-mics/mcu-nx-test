@@ -146,6 +146,8 @@ class StandardSegmentBuilderDashboard extends React.Component<Props> {
             DatamartUsersAnalyticsWrapper={DatamartUsersAnalyticsWrapper}
             DashboardWrapper={DashboardWrapper}
             onShowDashboard={handleOnShowDashboard}
+            queryExecutionSource={'DASHBOARD'}
+            queryExecutionSubSource={'STANDARD_SEGMENT_BUILDER_DASHBOARD'}
           />
           <div className='mcs-standardSegmentBuilder_timelineSelector'>
             <TimelineSelector

@@ -101,7 +101,7 @@ export class StandardSegmentBuilderQueryService implements IStandardSegmentBuild
       .then(otqlQ => otqlQ.data.output_query_text)
       .then(queryText => {
         this._queryService
-          .runOTQLQuery(datamartId, queryText)
+          .runOTQLQuery(datamartId, queryText, 'DASHBOARD', 'STANDARD_SEGMENT_BUILDER_DASHBOARD')
           .then(queryResult => {
             success(queryResult.data);
           })

@@ -62,7 +62,7 @@ class TimelineSelector extends React.Component<Props, State> {
 
     getQuery().then(queryText =>
       this._queryService
-        .runOTQLQuery(datamartId, queryText, {
+        .runOTQLQuery(datamartId, queryText, 'DASHBOARD', 'ADVANCED_SEGMENT_BUILDER_DASHBOARD', {
           // This is a temporary fix for the view matching timeline
           // It should be removed when the OTQL execution is fixed
           graphql_select: true,

@@ -15,7 +15,11 @@ import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';
 import MapRadarChart from './Vizualisation/MapRadarChart';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-import { McsLazyLoad } from '@mediarithmics-private/advanced-components';
+import {
+  McsLazyLoad,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
+} from '@mediarithmics-private/advanced-components';
 import {
   Component,
   ComponentLayout,
@@ -30,6 +34,8 @@ interface Props {
   layout: ComponentLayout[];
   onLayoutChange: (layout: Layout[], allLayouts: Layouts) => void;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   datamartId: string;
 }
 
@@ -53,7 +59,7 @@ export default class DashboardContent extends React.Component<Props, State> {
   }
 
   generateComponent = (comp: Component, layout: Layout) => {
-    const { source, datamartId } = this.props;
+    const { source, datamartId, queryExecutionSource, queryExecutionSubSource } = this.props;
 
     const height = this.computeHeight(layout.h);
 
@@ -62,6 +68,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <Count
             source={source}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             datamartId={datamartId}
             title={comp.title}
             queryId={comp.query_id}
@@ -72,6 +80,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <Percentage
             source={source}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             datamartId={datamartId}
             title={comp.title}
             queryId={comp.query_id}
@@ -83,6 +93,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <MapPieChart
             source={source}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             title={comp.title}
             queryId={comp.query_id}
             data={comp.data}
@@ -96,6 +108,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <MapBarChart
             source={source}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             datamartId={datamartId}
             queryId={comp.query_id}
             title={comp.title}
@@ -118,6 +132,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <MapIndexChart
             source={source}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             datamartId={datamartId}
             queryId={comp.query_id}
             title={comp.title}
@@ -139,6 +155,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <MapRadarChart
             source={source}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             datamartId={datamartId}
             queryId={comp.query_id}
             title={comp.title}
@@ -157,6 +175,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <DateAggregationChart
             source={source}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             title={comp.title}
             queryIds={comp.query_ids}
             plotLabels={comp.plot_labels}
@@ -170,6 +190,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <GaugePieChart
             datamartId={datamartId}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             title={comp.title}
             queryIds={comp.query_ids}
             height={height}
@@ -180,6 +202,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <WorldMapChart
             title={comp.title}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             datamartId={datamartId}
             queryId={comp.query_id}
             height={height}
@@ -190,6 +214,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <CountBarChart
             title={comp.title}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             queryIds={comp.query_ids}
             datamartId={datamartId}
             labelsEnabled={true}
@@ -203,6 +229,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <CountPieChart
             datamartId={datamartId}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             height={height}
             labelsEnabled={comp.labels_enabled}
             plotLabels={comp.plot_labels}
@@ -216,6 +244,8 @@ export default class DashboardContent extends React.Component<Props, State> {
         return (
           <TopInfo
             datamartId={datamartId}
+            queryExecutionSource={queryExecutionSource}
+            queryExecutionSubSource={queryExecutionSubSource}
             title={comp.title}
             queryId={comp.query_id}
             source={source}

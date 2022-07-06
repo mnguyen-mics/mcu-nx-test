@@ -219,7 +219,12 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     switch (datamart.storage_model_version) {
       case 'v201709':
         return this._queryService
-          .runOTQLQuery(datamart.id, 'select @count {} from UserPoint')
+          .runOTQLQuery(
+            datamart.id,
+            'select @count {} from UserPoint',
+            'DASHBOARD',
+            'SEGMENT_DASHBOARD',
+          )
           .then(res => {
             return res.data ? (res.data.rows[0] as OTQLCountResult).count : 0;
           });

@@ -9,6 +9,8 @@ import {
 import {
   injectThemeColors,
   InjectedThemeColorsProps,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -25,6 +27,8 @@ import {
 import { chartColors } from '../../../../components/Funnel/Utils';
 
 export interface GaugePieChartProps {
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   title?: string;
   queryIds: string[];
   datamartId: string;
@@ -93,7 +97,7 @@ class GaugePieChart extends React.Component<Props, State> {
 
   fetchData = (chartQueryIds: string[], datamartId: string): Promise<void> => {
     this.setState({ error: false, loading: true });
-    const { precision } = this.props;
+    const { precision, queryExecutionSource, queryExecutionSubSource } = this.props;
     const promises = chartQueryIds.map(chartQueryId => {
       return this._queryService.getQuery(datamartId, chartQueryId);
     });
@@ -103,10 +107,16 @@ class GaugePieChart extends React.Component<Props, State> {
       })
       .then(queryList => {
         const queryListPromises = queryList.map(q => {
-          return this._queryService.runOTQLQuery(datamartId, q.query_text, {
-            use_cache: true,
-            precision: precision,
-          });
+          return this._queryService.runOTQLQuery(
+            datamartId,
+            q.query_text,
+            queryExecutionSource,
+            queryExecutionSubSource,
+            {
+              use_cache: true,
+              precision: precision,
+            },
+          );
         });
         return Promise.all(queryListPromises)
           .then(otqlResultListResp => {

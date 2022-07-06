@@ -416,6 +416,8 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
               shouldDisplayAnalyticsFeature ? datamartAnalyticsDashboardConfig : []
             }
             source={segment}
+            queryExecutionSource={'DASHBOARD'}
+            queryExecutionSubSource={'SEGMENT_DASHBOARD'}
             defaultSegment={currentSegment}
             tabsClassname='m-t-30'
             isFullScreenLoading={false}

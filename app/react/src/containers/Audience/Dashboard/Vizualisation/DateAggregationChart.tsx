@@ -11,6 +11,8 @@ import {
   injectThemeColors,
   InjectedThemeColorsProps,
   ThemeColorsShape,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import moment from 'moment';
 import { compose } from 'recompose';
@@ -30,6 +32,8 @@ import { chartColors } from '../../../../components/Funnel/Utils';
 export interface DateAggregationChartProps {
   title?: string;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   queryIds: string[];
   datamartId: string;
   plotLabels: string[];
@@ -154,7 +158,7 @@ class DateAggregationChart extends React.Component<Props, State> {
     plotLabelIndex: number,
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<QueryResult[]> => {
-    const { precision } = this.props;
+    const { precision, queryExecutionSource, queryExecutionSubSource } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
       .then(queryResp => {
@@ -165,7 +169,7 @@ class DateAggregationChart extends React.Component<Props, State> {
       })
       .then(q => {
         return this._queryService
-          .runOTQLQuery(datamartId, q.query_text, {
+          .runOTQLQuery(datamartId, q.query_text, queryExecutionSource, queryExecutionSubSource, {
             use_cache: true,
             precision: precision,
           })

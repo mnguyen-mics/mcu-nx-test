@@ -11,6 +11,8 @@ import {
 import {
   injectThemeColors,
   InjectedThemeColorsProps,
+  QueryExecutionSource,
+  QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -32,6 +34,8 @@ import { chartColors } from '../../../../components/Funnel/Utils';
 export interface MapPieChartProps {
   title?: string;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
   queryId: string;
   data?: OTQLResult;
   datamartId: string;
@@ -125,7 +129,7 @@ class MapPieChart extends React.Component<Props, State> {
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-    const { precision } = this.props;
+    const { precision, queryExecutionSource, queryExecutionSubSource } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
 
@@ -138,7 +142,7 @@ class MapPieChart extends React.Component<Props, State> {
       .then(q => {
         const query = q.query_text;
         return this._queryService
-          .runOTQLQuery(datamartId, query, {
+          .runOTQLQuery(datamartId, query, queryExecutionSource, queryExecutionSubSource, {
             use_cache: true,
             precision: precision,
           })
