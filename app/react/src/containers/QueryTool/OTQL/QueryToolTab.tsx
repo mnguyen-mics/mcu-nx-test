@@ -7,13 +7,14 @@ import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult'
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import OTQLResultRenderer from './OTQLResultRenderer';
+import QueryResultContainer from './QueryResultContainer';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { ChartType } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import { McsTabsItem } from './QueryToolTabsContainer';
 import { SettingOutlined } from '@ant-design/icons';
 import OTQLSeries from './OTQLSeries';
+import { ChartResource } from '../../../models/chart/Chart';
 
 export interface QueryToolTabProps {
   datamartId: string;
@@ -22,7 +23,7 @@ export interface QueryToolTabProps {
   queryEditorClassName?: string;
   editionMode?: boolean;
   onSeriesChange: (newSeries: SerieQueryModel[]) => void;
-  runQuery: (_chartType?: ChartType) => void;
+  runQuery: (chartType?: ChartType) => void;
   onInputChange: (id: string) => (e: any) => void;
   updateQueryModel: (id: string) => (query: string) => void;
   updateNameModel: (id: string) => (e: any) => void;
@@ -31,7 +32,7 @@ export interface QueryToolTabProps {
   rawSchema?: ObjectLikeTypeInfoResource[];
   dismissError: () => void;
   abortQuery: () => void;
-  onSaveChart?: () => void;
+  onSaveChart?: (chart: ChartResource) => void;
   onDeleteChart: () => void;
   onQueryParamsChange: (eg: boolean, c: boolean, p: QueryPrecisionMode) => void;
 }
@@ -173,7 +174,7 @@ class QueryToolTab extends React.Component<Props, State> {
     );
 
     const queryResultRenderer: React.ReactNode = (
-      <OTQLResultRenderer
+      <QueryResultContainer
         tab={tab}
         query={query}
         datamartId={datamartId}

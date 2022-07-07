@@ -128,8 +128,8 @@ class UserContainer extends React.Component<Props, State> {
                     // based on userRole's organisationId
                     return {
                       ...user,
-                      organisation_id: role.organisation_id,
                       key: role.id,
+                      organisation_id: role.organisation_id,
                       role: {
                         ...role,
                         // The reason we use the org Id here is because we want to know during the tree build

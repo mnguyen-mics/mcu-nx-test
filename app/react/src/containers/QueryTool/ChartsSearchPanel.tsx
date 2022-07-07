@@ -14,6 +14,7 @@ import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import {
   AreaChartOutlined,
   BarChartOutlined,
+  BorderlessTableOutlined,
   PieChartOutlined,
   RadarChartOutlined,
   TableOutlined,
@@ -26,6 +27,7 @@ import {
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import UserResource from '@mediarithmics-private/advanced-components/lib/models/directory/UserResource';
 import { ChartType } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
+import _ from 'lodash';
 
 const messages = defineMessages({
   modifiedBy: {
@@ -45,6 +47,7 @@ const messages = defineMessages({
 export interface ChartsSearchPanelProps {
   organisationId: string;
   onItemClick?: (item: ChartResource) => void;
+  chartItem?: ChartResource;
 }
 
 export interface State {
@@ -72,6 +75,14 @@ class ChartsSearchPanel extends React.Component<Props, State> {
     this.fetchData();
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { chartItem } = this.props;
+    const { chartItem: prevChartItem } = prevProps;
+    if (!_.isEqual(chartItem, prevChartItem) && !chartItem) {
+      this.fetchData();
+    }
+  }
+
   daysBetween = (startDate: Date, endDate: Date) => {
     const oneDay = 1000 * 60 * 60 * 24;
 
@@ -89,6 +100,8 @@ class ChartsSearchPanel extends React.Component<Props, State> {
           return <RadarChartOutlined className={className} />;
         case 'area':
           return <AreaChartOutlined className={className} />;
+        case 'metric':
+          return <BorderlessTableOutlined className={className} />;
         default:
           return <TableOutlined className={className} />;
       }

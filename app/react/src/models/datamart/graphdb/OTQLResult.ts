@@ -1,4 +1,7 @@
-import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+import {
+  AggregateDataset,
+  CountDataset,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import {
   OTQLBuckets,
   OTQLMetric,
@@ -50,13 +53,19 @@ export function isAggregateResult(rows: OTQLResultRowsShape): rows is OTQLAggreg
 }
 
 export function isAggregateDataset(
-  aggregations: OTQLResult | AggregateDataset,
+  aggregations: OTQLResult | AggregateDataset | CountDataset,
 ): aggregations is AggregateDataset {
   return !!((aggregations as AggregateDataset).dataset !== undefined);
 }
 
+export function isCountDataset(
+  dataset: OTQLResult | AggregateDataset | CountDataset | OTQLAggregations,
+): dataset is CountDataset {
+  return !!((dataset as CountDataset).value !== undefined);
+}
+
 export function isOTQLAggregations(
-  aggregations: OTQLAggregations | AggregateDataset,
+  aggregations: OTQLAggregations | AggregateDataset | CountDataset,
 ): aggregations is OTQLAggregations {
   return !!((aggregations as OTQLAggregations).buckets !== undefined);
 }
@@ -73,7 +82,9 @@ function hasMultipleSeries(rows: OTQLResultRowsShape) {
   return Object.keys(rows[0] || []).length > 2;
 }
 
-export function isOTQLResult(result: OTQLResult | AggregateDataset): result is OTQLResult {
+export function isOTQLResult(
+  result: OTQLResult | AggregateDataset | CountDataset,
+): result is OTQLResult {
   return !!(result as OTQLResult).result_type;
 }
 

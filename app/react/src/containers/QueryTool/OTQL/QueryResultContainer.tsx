@@ -3,37 +3,37 @@ import { Spin, Tag } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import {
   OTQLResult,
-  isCountResult,
   isAggregateResult,
   isAggregateDataset,
   isOTQLResult,
+  isCountDataset,
 } from '../../../models/datamart/graphdb/OTQLResult';
-import AggregationRenderer from './AggregationRenderer';
+import QueryResultRenderer from './QueryResultRenderer';
 import { compose } from 'recompose';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import {
   injectThemeColors,
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
-import { CountRenderer } from './CountRenderer';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { McsTabsItem } from './QueryToolTabsContainer';
 import { QueryToolJsonResultRenderer } from './QueryToolJsonResultRenderer';
+import { ChartResource } from '../../../models/chart/Chart';
 
-export interface OTQLResultRendererProps {
+export interface QueryResultContainerProps {
   tab: McsTabsItem;
   query?: string;
   datamartId: string;
-  onSaveChart?: () => void;
+  onSaveChart?: (chart: ChartResource) => void;
   onDeleteChart: () => void;
 }
 
-type Props = OTQLResultRendererProps &
+type Props = QueryResultContainerProps &
   InjectedThemeColorsProps &
   InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class OTQLResultRenderer extends React.Component<Props> {
+class QueryResultContainer extends React.Component<Props> {
   render() {
     const {
       tab,
@@ -65,49 +65,32 @@ class OTQLResultRenderer extends React.Component<Props> {
           />
         </div>
       );
-    } else if (result && isOTQLResult(result) && isCountResult(result.rows)) {
-      const count = result.rows[0].count;
-      content = <CountRenderer count={count} />;
-    } else if (result && isOTQLResult(result) && isAggregateResult(result.rows)) {
-      const aggregations = result.rows[0].aggregations;
-      content = (
-        <div>
-          <AggregationRenderer
-            rootAggregations={aggregations}
-            tab={tab}
-            query={query}
-            datamartId={datamartId}
-            organisationId={organisationId}
-            onSaveChart={onSaveChart}
-            onDeleteChart={onDeleteChart}
-          />
-        </div>
-      );
-    } else if (result && isAggregateDataset(result)) {
-      content = (
-        <div>
-          <AggregationRenderer
-            rootAggregations={result}
-            tab={tab}
-            query={query}
-            datamartId={datamartId}
-            organisationId={organisationId}
-            onSaveChart={onSaveChart}
-            onDeleteChart={onDeleteChart}
-          />
-        </div>
-      );
     } else if (result) {
-      content = (
-        <div className='mcs-otqlQuery_result_json'>
-          <QueryToolJsonResultRenderer rows={result.rows} organisationId={organisationId} />
-        </div>
-      );
+      let commonProps = {
+        tab,
+        query,
+        datamartId,
+        organisationId,
+        onSaveChart,
+        onDeleteChart,
+      };
+      // This first condition should not be useful anymore
+      if (isOTQLResult(result) && isAggregateResult(result.rows)) {
+        content = <QueryResultRenderer datasource={result.rows[0].aggregations} {...commonProps} />;
+      } else if (isAggregateDataset(result) || isCountDataset(result)) {
+        content = <QueryResultRenderer datasource={result} {...commonProps} />;
+      } else {
+        content = (
+          <div className='mcs-otqlQuery_result_json'>
+            <QueryToolJsonResultRenderer rows={result.rows} organisationId={organisationId} />
+          </div>
+        );
+      }
     }
 
     return !(result && isOTQLResult(result) && isAggregateResult(result.rows)) ? (
       <div className='mcs-otqlQuery_result'>
-        {result && (
+        {result && (result as OTQLResult).took && (
           <div className='mcs-otqlQuery_result_tag_container'>
             <React.Fragment>
               <Tag className='mcs-otqlQuery_result_tag'>
@@ -159,8 +142,8 @@ class OTQLResultRenderer extends React.Component<Props> {
   }
 }
 
-export default compose<Props, OTQLResultRendererProps>(
+export default compose<Props, QueryResultContainerProps>(
   injectThemeColors,
   injectFeatures,
   withRouter,
-)(OTQLResultRenderer);
+)(QueryResultContainer);

@@ -3,7 +3,6 @@ import { BASE_CHART_HEIGHT } from '../../../../components/Charts/domain';
 import { Select } from 'antd';
 import moment from 'moment';
 import { AbstractSource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
-import { WrappedAbstractDataset } from '../AggregationRenderer';
 import {
   BarChartOptions,
   PieChartOptions,
@@ -11,6 +10,8 @@ import {
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 
 export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie' | 'table';
+import { WrappedAbstractDataset } from '../QueryResultRenderer';
+import { ChartType } from '@mediarithmics-private/advanced-components';
 
 export interface QuickOption {
   key: string;
@@ -22,9 +23,10 @@ export interface QuickOption {
 export interface QuickOptionsSelector {
   title: string;
   options: QuickOption[];
+  selectedValue?: string;
 }
 
-export function getLegend(_chartType: chartType, value: string) {
+export function getLegend(value?: string) {
   const key = 'legend';
   switch (value) {
     case 'no_legend':
@@ -47,14 +49,33 @@ export function getLegend(_chartType: chartType, value: string) {
           position: 'right',
         },
       };
+    default:
+      return undefined;
   }
   return undefined;
 }
 
-export function getChartOption(_chartType: chartType, key: string, value: string) {
+export function getSelectLegend(options: { [key: string]: any }) {
+  if (options) {
+    if (options.enabled) {
+      switch (options.position) {
+        case 'right':
+          return 'legend_right';
+        case 'bottom':
+          return 'legend_bottom';
+        default:
+          return 'no_legend';
+      }
+    } else {
+      return 'no_legend';
+    }
+  } else return 'no_legend';
+}
+
+export function getChartOption(chartType: ChartType, key: string, value?: string) {
   switch (key) {
     case 'legend':
-      return getLegend(_chartType, value);
+      return getLegend(value);
     case 'format':
       return {
         format: value,
@@ -64,7 +85,9 @@ export function getChartOption(_chartType: chartType, key: string, value: string
         innerRadius: value === 'donut',
       };
     case 'bar':
-      return _chartType === 'bar'
+    case 'bars':
+    case 'type':
+      return chartType === 'bars'
         ? {
             type: value,
           }
@@ -100,12 +123,12 @@ export function formatDate(str: string, format?: string, toUtc?: boolean) {
 
 /**
  * Fixed chart props
- * @param _chartType
+ * @param chartType
  * @returns
  */
-export function getBaseChartProps(_chartType: chartType) {
-  switch (_chartType) {
-    case 'bar':
+export function getBaseChartProps(chartType: ChartType) {
+  switch (chartType) {
+    case 'bars':
       return {
         xKey: 'key',
         yKeys: [
@@ -134,17 +157,27 @@ export function getBaseChartProps(_chartType: chartType) {
       } as RadarChartOptions;
     case 'pie':
       return {
+        xKey: '',
+        yKeys: [],
         height: BASE_CHART_HEIGHT,
         innerRadius: false,
         dataLabels: {
           enabled: true,
         },
       } as PieChartOptions;
+    default:
+      return {
+        xKey: '',
+        yKeys: [],
+      };
   }
-  return undefined;
 }
 
-export function getQuickOptionsForChartType(_chartType: chartType, hasDateHistogram: boolean) {
+export function getQuickOptionsForChartType(
+  chartType: ChartType,
+  hasDateHistogram: boolean,
+  selectedValues?: { [key: string]: any },
+) {
   const legendOptions: QuickOptionsSelector = {
     title: 'legend',
     options: [
@@ -236,8 +269,40 @@ export function getQuickOptionsForChartType(_chartType: chartType, hasDateHistog
     result.push(formatDateOptions);
   }
 
-  switch (_chartType) {
-    case 'bar':
+  if (selectedValues?.legend) {
+    let legendValue;
+    if (!selectedValues.legend.enabled) {
+      legendValue = 'no_legend';
+    } else {
+      switch (selectedValues.legend.position) {
+        case 'right':
+          legendValue = 'legend_right';
+          break;
+        case 'bottom':
+          legendValue = 'legend_bottom';
+          break;
+        default:
+          break;
+      }
+    }
+
+    legendOptions.selectedValue = legendValue;
+  }
+  if (selectedValues?.format) {
+    formatOptions.selectedValue = selectedValues.format;
+  }
+  if (selectedValues?.date_format) {
+    formatDateOptions.selectedValue = selectedValues.date_format;
+  }
+  if (selectedValues?.type === 'bar' || selectedValues?.type === 'column') {
+    barOptions.selectedValue = selectedValues.type;
+  }
+  if (selectedValues?.pie) {
+    pieOptions.selectedValue = selectedValues.pie;
+  }
+
+  switch (chartType) {
+    case 'bars':
       return result.concat([legendOptions, formatOptions, barOptions]);
     case 'pie':
       return result.concat([legendOptions, pieOptions]);
@@ -252,6 +317,7 @@ export function getQuickOptionsForChartType(_chartType: chartType, hasDateHistog
 function renderQuickOptionsSelector(
   quickOptionSelector: QuickOptionsSelector,
   onChangeQuickOption: (title: string, value: string) => void,
+  selectedValue?: string,
 ) {
   const onChange = (value: string) => onChangeQuickOption(quickOptionSelector.title, value);
   return (
@@ -259,7 +325,7 @@ function renderQuickOptionsSelector(
       className='mcs-otqlChart_items_quick_option'
       key={quickOptionSelector.title}
       onChange={onChange}
-      defaultValue={quickOptionSelector.options[0].value}
+      defaultValue={selectedValue || quickOptionSelector.options[0].value}
       bordered={false}
     >
       {quickOptionSelector.options.map(option => {
@@ -279,15 +345,17 @@ function renderQuickOptionsSelector(
 }
 
 export const renderQuickOptions = (
-  selectedChart: chartType,
+  selectedChart: ChartType,
   onChangeQuickOption: (title: string, value: string) => void,
   hasDateHistogram: boolean,
+  selectedValues: { [key: string]: string },
 ) => {
-  const quickOptions = getQuickOptionsForChartType(selectedChart, hasDateHistogram);
+  const quickOptions = getQuickOptionsForChartType(selectedChart, hasDateHistogram, selectedValues);
   return (
     <div>
       {quickOptions.map(quickOptionSelector => {
-        return renderQuickOptionsSelector(quickOptionSelector, onChangeQuickOption);
+        const selectedValue = quickOptionSelector.selectedValue;
+        return renderQuickOptionsSelector(quickOptionSelector, onChangeQuickOption, selectedValue);
       })}
     </div>
   );
@@ -308,8 +376,8 @@ export const getChartDataset = (
 ) => {
   const childProperty = isDataset ? 'children' : 'sources';
   let source: any = {
-    type: 'otql',
     ...dataset,
+    type: (dataset as AbstractSource)?.type || 'otql',
   };
 
   if (hasPercentageTransformation(chartProps)) {

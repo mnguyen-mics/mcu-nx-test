@@ -3,9 +3,8 @@ import { Alert, Layout, Row, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
+import { CancelablePromise } from '../../../utils/ApiHelper';
 import {
-  hasSubBucketsOrMultipleSeries,
   isQueryListModel,
   isSerieQueryModel,
   OTQLResult,
@@ -23,7 +22,7 @@ import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import QueryToolTab, { SerieQueryModel } from './QueryToolTab';
+import QueryToolTab, { QueryListModel, SerieQueryModel } from './QueryToolTab';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import ChartsSearchPanel from '../ChartsSearchPanel';
 import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
@@ -39,9 +38,21 @@ import {
   ChartResource,
   ChartSource,
   isChartSource,
-  SerieDataset,
+  isSerieDataset,
+  SerieDatasetSources,
 } from '../../../models/chart/Chart';
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
+
+interface SerieDatasetSourcesModel {
+  sources: SerieDatasetSources;
+}
+
+export function isSerieDatasetSources(
+  object: Partial<QueryListModel> | SerieDatasetSourcesModel,
+): object is SerieDatasetSourcesModel {
+  return !!(object as SerieDatasetSourcesModel).sources;
+}
 
 const messages = defineMessages({
   queryToSave: {
@@ -51,6 +62,10 @@ const messages = defineMessages({
   chartSaved: {
     id: 'queryTool.OtqlConsole.tab.chartSaved',
     defaultMessage: 'Chart is saved',
+  },
+  chartDeleted: {
+    id: 'queryTool.OtqlConsole.tab.chartDeleted',
+    defaultMessage: 'Chart is deleted',
   },
 });
 
@@ -65,7 +80,6 @@ interface SerializableMcsTabsItem {
   precision: QueryPrecisionMode;
   evaluateGraphQl: boolean;
   useCache: boolean;
-  showChartLegend?: boolean;
   chartItem?: ChartResource;
 }
 
@@ -99,7 +113,6 @@ interface State {
   rawSchema?: ObjectLikeTypeInfoResource[];
   noLiveSchemaFound: boolean;
   chartsSearchPanelKey: string;
-  selectedChart?: ChartResource;
 }
 
 type Props = QueryToolTabsContainerProps &
@@ -186,7 +199,6 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
         precision: tab.precision,
         evaluateGraphQl: tab.evaluateGraphQl,
         useCache: tab.useCache,
-        showChartLegend: tab.showChartLegend,
         chartItem: tab.chartItem,
       };
     });
@@ -308,90 +320,25 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
   };
 
   runQuery = () => {
-    const { datamartId, queryExecutionSource, queryExecutionSubSource } = this.props;
     const { activeKey, tabs } = this.state;
-    const activeTab = tabs.find(tab => tab.key === activeKey);
-    this.setState({
-      tabs: tabs.map(t => {
-        if (t.key === activeKey) {
-          return {
-            ...t,
-            runningQuery: true,
-            error: null,
-            queryAborted: false,
-          };
-        } else return t;
-      }),
-    });
-    const serieQueries = activeTab?.serieQueries;
-    if (
-      serieQueries &&
-      serieQueries.length === 1 &&
-      typeof serieQueries[0].queryModel === 'string'
-    ) {
-      const otqlQuery = serieQueries[0].queryModel;
-      const precision = activeTab?.precision;
-      const useCache = activeTab?.useCache;
-      const evaluateGraphQl = activeTab?.evaluateGraphQl;
-      this.asyncQuery = makeCancelable(
-        this._queryService.runOTQLQuery(
-          datamartId,
-          otqlQuery,
-          queryExecutionSource,
-          queryExecutionSubSource,
-          {
-            precision: precision,
-            use_cache: useCache,
-            graphql_select: evaluateGraphQl,
-          },
-        ),
+    const tabQuery = tabs.find(tab => tab.key === activeKey);
+    if (tabQuery) {
+      this.setState(
+        {
+          tabs: tabs.map(t => {
+            if (t.key === activeKey) {
+              return {
+                ...t,
+                runningQuery: true,
+                queryAborted: false,
+              };
+            } else return t;
+          }),
+        },
+        () => {
+          this.fetchQuerySeriesDataset(tabQuery);
+        },
       );
-      this.asyncQuery.promise
-        .then(result => {
-          this.setState({
-            tabs: tabs.map(tab => {
-              if (tab.key === activeKey) {
-                return {
-                  ...tab,
-                  runningQuery: false,
-                  queryResult: result.data,
-                  showChartLegend: !(
-                    result?.data?.rows && hasSubBucketsOrMultipleSeries(result.data.rows)
-                  ),
-                  serieQueries: serieQueries.map((q, i) =>
-                    i === 0
-                      ? {
-                          ...q,
-                          query: otqlQuery,
-                          queryModel: otqlQuery,
-                        }
-                      : q,
-                  ),
-                  chartItem: tab.chartItem,
-                  error: null,
-                };
-              } else return tab;
-            }),
-          });
-        })
-        .catch(error => {
-          this.setState({
-            tabs: tabs.map(tab => {
-              if (tab.key === activeKey) {
-                return {
-                  ...tab,
-                  error: !error.isCanceled ? error : null,
-                  runningQuery: false,
-                };
-              } else return tab;
-            }),
-          });
-        });
-    } else {
-      const tabQuery = tabs.find(tab => tab.key === activeKey);
-      if (tabQuery) {
-        this.fetchQuerySeriesDataset(tabQuery);
-      }
     }
   };
 
@@ -575,7 +522,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
               {
                 query_text: serieQuery.queryModel,
                 type: 'otql',
-                series_title: serieQuery.name,
+                series_title: serieQuery.name || 'count',
               } as any,
               true,
               {},
@@ -599,6 +546,27 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
         }
       });
     };
+
+    let dataset;
+    const serieQueries = tabs.find(t => t.key === activeKey)?.serieQueries;
+    if (serieQueries && serieQueries.length === 1) {
+      if (typeof serieQueries[0].queryModel === 'string') {
+        dataset = {
+          type: 'otql',
+          ...getSources()[0],
+        } as any;
+      } else {
+        dataset = {
+          type: 'to-list',
+          ...getSources()[0],
+        } as any;
+      }
+    } else {
+      dataset = {
+        type: 'join',
+        sources: getSources(),
+      };
+    }
     return this._chartDatasetService
       .fetchDataset(
         datamartId,
@@ -606,10 +574,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
         {
           title: '',
           type: tabQuery.chartItem?.type || 'table',
-          dataset: {
-            type: 'join',
-            sources: getSources(),
-          } as any,
+          dataset,
         },
         queryExecutionSource,
         queryExecutionSubSource,
@@ -623,15 +588,12 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                 ...tab,
                 runningQuery: false,
                 queryResult: response,
-                showChartLegend: response.dataset?.length < 2,
               };
             } else return tab;
           }),
         });
       })
       .catch(error => {
-        // tslint:disable-next-line:no-console
-        console.log(error);
         this.setState({
           tabs: tabs.map(tab => {
             if (tab.key === activeKey) {
@@ -648,7 +610,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
   abortQuery = () => {
     const { tabs, activeKey } = this.state;
-    this.asyncQuery.cancel();
+    this.asyncQuery?.cancel();
     this.setState({
       tabs: tabs.map(tab => {
         if (tab.key === activeKey) {
@@ -788,8 +750,9 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     return queryToUse;
   };
 
-  onSaveChart = () => {
+  onSaveChart = (chartItem: ChartResource) => {
     const { intl } = this.props;
+    const { tabs, activeKey } = this.state;
     this.props.notifySuccess({
       message: intl.formatMessage(messages.chartSaved),
       description: '',
@@ -797,19 +760,35 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
     this.setState({
       chartsSearchPanelKey: cuid(),
+      tabs: tabs.map(tab => {
+        if (activeKey === tab.key) {
+          return {
+            ...tab,
+            chartItem: chartItem,
+            title: chartItem.title,
+          };
+        } else return tab;
+      }),
     });
   };
 
   onDeleteChart = () => {
-    const { activeKey, tabs } = this.state;
-    this.setState(
-      {
-        tabs: tabs.filter(t => t.key !== activeKey),
-      },
-      () => {
-        this.add(false);
-      },
-    );
+    const { intl } = this.props;
+    const { tabs, activeKey } = this.state;
+    this.props.notifySuccess({
+      message: intl.formatMessage(messages.chartDeleted),
+      description: '',
+    });
+    this.setState({
+      tabs: tabs.map(tab => {
+        if (activeKey === tab.key) {
+          return {
+            ...tab,
+            chartItem: undefined,
+          };
+        } else return tab;
+      }),
+    });
   };
 
   setNewSerieQueries = (serieQueries: SerieQueryModel[], chartItem: ChartResource) => {
@@ -839,93 +818,132 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     const { datamartId, notifyError } = this.props;
 
     const dataset = chartItem.content.dataset;
-    if (isChartSource(dataset)) {
-      this._queryService
-        .getQuery(datamartId, dataset.query_id)
-        .then(res => {
-          this.setNewSerieQueries(
-            [
-              {
-                id: cuid(),
-                name: chartItem.title || '',
-                inputVisible: false,
-                queryModel: res.data.query_text,
-              },
-            ],
-            chartItem,
-          );
-        })
-        .catch(err => {
-          notifyError(err);
-        });
-    } else {
-      const newSerieQueries: SerieQueryModel[] = [];
 
-      const queryPromises: Array<
-        Promise<{ query_text: string; name: string } | Array<ChartSource | SerieDataset>>
-      > = dataset.sources.map(s => {
-        if (isChartSource(s)) {
-          return this._queryService.getQuery(datamartId, s.query_id).then(res => {
-            return Promise.resolve({
-              query_text: res.data.query_text,
-              name: s.series_title || '',
+    const buildSerieQueryTree = (sources: SerieDatasetSources, sourceType: SourceType) => {
+      const queryPromises: Array<Promise<Partial<QueryListModel> | SerieDatasetSourcesModel>> =
+        sources.map(s => {
+          if (isChartSource(s)) {
+            return this._queryService.getQuery(datamartId, s.query_id).then(res => {
+              return {
+                query: res.data.query_text,
+                name: s.series_title || '',
+              };
             });
-          });
-        } else return Promise.resolve(s.sources);
-      });
-      await Promise.all(queryPromises)
-        .then(queryResponses => {
-          queryResponses.forEach((res, i) => {
-            if (Array.isArray(res)) {
-              const subQueryPromises = res
-                .filter(source => isChartSource(source))
-                .map(s => {
-                  const source = s as ChartSource;
-                  return this._queryService.getQuery(datamartId, source.query_id).then(queryRes => {
-                    return Promise.resolve({
-                      query_text: queryRes.data.query_text,
-                      name: source.series_title,
-                    });
-                  });
-                });
-              return Promise.all(subQueryPromises)
-                .then(subResponse => {
-                  newSerieQueries.push({
-                    id: cuid(),
-                    name: `Serie ${i}`,
-                    inputVisible: false,
-                    queryModel: subResponse.map((source, j) => {
-                      return {
-                        id: cuid(),
-                        name: source.name || `Dimension ${j}`,
-                        inputVisible: false,
-                        query: source.query_text,
-                      };
-                    }),
-                  });
-                  return newSerieQueries;
-                })
-                .catch(err => {
-                  notifyError(err);
-                });
-            } else {
+          } else return Promise.resolve({ sources: s.sources });
+        });
+
+      Promise.all(queryPromises)
+        .then(async queryResponses => {
+          const newSerieQueries: SerieQueryModel[] = [];
+          const promiseLoop = () => {
+            if (sourceType === 'to-list') {
               newSerieQueries.push({
                 id: cuid(),
-                name: res.name || '',
+                name: '',
                 inputVisible: false,
-                queryModel: res.query_text,
+                queryModel: [],
               });
-              return newSerieQueries;
             }
-          });
-          return newSerieQueries;
+            queryResponses.forEach(async (res, i) => {
+              // If sources
+              if (isSerieDatasetSources(res)) {
+                const subQueryPromises = res.sources
+                  .filter(source => isChartSource(source))
+                  .map(s => {
+                    const source = s as ChartSource;
+                    return this._queryService
+                      .getQuery(datamartId, source.query_id)
+                      .then(queryRes => {
+                        return Promise.resolve({
+                          query_text: queryRes.data.query_text,
+                          name: source.series_title,
+                        });
+                      });
+                  });
+                await Promise.all(subQueryPromises)
+                  .then(subResponse => {
+                    newSerieQueries.push({
+                      id: cuid(),
+                      name: `Serie ${i}`,
+                      inputVisible: false,
+                      queryModel:
+                        subResponse.length === 1
+                          ? subResponse[0].query_text
+                          : subResponse.map((source, j) => {
+                              return {
+                                id: cuid(),
+                                name: source.name || `Dimension ${j}`,
+                                inputVisible: false,
+                                query: source.query_text,
+                              };
+                            }),
+                    });
+                  })
+                  .catch(err => {
+                    notifyError(err);
+                  });
+              } else {
+                if (sourceType === 'to-list' && isQueryListModel(newSerieQueries[0].queryModel)) {
+                  newSerieQueries[0].queryModel.push({
+                    id: cuid(),
+                    name: res.name || '',
+                    inputVisible: false,
+                    query: res.query || '',
+                  });
+                } else {
+                  newSerieQueries.push({
+                    id: cuid(),
+                    name: res.name || '',
+                    inputVisible: false,
+                    queryModel: res.query || '',
+                  });
+                }
+              }
+              if (queryResponses.length - 1 === i) {
+                this.setNewSerieQueries(newSerieQueries, chartItem);
+              }
+            });
+          };
+          promiseLoop();
         })
-        .then(newSerieQueriesResponse => {
-          this.setNewSerieQueries(newSerieQueriesResponse, chartItem);
-        })
+
         .catch(err => {
           notifyError(err);
         });
+    };
+    switch (dataset.type.toLowerCase()) {
+      case 'otql':
+        if (isChartSource(dataset)) {
+          this._queryService
+            .getQuery(datamartId, dataset.query_id)
+            .then(res => {
+              this.setNewSerieQueries(
+                [
+                  {
+                    id: cuid(),
+                    name: chartItem.title || '',
+                    inputVisible: false,
+                    queryModel: res.data.query_text,
+                  },
+                ],
+                chartItem,
+              );
+            })
+            .catch(err => {
+              notifyError(err);
+            });
+        }
+        break;
+      case 'join':
+      case 'to-list':
+      case 'to-percentages':
+      case 'format-dates':
+        if (isSerieDataset(dataset))
+          buildSerieQueryTree(dataset.sources, dataset.type.toLowerCase() as SourceType);
+        break;
+
+      default:
+        break;
     }
   };
 
@@ -1062,6 +1080,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                               key={chartsSearchPanelKey}
                               organisationId={organisationId}
                               onItemClick={this.onChartItemClick}
+                              chartItem={tab.chartItem}
                             />
                           </Tabs.TabPane>
                         </Tabs>
