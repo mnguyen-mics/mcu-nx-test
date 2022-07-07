@@ -6,7 +6,7 @@ class BuildersPage extends Page {
   constructor() {
     super();
   }
-  
+
   @logFunction()
   goToPage() {
     LeftMenu.clickAudienceMenu();
