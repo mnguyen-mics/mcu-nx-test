@@ -81,7 +81,8 @@ cat << EOF
     "allure":true,
     "allureResultsPath":"allure-results",
     "allureAttachRequests":true,
-    "allureOmitPreviousAttemptScreenshots":true
+    "allureOmitPreviousAttemptScreenshots":true,
+    "logLevel":1
   },
   "retries": {
     "runMode": 4,
