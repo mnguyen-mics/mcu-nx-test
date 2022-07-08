@@ -133,7 +133,9 @@ describe('Charts Tests', () => {
             cy.get('.mcs-otqlInputEditor_run_button').click();
             cy.get('.mcs-otqlChart_icons_bar').click();
             cy.wait(1000);
+            cy.intercept('**/queries**').as('queries');
             cy.get('.mcs-otqlChart_items_share_button').click();
+            cy.wait('@queries');
             cy.task('getClipboard')
               .should('contain', '"title": ""')
               .and('contain', '"type": "bars"')
