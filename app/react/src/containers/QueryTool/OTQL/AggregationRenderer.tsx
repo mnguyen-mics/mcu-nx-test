@@ -177,7 +177,6 @@ class AggregationRenderer extends React.Component<Props, State> {
       const numberOfItems = Math.min(MAX_ELEMENTS, buckets.buckets.length);
       const dataset: Dataset =
         this.formatDataset(buckets.buckets.slice(0, numberOfItems), this.state.numberItems) || [];
-
       const aggregateDataset: AggregateDataset = {
         type: 'aggregate',
         metadata: {
@@ -196,7 +195,15 @@ class AggregationRenderer extends React.Component<Props, State> {
 
       data = await this.applyTransformations(this.adaptChartType(selectedChart), abstractDataset);
     } else if (isAggregateDataset(rootAggregations)) {
-      data = rootAggregations;
+      const abstractDataset = getChartDataset(
+        {
+          dataset: rootAggregations,
+        },
+        true,
+        chartProps,
+      );
+
+      data = await this.applyTransformations(this.adaptChartType(selectedChart), abstractDataset);
     }
 
     this.setState({
@@ -596,7 +603,6 @@ class AggregationRenderer extends React.Component<Props, State> {
       if (bucketHasData(record)) return 'mcs-table-cursor';
       return '';
     };
-
     if ((viewBuckets || aggregateData) && dataset && dataset.type === 'aggregate') {
       const aggregateDataset = dataset as AggregateDataset;
       let displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
@@ -621,8 +627,6 @@ class AggregationRenderer extends React.Component<Props, State> {
         } else if (selectedChart === 'table') {
           displayedDataset.dataset = viewBuckets?.buckets;
         }
-      } else if (aggregateData) {
-        displayedDataset = JSON.parse(JSON.stringify(aggregateData));
       }
 
       const tabs = [
@@ -877,9 +881,11 @@ class AggregationRenderer extends React.Component<Props, State> {
         newState.selectedQuickOptions[selectedOptionKey],
       );
     });
+
     const chartProps = quickOptions.reduce((acc, prop) => {
       return { ...acc, ...prop };
     }, {});
+
     this.setState({
       ...newState,
     });
@@ -934,6 +940,7 @@ class AggregationRenderer extends React.Component<Props, State> {
       ? this.findAggregations(rootAggregations, aggregationsPath)!
       : rootAggregations;
     let selectedAggregationData = null;
+
     if (selectedView === 'metrics' && isOTQLAggregations(aggregations)) {
       selectedAggregationData = this.getMetrics(aggregations.metrics);
     } else {
