@@ -109,14 +109,14 @@ describe('Charts Tests', () => {
           data.accessToken,
           data.datamartId,
           channel.body.data.id,
-          'test_query_tool_1',
-          'test_query_tool_2',
+          'test_clipboard_1',
+          'test_clipboard_2',
         ).then(() => {
           cy.wait(30000);
           cy.executeQuery(
             data.accessToken,
             data.datamartId,
-            'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+            'SELECT {nature @map} FROM ActivityEvent where nature = "test_clipboard_1" or nature = "test_clipboard_2"',
           ).then(() => {
             cy.switchOrg(data.organisationName);
             cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
@@ -127,7 +127,7 @@ describe('Charts Tests', () => {
                 force: true,
               })
               .type(
-                'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+                'SELECT {nature @map} FROM ActivityEvent where nature = "test_clipboard_1" or nature = "test_clipboard_2"',
                 { force: true, parseSpecialCharSequences: false },
               );
             cy.get('.mcs-otqlInputEditor_run_button').click();

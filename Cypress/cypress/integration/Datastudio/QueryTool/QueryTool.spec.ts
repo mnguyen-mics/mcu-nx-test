@@ -37,4 +37,49 @@ describe('Should test the query tool', () => {
       cy.get('.mcs-schemaVizualize_content').should('not.contain', 'activity_events');
     });
   });
+
+  it('test @cardinality query', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.createChannel(
+        data.accessToken,
+        data.datamartId,
+        'first channel',
+        'test.com',
+        false,
+        'SITE',
+      ).then(channel => {
+        cy.prepareActivitiesForDashboards(
+          data.accessToken,
+          data.datamartId,
+          channel.body.data.id,
+          'test_cardinality_1',
+          'test_cardinality_2',
+        ).then(() => {
+          cy.wait(30000);
+          cy.executeQuery(
+            data.accessToken,
+            data.datamartId,
+            'SELECT {nature @cardinality} FROM ActivityEvent where nature = "test_cardinality_1" or nature = "test_cardinality_2"',
+          ).then(() => {
+            cy.switchOrg(data.organisationName);
+            cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+            cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
+            cy.get('.mcs-otqlInputEditor_otqlConsole')
+              .find('textarea')
+              .type('{selectall}{selectall}{backspace}{backspace}', {
+                force: true,
+              })
+              .type(
+                'SELECT {nature @cardinality} FROM ActivityEvent where nature = "test_cardinality_1" or nature = "test_cardinality_2"',
+                { force: true, parseSpecialCharSequences: false },
+              );
+            cy.get('.mcs-otqlInputEditor_run_button').click();
+            cy.get('.mcs-table-container')
+              .should('contain', '2')
+              .and('contain', 'cardinality_nature');
+          });
+        });
+      });
+    });
+  });
 });
