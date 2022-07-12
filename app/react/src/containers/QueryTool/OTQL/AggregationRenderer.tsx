@@ -604,8 +604,8 @@ class AggregationRenderer extends React.Component<Props, State> {
       return '';
     };
     if ((viewBuckets || aggregateData) && dataset && dataset.type === 'aggregate') {
-      const aggregateDataset = dataset as AggregateDataset;
-      let displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
+      const aggregateDataset = dataset;
+      const displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
       if (isOTQLAggregations(rootAggregations)) {
         // Reformat dataset to expected key and value
         if (selectedChart === 'radar') {
