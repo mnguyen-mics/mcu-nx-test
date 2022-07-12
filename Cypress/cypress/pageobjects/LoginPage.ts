@@ -198,13 +198,10 @@ class LoginPage extends Page {
 
   @logFunction()
   login(email: string = Cypress.env('devMail'), password: string = Cypress.env('devPwd')) {
-    cy.intercept('**/campaigns?organisation_id=1**').as('load');
     this.typeEmail(email);
     this.clickBtnSignIn();
     this.typePassword(password);
     this.clickBtnSignIn();
-
-    cy.wait('@load');
   }
 
   @logFunction()
