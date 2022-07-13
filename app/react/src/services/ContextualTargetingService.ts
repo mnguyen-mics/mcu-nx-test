@@ -21,6 +21,14 @@ export interface IContextualTargetingService {
     contextualTargetingId: string,
     volumeRatio: number,
   ) => Promise<DataResponse<ContextualTargetingResource>>;
+  getContextualTargetingLiftFile: (
+    segmentId: string,
+    contextualTargetingId: string,
+  ) => Promise<Blob>;
+  getContextualTargetingSignatureFile: (
+    segmentId: string,
+    contextualTargetingId: string,
+  ) => Promise<Blob>;
 }
 
 @injectable()
@@ -50,6 +58,21 @@ export class ContextualTargetingService implements IContextualTargetingService {
     return ApiService.postRequest(
       `audience_segments/${segmentId}/contextual_targetings/${contextualTargetingId}/actions`,
       body,
+    );
+  }
+
+  getContextualTargetingLiftFile(segmentId: string, contextualTargetingId: string): Promise<Blob> {
+    return ApiService.getRequest(
+      `audience_segments/${segmentId}/contextual_targetings/${contextualTargetingId}/lift_computation.csv`,
+    );
+  }
+
+  getContextualTargetingSignatureFile(
+    segmentId: string,
+    contextualTargetingId: string,
+  ): Promise<Blob> {
+    return ApiService.getRequest(
+      `audience_segments/${segmentId}/contextual_targetings/${contextualTargetingId}/contextual_targeting_signature.csv`,
     );
   }
 }
