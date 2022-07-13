@@ -133,23 +133,10 @@ describe('Should test keycloak update password', () => {
         .getPasswordRequirements(false)
         .should('contain', minDigitCount + ' digit(s) minimum');
       loginPageKeycloak.btnSubmitPassword.should('be.disabled');
-
-      // Should not accept the same password
-      // TODO: should have a valid password to reset, right now the vagrant password doesn't respect the password complexity
-      // If I wanna check that we don't allow the new password to be like the old one, I need to change the vagrant password
-      // to a valid one, then reset the password and test if inserting the same password again trigger an error
-      // As of today, we can't reset password in our automated test since it requires an email service
-      // The only way is for this to work is to expire again in the database the user password but that is not a good practice
-      // We just should make sure next time when we update the vagrant password it is a valid one !
-
-      // cy.get('#password-new').type('{selectall}{backspace}' + Cypress.env('devPwd'));
-      // cy.get('#password-confirm').type('{selectall}{backspace}' + Cypress.env('devPwd'));
-      // cy.get('#kc-form-buttons').click();
-      // cy.get('.alert-error-newlines').should('be.visible');
     });
   });
 
-  it('Verify that a expired password can be changed', () => {
+  it.skip('Verify that a expired password can be changed', () => {
     cy.visit('/').then(async () => {
       const loginPageKeycloak = new LoginPage(Cypress.env('apiToken'));
       const email = 'test@mediarithmics.com';
@@ -208,5 +195,59 @@ describe('Should test keycloak update password', () => {
       loginPageKeycloak.clickBtnSignIn();
       cy.url().should('contains', Cypress.config().baseUrl + '/#/v2/o/1/campaigns');
     });
+  });
+
+  it('Verify forgot password notification', () => {
+    cy.visit('/');
+    const loginPageKeycloak = new LoginPage(Cypress.env('apiToken'));
+    const email = 'test@mediarithmics.com';
+    const bastion = Cypress.env('virtualPlatformName') + '.mics-sandbox.com';
+    const ssh_options =
+      '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ProxyCommand="ssh -W %h:%p ' +
+      bastion +
+      '"';
+    const db1 = '10.0.1.7';
+    const front3 = '10.0.1.14';
+
+    cy.exec(
+      'scp ' +
+        ssh_options +
+        ' cypress/integration/Keycloak/sql_insert_user.sh ' +
+        db1 +
+        ':~/sql_insert_user.sh',
+      { timeout: 20000 },
+    );
+    cy.exec(
+      'scp ' +
+        ssh_options +
+        ' cypress/integration/Keycloak/check_notification.sh ' +
+        front3 +
+        ':~/check_notification.sh',
+      { timeout: 20000 },
+    );
+    cy.exec(
+      'ssh ' + ssh_options + ' ' + db1 + ' "chmod +x ~/sql_insert_user.sh && ~/sql_insert_user.sh"',
+      {
+        timeout: 20000,
+      },
+    );
+
+    loginPageKeycloak.typeEmail(email);
+    loginPageKeycloak.clickBtnSignIn();
+    loginPageKeycloak.clickLinkForgetPassword();
+    loginPageKeycloak.clickContinue();
+
+    cy.exec(
+      'ssh ' +
+        ssh_options +
+        ' ' +
+        front3 +
+        ' "chmod +x ~/check_notification.sh && ~/check_notification.sh ' +
+        email +
+        '"',
+      {
+        timeout: 20000,
+      },
+    );
   });
 });
