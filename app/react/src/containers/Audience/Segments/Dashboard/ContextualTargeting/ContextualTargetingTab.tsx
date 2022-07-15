@@ -9,7 +9,7 @@ import { messages } from './messages';
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Button, Col, Row, Statistic, Steps } from 'antd';
+import { Button, Col, Row, Statistic, Steps, Tabs, Tooltip } from 'antd';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import {
   ContextualTargetingResource,
@@ -23,14 +23,21 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';
 import Papa from 'papaparse';
-import { IDataFileService } from '@mediarithmics-private/advanced-components';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { InfoCircleFilled } from '@ant-design/icons';
+
+const { TabPane } = Tabs;
 
 export interface ContextualKeyResource {
   contextual_key: string;
   occurrences_in_segment_count: number;
   occurrences_in_datamart_count: number;
   lift: number;
+}
+
+interface SignatureScoredCategoryResource {
+  category_name: string;
+  weight: number;
 }
 
 interface ChartDataResource extends DataPoint {
@@ -58,18 +65,19 @@ interface State {
   sortedContextualKeys?: ContextualKeyResource[];
   chartData?: ChartDataResource[];
   targetedContextualKeyResources?: ContextualKeyResource[];
+  signatureScoredCategoryResources?: SignatureScoredCategoryResource[];
   isLoadingContextualKeys: boolean;
+  isLoadingSignature: boolean;
   sliderValue: number;
   totalPageViewVolume?: number;
   targetedPageViewVolume?: number;
   isLiveEditing: boolean;
+  activeTabKey: string;
 }
 
 class ContextualTargetingTab extends React.Component<Props, State> {
   @lazyInject(TYPES.IContextualTargetingService)
   private _contextualTargetingService: IContextualTargetingService;
-  @lazyInject(TYPES.IDataFileService)
-  private _dataFileService: IDataFileService;
 
   private refreshContextualTargetingInterval = setInterval(() => {
     if (this.state.contextualTargeting?.status === 'INIT') {
@@ -82,25 +90,41 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     this.state = {
       isLoading: true,
       isLoadingContextualKeys: true,
+      isLoadingSignature: false,
       sliderValue: 0,
       isLiveEditing: false,
+      activeTabKey: '0',
     };
   }
 
   componentDidMount() {
     this.getContextualTargeting().then(ct => {
-      if (ct && ct.status !== 'INIT') this.initLiftData();
+      if (ct && ct.status !== 'INIT') this.initLiftData(ct);
     });
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const { contextualTargeting } = this.state;
+    const {
+      contextualTargeting,
+      targetedContextualKeyResources,
+      signatureScoredCategoryResources,
+      isLoadingSignature,
+    } = this.state;
     if (
       contextualTargeting !== prevState.contextualTargeting &&
       prevState.contextualTargeting?.status === 'INIT' &&
       contextualTargeting?.status === 'DRAFT'
     )
-      this.initLiftData();
+      this.initLiftData(contextualTargeting);
+    if (
+      (contextualTargeting?.status === 'LIVE' ||
+        contextualTargeting?.status === 'LIVE_PUBLISHED') &&
+      targetedContextualKeyResources &&
+      !signatureScoredCategoryResources &&
+      !isLoadingSignature
+    ) {
+      this.initSignatureData(contextualTargeting);
+    }
   }
 
   componentWillUnmount() {
@@ -128,24 +152,16 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       });
   };
 
-  initLiftData = () => {
-    const {
-      segmentId,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-    const { contextualTargeting } = this.state;
+  initLiftData = (contextualTargeting: ContextualTargetingResource) => {
+    const { segmentId } = this.props;
     this.setState({
       isLoadingContextualKeys: true,
     });
-    return this._dataFileService
-      .getDatafileData(
-        `mics://data_file/tenants/${organisationId}/audience_segments/${segmentId}/contextual_targetings/${contextualTargeting?.id}/lift_computation.csv`,
-      )
+    return this._contextualTargetingService
+      .getContextualTargetingLiftFile(segmentId, contextualTargeting?.id)
       .then((res: Blob) => {
         res.text().then((resAsText: string) => {
-          const contextualKeys = this.parseCsv(resAsText).filter(
+          const contextualKeys = this.parseLiftCsv(resAsText).filter(
             ck => ck.contextual_key && ck.lift && ck.occurrences_in_datamart_count,
           );
           const sortedContextualKeys = contextualKeys.sort((cka, ckb) => ckb.lift - cka.lift);
@@ -190,11 +206,43 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       });
   };
 
-  parseCsv = (csvText: string): ContextualKeyResource[] => {
+  parseLiftCsv = (csvText: string): ContextualKeyResource[] => {
+    const test = Papa.parse(csvText, {
+      header: true,
+      dynamicTyping: true,
+    });
+    return test.data as ContextualKeyResource[];
+  };
+
+  initSignatureData = (contextualTargeting: ContextualTargetingResource) => {
+    const { segmentId } = this.props;
+    this.setState({ isLoadingSignature: true });
+    return this._contextualTargetingService
+      .getContextualTargetingSignatureFile(segmentId, contextualTargeting?.id)
+      .then((res: Blob) => {
+        res.text().then((resAsText: string) => {
+          const signatureScoredCategories = this.parseSignatureCsv(resAsText)
+            .filter(sc => sc.category_name && sc.weight)
+            .sort((catA, catB) => catB.weight - catA.weight);
+          this.setState({
+            signatureScoredCategoryResources: signatureScoredCategories,
+            isLoadingSignature: false,
+          });
+        });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          isLoadingSignature: false,
+        });
+      });
+  };
+
+  parseSignatureCsv = (csvText: string): SignatureScoredCategoryResource[] => {
     return Papa.parse(csvText, {
       header: true,
       dynamicTyping: true,
-    }).data as ContextualKeyResource[];
+    }).data as SignatureScoredCategoryResource[];
   };
 
   buildChartData = (sortedContextualKeys: ContextualKeyResource[]) => {
@@ -323,12 +371,14 @@ class ContextualTargetingTab extends React.Component<Props, State> {
   };
 
   renderDraftStepChart = () => {
+    const { intl } = this.props;
     const {
       chartData,
       targetedContextualKeyResources,
       sliderValue,
       contextualTargeting,
       isLiveEditing,
+      isLoadingContextualKeys,
     } = this.state;
 
     const sliderIndex = chartData?.findIndex(data => sliderValue > data.lift);
@@ -361,12 +411,14 @@ class ContextualTargetingTab extends React.Component<Props, State> {
           }
         />
       </Card>
-    ) : (
+    ) : isLoadingContextualKeys ? (
       <LoadingChart />
+    ) : (
+      <EmptyChart title={intl.formatMessage(messages.InitializationTabText)} icon='optimization' />
     );
   };
 
-  renderStepChartComponant = () => {
+  renderStepChartComponent = () => {
     const { contextualTargeting } = this.state;
 
     if (!contextualTargeting) {
@@ -378,12 +430,18 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     }
   };
 
-  renderStepTableComponant = () => {
+  renderStepTabComponent = () => {
     const { intl } = this.props;
-    const { isLoadingContextualKeys, targetedContextualKeyResources, contextualTargeting } =
-      this.state;
+    const {
+      isLoadingContextualKeys,
+      isLoadingSignature,
+      targetedContextualKeyResources,
+      signatureScoredCategoryResources,
+      contextualTargeting,
+      activeTabKey,
+    } = this.state;
 
-    const dataColumnsDefinition: Array<DataColumnDefinition<ContextualKeyResource>> = [
+    const liftDataColumnsDefinition: Array<DataColumnDefinition<ContextualKeyResource>> = [
       {
         title: intl.formatMessage(messages.content),
         key: 'contextual_key',
@@ -404,20 +462,108 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       },
     ];
 
-    return contextualTargeting?.status !== 'INIT' && targetedContextualKeyResources ? (
+    const signatureDataColumnsDefinition: Array<
+      DataColumnDefinition<SignatureScoredCategoryResource>
+    > = [
+      {
+        title: intl.formatMessage(messages.category),
+        key: 'category_name',
+        isVisibleByDefault: true,
+        isHideable: false,
+      },
+      {
+        title: intl.formatMessage(messages.score),
+        key: 'weight',
+        isVisibleByDefault: true,
+        isHideable: false,
+      },
+    ];
+
+    const lastLiftComputation =
+      contextualTargeting &&
+      contextualTargeting.last_lift_computation_ts &&
+      new Date(contextualTargeting.last_lift_computation_ts);
+
+    return (contextualTargeting?.status === 'DRAFT' ||
+      contextualTargeting?.status === 'PUBLISHED') &&
+      targetedContextualKeyResources &&
+      lastLiftComputation ? (
       <Card
-        title={intl.formatMessage(messages.targetedUrls)}
+        title={
+          <React.Fragment>
+            {intl.formatMessage(messages.targetedContentTab)}
+            <Tooltip
+              className='mcs-contextualTargetingDashboard_lastRefreshDate'
+              title={intl.formatMessage(messages.liftRefreshTooltip)}
+              placement='left'
+            >
+              <InfoCircleFilled />
+            </Tooltip>
+          </React.Fragment>
+        }
         className='mcs-contextualTargetingDashboard_contextualTargetingTableContainer'
       >
         <TableViewFilters
           dataSource={targetedContextualKeyResources}
           loading={isLoadingContextualKeys}
-          columns={dataColumnsDefinition}
+          columns={liftDataColumnsDefinition}
         />
+      </Card>
+    ) : (contextualTargeting?.status === 'LIVE' ||
+        contextualTargeting?.status === 'LIVE_PUBLISHED') &&
+      targetedContextualKeyResources &&
+      lastLiftComputation ? (
+      <Card className='mcs-contextualTargetingDashboard_contextualTargetingTableContainer'>
+        {activeTabKey === '0' ? (
+          <Tooltip
+            className='mcs-contextualTargetingDashboard_lastRefreshDate'
+            title={intl.formatMessage(messages.liftRefreshTooltip)}
+            placement='left'
+          >
+            <InfoCircleFilled />
+          </Tooltip>
+        ) : (
+          <Tooltip
+            className='mcs-contextualTargetingDashboard_lastRefreshDate'
+            title={intl.formatMessage(messages.signatureRefreshTooltip)}
+            placement='left'
+          >
+            <InfoCircleFilled />
+          </Tooltip>
+        )}
+        <Tabs defaultActiveKey={'0'} onChange={this.onTabChange}>
+          <TabPane tab={intl.formatMessage(messages.targetedContentTab)} key={'0'}>
+            <TableViewFilters
+              dataSource={targetedContextualKeyResources}
+              loading={isLoadingContextualKeys}
+              columns={liftDataColumnsDefinition}
+            />
+          </TabPane>
+          <TabPane tab={intl.formatMessage(messages.semanticAnalysisTab)} key={'1'}>
+            {signatureScoredCategoryResources ? (
+              <React.Fragment>
+                <TableViewFilters
+                  dataSource={signatureScoredCategoryResources}
+                  loading={isLoadingSignature}
+                  columns={signatureDataColumnsDefinition}
+                />
+              </React.Fragment>
+            ) : (
+              <EmptyChart
+                title={intl.formatMessage(messages.InitializationTabText)}
+                icon='optimization'
+              />
+            )}
+          </TabPane>
+        </Tabs>
       </Card>
     ) : (
       <div />
     );
+  };
+
+  onTabChange = (activeKey: string) => {
+    this.setState({ activeTabKey: activeKey });
   };
 
   getTargetedVolumeRatio = () => {
@@ -555,19 +701,19 @@ class ContextualTargetingTab extends React.Component<Props, State> {
 
   render() {
     const { isLoading } = this.state;
-    const stepChartComponant = this.renderStepChartComponant();
+    const stepChartComponent = this.renderStepChartComponent();
     const stepStatsCard = this.renderStepStatsCard();
-    const stepTableComponant = this.renderStepTableComponant();
+    const stepTableComponent = this.renderStepTabComponent();
 
     return isLoading ? (
       <LoadingChart />
     ) : (
       <React.Fragment>
         <Row className='mcs-contextualTargetingDashboard_contextualTargetingChartContainer'>
-          <Col span={19}>{stepChartComponant}</Col>
+          <Col span={19}>{stepChartComponent}</Col>
           <Col span={5}>{stepStatsCard}</Col>
         </Row>
-        <Row>{stepTableComponant}</Row>
+        <Row>{stepTableComponent}</Row>
       </React.Fragment>
     );
   }

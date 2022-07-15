@@ -7,7 +7,7 @@ export const messages = defineMessages({
   },
   noContextualTargetingTabButton: {
     id: 'audience.segment.dashboard.contextualTargeting.noContextualTargetingTabButton',
-    defaultMessage: 'Activate Contextual Targeting for this segment',
+    defaultMessage: 'Start content analysis on this segment',
   },
   InitializationTabText: {
     id: 'audience.segment.dashboard.contextualTargeting.InitializationTabText',
@@ -61,10 +61,6 @@ export const messages = defineMessages({
     id: 'audience.segment.dashboard.contextualTargeting.numberOfEvents',
     defaultMessage: 'Number of page views',
   },
-  targetedUrls: {
-    id: 'audience.segment.dashboard.contextualTargeting.targetedUrls',
-    defaultMessage: 'Targeted URLs',
-  },
   targetedRatio: {
     id: 'audience.segment.dashboard.contextualTargeting.targetedRatio',
     defaultMessage: 'Targeted page views ratio',
@@ -88,5 +84,30 @@ export const messages = defineMessages({
   settingsCardButtonInProgress: {
     id: 'audience.segment.dashboard.contextualTargeting.settingsCardButtonInProgress',
     defaultMessage: 'Activation in progress',
+  },
+  targetedContentTab: {
+    id: 'audience.segment.dashboard.contextualTargeting.targetedContentTab',
+    defaultMessage: 'Targeted content',
+  },
+  semanticAnalysisTab: {
+    id: 'audience.segment.dashboard.contextualTargeting.semanticAnalysisTab',
+    defaultMessage: 'Semantic analysis',
+  },
+  category: {
+    id: 'audience.segment.dashboard.contextualTargeting.category',
+    defaultMessage: 'Category',
+  },
+  score: {
+    id: 'audience.segment.dashboard.contextualTargeting.score',
+    defaultMessage: 'Score',
+  },
+  liftRefreshTooltip: {
+    id: 'audience.segment.dashboard.contextualTargeting.targetedContentTab.liftRefreshTooltip',
+    defaultMessage:
+      'URL Lift is recalculated every night and display is live updated when changing configuration',
+  },
+  signatureRefreshTooltip: {
+    id: 'audience.segment.dashboard.contextualTargeting.semanticAnalysisTab.signatureRefreshTooltip',
+    defaultMessage: 'Segment signature is recalculated every night',
   },
 });
