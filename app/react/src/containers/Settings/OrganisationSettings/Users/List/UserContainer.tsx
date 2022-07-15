@@ -1,5 +1,4 @@
 import { OrganisationResource } from '@mediarithmics-private/advanced-components/lib/models/organisation/organisation';
-import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { Loading, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import {
   ActionsColumnDefinition,
@@ -24,7 +23,6 @@ import UserResource from '../../../../../models/directory/UserResource';
 import _ from 'lodash';
 import { Empty, Tooltip } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
-import { IOrganisationService } from '../../../../../services/OrganisationService';
 
 export interface UserContainerProps {
   communityId: string;
@@ -37,6 +35,7 @@ export interface UserContainerProps {
   deleteUserRole: (user: UserResourceWithRole) => void;
   filterValue: string;
   displayInheritedRole: boolean;
+  organisations: OrganisationResource[];
 }
 
 interface UserResourceWithRole extends UserResource {
@@ -49,7 +48,6 @@ type Props = UserContainerProps &
   InjectedIntlProps;
 
 interface State {
-  organisations?: OrganisationResource[];
   users?: UserResourceWithRole[];
   userHierarchy?: FoldableCardHierarchyResource;
   loading?: boolean;
@@ -60,8 +58,6 @@ class UserContainer extends React.Component<Props, State> {
   private _communityService: ICommunityService;
   @lazyInject(TYPES.IUserRolesService)
   private _userRolesService: IUserRolesService;
-  @lazyInject(TYPES.IOrganisationService)
-  private _organisationService: IOrganisationService;
 
   constructor(props: Props) {
     super(props);
@@ -98,18 +94,15 @@ class UserContainer extends React.Component<Props, State> {
         params: { organisationId },
       },
     } = this.props;
-    const promises: Array<Promise<DataListResponse<any>>> = [
-      this._organisationService.getOrganisations(communityId),
-      this._communityService.getCommunityUsers(communityId, { max_results: 500 }),
-    ];
 
     this.setState({
       loading: true,
     });
 
-    Promise.all(promises)
+    this._communityService
+      .getCommunityUsers(communityId, { max_results: 500 })
       .then(res => {
-        const users = (res[1] as DataListResponse<UserResourceWithRole>).data;
+        const users = res.data;
         const filteredUsers = filterValue
           ? users.filter(
               u =>
@@ -153,7 +146,6 @@ class UserContainer extends React.Component<Props, State> {
             const flattenUsers = _.flattenDeep(usersResponse);
             this.setState(
               {
-                organisations: (res[0] as DataListResponse<OrganisationResource>).data,
                 users:
                   userDisplay === 'user_roles'
                     ? flattenUsers.filter(u => u.role?.role)
@@ -187,8 +179,9 @@ class UserContainer extends React.Component<Props, State> {
   }
 
   buildHierarchy(): FoldableCardHierarchyResource | undefined {
-    const { organisations, users } = this.state;
-    const { currentOrganisationId, displayInheritedRole, userDisplay, user } = this.props;
+    const { users } = this.state;
+    const { currentOrganisationId, displayInheritedRole, userDisplay, user, organisations } =
+      this.props;
 
     const recursiveBuildHierarchy = (
       organisation?: OrganisationResource,

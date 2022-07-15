@@ -98,7 +98,7 @@ export default class OrganisationService implements IOrganisationService {
     return ApiService.getRequest(endpoint);
   }
   getOrganisations(communityId: string): Promise<DataListResponse<OrganisationResource>> {
-    const endpoint = `organisations?community_id=${communityId}`;
+    const endpoint = `organisations?community_id=${communityId}&max_results=500`;
     return ApiService.getRequest(endpoint);
   }
   getProcessings(
