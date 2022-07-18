@@ -12,6 +12,7 @@
 import faker from 'faker';
 import 'cypress-file-upload';
 import LoginPage from '../pageobjects/LoginPage';
+import { newAPIToken } from './apiTokenQueries';
 
 before(() => {
   cy.initTestContext();
@@ -295,187 +296,196 @@ Cypress.Commands.add('initTestContext', () => {
   let organisationId: number;
   const datamartName: string = faker.random.words(3);
   const organisationName: string = faker.random.words(3);
-  // api Identification
-  cy.request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, {
-    email: `${Cypress.env('devMail')}`,
-    password: `${Cypress.env('devPwd')}`,
-  }).then(refreshTokenResponse => {
-    cy.request('POST', `${Cypress.env('apiDomain')}/v1/authentication/access_tokens`, {
-      refresh_token: `${refreshTokenResponse.body.data.refresh_token}`,
-    }).then(accessTokenResponse => {
-      accessToken = accessTokenResponse.body.data.access_token;
-      // organisation creation
+
+  //get api token
+  cy.readFile('cypress/fixtures/apiToken.json').then(async data => {
+    if (data.hasOwnProperty('apiToken')) {
+      if (data.virtualPlatformName == Cypress.env('virtualPlatformName')) {
+        accessToken = data.apiToken;
+      } else {
+        cy.then(async () => {
+          accessToken = await newAPIToken();
+        });
+      }
+    } else {
+      cy.then(async () => {
+        accessToken = await newAPIToken();
+      });
+    }
+  });
+
+  // organisation creation
+  cy.then(() => {
+    cy.request({
+      url: `${Cypress.env('apiDomain')}/v1/organisations`,
+      method: 'POST',
+      headers: { Authorization: accessToken! },
+      body: {
+        name: `${organisationName}`,
+        // Using faker here isn't such a good idea because of the constraints on the technical name
+        technical_name: `${
+          Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
+        }`,
+        market_id: '1',
+        type: 'TEST_SANDBOX',
+      },
+    }).then(orgResponse => {
+      organisationId = orgResponse.body.data.id;
+      // datamart creation
       cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/organisations`,
+        url: `${Cypress.env('apiDomain')}/v1/datamarts`,
         method: 'POST',
         headers: { Authorization: accessToken },
         body: {
-          name: `${organisationName}`,
-          // Using faker here isn't such a good idea because of the constraints on the technical name
-          technical_name: `${
-            Math.random().toString(36).substring(2, 10) +
-            Math.random().toString(36).substring(2, 10)
-          }`,
-          market_id: '1',
-          type: 'TEST_SANDBOX',
+          name: `${datamartName}`,
+          region: 'EUROPE',
+          user_point_system_version: 'v201901',
+          organisation_id: `${organisationId}`,
+          type: 'DATAMART',
+          datafarm: 'DF_EU_DEV',
         },
-      }).then(orgResponse => {
-        organisationId = orgResponse.body.data.id;
-        // datamart creation
+      }).then(datamartResponse => {
+        datamartId = datamartResponse.body.data.id;
+        datamartToken = datamartResponse.body.data.token;
+        // schema publication
         cy.request({
-          url: `${Cypress.env('apiDomain')}/v1/datamarts`,
-          method: 'POST',
+          url: `${Cypress.env('apiDomain')}/v1/datamarts/${datamartId}/graphdb_runtime_schemas`,
+          method: 'GET',
           headers: { Authorization: accessToken },
-          body: {
-            name: `${datamartName}`,
-            region: 'EUROPE',
-            user_point_system_version: 'v201901',
-            organisation_id: `${organisationId}`,
-            type: 'DATAMART',
-            datafarm: 'DF_EU_DEV',
-          },
-        }).then(datamartResponse => {
-          datamartId = datamartResponse.body.data.id;
-          datamartToken = datamartResponse.body.data.token;
-          // schema publication
+        }).then(schemaResponse => {
+          schemaId = schemaResponse.body.data[0].id;
           cy.request({
-            url: `${Cypress.env('apiDomain')}/v1/datamarts/${datamartId}/graphdb_runtime_schemas`,
+            url: `${Cypress.env(
+              'apiDomain',
+            )}/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/text`,
             method: 'GET',
             headers: { Authorization: accessToken },
-          }).then(schemaResponse => {
-            schemaId = schemaResponse.body.data[0].id;
+          }).then(() => {
             cy.request({
               url: `${Cypress.env(
                 'apiDomain',
               )}/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/text`,
-              method: 'GET',
-              headers: { Authorization: accessToken },
+              method: 'PUT',
+              headers: {
+                Authorization: accessToken,
+                'Content-type': 'text/plain',
+              },
+              body:
+                '######\n' +
+                'type UserPoint  @TreeIndexRoot(index:"USER_INDEX") {\n' +
+                'profiles:[UserProfile!]!\n' +
+                'segments:[UserSegment!]!\n' +
+                'id:ID!\n' +
+                'agents:[UserAgent!]!\n' +
+                'accounts:[UserAccount!]!\n' +
+                'emails:[UserEmail!]!\n' +
+                'activities:[UserActivity!]!\n' +
+                'activity_events:[ActivityEvent!]!\n' +
+                'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                'creation_date:Date! @Function(name:"ISODate", params:["creation_ts"]) @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '######\n' +
+                'type UserScenario  @Mirror(object_type:"UserScenario") {\n' +
+                'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
+                'scenario_id:String! @TreeIndex(index:"USER_INDEX")\n' +
+                'execution_id:String! @TreeIndex(index:"USER_INDEX")\n' +
+                'node_id:String! @TreeIndex(index:"USER_INDEX")\n' +
+                'callback_ts:Timestamp @TreeIndex(index:"USER_INDEX")\n' +
+                'start_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                'node_start_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                'active: Boolean @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '######\n' +
+                'type UserAgent  {\n' +
+                'creation_ts:Timestamp!\n' +
+                'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
+                'creation_date:Date! @Function(name:"ISODate", params:["creation_ts"]) @TreeIndex(index:"USER_INDEX")\n' +
+                'user_agent_info:UserAgentInfo @Function(name:"DeviceInfo", params:["id"]) @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '######\n' +
+                'type UserAgentInfo  {\n' +
+                'os_version:String\n' +
+                'brand:String @TreeIndex(index:"USER_INDEX")\n' +
+                'browser_family:BrowserFamily @TreeIndex(index:"USER_INDEX")\n' +
+                'browser_version:String @TreeIndex(index:"USER_INDEX")\n' +
+                'carrier:String @TreeIndex(index:"USER_INDEX")\n' +
+                'model:String @TreeIndex(index:"USER_INDEX")\n' +
+                'os_family:OperatingSystemFamily @TreeIndex(index:"USER_INDEX")\n' +
+                'agent_type:UserAgentType @TreeIndex(index:"USER_INDEX")\n' +
+                'form_factor:FormFactor @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '######\n' +
+                'type UserActivity  {\n' +
+                'id:ID!\n' +
+                'channel_id:String @Property(paths:["$site_id", "$app_id"]) @ReferenceTable(type:"CORE_OBJECT", model_type:"CHANNELS") @TreeIndex(index:"USER_INDEX")\n' +
+                'session_duration:Int @Property(path:"$session_duration")\n' +
+                'ts:Timestamp!\n' +
+                'events:[ActivityEvent!]!\n' +
+                '}\n' +
+                '#########################\n' +
+                'type UserAccount  {\n' +
+                'creation_ts:Timestamp!\n' +
+                'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
+                'compartment_id:String! @TreeIndex(index:"USER_INDEX")\n' +
+                'user_account_id:String! @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '######\n' +
+                'type UserEmail  {\n' +
+                'creation_ts:Timestamp!\n' +
+                'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
+                'email:String @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '######\n' +
+                'type UserSegment  {\n' +
+                'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
+                'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                'expiration_ts:Timestamp @TreeIndex(index:"USER_INDEX")\n' +
+                'last_modified_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '######\n' +
+                'type UserProfile  {\n' +
+                'id:ID!\n' +
+                'compartment_id:String! @TreeIndex(index:"USER_INDEX") @ReferenceTable(type:"CORE_OBJECT", model_type:"COMPARTMENTS")\n' +
+                'user_account_id:String @TreeIndex(index:"USER_INDEX")\n' +
+                'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                'last_modified_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                'country:String! @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '######\n' +
+                'type ActivityEvent  @Mirror(object_type:"UserEvent") {\n' +
+                'page:Page @Property(path:"$properties.page")\n' +
+                'url:String @Property(path:"$properties.$url") @TreeIndex(index:"USER_INDEX")\n' +
+                'referrer:String @Property(path:"$properties.$referrer") @TreeIndex(index:"USER_INDEX")\n' +
+                'date:Date! @Function(name:"ISODate", params:["ts"]) @TreeIndex(index:"USER_INDEX")\n' +
+                'nature:String @Property(path:"$event_name") @TreeIndex(index:"USER_INDEX")\n' +
+                'id:ID!\n' +
+                'ts:Timestamp!\n' +
+                'test:String @Property(paths:["$properties.universe", "$properties.site_id"]) @TreeIndex(index:"USER_INDEX")\n' +
+                'site_id:String @Property(path:"$properties.site_id") @TreeIndex(index:"USER_INDEX")\n' +
+                'app_id:String @Property(path:"$properties.app_id") @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n' +
+                '#############\n' +
+                'type Page  {\n' +
+                'page_name:String @TreeIndex(index:"USER_INDEX")\n' +
+                '}\n',
             }).then(() => {
               cy.request({
                 url: `${Cypress.env(
                   'apiDomain',
-                )}/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/text`,
-                method: 'PUT',
-                headers: {
-                  Authorization: accessToken,
-                  'Content-type': 'text/plain',
-                },
-                body:
-                  '######\n' +
-                  'type UserPoint  @TreeIndexRoot(index:"USER_INDEX") {\n' +
-                  'profiles:[UserProfile!]!\n' +
-                  'segments:[UserSegment!]!\n' +
-                  'id:ID!\n' +
-                  'agents:[UserAgent!]!\n' +
-                  'accounts:[UserAccount!]!\n' +
-                  'emails:[UserEmail!]!\n' +
-                  'activities:[UserActivity!]!\n' +
-                  'activity_events:[ActivityEvent!]!\n' +
-                  'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
-                  'creation_date:Date! @Function(name:"ISODate", params:["creation_ts"]) @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '######\n' +
-                  'type UserScenario  @Mirror(object_type:"UserScenario") {\n' +
-                  'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
-                  'scenario_id:String! @TreeIndex(index:"USER_INDEX")\n' +
-                  'execution_id:String! @TreeIndex(index:"USER_INDEX")\n' +
-                  'node_id:String! @TreeIndex(index:"USER_INDEX")\n' +
-                  'callback_ts:Timestamp @TreeIndex(index:"USER_INDEX")\n' +
-                  'start_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
-                  'node_start_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
-                  'active: Boolean @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '######\n' +
-                  'type UserAgent  {\n' +
-                  'creation_ts:Timestamp!\n' +
-                  'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
-                  'creation_date:Date! @Function(name:"ISODate", params:["creation_ts"]) @TreeIndex(index:"USER_INDEX")\n' +
-                  'user_agent_info:UserAgentInfo @Function(name:"DeviceInfo", params:["id"]) @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '######\n' +
-                  'type UserAgentInfo  {\n' +
-                  'os_version:String\n' +
-                  'brand:String @TreeIndex(index:"USER_INDEX")\n' +
-                  'browser_family:BrowserFamily @TreeIndex(index:"USER_INDEX")\n' +
-                  'browser_version:String @TreeIndex(index:"USER_INDEX")\n' +
-                  'carrier:String @TreeIndex(index:"USER_INDEX")\n' +
-                  'model:String @TreeIndex(index:"USER_INDEX")\n' +
-                  'os_family:OperatingSystemFamily @TreeIndex(index:"USER_INDEX")\n' +
-                  'agent_type:UserAgentType @TreeIndex(index:"USER_INDEX")\n' +
-                  'form_factor:FormFactor @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '######\n' +
-                  'type UserActivity  {\n' +
-                  'id:ID!\n' +
-                  'channel_id:String @Property(paths:["$site_id", "$app_id"]) @ReferenceTable(type:"CORE_OBJECT", model_type:"CHANNELS") @TreeIndex(index:"USER_INDEX")\n' +
-                  'session_duration:Int @Property(path:"$session_duration")\n' +
-                  'ts:Timestamp!\n' +
-                  'events:[ActivityEvent!]!\n' +
-                  '}\n' +
-                  '#########################\n' +
-                  'type UserAccount  {\n' +
-                  'creation_ts:Timestamp!\n' +
-                  'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
-                  'compartment_id:String! @TreeIndex(index:"USER_INDEX")\n' +
-                  'user_account_id:String! @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '######\n' +
-                  'type UserEmail  {\n' +
-                  'creation_ts:Timestamp!\n' +
-                  'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
-                  'email:String @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '######\n' +
-                  'type UserSegment  {\n' +
-                  'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
-                  'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
-                  'expiration_ts:Timestamp @TreeIndex(index:"USER_INDEX")\n' +
-                  'last_modified_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '######\n' +
-                  'type UserProfile  {\n' +
-                  'id:ID!\n' +
-                  'compartment_id:String! @TreeIndex(index:"USER_INDEX") @ReferenceTable(type:"CORE_OBJECT", model_type:"COMPARTMENTS")\n' +
-                  'user_account_id:String @TreeIndex(index:"USER_INDEX")\n' +
-                  'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
-                  'last_modified_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
-                  'country:String! @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '######\n' +
-                  'type ActivityEvent  @Mirror(object_type:"UserEvent") {\n' +
-                  'page:Page @Property(path:"$properties.page")\n' +
-                  'url:String @Property(path:"$properties.$url") @TreeIndex(index:"USER_INDEX")\n' +
-                  'referrer:String @Property(path:"$properties.$referrer") @TreeIndex(index:"USER_INDEX")\n' +
-                  'date:Date! @Function(name:"ISODate", params:["ts"]) @TreeIndex(index:"USER_INDEX")\n' +
-                  'nature:String @Property(path:"$event_name") @TreeIndex(index:"USER_INDEX")\n' +
-                  'id:ID!\n' +
-                  'ts:Timestamp!\n' +
-                  'test:String @Property(paths:["$properties.universe", "$properties.site_id"]) @TreeIndex(index:"USER_INDEX")\n' +
-                  'site_id:String @Property(path:"$properties.site_id") @TreeIndex(index:"USER_INDEX")\n' +
-                  'app_id:String @Property(path:"$properties.app_id") @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n' +
-                  '#############\n' +
-                  'type Page  {\n' +
-                  'page_name:String @TreeIndex(index:"USER_INDEX")\n' +
-                  '}\n',
+                )}/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/validation?organisationId=${organisationId}&allow_administrator=true`,
+                method: 'POST',
+                headers: { Authorization: accessToken },
               }).then(() => {
-                cy.request({
-                  url: `${Cypress.env(
-                    'apiDomain',
-                  )}/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/validation?organisationId=${organisationId}&allow_administrator=true`,
-                  method: 'POST',
-                  headers: { Authorization: accessToken },
-                }).then(() => {
-                  if (Cypress.env('apiDomain') === 'https://api.mediarithmics.local') {
-                    cy.exec(
-                      `curl -k -H "Authorization: ${accessToken}" -H Content-Type: application/json -X POST ${Cypress.env(
-                        'apiDomain',
-                      )}:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"`,
-                    )
-                      .its('stdout')
-                      .should('contain', '"status":"ok"')
-                      .then(() => {
-                        cy.exec(`cat <<EOT > cypress/fixtures/init_infos.json
+                if (Cypress.env('apiDomain') === 'https://api.mediarithmics.local') {
+                  cy.exec(
+                    `curl -k -H "Authorization: ${accessToken}" -H Content-Type: application/json -X POST ${Cypress.env(
+                      'apiDomain',
+                    )}:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"`,
+                  )
+                    .its('stdout')
+                    .should('contain', '"status":"ok"')
+                    .then(() => {
+                      cy.exec(`cat <<EOT > cypress/fixtures/init_infos.json
                                                                   {
                                                                       "accessToken":"${accessToken}",
                                                                       "datamartId":${datamartId},
@@ -485,17 +495,17 @@ Cypress.Commands.add('initTestContext', () => {
                                                                       "organisationId":${organisationId},
                                                                       "organisationName":"${organisationName}"
                                                                   }`);
-                      });
-                  } else if (Cypress.env('userName') !== '') {
-                    cy.exec(
-                      `ssh -o StrictHostKeyChecking=no -l ${Cypress.env('userName')} ${Cypress.env(
-                        'virtualPlatformName',
-                      )}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`,
-                    )
-                      .its('stdout')
-                      .should('contain', '"status":"ok"')
-                      .then(() => {
-                        cy.exec(`cat <<EOT > cypress/fixtures/init_infos.json
+                    });
+                } else if (Cypress.env('userName') !== '') {
+                  cy.exec(
+                    `ssh -o StrictHostKeyChecking=no -l ${Cypress.env('userName')} ${Cypress.env(
+                      'virtualPlatformName',
+                    )}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`,
+                  )
+                    .its('stdout')
+                    .should('contain', '"status":"ok"')
+                    .then(() => {
+                      cy.exec(`cat <<EOT > cypress/fixtures/init_infos.json
                                                                   {
                                                                       "accessToken":"${accessToken}",
                                                                       "datamartId":${datamartId},
@@ -505,17 +515,17 @@ Cypress.Commands.add('initTestContext', () => {
                                                                       "organisationId":${organisationId},
                                                                       "organisationName":"${organisationName}"
                                                                   }`);
-                      });
-                  } else {
-                    cy.exec(
-                      `ssh -o StrictHostKeyChecking=no ${Cypress.env(
-                        'virtualPlatformName',
-                      )}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`,
-                    )
-                      .its('stdout')
-                      .should('contain', '"status":"ok"')
-                      .then(() => {
-                        cy.exec(`cat <<EOT > cypress/fixtures/init_infos.json
+                    });
+                } else {
+                  cy.exec(
+                    `ssh -o StrictHostKeyChecking=no ${Cypress.env(
+                      'virtualPlatformName',
+                    )}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`,
+                  )
+                    .its('stdout')
+                    .should('contain', '"status":"ok"')
+                    .then(() => {
+                      cy.exec(`cat <<EOT > cypress/fixtures/init_infos.json
                                                                   {
                                                                       "accessToken":"${accessToken}",
                                                                       "datamartId":${datamartId},
@@ -525,9 +535,8 @@ Cypress.Commands.add('initTestContext', () => {
                                                                       "organisationId":${organisationId},
                                                                       "organisationName":"${organisationName}"
                                                                   }`);
-                      });
-                  }
-                });
+                    });
+                }
               });
             });
           });
@@ -536,6 +545,7 @@ Cypress.Commands.add('initTestContext', () => {
     });
   });
 });
+
 Cypress.Commands.add(
   'setDataSetForAutomation',
   (accessToken: string, datamartId: number, organisationId: number) => {
