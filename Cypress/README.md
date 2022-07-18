@@ -63,3 +63,16 @@ All plugins run before tests are located here. Plugins allow to "_tap into, modi
 - `index.d.ts` is used to declare the definitions of the custom commands. It's not compulsory, but if you do it, VS Code will show IntelliSense where the command is used, as it does for Typescript. (as long as there is `/// <reference path="../support/index.d.ts" />` at the top of the file, see [doc](https://docs.cypress.io/guides/tooling/intelligent-code-completion.html#Triple-slash-directives) for more info).
 
 Beside the `cypress` folder, there are a few other important folders, not tracked by Git, which contain the output of tests : `cypress/screenshots` and `cypress/videos` for screenshots and videos (!!), and `mochawesome-report` for generated reports.
+
+## Coding Guidelines
+
+In order to have an uniform and uderstandable by all testers, please follow the instructions in [the Coding Guidelines](https://github.com/MEDIARITHMICS/mediarithmics-navigator/blob/staging/Cypress/cypress/codingGuidelinesV2-1.pdf) and [Best Practices Cypress](https://docs.cypress.io/guides/references/best-practices#Organizing-Tests-Logging-In-Controlling-State)<br/>
+
+## Page Object Model in Cypress
+
+Cypress provides the flexibility to implement the automation framework using the Page Object Pattern.
+
+For the implementation part of the Page Object Model, as a first step, we will need to create a PageClass, it's a class which contains web element's locators and methods to interact with web elements.
+To achieve this, create a new file (class) under `Cypress/Cypress/pageobjects` directory that will be used in the test files.
+
+For all these reasons and others (specified in the coding guidelines) we decided to implement the automation framework using the Page Object Pattern, you can find the advancement [here](https://github.com/MEDIARITHMICS/mediarithmics-navigator/blob/staging/Cypress/cypress/AdvancementPOM.pdf)
