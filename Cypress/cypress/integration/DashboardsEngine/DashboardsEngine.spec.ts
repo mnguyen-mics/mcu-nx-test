@@ -72,8 +72,9 @@ describe('dashboards engine Tests', () => {
           ).then(() => {
             cy.switchOrg(data.organisationName);
             queryToolPage.goToPage();
-            queryToolPage.typeQuerry(
+            queryToolPage.typeQuery(
               'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+              0,
             );
             queryToolPage.clickBtnRun();
             queryToolPage.clickBarIcon();
@@ -90,8 +91,9 @@ describe('dashboards engine Tests', () => {
             queryToolPage.clickPieIcon();
             cy.wait(1000);
             queryToolPage.pieContent;
-            queryToolPage.typeQuerry(
+            queryToolPage.typeQuery(
               'SELECT @count{nature} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+              0,
             );
             queryToolPage.clickBtnRun();
             queryToolPage.resultMetrics.should('contain', '6');
@@ -833,8 +835,9 @@ describe('dashboards engine Tests', () => {
           ).then(() => {
             cy.switchOrg(data.organisationName);
             queryToolPage.goToPage();
-            queryToolPage.typeQuerry(
+            queryToolPage.typeQuery(
               'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
+              0,
             );
             queryToolPage.clickBtnRun();
             queryToolPage.clickBarIcon();
@@ -852,8 +855,9 @@ describe('dashboards engine Tests', () => {
             cy.wait(1000);
             queryToolPage.pieContent;
             homePage.clickBtnAddStep();
-            queryToolPage.typeQuerry(
+            queryToolPage.typeQuery(
               'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
+              1,
             );
             queryToolPage.clickBtnRun();
             queryToolPage.clickBarIcon();
@@ -893,8 +897,9 @@ describe('dashboards engine Tests', () => {
           ).then(() => {
             cy.switchOrg(data.organisationName);
             queryToolPage.goToPage();
-            queryToolPage.typeQuerry(
+            queryToolPage.typeQuery(
               'SELECT @count{} FROM ActivityEvent where nature = "test_to_list_1" or nature = "test_to_list_2"',
+              0,
             );
             homePage.clickBtnNewValue();
             cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
