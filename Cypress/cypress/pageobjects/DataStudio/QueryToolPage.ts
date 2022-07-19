@@ -71,12 +71,13 @@ class QueryToolPage extends Page {
   }
 
   @logFunction()
-  typeQuerry(querry: string) {
+  typeQuery(query: string, pos: number) {
     cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
+      .eq(pos)
       .type('{selectall}{backspace}{backspace}', {
         force: true,
       })
-      .type(querry, { force: true, parseSpecialCharSequences: false });
+      .type(query, { force: true, parseSpecialCharSequences: false });
   }
 }
 
