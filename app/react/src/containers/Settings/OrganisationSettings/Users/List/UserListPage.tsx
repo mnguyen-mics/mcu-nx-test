@@ -26,16 +26,18 @@ const { Content } = Layout;
 
 export type UserDisplay = 'users' | 'user_roles';
 interface State {
-  isLoadingOrganisation: boolean;
+  isLoadingOrganisations: boolean;
   organisation?: OrganisationResource;
   userDisplay: UserDisplay;
   isUserDrawerVisible: boolean;
   isUserRoleDrawerVisible: boolean;
+  isUserCreation: boolean;
   user?: UserResource;
   filterValue: string;
   nextFilterValue: string;
   lastFilterChangeTime?: number;
   displayInheritedRole: boolean;
+  organisations: OrganisationResource[];
 }
 
 export interface RouterProps {
@@ -60,13 +62,15 @@ class UserListPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoadingOrganisation: true,
+      isLoadingOrganisations: true,
       userDisplay: 'users',
       isUserDrawerVisible: false,
       isUserRoleDrawerVisible: false,
+      isUserCreation: false,
       filterValue: '',
       nextFilterValue: '',
       displayInheritedRole: true,
+      organisations: [],
     };
   }
 
@@ -76,7 +80,7 @@ class UserListPage extends React.Component<Props, State> {
         params: { organisationId },
       },
     } = this.props;
-    this.fetchOrganisation(organisationId);
+    this.fetchOrganisations(organisationId);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -91,30 +95,44 @@ class UserListPage extends React.Component<Props, State> {
       },
     } = prevProps;
     if (organisationId !== prevOrganisationId) {
-      this.fetchOrganisation(organisationId);
+      this.fetchOrganisations(organisationId);
     }
   }
 
-  fetchOrganisation = (organisationId: string, user?: UserResource) => {
+  fetchOrganisations = (organisationId: string, user?: UserResource) => {
     const { notifyError } = this.props;
     this.setState({
-      isLoadingOrganisation: true,
+      isLoadingOrganisations: true,
     });
     return this._organisationService
       .getOrganisation(organisationId)
       .then(res => {
         this.setState({
-          isLoadingOrganisation: false,
           organisation: res.data,
           filterValue: '',
           nextFilterValue: '',
           user: user ? user : this.state.user,
         });
+
+        this._organisationService
+          .getOrganisations(res.data.community_id)
+          .then(res => {
+            this.setState({
+              isLoadingOrganisations: false,
+              organisations: res.data,
+            });
+          })
+          .catch(err => {
+            notifyError(err);
+            this.setState({
+              isLoadingOrganisations: false,
+            });
+          });
       })
       .catch(err => {
         notifyError(err);
         this.setState({
-          isLoadingOrganisation: false,
+          isLoadingOrganisations: false,
         });
       });
   };
@@ -155,7 +173,7 @@ class UserListPage extends React.Component<Props, State> {
     });
   };
 
-  editUserRole = (user: UserResource, organisationId?: string) => {
+  editUserRole = (user: UserResource, organisationId?: string, isUserRoleCreation?: boolean) => {
     const userFormData = user;
     if (organisationId) {
       userFormData.organisation_id = organisationId;
@@ -163,6 +181,7 @@ class UserListPage extends React.Component<Props, State> {
     this.setState({
       user: userFormData,
       isUserRoleDrawerVisible: true,
+      isUserCreation: !!isUserRoleCreation,
     });
   };
 
@@ -267,6 +286,7 @@ class UserListPage extends React.Component<Props, State> {
           .then(() => {
             this.setState({
               isUserRoleDrawerVisible: false,
+              isUserCreation: false,
             });
             this.refreshAndScrollToElement();
           })
@@ -301,7 +321,7 @@ class UserListPage extends React.Component<Props, State> {
           },
           () => {
             this.refreshAndScrollToElement(res.data);
-            if (!previousUser) this.editUserRole(res.data, res.data.organisation_id);
+            if (!previousUser) this.editUserRole(res.data, res.data.organisation_id, true);
           },
         );
       })
@@ -317,7 +337,7 @@ class UserListPage extends React.Component<Props, State> {
       },
     } = this.props;
     const { userDisplay } = this.state;
-    this.fetchOrganisation(organisationId, user).then(() => {
+    this.fetchOrganisations(organisationId, user).then(() => {
       // wait for DOM to be populated
       const orgId = userDisplay === 'users' ? user?.organisation_id : user?.role?.organisation_id;
       const elementId = `mcs-foldable-card-${
@@ -411,14 +431,16 @@ class UserListPage extends React.Component<Props, State> {
 
     const {
       organisation,
-      isLoadingOrganisation,
+      isLoadingOrganisations,
       userDisplay,
       isUserDrawerVisible,
       isUserRoleDrawerVisible,
+      isUserCreation,
       user,
       filterValue,
       nextFilterValue,
       displayInheritedRole,
+      organisations,
     } = this.state;
 
     const suffixIcon = (
@@ -430,7 +452,7 @@ class UserListPage extends React.Component<Props, State> {
     return (
       <div className='ant-layout'>
         <Content className='mcs-content-container mcs-userSettings_container'>
-          {isLoadingOrganisation ? (
+          {isLoadingOrganisations ? (
             <Loading isFullScreen={true} />
           ) : (
             <React.Fragment>
@@ -487,6 +509,7 @@ class UserListPage extends React.Component<Props, State> {
                   deleteUserRole={this.deleteUserRole}
                   filterValue={filterValue}
                   displayInheritedRole={displayInheritedRole}
+                  organisations={organisations}
                 />
               )}
               <Drawer
@@ -500,7 +523,7 @@ class UserListPage extends React.Component<Props, State> {
                 visible={isUserDrawerVisible}
                 destroyOnClose={true}
               >
-                <UserForm user={user} save={this.saveUser} />
+                <UserForm user={user} save={this.saveUser} organisations={organisations} />
               </Drawer>
               <Drawer
                 className='mcs-userEdit_drawer'
@@ -513,7 +536,12 @@ class UserListPage extends React.Component<Props, State> {
                 visible={isUserRoleDrawerVisible}
                 destroyOnClose={true}
               >
-                <UserRoleForm user={user} organisation={organisation} save={this.saveUserRole} />
+                <UserRoleForm
+                  user={user}
+                  organisations={organisations}
+                  save={this.saveUserRole}
+                  isUserCreation={isUserCreation}
+                />
               </Drawer>
             </React.Fragment>
           )}

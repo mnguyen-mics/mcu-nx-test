@@ -9,6 +9,10 @@ import { UserCreationWithRoleResource as UserResource } from '../../../../../mod
 import { connect } from 'react-redux';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { UserProfileResource } from '../../../../../models/directory/UserProfileResource';
+import { OrganisationResource } from '../../../../../models/organisation/organisation';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 interface State {
   user: Partial<UserResource>;
@@ -29,11 +33,13 @@ interface MapStateToProps {
 
 interface UserFormProps {
   user?: UserResource;
+  organisations: OrganisationResource[];
   save: (user: Partial<UserResource>) => void;
 }
 
 type Props = UserFormProps &
   MapStateToProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; userId: string }> &
   InjectedIntlProps;
 
@@ -52,18 +58,6 @@ class UserForm extends React.Component<Props, State> {
       submittedWithoutOrg: false,
     };
   }
-  componentDidMount() {
-    const { user } = this.props;
-    if (user) {
-      this.setState({
-        user: user,
-        orgInput: {
-          id: user.organisation_id,
-          value: this.getOrganisations().find(o => o.key === user?.organisation_id)?.label,
-        },
-      });
-    }
-  }
 
   onChange = (value: string) => (e: any) => {
     const { user } = this.state;
@@ -74,17 +68,6 @@ class UserForm extends React.Component<Props, State> {
         ...user,
         ...newValue,
       },
-    });
-  };
-
-  getOrganisations = () => {
-    const { connectedUser } = this.props;
-    return connectedUser?.workspaces.map(ws => {
-      return {
-        label: ws.organisation_name,
-        value: ws.organisation_name,
-        key: ws.organisation_id,
-      };
     });
   };
 
@@ -143,7 +126,7 @@ class UserForm extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl } = this.props;
+    const { intl, organisations } = this.props;
     const { user, orgInput, submittedWithoutOrg } = this.state;
     const filterOption = (inputValue: string, option: { label: string; value: string }) => {
       return option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1;
@@ -198,8 +181,10 @@ class UserForm extends React.Component<Props, State> {
               ? 'mcs-userForm_select mcs-userForm_selectWrong'
               : 'mcs-userForm_select'
           }
-          options={this.getOrganisations()}
-          searchValue={this.getOrganisations().find(o => o.key === user?.organisation_id)?.label}
+          options={organisations?.map(org => {
+            return { key: org.id, label: org.name, value: org.name };
+          })}
+          searchValue={organisations?.find(o => o.id === user?.organisation_id)?.name}
           onSelect={this.onOrgSelect}
           onChange={this.onOrgChange}
           filterOption={filterOption}
@@ -218,6 +203,7 @@ class UserForm extends React.Component<Props, State> {
 export default compose<Props, UserFormProps>(
   withRouter,
   injectIntl,
+  injectNotifications,
   connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,
   })),

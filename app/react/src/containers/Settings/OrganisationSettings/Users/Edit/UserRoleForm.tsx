@@ -18,6 +18,7 @@ import { OrganisationResource } from '../../../../../models/organisation/organis
 import { isNull } from 'lodash';
 import { IUsersService } from '../../../../../services/UsersService';
 import { UserWithRole } from '../../UserRoles/domain';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   user?: Partial<UserCreationWithRoleResource>;
@@ -39,7 +40,7 @@ interface State {
   roleInput: string;
   userOrganisation?: OrganisationResource;
   submittedWithoutOrg: boolean;
-  organisations: OrganisationResource[];
+  isLoadingUser: boolean;
 }
 
 interface MapStateToProps {
@@ -47,8 +48,9 @@ interface MapStateToProps {
 }
 
 interface UserRoleFormProps {
-  organisation?: OrganisationResource;
   user?: UserCreationWithRoleResource;
+  isUserCreation?: boolean;
+  organisations: OrganisationResource[];
   save: (
     userId: string,
     organisationId: string,
@@ -78,29 +80,11 @@ class UserRoleForm extends React.Component<Props, State> {
       prevOrgInput: {},
       roleInput: 'READER',
       submittedWithoutOrg: false,
-      organisations: [],
+      isLoadingUser: true,
     };
   }
   componentDidMount() {
-    const {
-      user,
-      organisation,
-      notifyError,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-
-    if (organisation) this.fetchOrganisations(organisation.community_id);
-    else
-      this._organisationService
-        .getOrganisation(organisationId)
-        .then(org => {
-          this.fetchOrganisations(org.data.community_id);
-        })
-        .catch(err => {
-          notifyError(err);
-        });
+    const { user, notifyError, isUserCreation } = this.props;
 
     if (user) {
       this._organisationService
@@ -110,29 +94,17 @@ class UserRoleForm extends React.Component<Props, State> {
             user: user,
             roleInput: user.role?.role || 'READER',
             userOrganisation: res.data,
+            isLoadingUser: false,
           });
         })
         .catch(err => {
           notifyError(err);
+          this.setState({ isLoadingUser: false });
         });
-    } else {
+    } else if (!isUserCreation) {
       this.fetchUsers();
     }
   }
-
-  fetchOrganisations = (communityId: string) => {
-    const { notifyError } = this.props;
-    this._organisationService
-      .getOrganisations(communityId)
-      .then(orgs => {
-        this.setState({
-          organisations: orgs.data,
-        });
-      })
-      .catch(err => {
-        notifyError(err);
-      });
-  };
 
   fetchUsers = () => {
     const { connectedUser, notifyError } = this.props;
@@ -150,10 +122,12 @@ class UserRoleForm extends React.Component<Props, State> {
       .then(res => {
         this.setState({
           users: this.deduplicateUsersArray(res.flatMap(x => x)),
+          isLoadingUser: false,
         });
       })
       .catch(err => {
         notifyError(err);
+        this.setState({ isLoadingUser: false });
       });
   };
 
@@ -172,18 +146,6 @@ class UserRoleForm extends React.Component<Props, State> {
         id: optionData.key,
         isCommunity: optionData.isCommunity,
       },
-    });
-  };
-
-  getOrganisations = () => {
-    const { organisations } = this.state;
-    return organisations.map(org => {
-      return {
-        label: org.name,
-        value: org.name,
-        key: org.id,
-        isCommunity: !org.administrator_id,
-      };
     });
   };
 
@@ -278,8 +240,8 @@ class UserRoleForm extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl } = this.props;
-    const { user, userInput, orgInput, roleInput, submittedWithoutOrg } = this.state;
+    const { intl, isUserCreation, organisations } = this.props;
+    const { user, userInput, orgInput, roleInput, submittedWithoutOrg, isLoadingUser } = this.state;
 
     const filterOption =
       (hasValue: boolean) => (inputValue: string, option: { label: string; value: string }) => {
@@ -290,7 +252,7 @@ class UserRoleForm extends React.Component<Props, State> {
     const roleOrgId = user && user.role ? user.role.organisation_id : '';
     const disabledInputs = !!user?.id;
 
-    return (
+    return !isLoadingUser ? (
       <Form layout='vertical'>
         <Form.Item label={intl.formatMessage(messages.user)}>
           <AutoComplete
@@ -319,12 +281,14 @@ class UserRoleForm extends React.Component<Props, State> {
                 ? 'mcs-userForm_select mcs-userForm_selectWrong'
                 : 'mcs-userForm_select'
             }
-            options={this.getOrganisations()}
-            searchValue={this.getOrganisations().find(o => o.key === user?.organisation_id)?.label}
+            options={organisations.map(org => {
+              return { key: org.id, label: org.name, value: org.name };
+            })}
+            searchValue={organisations.find(o => o.id === user?.organisation_id)?.name}
             onSelect={this.onOrgSelect}
             onChange={this.onOrgChange}
             filterOption={filterOption(false)}
-            disabled={disabledInputs}
+            disabled={disabledInputs && !isUserCreation}
             placeholder={intl.formatMessage(messages.selectOrganisation)}
           >
             <Input.Search value={orgInput.value || roleOrgId} />
@@ -356,6 +320,8 @@ class UserRoleForm extends React.Component<Props, State> {
           {intl.formatMessage(messages.save)}
         </Button>
       </Form>
+    ) : (
+      <Loading isFullScreen={true} />
     );
   }
 }
