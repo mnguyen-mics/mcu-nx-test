@@ -164,7 +164,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
           const contextualKeys = this.parseLiftCsv(resAsText).filter(
             ck => ck.contextual_key && ck.lift && ck.occurrences_in_datamart_count,
           );
-          const sortedContextualKeys = contextualKeys.sort((cka, ckb) => ckb.lift - cka.lift);
+          const sortedContextualKeys = contextualKeys.sort(this.sortCks);
           const chartData = this.buildChartData(sortedContextualKeys);
 
           const totalPageViewVolume = sortedContextualKeys.reduce((acc, ck) => {
@@ -207,11 +207,19 @@ class ContextualTargetingTab extends React.Component<Props, State> {
   };
 
   parseLiftCsv = (csvText: string): ContextualKeyResource[] => {
-    const test = Papa.parse(csvText, {
+    const parsed = Papa.parse(csvText, {
       header: true,
       dynamicTyping: true,
     });
-    return test.data as ContextualKeyResource[];
+    return parsed.data as ContextualKeyResource[];
+  };
+
+  sortCks = (ck1: ContextualKeyResource, ck2: ContextualKeyResource): number => {
+    if (ck1.lift != ck2.lift) {
+      return ck2.lift - ck1.lift;
+    } else {
+      return ck2.occurrences_in_datamart_count - ck1.occurrences_in_datamart_count;
+    }
   };
 
   initSignatureData = (contextualTargeting: ContextualTargetingResource) => {
