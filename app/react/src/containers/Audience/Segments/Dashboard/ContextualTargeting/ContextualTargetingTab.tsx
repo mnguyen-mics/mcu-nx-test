@@ -80,8 +80,11 @@ class ContextualTargetingTab extends React.Component<Props, State> {
   private _contextualTargetingService: IContextualTargetingService;
 
   private refreshContextualTargetingInterval = setInterval(() => {
-    if (this.state.contextualTargeting?.status === 'INIT') {
-      this.getContextualTargeting();
+    if (this.state.contextualTargeting?.status) {
+      const status = this.state.contextualTargeting.status;
+      if (status === 'INIT' || status === 'PUBLISHED' || status === 'LIVE_PUBLISHED') {
+        this.getContextualTargeting();
+      }
     }
   }, 10000);
 
@@ -99,17 +102,15 @@ class ContextualTargetingTab extends React.Component<Props, State> {
 
   componentDidMount() {
     this.getContextualTargeting().then(ct => {
-      if (ct && ct.status !== 'INIT') this.initLiftData(ct);
+      if (ct && ct.status !== 'INIT')
+        this.initLiftData(ct).then(_ => {
+          if (ct.status !== 'DRAFT') this.initSignatureData(ct);
+        });
     });
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const {
-      contextualTargeting,
-      targetedContextualKeyResources,
-      signatureScoredCategoryResources,
-      isLoadingSignature,
-    } = this.state;
+    const { contextualTargeting } = this.state;
     if (
       contextualTargeting !== prevState.contextualTargeting &&
       prevState.contextualTargeting?.status === 'INIT' &&
@@ -117,11 +118,10 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     )
       this.initLiftData(contextualTargeting);
     if (
-      (contextualTargeting?.status === 'LIVE' ||
-        contextualTargeting?.status === 'LIVE_PUBLISHED') &&
-      targetedContextualKeyResources &&
-      !signatureScoredCategoryResources &&
-      !isLoadingSignature
+      contextualTargeting !== prevState.contextualTargeting &&
+      (prevState.contextualTargeting?.status === 'PUBLISHED' ||
+        prevState.contextualTargeting?.status === 'LIVE_PUBLISHED') &&
+      contextualTargeting?.status === 'LIVE'
     ) {
       this.initSignatureData(contextualTargeting);
     }
@@ -611,10 +611,10 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     } = this.state;
     const { intl } = this.props;
 
-    const liveDuration =
+    const liveDurationInDays =
       contextualTargeting &&
       contextualTargeting.live_activation_ts &&
-      new Date(Date.now() - contextualTargeting.live_activation_ts).getDay();
+      Math.floor((Date.now() - contextualTargeting.live_activation_ts) / (1000 * 60 * 60 * 24));
 
     const liveCard =
       contextualTargeting?.status === 'LIVE' &&
@@ -623,7 +623,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
         <Card className='mcs-contextualTargetingDashboard_liveCard'>
           <div className='mcs-contextualTargetingDashboard_liveCard_title'>LIVE</div>
           <div className='mcs-contextualTargetingDashboard_liveCard_duration'>
-            {liveDuration + ' days ago'}
+            {liveDurationInDays + ' days ago'}
           </div>
         </Card>
       ) : (
