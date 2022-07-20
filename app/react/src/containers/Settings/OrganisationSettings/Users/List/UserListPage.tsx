@@ -354,7 +354,7 @@ class UserListPage extends React.Component<Props, State> {
     const {
       workspace: { role },
     } = this.props;
-    if (role === 'READER' || role === 'EDITOR' || role === 'ORGANISATION_ADMIN') return false;
+    if (role === 'READER' || role === 'EDITOR') return false;
     else return true;
   };
 
