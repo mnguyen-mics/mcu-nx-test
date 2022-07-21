@@ -4,6 +4,11 @@ import { Select } from 'antd';
 import moment from 'moment';
 import { AbstractSource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
 import { WrappedAbstractDataset } from '../AggregationRenderer';
+import {
+  BarChartOptions,
+  PieChartOptions,
+  RadarChartOptions,
+} from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 
 export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie' | 'table';
 
@@ -43,7 +48,7 @@ export function getLegend(_chartType: chartType, value: string) {
         },
       };
   }
-  return {};
+  return undefined;
 }
 
 export function getChartOption(_chartType: chartType, key: string, value: string) {
@@ -71,7 +76,7 @@ export function getChartOption(_chartType: chartType, key: string, value: string
         },
       };
   }
-  return {};
+  return undefined;
 }
 
 export function formatDate(str: string, format?: string, toUtc?: boolean) {
@@ -112,7 +117,7 @@ export function getBaseChartProps(_chartType: chartType) {
         legend: {
           enabled: true,
         },
-      };
+      } as BarChartOptions;
     case 'radar':
       return {
         height: BASE_CHART_HEIGHT,
@@ -126,7 +131,7 @@ export function getBaseChartProps(_chartType: chartType) {
         dataLabels: {
           enabled: false,
         },
-      };
+      } as RadarChartOptions;
     case 'pie':
       return {
         height: BASE_CHART_HEIGHT,
@@ -134,9 +139,9 @@ export function getBaseChartProps(_chartType: chartType) {
         dataLabels: {
           enabled: true,
         },
-      };
+      } as PieChartOptions;
   }
-  return {};
+  return undefined;
 }
 
 export function getQuickOptionsForChartType(_chartType: chartType, hasDateHistogram: boolean) {
