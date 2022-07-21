@@ -235,7 +235,7 @@ class AggregationRenderer extends React.Component<Props, State> {
 
   private getChartProps = (_chartType: chartType) => {
     const chartPropsMap = this.getChartOptionsMap(_chartType);
-    const baseProps: ChartOptions = getBaseChartProps(_chartType);
+    const baseProps: ChartOptions | undefined = getBaseChartProps(_chartType);
     const newChartProps = chartPropsMap.reduce((acc, property) => {
       return { ...acc, ...property };
     }, baseProps);
