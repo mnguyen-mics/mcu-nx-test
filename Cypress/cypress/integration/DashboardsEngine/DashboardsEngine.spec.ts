@@ -63,36 +63,37 @@ describe('dashboards engine Tests', () => {
           channel.body.data.id,
           'test_query_tool_1',
           'test_query_tool_2',
+          undefined,
+          'test_query_tool_3',
         ).then(() => {
           cy.wait(30000);
           cy.executeQuery(
             data.accessToken,
             data.datamartId,
-            'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+            'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2" or nature = "test_query_tool_3"',
           ).then(() => {
             cy.switchOrg(data.organisationName);
             queryToolPage.goToPage();
             queryToolPage.typeQuery(
-              'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+              'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2" or nature = "test_query_tool_3"',
               0,
             );
             queryToolPage.clickBtnRun();
             queryToolPage.clickBarIcon();
             cy.wait(1000);
             queryToolPage.chartContainer.eq(1).trigger('mouseover');
-            queryToolPage.barContent.should('contain', 'count: 3');
+            queryToolPage.barContent.should('contain', 'count: 2');
             queryToolPage.clickPercentageOption();
-            queryToolPage.barContent.should('contain', 'count: 50% (3)');
+            queryToolPage.barContent.should('contain', 'count: 33.33% (2)');
             queryToolPage.clickIndexOption();
-            queryToolPage.barContent.should('contain', 'count: 3');
+            queryToolPage.barContent.should('contain', 'count: 2');
             queryToolPage.clickRadarIcon();
-            cy.wait(1000);
             queryToolPage.radarContent;
             queryToolPage.clickPieIcon();
             cy.wait(1000);
             queryToolPage.pieContent;
             queryToolPage.typeQuery(
-              'SELECT @count{nature} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2"',
+              'SELECT @count{nature} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2" or nature = "test_query_tool_3"',
               0,
             );
             queryToolPage.clickBtnRun();
@@ -314,7 +315,9 @@ describe('dashboards engine Tests', () => {
                         headers: { Authorization: data.accessToken },
                         body: standardSegmentDashboardContent(queryId),
                       }).then(() => {
+                        cy.wait(1000);
                         cy.reload();
+                        cy.wait(1000);
                         buildersPage.liveDashboard
                           .should('contain', 'Standard Segment Builder First Dashboard')
                           .and('contain', 'Standard Segment Builder Second Dashboard');
@@ -334,7 +337,6 @@ describe('dashboards engine Tests', () => {
                             headers: { Authorization: data.accessToken },
                             body: standardSegmentDashboardContent(queryId),
                           }).then(() => {
-                            cy.reload();
                             buildersPage.dashboardPageContent
                               .should('contain', 'Standard Segment Builder First Dashboard')
                               .and('contain', 'Standard Segment Builder Second Dashboard')
@@ -347,7 +349,6 @@ describe('dashboards engine Tests', () => {
                               [],
                               [],
                             ).then(() => {
-                              cy.reload();
                               buildersPage.dashboardPageContent
                                 .should('contain', 'Standard Segment Builder First Dashboard')
                                 .and('contain', 'Standard Segment Builder Second Dashboard')
@@ -824,19 +825,19 @@ describe('dashboards engine Tests', () => {
           data.accessToken,
           data.datamartId,
           channel.body.data.id,
-          'test_query_tool_3',
-          'test_query_tool_4',
+          'test_join_1',
+          'test_join_2',
         ).then(() => {
           cy.wait(30000);
           cy.executeQuery(
             data.accessToken,
             data.datamartId,
-            'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
+            'SELECT {nature @map} FROM ActivityEvent where nature = "test_join_1" or nature = "test_join_2"',
           ).then(() => {
             cy.switchOrg(data.organisationName);
             queryToolPage.goToPage();
             queryToolPage.typeQuery(
-              'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
+              'SELECT {nature @map} FROM ActivityEvent where nature = "test_join_1" or nature = "test_join_2"',
               0,
             );
             queryToolPage.clickBtnRun();
@@ -856,7 +857,7 @@ describe('dashboards engine Tests', () => {
             queryToolPage.pieContent;
             homePage.clickBtnAddStep();
             queryToolPage.typeQuery(
-              'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_3" or nature = "test_query_tool_4"',
+              'SELECT {nature @map} FROM ActivityEvent where nature = "test_join_1" or nature = "test_join_2"',
               1,
             );
             queryToolPage.clickBtnRun();
@@ -918,6 +919,8 @@ describe('dashboards engine Tests', () => {
             cy.wait(1000);
             queryToolPage.chartContainer.eq(1).trigger('mouseover');
             queryToolPage.barContent.should('contain', 'Dimension Test').and('contain', 'count: 6');
+            queryToolPage.clickPercentageOption();
+            queryToolPage.barContent.should('contain', 'count: 50% (6)');
           });
         });
       });
