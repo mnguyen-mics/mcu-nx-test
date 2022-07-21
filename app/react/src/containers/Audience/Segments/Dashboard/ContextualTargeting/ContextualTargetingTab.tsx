@@ -73,6 +73,7 @@ interface State {
   targetedPageViewVolume?: number;
   isLiveEditing: boolean;
   activeTabKey: string;
+  sliderIndexInit?: number;
 }
 
 class ContextualTargetingTab extends React.Component<Props, State> {
@@ -173,20 +174,23 @@ class ContextualTargetingTab extends React.Component<Props, State> {
           }, 0);
 
           let sliderValue: number;
-          if (contextualTargeting) {
-            const val = chartData.find(
-              data =>
-                contextualTargeting.volume_ratio &&
-                data.reach > (contextualTargeting.volume_ratio * totalPageViewVolume) / 1000000,
-            );
-            val ? (sliderValue = val.lift) : (sliderValue = chartData[19].lift);
-          } else sliderValue = chartData[19].lift;
+          let sliderIndexInit: number;
+          if (contextualTargeting && contextualTargeting.volume_ratio) {
+            const ctReach = (contextualTargeting.volume_ratio * totalPageViewVolume) / 1000000;
+            const index = chartData?.findIndex(data => ctReach <= data.reach);
+            sliderIndexInit = index ? index : 20;
+            sliderValue = chartData[sliderIndexInit].lift;
+          } else {
+            sliderValue = chartData[19].lift;
+            sliderIndexInit = 20;
+          }
 
           const targetedContextualKeys = sortedContextualKeys.filter(ck => ck.lift >= sliderValue);
 
           const targetedPageViewVolume = targetedContextualKeys.reduce((acc, ck) => {
             return acc + ck.occurrences_in_datamart_count;
           }, 0);
+
           this.setState({
             sortedContextualKeys: sortedContextualKeys,
             chartData: chartData,
@@ -195,6 +199,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
             isLoadingContextualKeys: false,
             totalPageViewVolume: totalPageViewVolume,
             targetedPageViewVolume: targetedPageViewVolume,
+            sliderIndexInit: sliderIndexInit,
           });
         });
       })
@@ -285,18 +290,16 @@ class ContextualTargetingTab extends React.Component<Props, State> {
   };
 
   onSliderChange = (point: DataPoint) => {
-    if (point) {
-      const contextualKeys = this.state.sortedContextualKeys?.filter(url => url.lift >= point.lift);
-      const targetedPageViewVolume = contextualKeys?.reduce((acc, ck) => {
-        return acc + ck.occurrences_in_datamart_count;
-      }, 0);
+    const contextualKeys = this.state.sortedContextualKeys?.filter(url => url.lift >= point.lift);
+    const targetedPageViewVolume = contextualKeys?.reduce((acc, ck) => {
+      return acc + ck.occurrences_in_datamart_count;
+    }, 0);
 
-      this.setState({
-        sliderValue: point.lift,
-        targetedContextualKeyResources: contextualKeys,
-        targetedPageViewVolume: targetedPageViewVolume,
-      });
-    }
+    this.setState({
+      sliderValue: point.lift,
+      targetedContextualKeyResources: contextualKeys,
+      targetedPageViewVolume: targetedPageViewVolume,
+    });
   };
 
   tipFormater = (selected: DataPoint, index?: number) => {
@@ -383,19 +386,17 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     const {
       chartData,
       targetedContextualKeyResources,
-      sliderValue,
       contextualTargeting,
       isLiveEditing,
       isLoadingContextualKeys,
+      sliderIndexInit,
     } = this.state;
 
-    const sliderIndex = chartData?.findIndex(data => sliderValue > data.lift);
-
-    return chartData && targetedContextualKeyResources && sliderIndex ? (
+    return chartData && targetedContextualKeyResources && sliderIndexInit ? (
       <Card className='mcs-contextualTargetingDashboard_graph'>
         <AreaChartSlider
           data={chartData}
-          initialValue={sliderIndex}
+          initialValue={sliderIndexInit}
           xAxis={{
             key: 'lift',
             labelFormat: '{value}',
