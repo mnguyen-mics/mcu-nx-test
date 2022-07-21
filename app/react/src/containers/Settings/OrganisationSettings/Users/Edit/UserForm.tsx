@@ -47,13 +47,20 @@ class UserForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      user: {
-        first_name: '',
-        last_name: '',
-        email: '',
-        organisation_id: '',
-      },
-      orgInput: {},
+      user: props.user
+        ? props.user
+        : {
+            first_name: '',
+            last_name: '',
+            email: '',
+            organisation_id: '',
+          },
+      orgInput: props.user
+        ? {
+            id: props.user.organisation_id,
+            value: props.organisations.find(org => org.id === props.user!.organisation_id)?.name!,
+          }
+        : {},
       prevOrgInput: {},
       submittedWithoutOrg: false,
     };
