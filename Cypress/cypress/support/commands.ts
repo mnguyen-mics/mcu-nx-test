@@ -86,7 +86,15 @@ Cypress.Commands.add('putDataFile', (accessToken, organisationId, fileContent, r
 
 Cypress.Commands.add(
   'prepareActivitiesForDashboards',
-  (accessToken, datamartId, channelId, eventName, secondEventName, secondChannelId?) => {
+  (
+    accessToken,
+    datamartId,
+    channelId,
+    eventName,
+    secondEventName,
+    secondChannelId?,
+    thirdEventName?,
+  ) => {
     return cy
       .request({
         url: `${Cypress.env(
@@ -112,7 +120,7 @@ Cypress.Commands.add(
               $properties: {},
             },
             {
-              $event_name: eventName,
+              $event_name: thirdEventName ? thirdEventName : eventName,
               $ts: new Date().getTime(),
               $properties: {},
             },
@@ -134,7 +142,7 @@ Cypress.Commands.add(
             $ts: new Date().getTime(),
             $events: [
               {
-                $event_name: secondEventName,
+                $event_name: thirdEventName ? thirdEventName : secondEventName,
                 $ts: new Date().getTime(),
                 $properties: {},
               },

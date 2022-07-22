@@ -156,6 +156,7 @@ declare namespace Cypress {
       eventName: string,
       secondEventName: string,
       secondChannelId?: string,
+      thirdEventName?: string,
     ): Chainable<any>;
 
     createQuery(accessToken: string, datamartId: string, queryText: string): Chainable<any>;
