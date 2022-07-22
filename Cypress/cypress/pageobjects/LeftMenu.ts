@@ -132,6 +132,25 @@ class LeftMenu extends Page {
   clickAudienceBuilder() {
     cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
   }
+
+  @logFunction()
+  clickDataStudioFunnel() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
+  }
+
+  @logFunction()
+  clickLibraryImports() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Imports').click();
+  }
+
+  @logFunction()
+  clickLibraryExports() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Exports').click();
+  }
+
+  clickChannels() {
+    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.channels').click();
+  }
 }
 
 export default new LeftMenu();
