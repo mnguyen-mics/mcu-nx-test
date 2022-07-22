@@ -104,7 +104,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
     } else {
       initialSliderIndex = 20;
     }
-    onSliderChange(chartData[initialSliderIndex - 1]);
+    onSliderChange(chartData[initialSliderIndex]);
     this.setState({
       initialSliderIndex: initialSliderIndex,
       chartData: chartData,
