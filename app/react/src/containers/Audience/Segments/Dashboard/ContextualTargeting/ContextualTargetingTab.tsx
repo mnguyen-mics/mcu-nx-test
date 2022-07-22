@@ -1,10 +1,10 @@
 import {
-  AreaChartSlider,
   Card,
   EmptyChart,
   LoadingChart,
   TableViewFilters,
 } from '@mediarithmics-private/mcs-components-library';
+import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';
 import { messages } from './messages';
 import * as React from 'react';
 import { compose } from 'recompose';
@@ -21,10 +21,10 @@ import { TYPES } from '../../../../../constants/types';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';
 import Papa from 'papaparse';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InfoCircleFilled } from '@ant-design/icons';
+import ContextualTargetingChart, { ChartDataResource } from './ContextualTargetingChart';
 
 const { TabPane } = Tabs;
 
@@ -40,19 +40,11 @@ interface SignatureScoredCategoryResource {
   weight: number;
 }
 
-interface ChartDataResource extends DataPoint {
-  lift: number;
-  reach: number;
-}
-
 interface ContextualTargetingTabProps {
-  datamartId: string;
   segmentId: string;
 }
 
 const { Step } = Steps;
-
-const stepNumber = 100;
 
 type Props = ContextualTargetingTabProps &
   InjectedNotificationProps &
@@ -63,17 +55,15 @@ interface State {
   contextualTargeting?: ContextualTargetingResource;
   isLoading: boolean;
   sortedContextualKeys?: ContextualKeyResource[];
-  chartData?: ChartDataResource[];
   targetedContextualKeyResources?: ContextualKeyResource[];
   signatureScoredCategoryResources?: SignatureScoredCategoryResource[];
   isLoadingContextualKeys: boolean;
   isLoadingSignature: boolean;
-  sliderValue: number;
+  sliderValue?: ChartDataResource;
   totalPageViewVolume?: number;
   targetedPageViewVolume?: number;
   isLiveEditing: boolean;
   activeTabKey: string;
-  sliderIndexInit?: number;
 }
 
 class ContextualTargetingTab extends React.Component<Props, State> {
@@ -95,7 +85,6 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       isLoading: true,
       isLoadingContextualKeys: true,
       isLoadingSignature: false,
-      sliderValue: 0,
       isLiveEditing: false,
       activeTabKey: '0',
     };
@@ -166,40 +155,14 @@ class ContextualTargetingTab extends React.Component<Props, State> {
             ck => ck.contextual_key && ck.lift && ck.occurrences_in_datamart_count,
           );
           const sortedContextualKeys = contextualKeys.sort(this.sortCks);
-          const chartData = this.buildChartData(sortedContextualKeys);
-
           const totalPageViewVolume = sortedContextualKeys.reduce((acc, ck) => {
             if (ck.occurrences_in_datamart_count) return acc + ck.occurrences_in_datamart_count;
             else return acc;
           }, 0);
-
-          let sliderValue: number;
-          let sliderIndexInit: number;
-          if (contextualTargeting && contextualTargeting.volume_ratio) {
-            const ctReach = (contextualTargeting.volume_ratio * totalPageViewVolume) / 1000000;
-            const index = chartData?.findIndex(data => ctReach <= data.reach);
-            sliderIndexInit = index ? index : 20;
-            sliderValue = chartData[sliderIndexInit].lift;
-          } else {
-            sliderValue = chartData[19].lift;
-            sliderIndexInit = 20;
-          }
-
-          const targetedContextualKeys = sortedContextualKeys.filter(ck => ck.lift >= sliderValue);
-
-          const targetedPageViewVolume = targetedContextualKeys.reduce((acc, ck) => {
-            return acc + ck.occurrences_in_datamart_count;
-          }, 0);
-
           this.setState({
             sortedContextualKeys: sortedContextualKeys,
-            chartData: chartData,
-            sliderValue: sliderValue,
-            targetedContextualKeyResources: targetedContextualKeys,
             isLoadingContextualKeys: false,
             totalPageViewVolume: totalPageViewVolume,
-            targetedPageViewVolume: targetedPageViewVolume,
-            sliderIndexInit: sliderIndexInit,
           });
         });
       })
@@ -258,21 +221,6 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     }).data as SignatureScoredCategoryResource[];
   };
 
-  buildChartData = (sortedContextualKeys: ContextualKeyResource[]) => {
-    const chartData = [];
-    const liftMax = sortedContextualKeys[0].lift;
-    const liftMin = sortedContextualKeys[sortedContextualKeys.length - 1].lift;
-    const liftStep = (liftMax - liftMin) / stepNumber;
-    let cumulativeReach = 0;
-    for (let i = 0; i < stepNumber; i++) {
-      cumulativeReach += sortedContextualKeys
-        .filter(ck => ck.lift > liftMax - liftStep * (i + 1) && ck.lift <= liftMax - liftStep * i)
-        .reduce((acc, ck) => acc + ck.occurrences_in_datamart_count, 0);
-      chartData[i] = { lift: liftMax - liftStep * (i + 1), reach: cumulativeReach / 1000000 };
-    }
-    return chartData;
-  };
-
   onPublishContextualTargeting = () => {
     const { segmentId } = this.props;
     const { contextualTargeting } = this.state;
@@ -296,17 +244,13 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     }, 0);
 
     this.setState({
-      sliderValue: point.lift,
+      sliderValue: point as ChartDataResource,
       targetedContextualKeyResources: contextualKeys,
       targetedPageViewVolume: targetedPageViewVolume,
     });
   };
 
-  tipFormater = (selected: DataPoint, index?: number) => {
-    return <div>{Math.round(this.getTargetedVolumeRatio() * 100) + '% of total events'}</div>;
-  };
-
-  onClick = () => {
+  onCreateContextualTargetingClick = () => {
     this.setState({
       isLoading: true,
     });
@@ -353,90 +297,21 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     }
   };
 
-  renderNoCtStep = () => {
-    const { intl } = this.props;
+  renderChartComponent = () => {
+    const { contextualTargeting, isLiveEditing, sortedContextualKeys, totalPageViewVolume } =
+      this.state;
+
     return (
-      <div className='mcs-contextualTargetingDashboard_noCtStep'>
-        <EmptyChart
-          title={intl.formatMessage(messages.noContextualTargetingTabText)}
-          icon='optimization'
-        />
-        <Button className='mcs-primary' type='primary' onClick={this.onClick}>
-          {intl.formatMessage(messages.noContextualTargetingTabButton)}
-        </Button>
-      </div>
+      <ContextualTargetingChart
+        contextualTargeting={contextualTargeting}
+        isEditing={isLiveEditing}
+        sortedContextualKeys={sortedContextualKeys}
+        totalPageViewVolume={totalPageViewVolume}
+        onSliderChange={this.onSliderChange}
+        createContextualTargeting={this.onCreateContextualTargetingClick}
+        getTargetedVolumeRatio={this.getTargetedVolumeRatio}
+      />
     );
-  };
-
-  renderInitializationStep = () => {
-    const { intl } = this.props;
-    return (
-      <div className='mcs-contextualTargetingDashboard_initializationStep'>
-        <EmptyChart
-          title={intl.formatMessage(messages.InitializationTabText)}
-          icon='optimization'
-        />
-        <span>{intl.formatMessage(messages.InitializationTabSubText)}</span>
-      </div>
-    );
-  };
-
-  renderDraftStepChart = () => {
-    const { intl } = this.props;
-    const {
-      chartData,
-      targetedContextualKeyResources,
-      contextualTargeting,
-      isLiveEditing,
-      isLoadingContextualKeys,
-      sliderIndexInit,
-    } = this.state;
-
-    return chartData && targetedContextualKeyResources && sliderIndexInit ? (
-      <Card className='mcs-contextualTargetingDashboard_graph'>
-        <AreaChartSlider
-          data={chartData}
-          initialValue={sliderIndexInit}
-          xAxis={{
-            key: 'lift',
-            labelFormat: '{value}',
-            title: 'Lift',
-            subtitle: 'Users in this segment consult this content x times more than other people',
-            reversed: true,
-          }}
-          yAxis={{
-            key: 'reach',
-            labelFormat: '{value}M',
-            title: 'Reach',
-            subtitle: '# Page views in the last 30 days',
-          }}
-          color={'#00a1df'}
-          onChange={this.onSliderChange}
-          tipFormatter={this.tipFormater}
-          disabled={
-            (contextualTargeting?.status === 'LIVE' && !isLiveEditing) ||
-            contextualTargeting?.status === 'LIVE_PUBLISHED' ||
-            contextualTargeting?.status === 'PUBLISHED'
-          }
-        />
-      </Card>
-    ) : isLoadingContextualKeys ? (
-      <LoadingChart />
-    ) : (
-      <EmptyChart title={intl.formatMessage(messages.InitializationTabText)} icon='optimization' />
-    );
-  };
-
-  renderStepChartComponent = () => {
-    const { contextualTargeting } = this.state;
-
-    if (!contextualTargeting) {
-      return this.renderNoCtStep();
-    } else if (contextualTargeting.status === 'INIT') {
-      return this.renderInitializationStep();
-    } else {
-      return this.renderDraftStepChart();
-    }
   };
 
   renderStepTabComponent = () => {
@@ -590,7 +465,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
           {Math.round(this.getTargetedVolumeRatio() * 100) + '%'}
         </span>
         <span className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_liftValue'>
-          {`(Lift = ${sliderValue.toFixed(1)})`}
+          {`(Lift = ${sliderValue?.lift.toFixed(1)})`}
         </span>
       </div>
     );
@@ -710,7 +585,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
 
   render() {
     const { isLoading } = this.state;
-    const stepChartComponent = this.renderStepChartComponent();
+    const stepChartComponent = this.renderChartComponent();
     const stepStatsCard = this.renderStepStatsCard();
     const stepTableComponent = this.renderStepTabComponent();
 
