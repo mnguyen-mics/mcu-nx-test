@@ -151,16 +151,20 @@ class UserListPage extends React.Component<Props, State> {
 
   getUserRoleDrawerTitle = () => {
     const { intl } = this.props;
-    const { user } = this.state;
+    const { user, isUserCreation } = this.state;
+
+    const title = user
+      ? isUserCreation
+        ? intl.formatMessage(messages.addAUserRole)
+        : intl.formatMessage(messages.editAUserRole)
+      : intl.formatMessage(messages.addAUserRole);
 
     return (
       <FormattedMessage
         id='settings.organisation.users.userRoleFormTitle'
         defaultMessage='Organisation > Roles > {title}'
         values={{
-          title: user
-            ? intl.formatMessage(messages.editAUserRole)
-            : intl.formatMessage(messages.addAUserRole),
+          title: title,
         }}
       />
     );
@@ -306,7 +310,11 @@ class UserListPage extends React.Component<Props, State> {
   };
 
   saveUser = (user: UserResource) => {
-    const { notifyError } = this.props;
+    const {
+      notifyError,
+      notifySuccess,
+      intl: { formatMessage },
+    } = this.props;
     const { userDisplay } = this.state;
     const previousUser = !!user.id;
     (previousUser
@@ -321,7 +329,13 @@ class UserListPage extends React.Component<Props, State> {
           },
           () => {
             this.refreshAndScrollToElement(res.data);
-            if (!previousUser) this.editUserRole(res.data, res.data.organisation_id, true);
+            if (!previousUser) {
+              notifySuccess({
+                message: formatMessage(messages.successCreationNewUser),
+                description: '',
+              });
+              this.editUserRole(res.data, res.data.organisation_id, true);
+            }
           },
         );
       })
