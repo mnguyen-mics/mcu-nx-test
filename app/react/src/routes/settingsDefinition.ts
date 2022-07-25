@@ -93,6 +93,13 @@ const organisationSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.processingsSettingsTitle,
     },
+    {
+      ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsOrganisationIdentityProviderList,
+      ),
+      translation: messages.identityProvidersTitle,
+      communityOnly: true,
+    },
   ],
 };
 

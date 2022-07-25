@@ -58,6 +58,7 @@ export interface NavigatorSubMenuDefinition extends Omit<RouteDef, 'layout'> {
   translation: FormattedMessage.MessageDescriptor;
   iconType?: McsIconType;
   mention?: Mention;
+  communityOnly?: boolean;
 }
 
 export interface NavigatorMultipleLevelMenuDefinition extends NavigatorBaseMenuDefinition {
