@@ -1,19 +1,17 @@
-import faker from 'faker';
+import ImportsPage from '../../../../pageobjects/DataStudio/ImportsPage';
 
 describe('User Profile Import Test', () => {
   const loginAndInitiateDocImportCreation = () => {
     cy.login();
     cy.url().should('contain', Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display');
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      const importsPage = new ImportsPage();
+      const importName = `Test Import Activities ${Math.random().toString(36).substring(2, 10)}`;
       cy.switchOrg(data.organisationName);
-      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Imports').click();
-      cy.get('.mcs-imports_creationButton').click();
+      importsPage.goToPage();
+      importsPage.clickBtnImportsCreation();
       cy.contains(data.datamartName).click();
-      cy.get('[id="name"]').type(faker.random.words(2));
-      cy.get('.mcs-imports_selectField_edit\\.import\\.general\\.infos\\.tooltip\\.documentType')
-        .first()
-        .click();
+      importsPage.importsInformation.typeImportName(importName);
     });
   };
 
@@ -36,44 +34,43 @@ describe('User Profile Import Test', () => {
   };
 
   // Document import type
-  const importTypeFunc = (importType: string | number | RegExp) => {
-    cy.contains(importType).click();
-    cy.get('.mcs-imports_selectField_edit\\.import\\.general\\.infos\\.tooltip\\.priority')
-      .first()
-      .click();
-    cy.contains('MEDIUM').click();
-    cy.get('.mcs-form_saveButton_importForm').click();
-    cy.get('.mcs-importExecution_newExecution').click();
+  const importTypeFunc = (importType: string | number | RegExp, priorityLevel: string) => {
+    const importsPage = new ImportsPage();
+    importsPage.importsInformation.selectImportType(importType);
+    importsPage.importsInformation.selectPriority(priorityLevel);
+    importsPage.importsInformation.clickBtnSaveImport();
+    importsPage.clickBtnNewExecution();
   };
 
   it('should succeed if import profile input file is valid', () => {
-    importTypeFunc('User Profile');
+    const importsPage = new ImportsPage();
+    importTypeFunc('User Profile', 'MEDIUM');
     uploadFile('00-testProfiles.ndjson');
     // Wait between the click of the Ok button and the upload of the file so that the interface can catch up
     cy.wait(4000);
-    cy.contains('Ok').click();
-    cy.get('.mcs-importExecution_table').should('contain', 'RUNNING');
-    cy.get('.mcs-importExecution_table').should('contain', 'SUCCEEDED');
+    importsPage.clickOK();
+    importsPage.importExecutionTable.should('contain', 'RUNNING');
+    importsPage.importExecutionTable.should('contain', 'SUCCEEDED');
   });
 
   it('should succeed if import activites input file is valid', () => {
-    importTypeFunc('User Activity');
+    const importsPage = new ImportsPage();
+    importTypeFunc('User Activity', 'MEDIUM');
     uploadFile('01-testActivities.ndjson');
     // Wait between the click of the Ok button and the upload of the file so that the interface can catch up
     cy.wait(4000);
-    cy.contains('Ok').click();
-    cy.get('.mcs-importExecution_table').should('contain', 'RUNNING');
-    cy.get('.mcs-importExecution_table').should('contain', 'SUCCEEDED');
+    importsPage.clickOK();
+    importsPage.importExecutionTable.should('contain', 'RUNNING');
+    importsPage.importExecutionTable.should('contain', 'SUCCEEDED');
   });
 
   it('should fail if import profile input file does not match user profile resource', () => {
-    importTypeFunc('User Profile');
+    const importsPage = new ImportsPage();
+    importTypeFunc('User Profile', 'MEDIUM');
     uploadFile('02-wrongData.ndjson');
     // Wait between the click of the Ok button and the upload of the file so that the interface can catch up
     cy.wait(4000);
-    cy.contains('Ok').click();
-    cy.get('.ant-notification-notice-with-icon')
-      .should('contain', 'Something went wrong')
-      .should('be.visible');
+    importsPage.clickOK();
+    importsPage.notificationNotice.should('contain', 'Something went wrong').should('be.visible');
   });
 });
