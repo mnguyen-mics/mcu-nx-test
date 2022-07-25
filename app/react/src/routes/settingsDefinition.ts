@@ -83,12 +83,6 @@ const organisationSettingsDefinition: NavigatorMenuDefinition = {
     },
     {
       ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsOrganisationUserRoleList,
-      ),
-      translation: messages.userRolesSettingsTitle,
-    },
-    {
-      ...generateMissingdefinitionItemFromRoute(
         settingsDefinition.settingsOrganisationProcessingList,
       ),
       translation: messages.processingsSettingsTitle,
