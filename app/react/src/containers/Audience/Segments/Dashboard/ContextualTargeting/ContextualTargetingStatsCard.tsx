@@ -15,10 +15,10 @@ const { Step } = Steps;
 interface ContextualTargetingStatsCardProps {
   contextualTargeting?: ContextualTargetingResource;
   isLiveEditing?: boolean;
-  sliderValue?: ChartDataResource;
+  chartDataSelected?: ChartDataResource;
   numberOfTargetedContent?: number;
   onPublishContextualTargeting: () => void;
-  liveEditionMode: () => void;
+  onEdit: () => void;
   getTargetedVolumeRatio: () => number;
 }
 
@@ -45,25 +45,25 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
   };
 
   renderTargetedVolumeRatio = () => {
-    const { sliderValue, getTargetedVolumeRatio } = this.props;
+    const { chartDataSelected, getTargetedVolumeRatio } = this.props;
     return (
       <div>
         <span className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_volumeRatioValue'>
           {Math.round(getTargetedVolumeRatio() * 100) + '%'}
         </span>
         <span className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_liftValue'>
-          {`(Lift = ${sliderValue?.lift.toFixed(1)})`}
+          {`(Lift = ${chartDataSelected?.lift.toFixed(1)})`}
         </span>
       </div>
     );
   };
 
-  renderStatsCard = () => {
+  render() {
     const {
       contextualTargeting,
       onPublishContextualTargeting,
-      liveEditionMode,
-      sliderValue,
+      onEdit,
+      chartDataSelected,
       numberOfTargetedContent,
       isLiveEditing,
     } = this.props;
@@ -132,7 +132,7 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
           />
           <Statistic
             title={intl.formatMessage(messages.targetedVolume)}
-            value={sliderValue?.reach}
+            value={chartDataSelected?.reach}
           />
         </div>
 
@@ -142,7 +142,7 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
             contextualTargeting?.status === 'DRAFT' ||
             (contextualTargeting?.status === 'LIVE' && isLiveEditing)
               ? onPublishContextualTargeting
-              : liveEditionMode
+              : onEdit
           }
           disabled={isButtonDisable}
         >
@@ -163,10 +163,6 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
         {stats}
       </div>
     );
-  };
-
-  render() {
-    return this.renderStatsCard();
   }
 }
 

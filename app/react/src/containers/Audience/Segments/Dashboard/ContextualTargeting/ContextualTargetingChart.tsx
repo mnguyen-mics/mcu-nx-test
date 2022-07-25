@@ -18,7 +18,7 @@ export interface ChartDataResource extends DataPoint {
   reach: number;
 }
 
-const stepNumber = 100;
+const STEP_NUMBER = 100;
 
 interface ContextualTargetingChartProps {
   contextualTargeting?: ContextualTargetingResource;
@@ -75,9 +75,9 @@ class ContextualTargetingChart extends React.Component<Props, State> {
     const chartData = [];
     const liftMax = sortedContextualKeys[0].lift;
     const liftMin = sortedContextualKeys[sortedContextualKeys.length - 1].lift;
-    const liftStep = (liftMax - liftMin) / stepNumber;
+    const liftStep = (liftMax - liftMin) / STEP_NUMBER;
     let cumulativeReach = 0;
-    for (let i = 0; i < stepNumber; i++) {
+    for (let i = 0; i < STEP_NUMBER; i++) {
       cumulativeReach += sortedContextualKeys
         .filter(ck => ck.lift > liftMax - liftStep * (i + 1) && ck.lift <= liftMax - liftStep * i)
         .reduce((acc, ck) => acc + ck.occurrences_in_datamart_count, 0);
@@ -185,7 +185,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
     );
   };
 
-  renderStepChartComponent = () => {
+  render() {
     const { contextualTargeting } = this.props;
 
     if (!contextualTargeting) {
@@ -195,10 +195,6 @@ class ContextualTargetingChart extends React.Component<Props, State> {
     } else {
       return this.renderDraftStepChart();
     }
-  };
-
-  render() {
-    return this.renderStepChartComponent();
   }
 }
 

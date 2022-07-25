@@ -1,16 +1,9 @@
-import {
-  Card,
-  EmptyChart,
-  LoadingChart,
-  TableViewFilters,
-} from '@mediarithmics-private/mcs-components-library';
+import { LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';
-import { messages } from './messages';
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Col, Row, Tabs, Tooltip } from 'antd';
-import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { Col, Row } from 'antd';
 import { ContextualTargetingResource } from '../../../../../models/contextualtargeting/ContextualTargeting';
 import { IContextualTargetingService } from '../../../../../services/ContextualTargetingService';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -20,11 +13,14 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import Papa from 'papaparse';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { InfoCircleFilled } from '@ant-design/icons';
 import ContextualTargetingChart, { ChartDataResource } from './ContextualTargetingChart';
 import ContextualTargetingStatsCard from './ContextualTargetingStatsCard';
+import ContextualTargetingSubTabs from './ContextualTargetingSubTabs';
 
-const { TabPane } = Tabs;
+export interface SignatureScoredCategoryResource {
+  category_name: string;
+  weight: number;
+}
 
 export interface ContextualKeyResource {
   contextual_key: string;
@@ -32,12 +28,6 @@ export interface ContextualKeyResource {
   occurrences_in_datamart_count: number;
   lift: number;
 }
-
-interface SignatureScoredCategoryResource {
-  category_name: string;
-  weight: number;
-}
-
 interface ContextualTargetingTabProps {
   segmentId: string;
 }
@@ -55,7 +45,7 @@ interface State {
   signatureScoredCategoryResources?: SignatureScoredCategoryResource[];
   isLoadingContextualKeys: boolean;
   isLoadingSignature: boolean;
-  sliderValue?: ChartDataResource;
+  chartDataSelected?: ChartDataResource;
   totalPageViewVolume?: number;
   targetedPageViewVolume?: number;
   isLiveEditing: boolean;
@@ -224,7 +214,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     }, 0);
 
     this.setState({
-      sliderValue: point as ChartDataResource,
+      chartDataSelected: point as ChartDataResource,
       targetedContextualKeyResources: contextualKeys,
       targetedPageViewVolume: targetedPageViewVolume,
     });
@@ -258,6 +248,13 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       });
   };
 
+  getTargetedVolumeRatio = () => {
+    const { targetedPageViewVolume, totalPageViewVolume } = this.state;
+    return targetedPageViewVolume && totalPageViewVolume
+      ? targetedPageViewVolume / totalPageViewVolume
+      : 0;
+  };
+
   renderChartComponent = () => {
     const { contextualTargeting, isLiveEditing, sortedContextualKeys, totalPageViewVolume } =
       this.state;
@@ -273,149 +270,6 @@ class ContextualTargetingTab extends React.Component<Props, State> {
         getTargetedVolumeRatio={this.getTargetedVolumeRatio}
       />
     );
-  };
-
-  renderStepTabComponent = () => {
-    const { intl } = this.props;
-    const {
-      isLoadingContextualKeys,
-      isLoadingSignature,
-      targetedContextualKeyResources,
-      signatureScoredCategoryResources,
-      contextualTargeting,
-      activeTabKey,
-    } = this.state;
-
-    const liftDataColumnsDefinition: Array<DataColumnDefinition<ContextualKeyResource>> = [
-      {
-        title: intl.formatMessage(messages.content),
-        key: 'contextual_key',
-        isVisibleByDefault: true,
-        isHideable: false,
-      },
-      {
-        title: intl.formatMessage(messages.lift),
-        key: 'lift',
-        isVisibleByDefault: true,
-        isHideable: false,
-      },
-      {
-        title: intl.formatMessage(messages.numberOfEvents),
-        key: 'occurrences_in_datamart_count',
-        isVisibleByDefault: true,
-        isHideable: false,
-      },
-    ];
-
-    const signatureDataColumnsDefinition: Array<
-      DataColumnDefinition<SignatureScoredCategoryResource>
-    > = [
-      {
-        title: intl.formatMessage(messages.category),
-        key: 'category_name',
-        isVisibleByDefault: true,
-        isHideable: false,
-      },
-      {
-        title: intl.formatMessage(messages.score),
-        key: 'weight',
-        isVisibleByDefault: true,
-        isHideable: false,
-      },
-    ];
-
-    const lastLiftComputation =
-      contextualTargeting &&
-      contextualTargeting.last_lift_computation_ts &&
-      new Date(contextualTargeting.last_lift_computation_ts);
-
-    return (contextualTargeting?.status === 'DRAFT' ||
-      contextualTargeting?.status === 'PUBLISHED') &&
-      targetedContextualKeyResources &&
-      lastLiftComputation ? (
-      <Card
-        title={
-          <React.Fragment>
-            {intl.formatMessage(messages.targetedContentTab)}
-            <Tooltip
-              className='mcs-contextualTargetingDashboard_lastRefreshDate'
-              title={intl.formatMessage(messages.liftRefreshTooltip)}
-              placement='left'
-            >
-              <InfoCircleFilled />
-            </Tooltip>
-          </React.Fragment>
-        }
-        className='mcs-contextualTargetingDashboard_contextualTargetingTableContainer'
-      >
-        <TableViewFilters
-          dataSource={targetedContextualKeyResources}
-          loading={isLoadingContextualKeys}
-          columns={liftDataColumnsDefinition}
-        />
-      </Card>
-    ) : (contextualTargeting?.status === 'LIVE' ||
-        contextualTargeting?.status === 'LIVE_PUBLISHED') &&
-      targetedContextualKeyResources &&
-      lastLiftComputation ? (
-      <Card className='mcs-contextualTargetingDashboard_contextualTargetingTableContainer'>
-        {activeTabKey === '0' ? (
-          <Tooltip
-            className='mcs-contextualTargetingDashboard_lastRefreshDate'
-            title={intl.formatMessage(messages.liftRefreshTooltip)}
-            placement='left'
-          >
-            <InfoCircleFilled />
-          </Tooltip>
-        ) : (
-          <Tooltip
-            className='mcs-contextualTargetingDashboard_lastRefreshDate'
-            title={intl.formatMessage(messages.signatureRefreshTooltip)}
-            placement='left'
-          >
-            <InfoCircleFilled />
-          </Tooltip>
-        )}
-        <Tabs defaultActiveKey={'0'} onChange={this.onTabChange}>
-          <TabPane tab={intl.formatMessage(messages.targetedContentTab)} key={'0'}>
-            <TableViewFilters
-              dataSource={targetedContextualKeyResources}
-              loading={isLoadingContextualKeys}
-              columns={liftDataColumnsDefinition}
-            />
-          </TabPane>
-          <TabPane tab={intl.formatMessage(messages.semanticAnalysisTab)} key={'1'}>
-            {signatureScoredCategoryResources ? (
-              <React.Fragment>
-                <TableViewFilters
-                  dataSource={signatureScoredCategoryResources}
-                  loading={isLoadingSignature}
-                  columns={signatureDataColumnsDefinition}
-                />
-              </React.Fragment>
-            ) : (
-              <EmptyChart
-                title={intl.formatMessage(messages.InitializationTabText)}
-                icon='optimization'
-              />
-            )}
-          </TabPane>
-        </Tabs>
-      </Card>
-    ) : (
-      <div />
-    );
-  };
-
-  onTabChange = (activeKey: string) => {
-    this.setState({ activeTabKey: activeKey });
-  };
-
-  getTargetedVolumeRatio = () => {
-    const { targetedPageViewVolume, totalPageViewVolume } = this.state;
-    return targetedPageViewVolume && totalPageViewVolume
-      ? targetedPageViewVolume / totalPageViewVolume
-      : 0;
   };
 
   onPublishContextualTargeting = () => {
@@ -434,24 +288,47 @@ class ContextualTargetingTab extends React.Component<Props, State> {
       });
   };
 
-  liveEditionMode = () => {
+  onEdit = () => {
     this.setState({
       isLiveEditing: true,
     });
   };
 
   renderStatsCard = () => {
-    const { contextualTargeting, isLiveEditing, sliderValue, targetedContextualKeyResources } =
-      this.state;
+    const {
+      contextualTargeting,
+      isLiveEditing,
+      chartDataSelected,
+      targetedContextualKeyResources,
+    } = this.state;
     return (
       <ContextualTargetingStatsCard
         contextualTargeting={contextualTargeting}
         isLiveEditing={isLiveEditing}
-        sliderValue={sliderValue}
+        chartDataSelected={chartDataSelected}
         numberOfTargetedContent={targetedContextualKeyResources?.length}
         onPublishContextualTargeting={this.onPublishContextualTargeting}
-        liveEditionMode={this.liveEditionMode}
+        onEdit={this.onEdit}
         getTargetedVolumeRatio={this.getTargetedVolumeRatio}
+      />
+    );
+  };
+
+  renderSubTabsComponent = () => {
+    const {
+      contextualTargeting,
+      targetedContextualKeyResources,
+      isLoadingContextualKeys,
+      signatureScoredCategoryResources,
+      isLoadingSignature,
+    } = this.state;
+    return (
+      <ContextualTargetingSubTabs
+        contextualTargeting={contextualTargeting}
+        targetedContextualKeyResources={targetedContextualKeyResources}
+        isLoadingContextualKeys={isLoadingContextualKeys}
+        signatureScoredCategoryResources={signatureScoredCategoryResources}
+        isLoadingSignature={isLoadingSignature}
       />
     );
   };
@@ -460,7 +337,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     const { isLoading } = this.state;
     const chartComponent = this.renderChartComponent();
     const statsCard = this.renderStatsCard();
-    const stepTableComponent = this.renderStepTabComponent();
+    const stepTableComponent = this.renderSubTabsComponent();
 
     return isLoading ? (
       <LoadingChart />
