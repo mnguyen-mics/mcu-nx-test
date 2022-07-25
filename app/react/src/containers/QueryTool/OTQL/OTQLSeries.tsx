@@ -202,7 +202,7 @@ class OTQLSeries extends React.Component<Props> {
           return (
             <div key={i} className='mcs-otqlSeries_mainStep'>
               {this.renderStepHeader(serieQuery, i)}
-              {i !== 0 && (
+              {seriesQueries.length !== 1 && (
                 <Button
                   shape='circle'
                   icon={<CloseOutlined />}
