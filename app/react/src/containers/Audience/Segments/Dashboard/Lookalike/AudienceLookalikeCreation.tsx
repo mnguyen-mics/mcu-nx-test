@@ -240,7 +240,10 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
           .then(res => {
             this.setState({ loading: false }, () => {
               this.props.close();
-              history.push(`/v2/o/${organisationId}/audience/segments/${res.id}`);
+              history.push({
+                pathname: `/v2/o/${organisationId}/audience/segments/${res.id}`,
+                state: { tab: 'COHORT' },
+              });
             });
           })
           .catch(err => {
@@ -574,14 +577,14 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
     } else {
       const { message, ...restActionBarProps } = actionBarProps;
 
-      const authorizedLookalikeTypes: LookalikeType[] = [
-        'PARTITION_BASED_LOOKALIKE' as LookalikeType,
-        'SCORE_BASED_LOOKALIKE' as LookalikeType,
-      ].concat(
-        hasFeature('audience-segments-cohort-lookalike')
-          ? ['COHORT_BASED_LOOKALIKE' as LookalikeType]
-          : [],
-      );
+      const authorizedLookalikeTypes: LookalikeType[] = ['PARTITION_BASED_LOOKALIKE'];
+
+      // COHORT_BASED_LOOKALIKE need to be the second option if available
+      if (hasFeature('audience-segments-cohort-lookalike'))
+        authorizedLookalikeTypes.push('COHORT_BASED_LOOKALIKE');
+
+      // see comment above
+      authorizedLookalikeTypes.push('SCORE_BASED_LOOKALIKE');
 
       const subtitleMessage: FormattedMessage.Props = {
         values: { nbOfTypes: authorizedLookalikeTypes.length },
