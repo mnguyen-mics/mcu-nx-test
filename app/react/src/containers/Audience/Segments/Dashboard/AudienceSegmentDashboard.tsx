@@ -435,7 +435,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
             DashboardWrapper={DashboardWrapper}
             contextualTargetingTab={
               hasFeature('segments-contextual-targeting') ? (
-                <ContextualTargetingTab datamartId={segment.datamart_id} segmentId={segment.id} />
+                <ContextualTargetingTab segmentId={segment.id} />
               ) : undefined
             }
             onShowDashboard={handleOnShowDashboard}
