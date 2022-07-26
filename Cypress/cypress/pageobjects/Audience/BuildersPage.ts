@@ -32,6 +32,11 @@ class BuildersPage extends Page {
   get segmentBuilderSelector() {
     return cy.get('.mcs-segmentBuilderSelector_container');
   }
+
+  @logGetter()
+  get buildersPage() {
+    return cy.get('.mcs-segmentBuilderSelector_container');
+  }
 }
 
 export default BuildersPage;

@@ -79,6 +79,26 @@ class LeftMenu extends Page {
   }
 
   @logFunction()
+  clickAudienceMonitoring() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.monitoring').click();
+  }
+
+  @logFunction()
+  clickAudienceSegments() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
+  }
+
+  @logFunction()
+  clickCampaignsGoals() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.campaign\\.goals').click();
+  }
+
+  @logFunction()
+  clickAutomationsBuilder() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.builder').click();
+  }
+
+  @logFunction()
   clickDataStudioFunnel() {
     cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
   }
