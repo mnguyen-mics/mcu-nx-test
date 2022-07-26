@@ -29,6 +29,10 @@ export const messages = defineMessages({
     id: 'settings.organisation.users.list.new',
     defaultMessage: 'New User',
   },
+  successCreationNewUser: {
+    id: 'settings.organisation.users.list.new.creation.success',
+    defaultMessage: 'User successfully created',
+  },
   editUser: {
     id: 'settings.organisation.users.list.edit',
     defaultMessage: 'Edit User',
