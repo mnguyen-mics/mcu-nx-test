@@ -202,7 +202,6 @@ class AggregationRenderer extends React.Component<Props, State> {
         true,
         chartProps,
       );
-
       data = await this.applyTransformations(this.adaptChartType(selectedChart), abstractDataset);
     }
 
@@ -610,8 +609,13 @@ class AggregationRenderer extends React.Component<Props, State> {
         // Reformat dataset to expected key and value
         if (selectedChart === 'radar') {
           const RADAR_Y_KEY = 'value';
+          const RADAR_Y_KEY_COUNT = `${RADAR_Y_KEY}-count`;
           displayedDataset.dataset = displayedDataset.dataset.map((bucket: any) => {
-            return { key: bucket.key, [RADAR_Y_KEY]: bucket.count };
+            return {
+              key: bucket.key,
+              [RADAR_Y_KEY]: bucket.count,
+              [RADAR_Y_KEY_COUNT]: bucket['count-count'],
+            };
           });
           displayedDataset.metadata = {
             seriesTitles: [RADAR_Y_KEY],
