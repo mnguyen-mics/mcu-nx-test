@@ -148,8 +148,14 @@ class LeftMenu extends Page {
     cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Exports').click();
   }
 
+  @logFunction()
   clickChannels() {
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.channels').click();
+  }
+
+  @logFunction()
+  clickActivityAnalyser() {
+    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.activity_analyzer').click();
   }
 }
 
