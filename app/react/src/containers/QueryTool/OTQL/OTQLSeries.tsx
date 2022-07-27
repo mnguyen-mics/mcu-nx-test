@@ -34,9 +34,9 @@ class OTQLSeries extends React.Component<Props> {
     onSeriesChange(newSteps);
   };
 
-  addStep = () => {
+  addStep = (existingSeriesNames?: string[]) => {
     const { seriesQueries, onSeriesChange } = this.props;
-    const newName = `Series ${seriesQueries.length + 1}`;
+    const newName = this.generateSerieName(seriesQueries.length + 1, existingSeriesNames);
     const newSteps = seriesQueries.concat([getNewSerieQuery(newName, DEFAULT_OTQL_QUERY)]);
     onSeriesChange(newSteps);
   };
@@ -64,7 +64,25 @@ class OTQLSeries extends React.Component<Props> {
     onSeriesChange(newSeries);
   };
 
-  renderStepHeader = (queryModelStep: SerieQueryModel | QueryListModel, i: number) => {
+  generateSerieName = (index: number, existingSeriesNames?: string[]) => {
+    if (existingSeriesNames !== undefined) {
+      for (let i = 1; i < 100; i++) {
+        const candidate = `Series ${i}`;
+        if (!existingSeriesNames.find(name => name === candidate)) {
+          return candidate;
+        }
+      }
+      return `Series ${index + 1}`;
+    } else {
+      return `Series ${index + 1}`;
+    }
+  };
+
+  renderStepHeader = (
+    queryModelStep: SerieQueryModel | QueryListModel,
+    i: number,
+    existingSeriesNames?: string[],
+  ) => {
     const { onInputChange, updateNameModel, displaySeriesInput, editionMode, seriesQueries } =
       this.props;
     const queryModel = queryModelStep;
@@ -89,7 +107,7 @@ class OTQLSeries extends React.Component<Props> {
               onClick={displaySeriesInput(queryModelId, subSerieQueryId)}
               type='dashed'
             >
-              {queryModel.name || `Serie ${i + 1}`}
+              {queryModel.name || this.generateSerieName(i, existingSeriesNames)}
             </Button>
           )}
         </React.Fragment>
@@ -196,13 +214,21 @@ class OTQLSeries extends React.Component<Props> {
   render() {
     const { seriesQueries, editionMode } = this.props;
 
+    const addStep = () => {
+      this.addStep(seriesQueries.map(q => q.name));
+    };
+
     return (
       <div className='mcs-otqlSeries_container'>
         {seriesQueries.map((serieQuery, i) => {
           return (
             <div key={i} className='mcs-otqlSeries_mainStep'>
-              {this.renderStepHeader(serieQuery, i)}
-              {i !== 0 && (
+              {this.renderStepHeader(
+                serieQuery,
+                i,
+                seriesQueries.map(q => q.name),
+              )}
+              {seriesQueries.length !== 1 && (
                 <Button
                   shape='circle'
                   icon={<CloseOutlined />}
@@ -216,7 +242,7 @@ class OTQLSeries extends React.Component<Props> {
           );
         })}
         {!editionMode && (
-          <Button className={'mcs-timelineStepBuilder_addStepBtn'} onClick={this.addStep}>
+          <Button className={'mcs-timelineStepBuilder_addStepBtn'} onClick={addStep}>
             <FormattedMessage
               {...{
                 id: 'queryTool.newSerieButton',
