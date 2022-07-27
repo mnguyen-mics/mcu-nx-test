@@ -1,3 +1,5 @@
+import ExportsPage from '../../../pageobjects/DataStudio/ExportsPage';
+
 describe('Check DataStudio Export Page', () => {
   const second = 1000;
 
@@ -22,44 +24,17 @@ describe('Check DataStudio Export Page', () => {
   });
 
   it('Create an export', () => {
+    const exportsPage = new ExportsPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const exportName = `Test Export Activities ${Math.random().toString(36).substring(2, 10)}`;
-
-      // Go to data Studio menu
-      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
-
-      // Go to Export
-      cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Exports').click();
-
-      // Create New Export
-      cy.get('.mcs-exports_creationButton').click();
-
-      // Select the datamart
+      exportsPage.goToPage();
+      exportsPage.clickBtnExportsCreation();
       cy.contains(data.datamartName).click();
-
-      // Fill the name
-      cy.get('.mcs-exports_exportName').type(exportName);
-
-      // Click on otql area
-      cy.get('.mcs-otql').type('select {id} from UserProfile', {
-        parseSpecialCharSequences: false,
-      });
-
-      // Save the query export
-      cy.get('.mcs-form_saveButton_exportForm').click();
-
-      // Click on the link Export
-      cy.get('.mcs-breadcrumb_exportsLink').click();
-
-      // Search the export created
-      cy.get('.mcs-search-input').type(exportName);
-
-      // Type enter on text field
-      cy.get('.mcs-search-input').type('{enter}');
-      cy.wait(100);
-
-      // Click on the link of the export created
-      cy.get('.mcs-campaigns-link').click();
+      exportsPage.exportsInformation.typeExportName(exportName);
+      exportsPage.exportsInformation.typeQuery('select {id} from UserProfile');
+      exportsPage.exportsInformation.clickBtnSaveExport();
+      exportsPage.clickExportsLink();
+      exportsPage.goToExportExecutions(exportName);
     });
   });
 });
