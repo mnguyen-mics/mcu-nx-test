@@ -100,6 +100,13 @@ const organisationSettingsDefinition: NavigatorMenuDefinition = {
       translation: messages.identityProvidersTitle,
       communityOnly: true,
     },
+    {
+      ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsOrganisationDeviceIdRegistryList,
+      ),
+      translation: messages.deviceIdRegistriesSettingsTitle,
+      communityOnly: true,
+    },
   ],
 };
 

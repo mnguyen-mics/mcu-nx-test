@@ -73,6 +73,7 @@ const TYPES = {
   IChartDatasetService: Symbol.for('chartDatasetService'),
   IChartService: Symbol.for('chartService'),
   IContextualTargetingService: Symbol.for('contextualTargetingService'),
+  IDeviceIdRegistryService: Symbol.for('deviceIdRegistryService'),
 };
 
 export { TYPES };

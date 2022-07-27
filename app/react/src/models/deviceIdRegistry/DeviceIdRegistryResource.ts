@@ -1,0 +1,20 @@
+export type DeviceIdRegistryType =
+  | 'INSTALLATION_ID'
+  | 'MUM_ID'
+  | 'NETWORK_DEVICE_ID'
+  | 'CUSTOM_DEVICE_ID'
+  | 'MOBILE_ADVERTISING_ID'
+  | 'MOBILE_VENDOR_ID';
+
+export interface DeviceIdRegistryResource {
+  id: string;
+  name: string;
+  type: DeviceIdRegistryType;
+}
+
+export interface DeviceIdRegistryOfferResource {
+  id: string;
+  device_id_registry_type: DeviceIdRegistryType;
+  name: string;
+  subscribed: boolean;
+}
