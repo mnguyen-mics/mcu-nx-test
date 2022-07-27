@@ -2,7 +2,7 @@ import faker from 'faker';
 import DashboardFilter from '../components/DashboardFilter';
 import LeftMenu from '../../pageobjects/LeftMenu';
 import HomePage from '../../pageobjects/Home/HomePage';
-import QueryToolPage from '../../pageobjects/DataStudio/QueryToolPage';
+import QueryToolPage from '../../pageobjects/DataStudio/QueryTool/QueryToolPage';
 import {
   compartmentFilterContent,
   dataFileContent,
@@ -78,7 +78,7 @@ describe('dashboards engine Tests', () => {
               'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2" or nature = "test_query_tool_3"',
               0,
             );
-            queryToolPage.clickBtnRun();
+            queryToolPage.clickBtnRun(0);
             queryToolPage.clickBarIcon();
             cy.wait(1000);
             queryToolPage.chartContainer.eq(1).trigger('mouseover');
@@ -96,7 +96,7 @@ describe('dashboards engine Tests', () => {
               'SELECT @count{nature} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2" or nature = "test_query_tool_3"',
               0,
             );
-            queryToolPage.clickBtnRun();
+            queryToolPage.clickBtnRun(0);
             queryToolPage.resultMetrics.should('contain', '6');
           });
         });
@@ -840,7 +840,7 @@ describe('dashboards engine Tests', () => {
               'SELECT {nature @map} FROM ActivityEvent where nature = "test_join_1" or nature = "test_join_2"',
               0,
             );
-            queryToolPage.clickBtnRun();
+            queryToolPage.clickBtnRun(0);
             queryToolPage.clickBarIcon();
             cy.wait(1000);
             queryToolPage.chartContainer.eq(1).trigger('mouseover');
@@ -860,7 +860,7 @@ describe('dashboards engine Tests', () => {
               'SELECT {nature @map} FROM ActivityEvent where nature = "test_join_1" or nature = "test_join_2"',
               1,
             );
-            queryToolPage.clickBtnRun();
+            queryToolPage.clickBtnRun(0);
             queryToolPage.clickBarIcon();
             cy.wait(1000);
             queryToolPage.chartContainer.eq(1).trigger('mouseover');
@@ -914,7 +914,7 @@ describe('dashboards engine Tests', () => {
               );
             homePage.clickBtnStepName();
             homePage.typeNameStep('Dimension Test{enter}');
-            queryToolPage.clickBtnRun();
+            queryToolPage.clickBtnRun(0);
             queryToolPage.clickBarIcon();
             cy.wait(1000);
             queryToolPage.chartContainer.eq(1).trigger('mouseover');

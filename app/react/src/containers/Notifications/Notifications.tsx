@@ -221,6 +221,7 @@ class Notifications extends React.Component<Props> {
     // OVH Crisis: There are many error notifications due to OVH crisis
     // Let's make these notifications disappear after 3 seconds
     notifcationConfig.duration = 3;
+    notifcationConfig.className = 'mcs-notification';
 
     return notifcationConfig;
   }
