@@ -290,7 +290,7 @@ class UserContainer extends React.Component<Props, State> {
     orgUsersNb: number,
     inheritedUsersNb: number,
   ): React.ReactNode {
-    const { userDisplay } = this.props;
+    const { userDisplay, displayInheritedRole } = this.props;
     const renderHeaderText = () => {
       if (userDisplay === 'users') {
         return ` (${orgUsersNb} user${this.generateEnding(orgUsersNb)})`;
@@ -299,7 +299,9 @@ class UserContainer extends React.Component<Props, State> {
           inheritedUsersNb !== 0
             ? `, ${inheritedUsersNb} role${this.generateEnding(inheritedUsersNb)} inherited`
             : '';
-        return ` (${orgUsersNb} role${this.generateEnding(orgUsersNb)} defined${inheritedText})`;
+        return ` (${
+          displayInheritedRole ? orgUsersNb - inheritedUsersNb : orgUsersNb
+        } role${this.generateEnding(orgUsersNb)} defined${inheritedText})`;
       }
     };
     return (

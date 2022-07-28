@@ -17,7 +17,6 @@ import injectNotifications, {
 import { OrganisationResource } from '../../../../../models/organisation/organisation';
 import { isNull } from 'lodash';
 import { IUsersService } from '../../../../../services/UsersService';
-import { UserWithRole } from '../../UserRoles/domain';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
@@ -110,18 +109,16 @@ class UserRoleForm extends React.Component<Props, State> {
     const { connectedUser, notifyError } = this.props;
     const promises = connectedUser?.workspaces.map(ws => {
       if (!ws.administrator_id)
-        return this._usersService
-          .getUsersWithUserRole(ws.community_id, { max_results: 500 })
-          .then(response => {
-            return response.data;
-          });
+        return this._usersService.getUsers(ws.community_id, { max_results: 500 }).then(response => {
+          return response.data;
+        });
       else return Promise.resolve([]);
     });
 
     Promise.all(promises)
       .then(res => {
         this.setState({
-          users: this.deduplicateUsersArray(res.flatMap(x => x)),
+          users: res.flatMap(x => x),
           isLoadingUser: false,
         });
       })
@@ -129,14 +126,6 @@ class UserRoleForm extends React.Component<Props, State> {
         notifyError(err);
         this.setState({ isLoadingUser: false });
       });
-  };
-
-  deduplicateUsersArray = (users: UserWithRole[]) => {
-    const usersMap = new Map();
-    users.forEach(usr => {
-      usersMap.set(usr.id, usr);
-    });
-    return Array.from(usersMap.values());
   };
 
   onOrgSelect = (value: string, optionData: any) => {
