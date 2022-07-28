@@ -14,7 +14,7 @@ class ImportsPage extends Page {
   @logFunction()
   goToPage() {
     LeftMenu.clickDataStudioMenu();
-    LeftMenu.clickLibraryImports();
+    LeftMenu.clickDataStudioImports();
   }
 
   @logGetter()

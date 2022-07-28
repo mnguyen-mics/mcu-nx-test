@@ -1,5 +1,6 @@
 import Page from '../../Page';
-import LeftMenu from '../../LeftMenu';
+import SettingsMenu from '../SettingsMenu';
+import DatamartMenu from './DatamartMenu';
 import HeaderMenu from '../../HeaderMenu';
 import { logFunction } from '../../log/LoggingDecorator';
 
@@ -11,8 +12,8 @@ class DatamartsPage extends Page {
   @logFunction()
   goToPage() {
     HeaderMenu.clickSettingsIcon();
-    LeftMenu.clickDatamart();
-    LeftMenu.clickMyDatamart();
+    SettingsMenu.clickDatamart();
+    DatamartMenu.clickMyDatamart();
   }
 
   @logFunction()
