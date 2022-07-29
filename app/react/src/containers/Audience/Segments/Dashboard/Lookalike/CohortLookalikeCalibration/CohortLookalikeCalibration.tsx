@@ -16,6 +16,9 @@ import {
   AudienceSegmentShape,
   UserLookalikeByCohortsSegment,
 } from '@mediarithmics-private/advanced-components/lib/models/audienceSegment/AudienceSegmentResource';
+import { IQueryService } from '../../../../../../services/QueryService';
+import { OTQLAggregationResult } from '../../../../../../models/datamart/graphdb/OTQLResult';
+import CohortCalculationFailed from './Calculation/CohortCalculationFailed';
 
 interface CohortLookalikeCalibrationProps {
   cohortLookalikeSegment: UserLookalikeByCohortsSegment;
@@ -25,6 +28,7 @@ type Props = CohortLookalikeCalibrationProps & InjectedNotificationProps & Injec
 
 interface CohortLookalikeCalibrationState {
   isCalibrating: boolean;
+  calibrationFailed: boolean;
   fetchedData?: {
     cohortLookalikeSegment: UserLookalikeByCohortsSegment;
     sourceSegment: AudienceSegmentShape;
@@ -35,10 +39,12 @@ interface CohortLookalikeCalibrationState {
 class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeCalibrationState> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   constructor(props: Props) {
     super(props);
-    this.state = { isCalibrating: true };
+    this.state = { isCalibrating: true, calibrationFailed: false };
   }
 
   componentDidMount() {
@@ -54,7 +60,90 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
   };
 
   fetchRealInfos = () => {
-    this.fetchMockedInfos();
+    const { cohortLookalikeSegment, notifyError } = this.props;
+    this.setState({ isCalibrating: true }, () => {
+      const cohortSegmentPromise = this._audienceSegmentService.getSegment(
+        cohortLookalikeSegment.id,
+      );
+
+      const sourceSegmentPromise = this._audienceSegmentService.getSegment(
+        cohortLookalikeSegment.source_segment_id,
+      );
+      Promise.all([sourceSegmentPromise, cohortSegmentPromise])
+        .then(res => {
+          const sourceSegment = res[0].data;
+          const datamartId = sourceSegment.datamart_id;
+          const cohortSegment = res[1].data as UserLookalikeByCohortsSegment;
+          const volPerCohortOtqlQuery =
+            'SELECT { clustering_cohort { cohort_id @map(limit:4096) } } FROM UserPoint';
+          const volPerCohortQueryP = this._queryService.runOTQLQuery(
+            datamartId,
+            volPerCohortOtqlQuery,
+            'DASHBOARD',
+            'SEGMENT_DASHBOARD',
+            { use_cache: false },
+          );
+          const volPerCohortAndSegmentOtqlQuery = `SELECT { clustering_cohort { cohort_id @map(limit:4096) } } FROM UserPoint WHERE segments { id = "${sourceSegment.id}" }`;
+          const volPerCohortAndSegmentQueryP = this._queryService.runOTQLQuery(
+            datamartId,
+            volPerCohortAndSegmentOtqlQuery,
+            'DASHBOARD',
+            'SEGMENT_DASHBOARD',
+            { use_cache: false },
+          );
+
+          Promise.all([volPerCohortQueryP, volPerCohortAndSegmentQueryP])
+            .then(resPs => {
+              const resVolPerCohortQuery = resPs[0].data;
+              const resVolPerCohortAndSegmentQuery = resPs[1].data;
+
+              const perCohortBuckets = (resVolPerCohortQuery.rows as OTQLAggregationResult[])[0]
+                .aggregations.buckets[0].buckets;
+              const perCohortAndSegmentBuckets = (
+                resVolPerCohortAndSegmentQuery.rows as OTQLAggregationResult[]
+              )[0].aggregations.buckets[0].buckets;
+
+              const cohorts: CohortCalibrationGraphPoint[] = [];
+
+              perCohortBuckets.forEach(b => {
+                const cohortId = b.key;
+
+                const nbUserpoints = b.count;
+
+                const associatedAndSegmentB = perCohortAndSegmentBuckets.find(bb => {
+                  return bb.key === cohortId;
+                });
+
+                if (associatedAndSegmentB && nbUserpoints !== 0) {
+                  const cohort: CohortCalibrationGraphPoint = {
+                    cohortNumber: +cohortId,
+                    nbUserpoints: nbUserpoints,
+                    overlap: (associatedAndSegmentB.count / nbUserpoints) * 100,
+                  };
+                  cohorts.push(cohort);
+                }
+              });
+
+              cohorts.sort((a, b) => a.overlap - b.overlap);
+              this.setState({
+                isCalibrating: false,
+                fetchedData: {
+                  sourceSegment: sourceSegment,
+                  cohorts,
+                  cohortLookalikeSegment: cohortSegment,
+                },
+              });
+            })
+            .catch(err => {
+              notifyError(err);
+              this.setState({ isCalibrating: false, calibrationFailed: true });
+            });
+        })
+        .catch(err => {
+          notifyError(err);
+          this.setState({ isCalibrating: false, calibrationFailed: true });
+        });
+    });
   };
 
   fetchMockedInfos = () => {
@@ -128,11 +217,13 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
   };
 
   render() {
-    const { isCalibrating, fetchedData } = this.state;
+    const { isCalibrating, fetchedData, calibrationFailed } = this.state;
     return (
       <div>
         <Card className='mcs-audienceSegmentDashboard_cohort_lookalike_calibration'>
-          {isCalibrating || !fetchedData ? (
+          {calibrationFailed ? (
+            <CohortCalculationFailed />
+          ) : isCalibrating || !fetchedData ? (
             <CohortCalculationInProgress />
           ) : (
             <CohortLookalikeCalibrationSettings
