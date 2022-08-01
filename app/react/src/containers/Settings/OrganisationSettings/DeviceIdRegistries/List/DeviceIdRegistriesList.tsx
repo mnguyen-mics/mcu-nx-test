@@ -1,9 +1,8 @@
 import * as React from 'react';
 import messages from '../messages';
-import { FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { Layout, Row } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { IDeviceIdRegistryService } from '../../../../../services/DeviceIdRegistryService';
@@ -231,7 +230,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         key: 'subscription',
         sorter: (a: DeviceIdRegistryOfferResource, b: DeviceIdRegistryOfferResource) =>
           a.subscribed.toString().localeCompare(b.subscribed.toString()),
-        render: (text: String, record: DeviceIdRegistryOfferResource) => {
+        render: (text: string, record: DeviceIdRegistryOfferResource) => {
           return <span>{record.subscribed ? 'subscribed' : 'not subscribed'}</span>;
         },
       },
