@@ -149,7 +149,7 @@ class UserRoleForm extends React.Component<Props, State> {
       if (userId) {
         if (userRoleId && orgId)
           this.props.save(userId, orgId, roleInput, userRoleId, user.role?.is_inherited);
-        else if (user.organisation_id) this.props.save(userId, user.organisation_id, roleInput);
+        else if (orgId) this.props.save(userId, orgId, roleInput);
       }
     } else if (userInput.id && orgInput.id && roleInput) {
       // creation
