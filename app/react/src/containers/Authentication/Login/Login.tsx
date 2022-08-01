@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import React, { useEffect, useState, MouseEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActionFunctionAny, ActionMeta } from 'redux-actions';
 import { compose } from 'recompose';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
@@ -126,7 +126,7 @@ const Login = (props: Props) => {
     });
   };
 
-  const onSwitchChange = (checked: boolean, event: MouseEvent) => {
+  const onSwitchChange = (checked: boolean) => {
     setCheck(checked);
   };
 
