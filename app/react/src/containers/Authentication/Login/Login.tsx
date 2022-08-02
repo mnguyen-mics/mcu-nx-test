@@ -126,7 +126,7 @@ const Login = (props: Props) => {
     });
   };
 
-  const onSwitchChange = (checked: boolean, event: MouseEvent) => {
+  const onSwitchChange = (checked: boolean) => {
     setCheck(checked);
   };
 

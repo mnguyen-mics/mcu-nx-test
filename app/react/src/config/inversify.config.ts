@@ -169,6 +169,9 @@ import {
   ContextualTargetingService,
   IContextualTargetingService,
 } from '../services/ContextualTargetingService';
+import DeviceIdRegistryService, {
+  IDeviceIdRegistryService,
+} from '../services/DeviceIdRegistryService';
 
 export const container = new Container();
 
@@ -328,6 +331,9 @@ container.bind<IChartService>(TYPES.IChartService).to(ChartService);
 container
   .bind<IContextualTargetingService>(TYPES.IContextualTargetingService)
   .to(ContextualTargetingService);
+container
+  .bind<IDeviceIdRegistryService>(TYPES.IDeviceIdRegistryService)
+  .to(DeviceIdRegistryService);
 
 export const { lazyInject } = getDecorators(container, false);
 

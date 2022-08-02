@@ -17,7 +17,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import FoldableCardHierarchy, { FoldableCardHierarchyResource } from './FoldableCardHierarchy';
-import { RouterProps, UserDisplay } from './UserListPage';
+import { RouterProps, DisplayMode } from './UserListPage';
 import { messages } from './messages';
 import UserResource from '../../../../../models/directory/UserResource';
 import _ from 'lodash';
@@ -27,7 +27,7 @@ import { HomeOutlined } from '@ant-design/icons';
 export interface UserContainerProps {
   communityId: string;
   currentOrganisationId: string;
-  userDisplay: UserDisplay;
+  displayMode: DisplayMode;
   user?: UserResourceWithRole;
   editUser: (user: UserResourceWithRole) => void;
   editUserRole: (user: UserResourceWithRole, organisationId?: string) => void;
@@ -72,9 +72,9 @@ class UserContainer extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { userDisplay, communityId, filterValue, displayInheritedRole } = this.props;
+    const { displayMode: userDisplay, communityId, filterValue, displayInheritedRole } = this.props;
     const {
-      userDisplay: prevUserDisplay,
+      displayMode: prevUserDisplay,
       filterValue: prevFilterValue,
       displayInheritedRole: prevDisplayInheritedRole,
     } = prevProps;
@@ -89,10 +89,11 @@ class UserContainer extends React.Component<Props, State> {
 
   initializeUserHierarchy(communityId: string, filterValue?: string) {
     const {
-      userDisplay,
+      displayMode: userDisplay,
       match: {
         params: { organisationId },
       },
+      organisations,
     } = this.props;
 
     this.setState({
@@ -102,7 +103,9 @@ class UserContainer extends React.Component<Props, State> {
     this._communityService
       .getCommunityUsers(communityId, { max_results: 500 })
       .then(res => {
-        const users = res.data;
+        const users = res.data.filter(u =>
+          organisations.map(o => o.id).includes(u.organisation_id),
+        );
         const filteredUsers = filterValue
           ? users.filter(
               u =>
@@ -180,8 +183,13 @@ class UserContainer extends React.Component<Props, State> {
 
   buildHierarchy(): FoldableCardHierarchyResource | undefined {
     const { users } = this.state;
-    const { currentOrganisationId, displayInheritedRole, userDisplay, user, organisations } =
-      this.props;
+    const {
+      currentOrganisationId,
+      displayInheritedRole,
+      displayMode: userDisplay,
+      user,
+      organisations,
+    } = this.props;
 
     const recursiveBuildHierarchy = (
       organisation?: OrganisationResource,
@@ -290,13 +298,13 @@ class UserContainer extends React.Component<Props, State> {
     orgUsersNb: number,
     inheritedUsersNb: number,
   ): React.ReactNode {
-    const { userDisplay, displayInheritedRole } = this.props;
+    const { displayMode: userDisplay, displayInheritedRole } = this.props;
     const renderHeaderText = () => {
       if (userDisplay === 'users') {
         return ` (${orgUsersNb} user${this.generateEnding(orgUsersNb)})`;
       } else {
         const inheritedText =
-          inheritedUsersNb !== 0
+          inheritedUsersNb !== 0 && displayInheritedRole
             ? `, ${inheritedUsersNb} role${this.generateEnding(inheritedUsersNb)} inherited`
             : '';
         return ` (${
@@ -331,7 +339,7 @@ class UserContainer extends React.Component<Props, State> {
   };
 
   buildBody(orgUsers: UserResourceWithRole[], organisationId?: string): React.ReactNode {
-    const { userDisplay, intl } = this.props;
+    const { displayMode: userDisplay, intl } = this.props;
     if (orgUsers.length === 0)
       return <Empty className='mcs-foldable-card-empty' image={Empty.PRESENTED_IMAGE_SIMPLE} />;
     const idSorter = (a: UserResourceWithRole, b: UserResourceWithRole) => a.id.localeCompare(b.id);

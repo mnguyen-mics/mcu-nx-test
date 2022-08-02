@@ -264,6 +264,10 @@ export default defineMessages({
     id: 'menu.organisation.processings',
     defaultMessage: 'Processing Activities',
   },
+  deviceIdRegistriesSettingsTitle: {
+    id: 'menu.organisation.deviceIdRegistries',
+    defaultMessage: 'Device Registries',
+  },
   campaignSettingsTitle: {
     id: 'menu.campaigns.title',
     defaultMessage: 'Campaigns',

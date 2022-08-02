@@ -24,11 +24,11 @@ import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 
 const { Content } = Layout;
 
-export type UserDisplay = 'users' | 'user_roles';
+export type DisplayMode = 'users' | 'user_roles';
 interface State {
   isLoadingOrganisations: boolean;
   organisation?: OrganisationResource;
-  userDisplay: UserDisplay;
+  displayMode: DisplayMode;
   isUserDrawerVisible: boolean;
   isUserRoleDrawerVisible: boolean;
   isUserCreation: boolean;
@@ -63,7 +63,7 @@ class UserListPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoadingOrganisations: true,
-      userDisplay: 'users',
+      displayMode: 'users',
       isUserDrawerVisible: false,
       isUserRoleDrawerVisible: false,
       isUserCreation: false,
@@ -237,7 +237,7 @@ class UserListPage extends React.Component<Props, State> {
           .catch(err => {
             notifyError(err);
             this.setState({
-              userDisplay: 'user_roles',
+              displayMode: 'user_roles',
             });
           });
     };
@@ -297,14 +297,14 @@ class UserListPage extends React.Component<Props, State> {
           .catch(err => {
             notifyError(err);
             this.setState({
-              userDisplay: 'user_roles',
+              displayMode: 'user_roles',
             });
           });
       })
       .catch(err => {
         notifyError(err);
         this.setState({
-          userDisplay: 'user_roles',
+          displayMode: 'user_roles',
         });
       });
   };
@@ -315,7 +315,7 @@ class UserListPage extends React.Component<Props, State> {
       notifySuccess,
       intl: { formatMessage },
     } = this.props;
-    const { userDisplay } = this.state;
+    const { displayMode: userDisplay } = this.state;
     const previousUser = !!user.id;
     (previousUser
       ? this._usersService.updateUser(user.id, user.organisation_id, user)
@@ -325,7 +325,7 @@ class UserListPage extends React.Component<Props, State> {
         this.setState(
           {
             isUserDrawerVisible: false,
-            userDisplay: previousUser ? userDisplay : 'user_roles',
+            displayMode: previousUser ? userDisplay : 'user_roles',
           },
           () => {
             this.refreshAndScrollToElement(res.data);
@@ -350,7 +350,7 @@ class UserListPage extends React.Component<Props, State> {
         params: { organisationId },
       },
     } = this.props;
-    const { userDisplay } = this.state;
+    const { displayMode: userDisplay } = this.state;
     this.fetchOrganisations(organisationId, user).then(() => {
       // wait for DOM to be populated
       const orgId = userDisplay === 'users' ? user?.organisation_id : user?.role?.organisation_id;
@@ -389,15 +389,15 @@ class UserListPage extends React.Component<Props, State> {
     return userOptions;
   };
 
-  handleChange = (value: UserDisplay) => {
+  handleDisplayMode = (value: DisplayMode) => {
     this.setState({
-      userDisplay: value,
+      displayMode: value,
       user: undefined,
     });
   };
 
   handleDrawer = (isVisible: boolean) => () => {
-    const { userDisplay } = this.state;
+    const { displayMode: userDisplay } = this.state;
     if (userDisplay === 'users') {
       this.setState({
         isUserDrawerVisible: isVisible,
@@ -446,7 +446,7 @@ class UserListPage extends React.Component<Props, State> {
     const {
       organisation,
       isLoadingOrganisations,
-      userDisplay,
+      displayMode: userDisplay,
       isUserDrawerVisible,
       isUserRoleDrawerVisible,
       isUserCreation,
@@ -473,7 +473,7 @@ class UserListPage extends React.Component<Props, State> {
               <Select
                 className='mcs-primary mcs-userSettings_userSelect'
                 suffixIcon={suffixIcon}
-                onChange={this.handleChange}
+                onChange={this.handleDisplayMode}
                 options={this.getUsersOptions()}
                 value={userDisplay}
                 placeholder={this.getUsersOptions()[0].value}
@@ -515,7 +515,7 @@ class UserListPage extends React.Component<Props, State> {
                 <UserContainer
                   currentOrganisationId={organisationId}
                   communityId={organisation.community_id}
-                  userDisplay={userDisplay}
+                  displayMode={userDisplay}
                   user={user}
                   editUser={this.editUser}
                   editUserRole={this.editUserRole}

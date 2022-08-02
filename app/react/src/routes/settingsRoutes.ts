@@ -47,6 +47,7 @@ import AudienceFeatureEditPage from '../containers/Settings/DatamartSettings/Sta
 import StandardSegmentBuilderEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/StandardSegmentBuilderEditPage';
 import UserListPageContainer from '../containers/Settings/OrganisationSettings/Users/List/UserListPageContainer';
 import IdentityProviders from '../containers/Settings/OrganisationSettings/IdentityProviders/IdentityProviders';
+import DeviceIdRegistriesList from '../containers/Settings/OrganisationSettings/DeviceIdRegistries/List/DeviceIdRegistriesList';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -413,6 +414,13 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/organisation/identity_providers',
     layout: 'settings',
     contentComponent: IdentityProviders,
+  },
+
+  // device registries
+  settingsOrganisationDeviceIdRegistryList: {
+    path: '/settings/organisation/device_registries',
+    layout: 'settings',
+    contentComponent: DeviceIdRegistriesList,
     requiredFeature: 'organisationSettings-settings',
   },
 

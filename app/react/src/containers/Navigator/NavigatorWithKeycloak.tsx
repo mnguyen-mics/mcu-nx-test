@@ -10,7 +10,6 @@ import Datalayer from './Datalayer';
 import LayoutManager from './Layout/LayoutManager';
 import routes from '../../routes/routes';
 import log from '../../utils/Logger';
-import { isAppInitialized } from '../../redux/App/selectors';
 import * as loginActions from '../../redux/Login/actions';
 import { setColorsStore } from '../../redux/Theme/actions';
 import * as SessionHelper from '../../redux/Session/selectors';
@@ -99,7 +98,6 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
   render() {
     const {
       intl: { formatMessage },
-      initialized,
       initializationError,
     } = this.props;
 
@@ -116,8 +114,6 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
     if (error) {
       return <Error message={formatMessage(errorMessages.generic)} />;
     }
-
-    if (!initialized) return <Loading isFullScreen={false} />; // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
     let selectorSize = 200;
 
@@ -239,7 +235,6 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
 }
 
 const mapStateToProps = (state: MicsReduxState) => ({
-  initialized: isAppInitialized(state),
   initializationError: state.app.initializationError,
   workspaces: SessionHelper.getWorkspaces(state),
   defaultWorkspaceOrganisationId: SessionHelper.getDefaultWorkspaceOrganisationId(state),

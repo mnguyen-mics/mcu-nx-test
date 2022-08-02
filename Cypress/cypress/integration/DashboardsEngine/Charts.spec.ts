@@ -134,7 +134,10 @@ describe('Charts Tests', () => {
             cy.get('.mcs-otqlChart_icons_bar').click();
             cy.wait(1000);
             cy.get('.mcs-otqlChart_items_share_button').click();
-            cy.wait(1000);
+            cy.get('.mcs-notification').should(
+              'contain',
+              'Copied chart configuration to clipboard',
+            );
             cy.task('getClipboard')
               .should('contain', '"title": ""')
               .and('contain', '"type": "bars"')
