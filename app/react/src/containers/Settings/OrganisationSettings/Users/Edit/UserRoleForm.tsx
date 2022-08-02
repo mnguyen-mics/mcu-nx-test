@@ -15,9 +15,9 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { OrganisationResource } from '../../../../../models/organisation/organisation';
-import { isNull } from 'lodash';
 import { IUsersService } from '../../../../../services/UsersService';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { isNull } from 'lodash';
 
 interface State {
   user?: Partial<UserCreationWithRoleResource>;
@@ -82,18 +82,24 @@ class UserRoleForm extends React.Component<Props, State> {
       isLoadingUser: true,
     };
   }
+
   componentDidMount() {
     const { user, notifyError, isUserCreation } = this.props;
 
     if (user) {
       this._organisationService
         .getOrganisation(user.organisation_id)
-        .then(res => {
+        .then(({ data: org }) => {
           this.setState({
             user: user,
             roleInput: user.role?.role || 'READER',
-            userOrganisation: res.data,
+            userOrganisation: org,
             isLoadingUser: false,
+            orgInput: {
+              value: org.name,
+              id: org.id,
+              isCommunity: isNull(org.administrator_id),
+            },
           });
         })
         .catch(err => {
@@ -108,11 +114,11 @@ class UserRoleForm extends React.Component<Props, State> {
   fetchUsers = () => {
     const { connectedUser, notifyError } = this.props;
     const promises = connectedUser?.workspaces.map(ws => {
-      if (!ws.administrator_id)
-        return this._usersService.getUsers(ws.community_id, { max_results: 500 }).then(response => {
+      return this._usersService
+        .getUsers(ws.organisation_id, { max_results: 500 })
+        .then(response => {
           return response.data;
         });
-      else return Promise.resolve([]);
     });
 
     Promise.all(promises)
@@ -172,8 +178,8 @@ class UserRoleForm extends React.Component<Props, State> {
     const { users } = this.state;
     return users?.map(u => {
       return {
-        label: `${u.first_name} ${u.last_name}`,
-        value: `${u.first_name} ${u.last_name}`,
+        label: `${u.first_name} ${u.last_name} (${u.email})`,
+        value: `${u.first_name} ${u.last_name} (${u.email})`,
         key: u.id,
       };
     });
@@ -196,9 +202,8 @@ class UserRoleForm extends React.Component<Props, State> {
 
   displayCommunityAdminOption = () => {
     const { intl } = this.props;
-    const { userOrganisation, orgInput } = this.state;
-    return (userOrganisation && isNull(userOrganisation.administrator_id)) ||
-      orgInput?.isCommunity ? (
+    const { orgInput } = this.state;
+    return orgInput?.isCommunity ? (
       <Radio value={'COMMUNITY_ADMIN'}>
         <b>Community Admin</b>
         <br />
@@ -271,7 +276,12 @@ class UserRoleForm extends React.Component<Props, State> {
                 : 'mcs-userForm_select'
             }
             options={organisations.map(org => {
-              return { key: org.id, label: org.name, value: org.name };
+              return {
+                key: org.id,
+                label: org.name,
+                value: org.name,
+                isCommunity: isNull(org.administrator_id),
+              };
             })}
             searchValue={organisations.find(o => o.id === user?.organisation_id)?.name}
             onSelect={this.onOrgSelect}
