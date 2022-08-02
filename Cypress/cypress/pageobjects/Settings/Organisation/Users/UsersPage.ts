@@ -239,7 +239,7 @@ class UsersPage extends Page {
     cy.wait(500);
     rolesPage.roleInformationPage.clickOnRole(role);
     rolesPage.roleInformationPage.clickBtnSave();
-    cy.wait(500);
+    cy.wait(5000);
     rolesPage.usersPage.click();
   }
 }
