@@ -3,36 +3,6 @@ import { logFunction, logGetter } from './log/LoggingDecorator';
 
 class LeftMenu extends Page {
   @logGetter()
-  get settingsMainMenuContainer() {
-    return cy.get('.mcs-settingsMainMenu_container');
-  }
-
-  @logGetter()
-  get myAccount() {
-    return cy.get('.mcs-settingsMainMenu_menu\\.account\\.title');
-  }
-
-  @logGetter()
-  get organisation() {
-    return cy.get('.mcs-settingsMainMenu_menu\\.organisation\\.title');
-  }
-
-  @logGetter()
-  get datamart() {
-    return cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title');
-  }
-
-  @logGetter()
-  get campaigns() {
-    return cy.get('.mcs-settingsMainMenu_menu\\.campaigns\\.title');
-  }
-
-  @logGetter()
-  get services() {
-    return cy.get('.mcs-settingsMainMenu_menu\\.service\\.offers\\.title');
-  }
-
-  @logGetter()
   get arrowMenu() {
     return cy.get('.mcs-settingsMainMenu_container_arrowMenu');
   }
@@ -40,31 +10,6 @@ class LeftMenu extends Page {
   @logGetter()
   get settingsMainMenu() {
     return cy.get('.mcs-settings-main-menu');
-  }
-
-  @logFunction()
-  clickMyAccount() {
-    this.myAccount.click();
-  }
-
-  @logFunction()
-  clickOrganisation() {
-    this.organisation.click();
-  }
-
-  @logFunction()
-  clickDatamart() {
-    this.datamart.click();
-  }
-
-  @logFunction()
-  clickCampaigns() {
-    this.campaigns.click();
-  }
-
-  @logFunction()
-  clickServices() {
-    this.services.click();
   }
 
   @logFunction()
@@ -139,23 +84,13 @@ class LeftMenu extends Page {
   }
 
   @logFunction()
-  clickLibraryImports() {
+  clickDataStudioImports() {
     cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Imports').click();
   }
 
   @logFunction()
-  clickLibraryExports() {
+  clickDataStudioExports() {
     cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Exports').click();
-  }
-
-  @logFunction()
-  clickChannels() {
-    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.channels').click();
-  }
-
-  @logFunction()
-  clickActivityAnalyser() {
-    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.activity_analyzer').click();
   }
 }
 
