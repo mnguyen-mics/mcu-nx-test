@@ -1,11 +1,12 @@
 import Page from '../../../Page';
-import LeftMenu from '../../../LeftMenu';
 import HeaderMenu from '../../../HeaderMenu';
 import ActivityAnalyserTypePage from './ActivityAnalyserTypePage';
 import ActivityAnalyserPropertiesPage from './ActivityAnalyserPropertiesPage';
 import { logFunction, logGetter } from '../../../log/LoggingDecorator';
 import faker from 'faker';
 import ConfirmArchivePopUp from './ConfirmArchivePopUp';
+import DatamartMenu from '../DatamartMenu';
+import SettingsMenu from '../../SettingsMenu';
 
 class ActivityAnalyserPage extends Page {
   visitAnalyserName: string;
@@ -26,8 +27,8 @@ class ActivityAnalyserPage extends Page {
   @logFunction()
   goToPage() {
     HeaderMenu.clickSettingsIcon();
-    LeftMenu.clickDatamart();
-    LeftMenu.clickActivityAnalyser();
+    SettingsMenu.clickDatamart();
+    DatamartMenu.clickActivityAnalyser();
   }
 
   @logGetter()

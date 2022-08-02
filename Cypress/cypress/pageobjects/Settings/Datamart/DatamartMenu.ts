@@ -16,6 +16,11 @@ class DatamartMenu extends Page {
   clickMlFunctions() {
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.ml_functions').click();
   }
+
+  @logFunction()
+  clickActivityAnalyser() {
+    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.activity_analyzer').click();
+  }
 }
 
 export default new DatamartMenu();
