@@ -402,11 +402,13 @@ class UserListPage extends React.Component<Props, State> {
       this.setState({
         isUserDrawerVisible: isVisible,
         user: undefined,
+        isUserCreation: false,
       });
     } else {
       this.setState({
         isUserRoleDrawerVisible: isVisible,
         user: undefined,
+        isUserCreation: false,
       });
     }
   };
