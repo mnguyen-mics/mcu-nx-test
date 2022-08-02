@@ -1,5 +1,6 @@
 import Page from '../../../Page';
-import LeftMenu from '../../../LeftMenu';
+import SettingsMenu from '../../SettingsMenu';
+import DatamartMenu from '../DatamartMenu';
 import HeaderMenu from '../../../HeaderMenu';
 import SelectDatamartPage from './SelectDatamartPage';
 import SiteInformation from './SiteInformation';
@@ -24,9 +25,8 @@ class ChannelsPage extends Page {
 
   @logFunction()
   goToPage() {
-    HeaderMenu.clickSettingsIcon();
-    LeftMenu.clickDatamart();
-    LeftMenu.clickChannels();
+    SettingsMenu.clickDatamart();
+    DatamartMenu.clickChannels();
   }
 
   @logGetter()

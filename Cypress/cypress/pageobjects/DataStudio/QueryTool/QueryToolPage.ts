@@ -21,6 +21,11 @@ class QueryToolPage extends Page {
   }
 
   @logGetter()
+  get consoleContainer() {
+    return cy.get('.mcs-OTQLConsoleContainer_tabs');
+  }
+
+  @logGetter()
   get btnAddQuery() {
     return cy.get('.mcs-OTQLConsoleContainer_tabs').find('.ant-tabs-nav-add').eq(1);
   }

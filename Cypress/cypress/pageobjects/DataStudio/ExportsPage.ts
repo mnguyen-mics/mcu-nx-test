@@ -14,7 +14,7 @@ class ExportsPage extends Page {
   @logFunction()
   goToPage() {
     LeftMenu.clickDataStudioMenu();
-    LeftMenu.clickLibraryExports();
+    LeftMenu.clickDataStudioExports();
   }
 
   @logFunction()
