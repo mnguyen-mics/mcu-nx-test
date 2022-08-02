@@ -4,8 +4,8 @@ import {
   DataResponse,
 } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { injectable } from 'inversify';
+import { UserWithRole } from '../containers/Settings/OrganisationSettings/Users/domain';
 import UserResource, { UserCreationWithRoleResource } from '../models/directory/UserResource';
-import { UserWithRole } from '../containers/Settings/OrganisationSettings/UserRoles/domain';
 
 export interface IUsersService {
   getUsers: (organisationId: string, filters?: object) => Promise<DataListResponse<UserResource>>;

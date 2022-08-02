@@ -1,6 +1,5 @@
 import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datamarts/List';
 import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels';
-import UserRoleListPage from '../containers/Settings/OrganisationSettings/UserRoles/List/UserRolesList';
 import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount';
 import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/Profile';
 import MobileApplicationEditPage from '../containers/Settings/DatamartSettings/MobileApplications/Edit/MobileApplicationEditPage';
@@ -42,12 +41,11 @@ import Partition from '../containers/Settings/DatamartSettings/Partitions/Dashbo
 import AudiencePartitionPage from '../containers/Settings/DatamartSettings/Partitions/Edit/AudiencePartitionPage';
 import CleaningRulesDashboardPage from '../containers/Settings/DatamartSettings/CleaningRules/Dashboard/CleaningRulesDashboardPage';
 import CleaningRuleEditPage from '../containers/Settings/DatamartSettings/CleaningRules/Edit/CleaningRuleEditPage';
-import EditUserRolePage from '../containers/Settings/OrganisationSettings/UserRoles/Edit/EditUserRolePage';
 import AudienceFeatureEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/AudienceFeatureEditPage';
 import StandardSegmentBuilderEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/StandardSegmentBuilderEditPage';
-import UserListPageContainer from '../containers/Settings/OrganisationSettings/Users/List/UserListPageContainer';
 import IdentityProviders from '../containers/Settings/OrganisationSettings/IdentityProviders/IdentityProviders';
 import DeviceIdRegistriesList from '../containers/Settings/OrganisationSettings/DeviceIdRegistries/List/DeviceIdRegistriesList';
+import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UserListPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -359,7 +357,7 @@ export const settingsDefinition: NavigatorDefinition = {
   settingsOrganisationUserList: {
     path: '/settings/organisation/users',
     layout: 'settings',
-    contentComponent: UserListPageContainer,
+    contentComponent: UserListPage,
     requiredFeature: 'organisationSettings-users',
   },
   settingsOrganisationUserEdition: {
@@ -373,20 +371,6 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: EditUserPage,
     requiredFeature: 'organisationSettings-users',
-  },
-
-  // user roles
-  settingsOrganisationUserRoleList: {
-    path: '/settings/organisation/user_roles',
-    layout: 'settings',
-    contentComponent: UserRoleListPage,
-    requiredFeature: 'organisationSettings-user_roles',
-  },
-  settingsOrganisationUserRoleEdition: {
-    path: '/settings/organisation/user_roles/:roleId/user/:userId/edit',
-    layout: 'edit',
-    editComponent: EditUserRolePage,
-    requiredFeature: 'organisationSettings-user_roles',
   },
 
   // processings

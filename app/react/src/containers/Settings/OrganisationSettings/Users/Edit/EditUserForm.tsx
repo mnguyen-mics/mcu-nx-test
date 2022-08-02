@@ -14,7 +14,7 @@ import ScrollspySider, {
 } from '../../../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import RoleFormSection from '../../UserRoles/Edit/Sections/RoleInfoFormSection';
+import RoleFormSection from './Sections/RoleInfoFormSection';
 import { Omit } from '../../../../../utils/Types';
 import UserResource from '../../../../../models/directory/UserResource';
 
