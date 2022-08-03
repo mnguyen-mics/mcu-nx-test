@@ -76,7 +76,7 @@ class RolesPage extends Page {
 
   @logGetter()
   get homeIcon() {
-    return cy.get('.mcs-userRoleList_homeUserCell');
+    return cy.get('.mcs-userRoleList_homeUserCell').find('.anticon-home');
   }
 
   @logGetter()
