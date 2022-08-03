@@ -94,6 +94,7 @@ cat << EOF
   "responseTimeout": 300000,
   "pageLoadTimeout": 120000,
   "execTimeout": 300000,
+  "requestTimeout": 120000,
 
   "video": ${RECORD_VIDEO},
   "viewportHeight": 1080,

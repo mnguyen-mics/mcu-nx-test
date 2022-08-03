@@ -84,14 +84,14 @@ describe('Users Rights test', () => {
       await createUserAndLoginWithIt(subOrg1.id, 'ORGANISATION_ADMIN');
       HeaderMenu.switchOrgWithCreatedUser(subOrg1.id);
       usersPage.goToPage();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage.cardWithId(subOrg1.id).should('exist');
 
       usersPage.addUserAndItsRole(subOrg1.name, undefined, new UsersPage().email);
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
       usersPage.addUserAndItsRole(subOrg1_1.name, undefined, new UsersPage().email);
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage.clickBtnAddUser();
       usersPage.userInformationPage.clickOrganisationField();

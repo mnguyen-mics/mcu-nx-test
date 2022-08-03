@@ -59,7 +59,7 @@ describe('Users test', () => {
     const usersPage = new UsersPage();
     const rolesPage = new RolesPage();
     usersPage.goToPage();
-    cy.wait('@getUsers', { timeout: 120000 });
+    cy.wait('@getUsers');
 
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       usersPage.clickBtnAddUser();
@@ -71,9 +71,9 @@ describe('Users test', () => {
         .contains(new RegExp('^' + data.organisationName + '$', 'g'))
         .click();
       usersPage.userInformationPage.clickBtnSaveUser();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
       rolesPage.roleInformationPage.userSearchField
         .should('be.disabled')
         .and('have.value', `${usersPage.firstName} ${usersPage.lastName}`);
@@ -83,7 +83,7 @@ describe('Users test', () => {
       );
       rolesPage.roleInformationPage.readerRoleRadioBtn.find('input').should('be.checked');
       rolesPage.roleInformationPage.clickBtnSave();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
       rolesPage.firstNamesColumnInCard(data.organisationId).should('contain', usersPage.firstName);
       rolesPage
         .firstNamesColumnInCard(data.organisationId)
@@ -94,7 +94,7 @@ describe('Users test', () => {
         .and('contain', 'READER');
 
       rolesPage.usersPage.click();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage.idsHeaderInCard(data.organisationId).click();
 
@@ -114,7 +114,7 @@ describe('Users test', () => {
     const usersPage = new UsersPage();
     const rolesPage = new RolesPage();
     usersPage.goToPage();
-    cy.wait('@getUsers', { timeout: 120000 });
+    cy.wait('@getUsers');
 
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       usersPage.clickBtnAddUser();
@@ -126,9 +126,9 @@ describe('Users test', () => {
         .contains(new RegExp('^' + data.organisationName + '$', 'g'))
         .click();
       usersPage.userInformationPage.clickBtnSaveUser();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
       rolesPage.roleInformationPage.userSearchField
         .should('be.disabled')
         .and('have.value', `${usersPage.firstName} ${usersPage.lastName}`);
@@ -142,7 +142,7 @@ describe('Users test', () => {
         .click();
       rolesPage.roleInformationPage.readerRoleRadioBtn.find('input').should('be.checked');
       rolesPage.roleInformationPage.clickBtnSave();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
       rolesPage.cardWithId(data.organisationId).should('not.contain', usersPage.firstName);
       rolesPage.clickCardToggle(subOrg1.id);
       rolesPage.firstNamesColumnInCard(subOrg1.id).should('contain', usersPage.firstName);
@@ -155,7 +155,7 @@ describe('Users test', () => {
         .and('contain', 'READER');
 
       rolesPage.usersPage.click();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage.idsHeaderInCard(data.organisationId).click();
 
@@ -177,7 +177,7 @@ describe('Users test', () => {
     const usersPage = new UsersPage();
     const rolesPage = new RolesPage();
     usersPage.goToPage();
-    cy.wait('@getUsers', { timeout: 120000 });
+    cy.wait('@getUsers');
 
     usersPage.clickBtnAddUser();
     usersPage.userInformationPage.typeFirstName();
@@ -188,9 +188,9 @@ describe('Users test', () => {
       .contains(new RegExp('^' + subOrg1.name + '$', 'g'))
       .click();
     usersPage.userInformationPage.clickBtnSaveUser();
-    cy.wait('@getUsers', { timeout: 120000 });
+    cy.wait('@getUsers');
 
-    cy.wait('@getUsers', { timeout: 120000 });
+    cy.wait('@getUsers');
     rolesPage.roleInformationPage.userSearchField
       .should('be.disabled')
       .and('have.value', `${usersPage.firstName} ${usersPage.lastName}`);
@@ -198,7 +198,7 @@ describe('Users test', () => {
     rolesPage.roleInformationPage.readerRoleRadioBtn.find('input').should('be.checked');
     rolesPage.roleInformationPage.clickBtnEditorRole();
     rolesPage.roleInformationPage.clickBtnSave();
-    cy.wait('@getUsers', { timeout: 120000 });
+    cy.wait('@getUsers');
     rolesPage.firstNamesColumnInCard(subOrg1.id).should('contain', usersPage.firstName);
     rolesPage
       .firstNamesColumnInCard(subOrg1.id)
@@ -208,7 +208,7 @@ describe('Users test', () => {
       .and('contain', usersPage.email)
       .and('contain', 'EDITOR');
     rolesPage.usersPage.click();
-    cy.wait('@getUsers', { timeout: 120000 });
+    cy.wait('@getUsers');
 
     usersPage.clickCardToggle(subOrg1.id);
     usersPage.idsHeaderInCard(subOrg1.id).click();
@@ -276,7 +276,7 @@ describe('Users test', () => {
   it('Should edit a user (edit first name, last name)', () => {
     const usersPage = new UsersPage();
     usersPage.goToPage();
-    cy.wait('@getUsers', { timeout: 120000 });
+    cy.wait('@getUsers');
 
     usersPage.clickCardToggle(subOrg1.id);
     usersPage.clickIdsHeaderInCard(subOrg1.id);
@@ -298,7 +298,7 @@ describe('Users test', () => {
             usersPage.userInformationPage.typeFirstName();
             usersPage.userInformationPage.typeLastName();
             usersPage.userInformationPage.clickBtnSaveUser();
-            cy.wait('@getUsers', { timeout: 120000 });
+            cy.wait('@getUsers');
             usersPage.clickIdsHeaderInCard(subOrg1.id);
 
             usersPage
@@ -364,7 +364,7 @@ describe('Users test', () => {
       await createUserQuery(data.accessToken, data.organisationId);
 
       usersPage.goToPage();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage
         .firstNamesColumnInCard(data.organisationId)
@@ -380,7 +380,7 @@ describe('Users test', () => {
               usersPage.clickFirstUserDropDownMenuCard(data.organisationId);
               usersPage.clickBtnDeleteUser();
               usersPage.confirmDeletePopUp.clickBtnOK();
-              cy.wait('@getUsers', { timeout: 120000 });
+              cy.wait('@getUsers');
 
               usersPage
                 .firstNamesColumnInCard(data.organisationId)
@@ -415,10 +415,10 @@ describe('Users test', () => {
       const user5 = await createUserQuery(data.accessToken, subOrg2.id);
 
       usersPage.goToPage();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage.typeUserFilter('filter');
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage.clickCardToggle(subOrg1.id);
       usersPage.clickCardToggle(subOrg1_1.id);
@@ -432,7 +432,7 @@ describe('Users test', () => {
       usersPage.firstNamesColumns.should('not.contain', user5.first_name);
 
       usersPage.userFilter.clear();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage.clickCardToggle(subOrg1.id);
       usersPage.clickCardToggle(subOrg1_1.id);
@@ -446,7 +446,7 @@ describe('Users test', () => {
       usersPage.firstNamesColumns.should('contain', user5.first_name);
 
       usersPage.typeUserFilter('Filter');
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
 
       usersPage.clickCardToggle(subOrg1.id);
       usersPage.clickCardToggle(subOrg1_1.id);
@@ -488,7 +488,7 @@ describe('Users test', () => {
       }
 
       usersPage.goToPage();
-      cy.wait('@getUsers', { timeout: 120000 });
+      cy.wait('@getUsers');
       usersPage.clickCardToggle(newOrg.id);
 
       usersPage.clickIdsHeaderInCard(newOrg.id);
