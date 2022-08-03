@@ -77,9 +77,10 @@ describe('Users test', () => {
       rolesPage.roleInformationPage.userSearchField
         .should('be.disabled')
         .and('have.value', `${usersPage.firstName} ${usersPage.lastName}`);
-      rolesPage.roleInformationPage.organisationDropDown
-        .should('be.disabled')
-        .and('have.value', data.organisationName);
+      rolesPage.roleInformationPage.organisationDropDown.should(
+        'have.value',
+        data.organisationName,
+      );
       rolesPage.roleInformationPage.readerRoleRadioBtn.find('input').should('be.checked');
       rolesPage.roleInformationPage.clickBtnSave();
       cy.wait('@getUsers');
@@ -109,6 +110,69 @@ describe('Users test', () => {
     });
   });
 
+  it('Should add a new user in the top organisation and role in sub organisation', () => {
+    const usersPage = new UsersPage();
+    const rolesPage = new RolesPage();
+    usersPage.goToPage();
+    cy.wait('@getUsers');
+
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      usersPage.clickBtnAddUser();
+      usersPage.userInformationPage.typeFirstName();
+      usersPage.userInformationPage.typeLastName();
+      usersPage.userInformationPage.typeEmail();
+      usersPage.userInformationPage.typeOrganisation(data.organisationName);
+      usersPage.userInformationPage.organisationSelectionDropDown
+        .contains(new RegExp('^' + data.organisationName + '$', 'g'))
+        .click();
+      usersPage.userInformationPage.clickBtnSaveUser();
+      cy.wait('@getUsers');
+
+      cy.wait('@getUsers');
+      rolesPage.roleInformationPage.userSearchField
+        .should('be.disabled')
+        .and('have.value', `${usersPage.firstName} ${usersPage.lastName}`);
+      rolesPage.roleInformationPage.organisationDropDown.should(
+        'have.value',
+        data.organisationName,
+      );
+      usersPage.userInformationPage.typeOrganisation(subOrg1.name);
+      usersPage.userInformationPage.organisationSelectionDropDown
+        .contains(new RegExp('^' + subOrg1.name + '$', 'g'))
+        .click();
+      rolesPage.roleInformationPage.readerRoleRadioBtn.find('input').should('be.checked');
+      rolesPage.roleInformationPage.clickBtnSave();
+      cy.wait('@getUsers');
+      rolesPage.cardWithId(data.organisationId).should('not.contain', usersPage.firstName);
+      rolesPage.clickCardToggle(subOrg1.id);
+      rolesPage.firstNamesColumnInCard(subOrg1.id).should('contain', usersPage.firstName);
+      rolesPage
+        .firstNamesColumnInCard(subOrg1.id)
+        .contains(usersPage.firstName)
+        .parent()
+        .should('contain', usersPage.lastName)
+        .and('contain', usersPage.email)
+        .and('contain', 'READER');
+
+      rolesPage.usersPage.click();
+      cy.wait('@getUsers');
+
+      usersPage.idsHeaderInCard(data.organisationId).click();
+
+      usersPage
+        .firstNamesColumnInCard(data.organisationId)
+        .last()
+        .should('contain', usersPage.firstName);
+      usersPage
+        .lastNamesColumnInCard(data.organisationId)
+        .last()
+        .should('contain', usersPage.lastName);
+      usersPage.emailsColumnInCard(data.organisationId).last().should('contain', usersPage.email);
+      usersPage.clickCardToggle(subOrg1.id);
+      usersPage.cardWithId(subOrg1.id).should('not.contain', usersPage.firstName);
+    });
+  });
+
   it('Should add a new user in a child organisation', () => {
     const usersPage = new UsersPage();
     const rolesPage = new RolesPage();
@@ -130,9 +194,7 @@ describe('Users test', () => {
     rolesPage.roleInformationPage.userSearchField
       .should('be.disabled')
       .and('have.value', `${usersPage.firstName} ${usersPage.lastName}`);
-    rolesPage.roleInformationPage.organisationDropDown
-      .should('be.disabled')
-      .and('have.value', subOrg1.name);
+    rolesPage.roleInformationPage.organisationDropDown.should('have.value', subOrg1.name);
     rolesPage.roleInformationPage.readerRoleRadioBtn.find('input').should('be.checked');
     rolesPage.roleInformationPage.clickBtnEditorRole();
     rolesPage.roleInformationPage.clickBtnSave();

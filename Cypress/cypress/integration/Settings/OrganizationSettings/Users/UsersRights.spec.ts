@@ -77,9 +77,7 @@ describe('Users Rights test', () => {
     });
   });
 
-  //https://mediarithmics.atlassian.net/browse/MICS-13508?filter=-2
-  //Users are nos displayed when connected with a user created in an organisation which is not a community, for instance with a user created in “Test AV 1” or “Test AV 1.1” wih any role (it works with old GUI)
-  it.skip('Organisation admin should be able to add a user to its organisation and its childs organisations but not above', () => {
+  it('Organisation admin should be able to add a user to its organisation and its childs organisations but not above', () => {
     const usersPage = new UsersPage();
 
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
@@ -88,23 +86,22 @@ describe('Users Rights test', () => {
       usersPage.goToPage();
       cy.wait('@getUsers');
 
-      usersPage.cardWithId(subOrg1.id);
+      usersPage.cardWithId(subOrg1.id).should('exist');
 
       usersPage.addUserAndItsRole(subOrg1.name, undefined, new UsersPage().email);
       cy.wait('@getUsers');
       usersPage.addUserAndItsRole(subOrg1_1.name, undefined, new UsersPage().email);
       cy.wait('@getUsers');
-      usersPage.addUser(subOrg2.name, new UsersPage().email);
-      usersPage.errorPopUp.should('be.visible');
-      usersPage.errorPopUp.should('not.exist');
-      usersPage.addUser(data.organisationName, new UsersPage().email);
-      usersPage.errorPopUp.should('be.visible');
+
+      usersPage.clickBtnAddUser();
+      usersPage.userInformationPage.clickOrganisationField();
+      usersPage.userInformationPage.organisationSelectionDropDown
+        .should('not.contain', new RegExp('^' + subOrg2.name + '$', 'g'))
+        .and('not.contain', new RegExp('^' + data.organisationName + '$', 'g'));
     });
   });
 
-  //https://mediarithmics.atlassian.net/browse/MICS-13508?filter=-2
-  //Users are nos displayed when connected with a user created in an organisation which is not a community, for instance with a user created in “Test AV 1” or “Test AV 1.1” wih any role (it works with old GUI)
-  it.skip('Reader should only be able to view users in its organisation branch', () => {
+  it('Reader should only be able to view users in its organisation branch', () => {
     const usersPage = new UsersPage();
 
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
@@ -118,15 +115,13 @@ describe('Users Rights test', () => {
 
       usersPage.firstNamesColumnInCard(subOrg1.id).should('contain', 'UserOrg1');
 
-      usersPage.clickCardToggle(data.organisationId);
-      usersPage.firstNamesColumnInCard(data.organisationId).should('contain', 'UserOrg0');
-
       usersPage.clickCardToggle(subOrg1_1.id);
       usersPage.firstNamesColumnInCard(subOrg1_1.id).should('contain', 'UserOrg1_1');
 
+      usersPage.cardWithId(data.organisationId).should('not.exist');
       usersPage.cardWithId(subOrg2.id).should('not.exist');
 
-      usersPage.addUser(subOrg1.id);
+      usersPage.addUser(subOrg1.name);
       usersPage.errorPopUp.should('contain', 'User is not authorized to perform this operation');
     });
   });
