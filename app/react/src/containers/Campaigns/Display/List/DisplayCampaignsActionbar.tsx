@@ -270,7 +270,11 @@ class DisplayCampaignsActionbar extends React.Component<
           </Button>
         </Link>
 
-        <Button onClick={this.handleRunExport} loading={exportIsRunning}>
+        <Button
+          onClick={this.handleRunExport}
+          loading={exportIsRunning}
+          className='mcs-displayCampaigns_actionBar_export'
+        >
           {!exportIsRunning && <McsIcon type='download' />}
           <FormattedMessage
             id='display.campaigns.list.actionbar.newExportButton'
