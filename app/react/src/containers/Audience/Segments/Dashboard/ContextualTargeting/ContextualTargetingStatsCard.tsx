@@ -60,7 +60,24 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
 
   renderTargetedVolume = () => {
     const { chartDataSelected } = this.props;
-    return chartDataSelected ? <div>{chartDataSelected?.reach * 1000000}</div> : <div />;
+    return chartDataSelected ? chartDataSelected?.reach * 1000000 : 0;
+  };
+
+  renderLiveDuration = () => {
+    const { contextualTargeting } = this.props;
+    const liveDurationInDays =
+      contextualTargeting?.live_activation_ts &&
+      Math.floor((Date.now() - contextualTargeting.live_activation_ts) / (1000 * 60 * 60 * 24));
+
+    const liveDurationInHours =
+      contextualTargeting?.live_activation_ts &&
+      Math.floor((Date.now() - contextualTargeting.live_activation_ts) / (1000 * 60 * 60));
+
+    return liveDurationInDays !== 0
+      ? liveDurationInDays + (liveDurationInDays === 1 ? ' day ago' : ' days ago')
+      : liveDurationInHours !== 0
+      ? liveDurationInHours + (liveDurationInHours === 1 ? ' hour ago' : ' hours ago')
+      : 'Just now';
   };
 
   render() {
@@ -73,11 +90,6 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
     } = this.props;
     const { intl } = this.props;
 
-    const liveDurationInDays =
-      contextualTargeting &&
-      contextualTargeting.live_activation_ts &&
-      Math.floor((Date.now() - contextualTargeting.live_activation_ts) / (1000 * 60 * 60 * 24));
-
     const liveCard =
       contextualTargeting?.status === 'LIVE' &&
       contextualTargeting?.live_activation_ts &&
@@ -85,7 +97,7 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
         <Card className='mcs-contextualTargetingDashboard_liveCard'>
           <div className='mcs-contextualTargetingDashboard_liveCard_title'>LIVE</div>
           <div className='mcs-contextualTargetingDashboard_liveCard_duration'>
-            {liveDurationInDays + ' days ago'}
+            {this.renderLiveDuration()}
           </div>
         </Card>
       ) : (
@@ -137,9 +149,9 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
             value={numberOfTargetedContent ? numberOfTargetedContent : 0}
           />
           <Statistic
-            className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block-last'
+            className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'
             title={intl.formatMessage(messages.targetedVolume)}
-            valueRender={this.renderTargetedVolume}
+            value={this.renderTargetedVolume()}
           />
         </div>
 

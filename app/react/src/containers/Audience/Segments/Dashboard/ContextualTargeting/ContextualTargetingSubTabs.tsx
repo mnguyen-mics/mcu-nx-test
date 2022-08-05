@@ -98,7 +98,7 @@ class ContextualTargetingSubTabs extends React.Component<Props, State> {
         title={
           <React.Fragment>
             <span>
-              <AimOutlined />
+              <AimOutlined style={{ marginRight: '5px' }} />
               {intl.formatMessage(messages.targetedContentTab)}
             </span>
             <Tooltip
