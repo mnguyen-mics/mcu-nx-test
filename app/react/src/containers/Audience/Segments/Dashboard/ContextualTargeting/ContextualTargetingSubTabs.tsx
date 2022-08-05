@@ -1,4 +1,4 @@
-import { InfoCircleFilled } from '@ant-design/icons';
+import { AimOutlined, InfoCircleFilled, TagsOutlined } from '@ant-design/icons';
 import { Card, EmptyChart, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { Tabs, Tooltip } from 'antd';
@@ -97,7 +97,10 @@ class ContextualTargetingSubTabs extends React.Component<Props, State> {
       <Card
         title={
           <React.Fragment>
-            {intl.formatMessage(messages.targetedContentTab)}
+            <span>
+              <AimOutlined />
+              {intl.formatMessage(messages.targetedContentTab)}
+            </span>
             <Tooltip
               className='mcs-contextualTargetingDashboard_lastRefreshDate'
               title={intl.formatMessage(messages.liftRefreshTooltip)}
@@ -137,14 +140,30 @@ class ContextualTargetingSubTabs extends React.Component<Props, State> {
           </Tooltip>
         )}
         <Tabs defaultActiveKey={'0'} onChange={this.onTabChange}>
-          <TabPane tab={intl.formatMessage(messages.targetedContentTab)} key={'0'}>
+          <TabPane
+            tab={
+              <span>
+                <AimOutlined style={{ marginRight: '5px' }} />
+                {intl.formatMessage(messages.targetedContentTab)}
+              </span>
+            }
+            key={'0'}
+          >
             <TableViewFilters
               dataSource={targetedContextualKeyResources ? targetedContextualKeyResources : []}
               loading={isLoadingContextualKeys}
               columns={liftDataColumnsDefinition}
             />
           </TabPane>
-          <TabPane tab={intl.formatMessage(messages.semanticAnalysisTab)} key={'1'}>
+          <TabPane
+            tab={
+              <span>
+                <TagsOutlined style={{ marginRight: '5px' }} />
+                {intl.formatMessage(messages.semanticAnalysisTab)}
+              </span>
+            }
+            key={'1'}
+          >
             {signatureScoredCategoryResources ? (
               <React.Fragment>
                 <TableViewFilters

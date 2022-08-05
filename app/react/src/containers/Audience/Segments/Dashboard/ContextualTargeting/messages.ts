@@ -67,11 +67,11 @@ export const messages = defineMessages({
   },
   numberOfTargetedContent: {
     id: 'audience.segment.dashboard.contextualTargeting.numberOfTargetedContent',
-    defaultMessage: '# Targeted Content',
+    defaultMessage: 'Targeted Content',
   },
   targetedVolume: {
     id: 'audience.segment.dashboard.contextualTargeting.targetedVolume',
-    defaultMessage: '# Page views on this content (last 30 days)',
+    defaultMessage: '30-day page views',
   },
   settingsCardButtonActivation: {
     id: 'audience.segment.dashboard.contextualTargeting.settingsCardButtonActivation',
@@ -104,10 +104,10 @@ export const messages = defineMessages({
   liftRefreshTooltip: {
     id: 'audience.segment.dashboard.contextualTargeting.targetedContentTab.liftRefreshTooltip',
     defaultMessage:
-      'URL Lift is recalculated every night and display is live updated when changing configuration',
+      'Targeted content is live updated when editing settings (lift & targeted content ratio). Lift value is recalculated every night.',
   },
   signatureRefreshTooltip: {
     id: 'audience.segment.dashboard.contextualTargeting.semanticAnalysisTab.signatureRefreshTooltip',
-    defaultMessage: 'Segment signature is recalculated every night',
+    defaultMessage: 'Semantic analysis of targeted content is recalculated every night.',
   },
 });

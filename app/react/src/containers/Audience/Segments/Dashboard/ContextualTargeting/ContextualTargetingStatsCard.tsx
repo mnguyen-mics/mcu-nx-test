@@ -58,12 +58,16 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
     );
   };
 
+  renderTargetedVolume = () => {
+    const { chartDataSelected } = this.props;
+    return chartDataSelected ? <div>{chartDataSelected?.reach * 1000000}</div> : <div />;
+  };
+
   render() {
     const {
       contextualTargeting,
       onPublishContextualTargeting,
       onEdit,
-      chartDataSelected,
       numberOfTargetedContent,
       isLiveEditing,
     } = this.props;
@@ -123,16 +127,19 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
           )}
         <div className='mcs-contextualTargetingDashboard_settingsCardContainer_stats'>
           <Statistic
+            className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'
             title={intl.formatMessage(messages.targetedRatio)}
             valueRender={this.renderTargetedVolumeRatio}
           />
           <Statistic
+            className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'
             title={intl.formatMessage(messages.numberOfTargetedContent)}
             value={numberOfTargetedContent ? numberOfTargetedContent : 0}
           />
           <Statistic
+            className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block-last'
             title={intl.formatMessage(messages.targetedVolume)}
-            value={chartDataSelected?.reach}
+            valueRender={this.renderTargetedVolume}
           />
         </div>
 
