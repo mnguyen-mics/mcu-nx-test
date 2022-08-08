@@ -8,6 +8,16 @@ class DatamartMenu extends Page {
   }
 
   @logFunction()
+  clickPartitions() {
+    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.partitions').click();
+  }
+
+  @logFunction()
+  clickCompartments() {
+    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
+  }
+
+  @logFunction()
   clickChannels() {
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.channels').click();
   }
@@ -15,6 +25,11 @@ class DatamartMenu extends Page {
   @logFunction()
   clickMlFunctions() {
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.ml_functions').click();
+  }
+
+  @logFunction()
+  clickCleaningRules() {
+    cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.cleaningRules').click();
   }
 
   @logFunction()

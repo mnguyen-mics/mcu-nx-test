@@ -128,6 +128,11 @@ class FunnelPage extends Page {
     return cy.get('.mcs-funnel_conversionInfo');
   }
 
+  @logGetter()
+  get funnelAnalyticsPage() {
+    return cy.get('.mcs-funnelQueryBuilder');
+  }
+
   @logFunction()
   clickDimensionCategoryField() {
     cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();

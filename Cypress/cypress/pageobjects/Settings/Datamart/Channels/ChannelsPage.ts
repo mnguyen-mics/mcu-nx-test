@@ -1,7 +1,6 @@
 import Page from '../../../Page';
 import SettingsMenu from '../../SettingsMenu';
 import DatamartMenu from '../DatamartMenu';
-import HeaderMenu from '../../../HeaderMenu';
 import SelectDatamartPage from './SelectDatamartPage';
 import SiteInformation from './SiteInformation';
 import { logFunction, logGetter } from '../../../log/LoggingDecorator';
@@ -37,6 +36,11 @@ class ChannelsPage extends Page {
   @logGetter()
   get searchChannelsField() {
     return cy.get('.mcs-channelsTable_search_bar');
+  }
+
+  @logGetter()
+  get btnSave() {
+    return cy.get('.mcs-form_saveButton_siteForm');
   }
 
   @logFunction()
