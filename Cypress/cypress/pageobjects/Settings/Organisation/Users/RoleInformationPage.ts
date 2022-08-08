@@ -12,8 +12,18 @@ class RoleInformationPage extends Page {
   }
 
   @logGetter()
+  get userSelectionDropDown() {
+    return cy.get('.ant-select-item-option');
+  }
+
+  @logGetter()
   get organisationDropDown() {
     return cy.get('.ant-form').find('.ant-input').eq(1);
+  }
+
+  @logGetter()
+  get organisationSelectionDropDown() {
+    return cy.get('.ant-select-item-option');
   }
 
   @logGetter()
@@ -48,7 +58,7 @@ class RoleInformationPage extends Page {
 
   @logGetter()
   get closeEditBtn() {
-    return cy.get('.anticon-close');
+    return cy.get('.mcs-userEdit_drawer').find('.ant-drawer-close');
   }
 
   @logFunction()
@@ -63,7 +73,7 @@ class RoleInformationPage extends Page {
 
   @logFunction()
   typeOrganisationWithName(organisation: string) {
-    this.organisationsAvailableMenu.type(organisation);
+    this.organisationDropDown.type(organisation);
   }
 
   @logFunction()
