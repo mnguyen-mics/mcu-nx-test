@@ -1,4 +1,4 @@
-import LeftMenu from '../../../../pageobjects/LeftMenu';
+import SegmentsPage from '../../../../pageobjects/Audience/SegmentsPage';
 import ProcessingActivitiesPage from '../../../../pageobjects/Settings/Organisation/ProcessingActivitiesPage';
 describe('This test should check that the audience segments forms are working properly', () => {
   beforeEach(() => {
@@ -22,29 +22,26 @@ describe('This test should check that the audience segments forms are working pr
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
     });
-    LeftMenu.goToSegmentsPage();
-    cy.get('.mcs-audienceSegmentsTable_search_bar')
-      .type('Test Audience Segment Form{enter}')
-      .then(() => {
-        cy.wait(5000);
-        cy.get('.mcs-audienceSegmentTable_dropDownMenu')
-          .should('be.visible')
-          .each(dropdownArrow => {
-            cy.wrap(dropdownArrow)
-              .click()
-              .then(() => {
-                //Wait between deletions
-                cy.wait(1000);
-                cy.get('.mcs-audienceSegmentTable_dropDownMenu--delete').click();
-                cy.get('.mcs-audienceSegmentDeletePopup').should(
-                  'contain',
-                  'You are about to definitively delete this segment : Test Audience Segment Form',
-                );
-                cy.get('.mcs-audienceSegmentDeletePopup_ok_button').click();
-              });
+    const segmentsPage = new SegmentsPage();
+    segmentsPage.goToPage();
+    segmentsPage.searchBar.type('Test Audience Segment Form{enter}').then(() => {
+      cy.wait(5000);
+      segmentsPage.dropDownMenu.should('be.visible').each(dropdownArrow => {
+        cy.wrap(dropdownArrow)
+          .click()
+          .then(() => {
+            //Wait between deletions
+            cy.wait(1000);
+            segmentsPage.clickBtnDelete();
+            segmentsPage.deletePopUp.should(
+              'contain',
+              'You are about to definitively delete this segment : Test Audience Segment Form',
+            );
+            segmentsPage.clickBtnOkDeletePopUp();
           });
-        cy.get('.mcs-audienceSegmentTable').should('not.contain', 'Test Audience Segment Form');
       });
+      segmentsPage.segmentsTable.should('not.contain', 'Test Audience Segment Form');
+    });
   };
 
   const createProcessingActivities = (
@@ -88,8 +85,8 @@ describe('This test should check that the audience segments forms are working pr
       processingActivitiesPage.purpose,
       processingActivitiesPage.technicalName,
     );
-
-    LeftMenu.goToSegmentsPage();
+    const segmentsPage = new SegmentsPage();
+    segmentsPage.goToPage();
     cy.createSegmentFromUI('User List', processingActivitiesPage.name);
     deleteSegment();
   });
@@ -104,7 +101,8 @@ describe('This test should check that the audience segments forms are working pr
       processingActivitiesPage.purpose,
       processingActivitiesPage.technicalName,
     );
-    LeftMenu.goToSegmentsPage();
+    const segmentsPage = new SegmentsPage();
+    segmentsPage.goToPage();
     cy.createSegmentFromUI('User Pixel', processingActivitiesPage.name);
     deleteSegment();
   });
@@ -119,7 +117,8 @@ describe('This test should check that the audience segments forms are working pr
       processingActivitiesPage.purpose,
       processingActivitiesPage.technicalName,
     );
-    LeftMenu.goToSegmentsPage();
+    const segmentsPage = new SegmentsPage();
+    segmentsPage.goToPage();
     cy.createSegmentFromUI('User Expert Query', processingActivitiesPage.name);
     deleteSegment();
   });

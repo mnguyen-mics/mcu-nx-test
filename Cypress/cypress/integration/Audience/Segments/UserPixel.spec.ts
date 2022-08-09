@@ -1,4 +1,6 @@
 import faker from 'faker';
+import SegmentsPage from '../../../pageobjects/Audience/SegmentsPage';
+
 describe('User pixel segment test', () => {
   before(() => {
     cy.login();
@@ -13,33 +15,22 @@ describe('User pixel segment test', () => {
 
   it('Should test the UserPixel Forms', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      const segmentsPage = new SegmentsPage();
       const segmentName: string = 'Test Audience Segment Form - Test User Pixel Creation Form';
       const segmentDescription: string =
         'This segment was created to test the creation of segments.';
       const segmentTechName: string = faker.random.uuid();
       cy.switchOrg(data.organisationName);
-      // Go to Segment menu
-      cy.contains('Audience').click();
-      cy.contains('Segments').click();
-      // Click on "new Segment"
-      cy.contains('New Segment').click({ force: true });
-      // Select Segment Types
-      cy.contains('User Pixel').click();
-      // Fill the name of the segement
-      cy.get('[id="audienceSegment.name"]').type(segmentName);
-      // Fill the descritpion
-      cy.get('[id="audienceSegment.short_description"]').type(segmentDescription);
-      // click on advanced
-      cy.get('[class="mcs-button optional-section-title"]').click();
-      // Fill the technical name
-      cy.get('[id="audienceSegment.technical_name"]').type(segmentTechName);
-      // Fill the default life time
-      cy.get('[id="defaultLifetime"]').type('1');
-      // Choose day as the lifetime
-      cy.get('[class ="mcs-addonSelect"]').click();
-      cy.contains('Days').click();
-      // Save the new segment
-      cy.contains('Save').click({ force: true });
+      segmentsPage.goToPage();
+      segmentsPage.clickBtnNewSegment();
+      segmentsPage.clickUserPixel();
+      segmentsPage.typeSegmentName(segmentName);
+      segmentsPage.typeSegmentDescription(segmentDescription);
+      segmentsPage.clickBtnAdvanced();
+      segmentsPage.typeSegmentTechName(segmentTechName);
+      segmentsPage.typeDefaultLifetime('1');
+      segmentsPage.selectDayslifeTime();
+      segmentsPage.clickBtnSaveNewSegment();
       // Extract the id
       cy.url().should('match', /.*segments\/.*\/edit/);
       cy.url().then(url => {
@@ -63,26 +54,19 @@ describe('User pixel segment test', () => {
           expect(responseAdd.body.data.subtype).to.eq('USER_PIXEL');
           expect(responseAdd.body.data.default_ttl).to.eq(1 * 24 * 60 * 60 * 1000);
           // Edit segment
-          cy.contains('Segments').click();
-          cy.get('[placeholder="Search Segments"]').type(segmentName).type('{enter}');
-          cy.get('.mcs-campaigns-link').first().click();
-          cy.get('.mcs-actionbar').contains('Edit').click({ force: true });
-          cy.get('[id="audienceSegment.name"]').type(' -edited');
-          // Fill the descritpion
-          cy.get('[id="audienceSegment.short_description"]').type(' -edited');
-          // click on advanced
-          cy.get('[class="mcs-button optional-section-title"]').click();
-          // Fill the technical name
-          cy.get('[id="audienceSegment.technical_name"]').type(' -edited');
-          // Fill the default life time
-          cy.get('[id="defaultLifetime"]').type('2');
-          // Choose day as the lifetime
-          cy.get('[class ="mcs-addonSelect"]').click();
-          cy.contains('Days').click();
-          // click on advanced
-          cy.get('[class="mcs-button optional-section-title"]').click();
-          // Save the new segment
-          cy.contains('Save').click({ force: true });
+          cy.wait(1000);
+          segmentsPage.goToPage();
+          segmentsPage.pickCreatedSegment(segmentName);
+          segmentsPage.segmentNameInTable.first().click();
+          segmentsPage.clickBtnEdit();
+          segmentsPage.typeSegmentName(' -edited');
+          segmentsPage.typeSegmentDescription(' -edited');
+          segmentsPage.clickBtnAdvanced();
+          segmentsPage.typeSegmentTechName(' -edited');
+          segmentsPage.typeDefaultLifetime('2');
+          segmentsPage.selectDayslifeTime();
+          segmentsPage.clickBtnAdvanced();
+          segmentsPage.clickBtnSaveNewSegment();
           // Wait before checking the changes
           cy.wait(1000);
           cy.request({
