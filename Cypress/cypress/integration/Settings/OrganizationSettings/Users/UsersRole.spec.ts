@@ -247,8 +247,16 @@ describe('Roles test', () => {
       rolesPage.clickBtnEditRole();
       rolesPage.roleInformationPage.clickBtnReaderRole();
       rolesPage.roleInformationPage.clickBtnSave();
-      rolesPage.errorPopUp.should('be.visible').and('contain', '?');
+      rolesPage.errorPopUp.should('be.visible').and('contain', 'This role cannot be assigned');
       rolesPage.roleInformationPage.clickCloseEditBtn();
+
+      rolesPage
+        .firstNamesColumnInCard(subOrg1_1.id)
+        .filter(`:contains(${user.first_name})`)
+        .parent()
+        .should('have.length', 1)
+        .and('not.contain', 'READER')
+        .and('contain', 'EDITOR');
 
       rolesPage
         .firstNamesColumnInCard(subOrg1_1.id)
@@ -262,11 +270,23 @@ describe('Roles test', () => {
       cy.intercept('**/users**').as('getUsers');
       rolesPage.roleInformationPage.clickBtnSave();
       cy.wait('@getUsers');
+
       rolesPage
         .firstNamesColumnInCard(subOrg1_1.id)
-        .contains(user.first_name)
+        .filter(`:contains(${user.first_name})`)
         .parent()
-        .should('contain', 'ORGANISATION_ADMIN');
+        .should('have.length', 1)
+        .and('not.contain', 'EDITOR')
+        .and('contain', 'ORGANISATION_ADMIN');
+
+      rolesPage.clickCardToggle(subOrg1.id);
+      rolesPage
+        .firstNamesColumnInCard(subOrg1_1.id)
+        .filter(`:contains(${user.first_name})`)
+        .parent()
+        .should('have.length', 1)
+        .and('not.contain', 'ORGANISATION_ADMIN')
+        .and('contain', 'EDITOR');
     });
   });
 
