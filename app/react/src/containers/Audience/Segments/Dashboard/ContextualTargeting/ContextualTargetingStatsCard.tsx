@@ -58,21 +58,37 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
     );
   };
 
+  renderTargetedVolume = () => {
+    const { chartDataSelected } = this.props;
+    return chartDataSelected ? chartDataSelected?.reach * 1000000 : 0;
+  };
+
+  renderLiveDuration = () => {
+    const { contextualTargeting } = this.props;
+    const liveDurationInDays =
+      contextualTargeting?.live_activation_ts &&
+      Math.floor((Date.now() - contextualTargeting.live_activation_ts) / (1000 * 60 * 60 * 24));
+
+    const liveDurationInHours =
+      contextualTargeting?.live_activation_ts &&
+      Math.floor((Date.now() - contextualTargeting.live_activation_ts) / (1000 * 60 * 60));
+
+    return liveDurationInDays !== 0
+      ? liveDurationInDays + (liveDurationInDays === 1 ? ' day ago' : ' days ago')
+      : liveDurationInHours !== 0
+      ? liveDurationInHours + (liveDurationInHours === 1 ? ' hour ago' : ' hours ago')
+      : 'Just now';
+  };
+
   render() {
     const {
       contextualTargeting,
       onPublishContextualTargeting,
       onEdit,
-      chartDataSelected,
       numberOfTargetedContent,
       isLiveEditing,
     } = this.props;
     const { intl } = this.props;
-
-    const liveDurationInDays =
-      contextualTargeting &&
-      contextualTargeting.live_activation_ts &&
-      Math.floor((Date.now() - contextualTargeting.live_activation_ts) / (1000 * 60 * 60 * 24));
 
     const liveCard =
       contextualTargeting?.status === 'LIVE' &&
@@ -81,7 +97,7 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
         <Card className='mcs-contextualTargetingDashboard_liveCard'>
           <div className='mcs-contextualTargetingDashboard_liveCard_title'>LIVE</div>
           <div className='mcs-contextualTargetingDashboard_liveCard_duration'>
-            {liveDurationInDays + ' days ago'}
+            {this.renderLiveDuration()}
           </div>
         </Card>
       ) : (
@@ -123,16 +139,19 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
           )}
         <div className='mcs-contextualTargetingDashboard_settingsCardContainer_stats'>
           <Statistic
+            className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'
             title={intl.formatMessage(messages.targetedRatio)}
             valueRender={this.renderTargetedVolumeRatio}
           />
           <Statistic
+            className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'
             title={intl.formatMessage(messages.numberOfTargetedContent)}
             value={numberOfTargetedContent ? numberOfTargetedContent : 0}
           />
           <Statistic
+            className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'
             title={intl.formatMessage(messages.targetedVolume)}
-            value={chartDataSelected?.reach}
+            value={this.renderTargetedVolume()}
           />
         </div>
 

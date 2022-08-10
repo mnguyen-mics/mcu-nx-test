@@ -142,7 +142,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
 
   tipFormater = (selected: DataPoint, index?: number) => {
     const { getTargetedVolumeRatio } = this.props;
-    return <div>{Math.round(getTargetedVolumeRatio() * 100) + '% of total events'}</div>;
+    return <div>{Math.round(getTargetedVolumeRatio() * 100) + '% of total page views'}</div>;
   };
 
   renderDraftStepChart = () => {
@@ -166,7 +166,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
             key: 'reach',
             labelFormat: '{value}M',
             title: 'Reach',
-            subtitle: '# Page views in the last 30 days',
+            subtitle: 'Page views over the past 30 days',
           }}
           color={'#00a1df'}
           onChange={onSliderChange}

@@ -162,10 +162,13 @@
       margin-bottom: 25px;
     }
   }
+  .mcs-contextualTargetingDashboard_graph {
+    margin-bottom: 30px;
+  }
   .mcs-contextualTargetingDashboard_settingsCol {
     position: relative;
     border-radius: @border-radius-base;
-    margin-left: 40px;
+    margin-left: 30px;
     height: 100%;
     .mcs-contextualTargetingDashboard_liveCard {
       background-color: #00ab67;
@@ -181,7 +184,7 @@
     .mcs-contextualTargetingDashboard_settingsCardContainer {
       position: absolute;
       bottom: 0px;
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       width: 100%;
       .mcs-contextualTargetingDashboard_liveEditionCard {
         background-color: #00ab67;
@@ -195,13 +198,20 @@
       .mcs-contextualTargetingDashboard_settingsCardContainer_stats {
         background-color: white;
         padding: 15px;
-        .mcs-contextualTargetingDashboard_settingsCardContainer_stats_volumeRatioValue {
-        }
-        .mcs-contextualTargetingDashboard_settingsCardContainer_stats_liftValue {
-          margin-left: 10px;
-          font-size: 11px;
-          font-style: italic;
-          color: grey;
+        .mcs-contextualTargetingDashboard_settingsCardContainer_stats_block {
+          margin-bottom: 15px;
+          .ant-statistic-title {
+            margin-bottom: 0px;
+          }
+          .mcs-contextualTargetingDashboard_settingsCardContainer_stats_liftValue {
+            margin-left: 10px;
+            font-size: 11px;
+            font-style: italic;
+            color: grey;
+          }
+          &:last-child {
+            margin-bottom: 0px;
+          }
         }
       }
       .mcs-contextualTargetingDashboard_settingsCardButton {
