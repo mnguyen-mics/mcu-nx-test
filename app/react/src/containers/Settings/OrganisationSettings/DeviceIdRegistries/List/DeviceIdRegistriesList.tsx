@@ -1,7 +1,7 @@
 import * as React from 'react';
 import messages from '../messages';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Layout, Row } from 'antd';
+import { Button, Drawer, Layout, Row } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
@@ -19,6 +19,8 @@ import {
   DeviceIdRegistryResource,
 } from '../../../../../models/deviceIdRegistry/DeviceIdRegistryResource';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
+import DeviceIdRegistriesEditForm from '../Edit/DeviceIdRegistriesEditForm';
+import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
 
 const { Content } = Layout;
 
@@ -36,7 +38,9 @@ interface DeviceIdRegistriesListState {
   isLoadingRegistryOffers: boolean;
   deviceIdRegistries: DeviceIdRegistryResource[];
   deviceIdRegistryOffers: DeviceIdRegistryOfferResource[];
-  total: number;
+  registriesTotal: number;
+  offersTotal: number;
+  isNewRegistryDrawerVisible: boolean;
 }
 
 class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesListState> {
@@ -51,51 +55,60 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       isLoadingRegistryOffers: false,
       deviceIdRegistries: [],
       deviceIdRegistryOffers: [],
-      total: 0,
+      registriesTotal: 0,
+      offersTotal: 0,
+      isNewRegistryDrawerVisible: false,
     };
   }
 
-  fetchRegistries = () => {
+  fetchRegistries = (communityId: string) => {
     const { notifyError } = this.props;
 
-    this.setState({ isLoadingRegistries: true }, () => {
-      const options = {
-        ...getPaginatedApiParam(1, 500),
-      };
-      return this._deviceIdRegistryService
-        .getDeviceIdRegistries(options)
-        .then((results: DataListResponse<DeviceIdRegistryResource>) => {
-          this.setState({
-            isLoadingRegistries: false,
-            deviceIdRegistries: results.data,
-            total: results.total || results.count,
-          });
-          return results;
-        })
-        .catch(err => {
-          this.setState({
-            isLoadingRegistries: false,
-            deviceIdRegistries: [],
-            total: 0,
-          });
-          notifyError(err);
-        });
+    this.setState({
+      isLoadingRegistries: true,
     });
+
+    const registriesOptions = {
+      ...getPaginatedApiParam(1, 500),
+    };
+
+    return Promise.all([
+      this._deviceIdRegistryService.getDeviceIdRegistries('1', registriesOptions),
+      this._deviceIdRegistryService.getDeviceIdRegistries(communityId, registriesOptions),
+    ])
+      .then((results: DataListResponse<DeviceIdRegistryResource>[]) => {
+        const registries = results.reduce((acc: DeviceIdRegistryResource[], val) => {
+          return acc.concat(val.data);
+        }, []);
+        this.setState({
+          isLoadingRegistries: false,
+          deviceIdRegistries: registries,
+          registriesTotal: registries.length,
+        });
+      })
+      .catch(err => {
+        this.setState({
+          isLoadingRegistries: false,
+          deviceIdRegistries: [],
+          registriesTotal: 0,
+        });
+        notifyError(err);
+      });
   };
 
-  fetchRegistryOffers = (organisationId: string) => {
+  fetchRegistryOffers = (communityId: string) => {
     const { notifyError } = this.props;
 
     this.setState({ isLoadingRegistryOffers: true }, () => {
-      const options = {
+      const offersOptions = {
         ...getPaginatedApiParam(1, 500),
       };
 
-      const offers = this._deviceIdRegistryService.getDeviceIdRegistryOffers(options);
+      const offers = this._deviceIdRegistryService.getDeviceIdRegistryOffers(offersOptions);
 
       const subscribedOffers = this._deviceIdRegistryService.getSubscribedDeviceIdRegistryOffers(
-        organisationId,
-        options,
+        communityId,
+        offersOptions,
       );
 
       return Promise.all([offers, subscribedOffers])
@@ -108,18 +121,17 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
             return offerWithSubscription;
           });
-
           this.setState({
             isLoadingRegistryOffers: false,
             deviceIdRegistryOffers: offersWithSubscription,
-            total: res[0].total || res[0].count,
+            offersTotal: res[0].total || res[0].count,
           });
         })
         .catch(err => {
           this.setState({
             isLoadingRegistryOffers: false,
             deviceIdRegistryOffers: [],
-            total: 0,
+            offersTotal: 0,
           });
           notifyError(err);
         });
@@ -132,7 +144,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       isLoadingRegistryOffers: false,
       deviceIdRegistries: [],
       deviceIdRegistryOffers: [],
-      total: 0,
+      registriesTotal: 0,
+      offersTotal: 0,
     });
   };
 
@@ -142,7 +155,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     } = this.props;
 
     if (organisation_id === community_id) {
-      this.fetchRegistries();
+      this.fetchRegistries(organisation_id);
       this.fetchRegistryOffers(organisation_id);
     } else {
       this.makeEmptyState();
@@ -165,16 +178,94 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
     if (previousOrganisationId !== organisationId) {
       if (organisation_id === community_id) {
-        this.fetchRegistries();
+        this.fetchRegistries(organisation_id);
         this.fetchRegistryOffers(organisation_id);
       } else this.makeEmptyState();
     }
+  }
+
+  handleDrawer = (isVisible: boolean) => () => {
+    this.setState({
+      isNewRegistryDrawerVisible: isVisible,
+    });
+  };
+
+  saveRegistry = (registry: Partial<DeviceIdRegistryResource>, datamartIds: string[]) => {
+    const {
+      notifyError,
+      notifySuccess,
+      intl: { formatMessage },
+    } = this.props;
+
+    const datamartSelectiontasks: Task[] = [];
+
+    return this._deviceIdRegistryService
+      .createDeviceIdRegistry(registry)
+      .then(registryRes => {
+        datamartIds.forEach(datamartId =>
+          datamartSelectiontasks.push(() =>
+            this._deviceIdRegistryService.createDeviceIdRegistryDatamartSelection(
+              datamartId,
+              registryRes.data.id,
+            ),
+          ),
+        );
+        return executeTasksInSequence(datamartSelectiontasks)
+          .then(() => {
+            this.setState(
+              {
+                isNewRegistryDrawerVisible: false,
+              },
+              () => {
+                this.refresh();
+                notifySuccess({
+                  message: formatMessage(messages.newRegistryCreationSuccess),
+                  description: '',
+                });
+              },
+            );
+            return undefined;
+          })
+          .catch(err => {
+            notifyError(err);
+          });
+      })
+      .catch(err => {
+        this.setState({
+          isLoadingRegistries: false,
+          deviceIdRegistries: [],
+          registriesTotal: 0,
+        });
+        notifyError(err);
+      });
+  };
+
+  refresh = () => {
+    const {
+      workspace: { community_id, organisation_id },
+    } = this.props;
+
+    if (organisation_id === community_id) {
+      this.fetchRegistries(organisation_id);
+    } else {
+      this.makeEmptyState();
+    }
+  };
+
+  hasRightToCreateRegistry(): boolean {
+    const {
+      workspace: { role },
+    } = this.props;
+
+    return role === 'COMMUNITY_ADMIN' || role === 'CUSTOMER_ADMIN' || role === 'SUPER_ADMIN';
   }
 
   render() {
     const {
       intl: { formatMessage },
     } = this.props;
+
+    const { isNewRegistryDrawerVisible } = this.state;
 
     const deviceIdRegistryColumnsDefinition: Array<DataColumnDefinition<DeviceIdRegistryResource>> =
       [
@@ -236,12 +327,29 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       },
     ];
 
-    const tableHeaderComponent = (message: FormattedMessage.MessageDescriptor) => (
+    const newRegistryButton = (
+      <span className='mcs-card-button'>
+        <Button
+          key='create'
+          type='primary'
+          className='mcs-primary'
+          onClick={this.handleDrawer(true)}
+        >
+          {formatMessage(messages.newDeviceIdRegistry)}
+        </Button>
+      </span>
+    );
+
+    const simpleTableHeader = (
+      message: FormattedMessage.MessageDescriptor,
+      button?: JSX.Element,
+    ) => (
       <div>
         <div className='mcs-card-header mcs-card-title'>
           <span className='mcs-card-title'>
             <FormattedMessage {...message} />
           </span>
+          {button}
         </div>
         <hr className='mcs-separator' />
       </div>
@@ -250,8 +358,24 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     return (
       <div className='ant-layout mcs-modal_container'>
         <Content className='mcs-content-container'>
+          <Drawer
+            className='mcs-userEdit_drawer'
+            width='800'
+            bodyStyle={{ padding: '0' }}
+            title={formatMessage(messages.newRegistryDrawerTitle)}
+            placement={'right'}
+            closable={true}
+            onClose={this.handleDrawer(false)}
+            visible={isNewRegistryDrawerVisible}
+            destroyOnClose={true}
+          >
+            <DeviceIdRegistriesEditForm save={this.saveRegistry} />
+          </Drawer>
           <Row className='mcs-table-container'>
-            {tableHeaderComponent(messages.deviceIdRegistries)}
+            {simpleTableHeader(
+              messages.deviceIdRegistries,
+              this.hasRightToCreateRegistry() ? newRegistryButton : undefined,
+            )}
             <TableViewFilters
               pagination={false}
               columns={deviceIdRegistryColumnsDefinition}
@@ -261,7 +385,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             />
           </Row>
           <Row className='mcs-table-container'>
-            {tableHeaderComponent(messages.deviceIdRegistryOffers)}
+            {simpleTableHeader(messages.deviceIdRegistryOffers)}
             <TableViewFilters
               pagination={false}
               columns={deviceIdRegistryOfferColumnsDefinition}
