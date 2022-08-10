@@ -81,10 +81,6 @@ const messages = defineMessages({
     defaultMessage:
       'This is the default authentication workflow, using emails and passwords managed by our platform.',
   },
-  identityProviderSsoServiceUrlTitle: {
-    id: 'settings.organisation.organisationAccount.authentication.identityProvider.ssoServiceUrl',
-    defaultMessage: 'Single Sign-On Service URL',
-  },
   identityProviderEntityIdTitle: {
     id: 'settings.organisation.organisationAccount.authentication.identityProvider.entityId',
     defaultMessage: 'Identifier (Entity ID)',
@@ -92,6 +88,10 @@ const messages = defineMessages({
   identityProviderRedirectUrlTitle: {
     id: 'settings.organisation.organisationAccount.authentication.identityProvider.redirectUrl',
     defaultMessage: 'Redirect URI/Reply URL',
+  },
+  identityProviderMetadataXmlUrlTitle: {
+    id: 'settings.organisation.organisationAccount.authentication.identityProvider.metadataXmlUrl',
+    defaultMessage: 'Metadata XML URL',
   },
 });
 export interface OrganisationAccountProps {
@@ -288,17 +288,23 @@ class OrganisationAccount extends React.Component<Props, State> {
                   <Tag color={'cyan'}>{identityProvider.provider_type}</Tag>
                 </div>
               </Descriptions.Item>
-              <Descriptions.Item label={formatMessage(messages.identityProviderDescriptionTitle)}>
-                {identityProvider.description}
-              </Descriptions.Item>
-              <Descriptions.Item label={formatMessage(messages.identityProviderSsoServiceUrlTitle)}>
-                {identityProvider.sso_service_url}
-              </Descriptions.Item>
+              {identityProvider.description && (
+                <Descriptions.Item label={formatMessage(messages.identityProviderDescriptionTitle)}>
+                  {identityProvider.description}
+                </Descriptions.Item>
+              )}
               <Descriptions.Item label={formatMessage(messages.identityProviderEntityIdTitle)}>
                 {identityProvider.entity_id}
               </Descriptions.Item>
               <Descriptions.Item label={formatMessage(messages.identityProviderRedirectUrlTitle)}>
                 {identityProvider.redirect_url}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={formatMessage(messages.identityProviderMetadataXmlUrlTitle)}
+              >
+                <a href={identityProvider.metadata_xml_url} target='_blank'>
+                  {identityProvider.metadata_xml_url}
+                </a>
               </Descriptions.Item>
             </Descriptions>
           ) : (
