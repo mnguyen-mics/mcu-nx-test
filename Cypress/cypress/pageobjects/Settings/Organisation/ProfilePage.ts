@@ -16,22 +16,17 @@ class ProfilePage extends Page {
 
   @logGetter()
   get organisationNameField() {
-    return cy.get('#organisation_name');
+    return cy.get('.ant-descriptions-item').eq(0);
   }
 
   @logGetter()
   get logoZone() {
-    return cy.get('.mcs-logo-dragger');
+    return cy.get('.mcs-logo').find('input');
   }
 
   @logGetter()
   get logoInformationIcon() {
     return cy.get('.mcs-icon > .mcs-info');
-  }
-
-  @logFunction()
-  typeOrganisationName(orgName: string) {
-    this.organisationNameField.type(orgName);
   }
 
   @logFunction()
