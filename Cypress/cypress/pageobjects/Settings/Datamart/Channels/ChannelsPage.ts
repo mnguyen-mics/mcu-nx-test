@@ -1,4 +1,5 @@
 import Page from '../../../Page';
+import HeaderMenu from '../../../HeaderMenu';
 import SettingsMenu from '../../SettingsMenu';
 import DatamartMenu from '../DatamartMenu';
 import SelectDatamartPage from './SelectDatamartPage';
