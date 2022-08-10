@@ -144,6 +144,10 @@ class CohortLookalikeCalibrationSettings extends React.Component<
     const { cohorts, seedSegment, cohortLookalikeSegment } = this.props;
     const { includeSeedSegment, graphData, initialIndex } = this.state;
 
+    const lookalikeSegmentMinOverlap = cohortLookalikeSegment.min_overlap
+      ? cohortLookalikeSegment.min_overlap * 100
+      : undefined;
+
     const previousCurrentGraphData = graphData?.currentGraphPoint;
 
     const firstPercentageNbUserpoints = includeSeedSegment ? seedSegment.user_points_count || 0 : 0;
@@ -184,8 +188,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
       { currentGraphData: [] },
     ).currentGraphData;
 
-    const researchedOverlap =
-      previousCurrentGraphData?.overlap || cohortLookalikeSegment.min_overlap;
+    const researchedOverlap = previousCurrentGraphData?.overlap || lookalikeSegmentMinOverlap;
 
     const newInitialIndex =
       initialIndex ||
@@ -222,7 +225,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
           .updateAudienceSegment(cohortLookalikeSegment.id, {
             include_seed_segment: includeSeedSegment,
             user_points_target: graphData.currentGraphPoint.nbUserpoints,
-            min_overlap: graphData.currentGraphPoint.overlap,
+            min_overlap: graphData.currentGraphPoint.overlap / 100,
             type: cohortLookalikeSegment.type,
           })
           .then(() => {
