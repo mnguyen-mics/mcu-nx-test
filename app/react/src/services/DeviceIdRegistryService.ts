@@ -1,52 +1,94 @@
 import { ApiService } from '@mediarithmics-private/advanced-components';
-import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
+import {
+  DataListResponse,
+  DataResponse,
+} from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { injectable } from 'inversify';
 import {
   DeviceIdRegistryResource,
   DeviceIdRegistryOfferResource,
+  DeviceIdRegistryDatamartSelectionResource,
 } from '../models/deviceIdRegistry/DeviceIdRegistryResource';
 
 export interface IDeviceIdRegistryService {
-  getDeviceIdRegistries: (filters?: object) => Promise<DataListResponse<DeviceIdRegistryResource>>;
+  getDeviceIdRegistries: (
+    communityId: string,
+    options?: object,
+  ) => Promise<DataListResponse<DeviceIdRegistryResource>>;
+
+  createDeviceIdRegistry: (
+    body: Partial<DeviceIdRegistryResource>,
+  ) => Promise<DataResponse<DeviceIdRegistryResource>>;
+
+  createDeviceIdRegistryDatamartSelection: (
+    datamartId: string,
+    deviceIdRegistryId: string,
+    options?: object,
+  ) => Promise<DataResponse<DeviceIdRegistryDatamartSelectionResource>>;
+
   getDeviceIdRegistryOffers: (
-    filters?: object,
+    options?: object,
   ) => Promise<DataListResponse<DeviceIdRegistryOfferResource>>;
+
   getSubscribedDeviceIdRegistryOffers: (
     organisationId: string,
-    filters?: object,
+    options?: object,
   ) => Promise<DataListResponse<DeviceIdRegistryOfferResource>>;
 }
 
 @injectable()
 export default class DeviceIdRegistryService implements IDeviceIdRegistryService {
-  getDeviceIdRegistries(filters: object = {}): Promise<DataListResponse<DeviceIdRegistryResource>> {
+  getDeviceIdRegistries(
+    communityId: string,
+    options: object = {},
+  ): Promise<DataListResponse<DeviceIdRegistryResource>> {
     const endpoint = 'device_id_registries';
-    const options = {
-      ...filters,
+    const params = {
+      community_id: communityId,
+      ...options,
     };
-    return ApiService.getRequest(endpoint, options);
+    return ApiService.getRequest(endpoint, params);
+  }
+
+  createDeviceIdRegistry(
+    body: DeviceIdRegistryResource,
+  ): Promise<DataResponse<DeviceIdRegistryResource>> {
+    const endpoint = 'device_id_registries';
+    return ApiService.postRequest(endpoint, body);
+  }
+
+  createDeviceIdRegistryDatamartSelection(
+    datamartId: string,
+    deviceIdRegistryId: String,
+  ): Promise<DataResponse<DeviceIdRegistryDatamartSelectionResource>> {
+    const endpoint = `datamarts/${datamartId}/device_id_registries`;
+    const body: Partial<DeviceIdRegistryDatamartSelectionResource> = {
+      device_id_registry_id: deviceIdRegistryId,
+      datamart_id: datamartId,
+    };
+    return ApiService.postRequest(endpoint, body);
   }
 
   getDeviceIdRegistryOffers(
-    filters: object = {},
+    options: object = {},
   ): Promise<DataListResponse<DeviceIdRegistryOfferResource>> {
     const endpoint = 'device_technical_id_registry_service_offers';
-    const options = {
-      ...filters,
+    const params = {
+      ...options,
     };
-    return ApiService.getRequest(endpoint, options);
+    return ApiService.getRequest(endpoint, params);
   }
 
   getSubscribedDeviceIdRegistryOffers(
     organisationId: string,
-    filters: object = {},
+    options: object = {},
   ): Promise<DataListResponse<DeviceIdRegistryOfferResource>> {
     const endpoint = 'device_technical_id_registry_service_offers';
-    const options = {
+    const params = {
       subscriber_id: organisationId,
       signed_agreement_filter: true,
-      ...filters,
+      ...options,
     };
-    return ApiService.getRequest(endpoint, options);
+    return ApiService.getRequest(endpoint, params);
   }
 }

@@ -9,7 +9,9 @@ export type DeviceIdRegistryType =
 export interface DeviceIdRegistryResource {
   id: string;
   name: string;
+  description?: string;
   type: DeviceIdRegistryType;
+  community_id: string;
 }
 
 export interface DeviceIdRegistryOfferResource {
@@ -17,4 +19,10 @@ export interface DeviceIdRegistryOfferResource {
   device_id_registry_type: DeviceIdRegistryType;
   name: string;
   subscribed: boolean;
+}
+
+export interface DeviceIdRegistryDatamartSelectionResource {
+  id: String;
+  device_id_registry_id: String;
+  datamart_id: String;
 }

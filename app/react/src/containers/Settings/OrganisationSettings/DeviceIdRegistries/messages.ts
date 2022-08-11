@@ -10,7 +10,7 @@ const messages = defineMessages({
     defaultMessage: 'There are no device registries.',
   },
   newDeviceIdRegistry: {
-    id: 'settings.organisation.device.registries.list.newDeviceIdRegistryy',
+    id: 'settings.organisation.device.registries.list.newDeviceIdRegistry',
     defaultMessage: 'New Registry',
   },
   deviceIdRegistryId: {
@@ -32,6 +32,54 @@ const messages = defineMessages({
   deleteDeviceIdRegistry: {
     id: 'settings.organisation.device.registries.list.delete',
     defaultMessage: 'Delete registry',
+  },
+  newRegistryDrawerTitle: {
+    id: 'settings.organisation.device.registries.new.title',
+    defaultMessage: 'Device Registries > New Device Registry',
+  },
+  generalInformation: {
+    id: 'settings.organisation.device.registries.new.generalInformation',
+    defaultMessage: 'General Information',
+  },
+  namePlaceholder: {
+    id: 'settings.organisation.device.registries.new.name.placeholder',
+    defaultMessage: 'Device registry name',
+  },
+  description: {
+    id: 'settings.organisation.device.registries.new.description',
+    defaultMessage: 'Description',
+  },
+  descritpionPlaceholder: {
+    id: 'settings.organisation.device.registries.new.description.placeholder',
+    defaultMessage: 'Device registry description',
+  },
+  enableDatamarts: {
+    id: 'settings.organisation.device.registries.new.enableDatamarts',
+    defaultMessage: 'Enable Datamarts',
+  },
+  tootltipRegistryType: {
+    id: 'settings.organisation.device.registries.new.tooltip.type',
+    defaultMessage: 'Help message TODO',
+  },
+  save: {
+    id: 'settings.organisation.device.registries.new.save',
+    defaultMessage: 'Save',
+  },
+  organisationName: {
+    id: 'settings.organisation.device.registries.new.datamarts.organisation.name',
+    defaultMessage: 'Organisation',
+  },
+  datamartName: {
+    id: 'settings.organisation.device.registries.new.datamarts.name',
+    defaultMessage: 'Datamart',
+  },
+  formNotComplete: {
+    id: 'settings.organisation.device.registries.new.formNotComplete',
+    defaultMessage: 'Please fill in the required fields',
+  },
+  newRegistryCreationSuccess: {
+    id: 'settings.organisation.device.registries.new.creation.success',
+    defaultMessage: 'Device registry successfully created',
   },
   deviceIdRegistryOffers: {
     id: 'settings.organisation.device.registry.offers.list.title',
