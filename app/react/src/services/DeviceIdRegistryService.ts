@@ -59,7 +59,7 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
 
   createDeviceIdRegistryDatamartSelection(
     datamartId: string,
-    deviceIdRegistryId: String,
+    deviceIdRegistryId: string,
   ): Promise<DataResponse<DeviceIdRegistryDatamartSelectionResource>> {
     const endpoint = `datamarts/${datamartId}/device_id_registries`;
     const body: Partial<DeviceIdRegistryDatamartSelectionResource> = {
