@@ -1,4 +1,3 @@
-import moment from 'moment';
 import HeaderMenu from '../../../../pageobjects/HeaderMenu';
 import LabelsPage from '../../../../pageobjects/Settings/Organisation/LabelsPage';
 
@@ -19,9 +18,18 @@ describe('Labels test', () => {
     cy.clearLocalStorage();
   });
 
+  const getDate = () => {
+    const day = new Date().getDate();
+    const month = new Date().getMonth() + 1;
+    const year = new Date().getFullYear();
+    const formattedDay = day >= 10 ? day : `0${day}`;
+    const formattedMonth = month >= 10 ? month : `0${month}`;
+    return `${formattedDay}/${formattedMonth}/${year}`;
+  };
+
   it('Should create a new Label', () => {
     const labelsPage = new LabelsPage();
-    const dateNow = moment(new Date()).format('DD/MM/YYYY');
+    const dateNow = getDate();
     labelsPage.clickBtnNewLabel();
     labelsPage.typeNewLabelField();
     labelsPage.clickBtnSave();
@@ -46,6 +54,7 @@ describe('Labels test', () => {
     const editedLabel = `label-${Math.random().toString(36).substring(2, 10)}`;
     labelsPage.addNewLabel();
     cy.wait('@getLabels');
+    cy.wait(100);
     labelsPage.clickDropDownArrowLabel(labelsPage.label);
     labelsPage.clickBtnEdit();
     labelsPage.typeNewLabelField(editedLabel);
@@ -63,6 +72,7 @@ describe('Labels test', () => {
     const labelsPage = new LabelsPage();
     labelsPage.addNewLabel();
     cy.wait('@getLabels');
+    cy.wait(100);
     labelsPage.clickDropDownArrowLabel(labelsPage.label);
     labelsPage.clickBtnArchive();
     labelsPage.clickBtnOKConfirmPopUp();
