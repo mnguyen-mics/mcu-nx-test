@@ -22,7 +22,7 @@ export interface DeviceIdRegistryOfferResource {
 }
 
 export interface DeviceIdRegistryDatamartSelectionResource {
-  id: String;
-  device_id_registry_id: String;
-  datamart_id: String;
+  id: string;
+  device_id_registry_id: string;
+  datamart_id: string;
 }
