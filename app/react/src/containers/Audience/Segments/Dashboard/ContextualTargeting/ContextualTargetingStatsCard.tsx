@@ -1,5 +1,6 @@
+import { SettingOutlined } from '@ant-design/icons';
 import { Card } from '@mediarithmics-private/mcs-components-library';
-import { Button, Statistic, Steps } from 'antd';
+import { Button, Dropdown, Menu, Statistic, Steps } from 'antd';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -18,6 +19,7 @@ interface ContextualTargetingStatsCardProps {
   chartDataSelected?: ChartDataResource;
   numberOfTargetedContent?: number;
   onPublishContextualTargeting: () => void;
+  onArchiveContextualTargeting: () => void;
   onEdit: () => void;
   getTargetedVolumeRatio: () => number;
 }
@@ -84,6 +86,7 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
     const {
       contextualTargeting,
       onPublishContextualTargeting,
+      onArchiveContextualTargeting,
       onEdit,
       numberOfTargetedContent,
       isLiveEditing,
@@ -109,24 +112,26 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
     const steps = (contextualTargeting?.status !== 'LIVE' ||
       (contextualTargeting?.status === 'LIVE' && isLiveEditing)) && (
       <Steps direction='vertical' current={stepIndex}>
-        <Step
-          title={intl.formatMessage(messages.stepOneTitle)}
-          description={intl.formatMessage(messages.stepOneDescription)}
-        />
-        <Step
-          title={intl.formatMessage(messages.stepTwoTitle)}
-          description={intl.formatMessage(messages.stepTwoDescription)}
-        />
-        <Step
-          title={intl.formatMessage(messages.stepThreeTitle)}
-          description={intl.formatMessage(messages.stepThreeDescription)}
-        />
+        <Step title={intl.formatMessage(messages.stepOneTitle)} />
+        <Step title={intl.formatMessage(messages.stepTwoTitle)} />
+        <Step title={intl.formatMessage(messages.stepThreeTitle)} />
       </Steps>
     );
     const isButtonDisable =
       contextualTargeting &&
       (contextualTargeting.status === 'PUBLISHED' ||
         contextualTargeting.status === 'LIVE_PUBLISHED');
+
+    const settingsMenu = (
+      <Menu className='mcs-menu-antd-customized'>
+        <Menu.Item
+          className='mcs-channelsListPage_new_site_button'
+          onClick={onArchiveContextualTargeting}
+        >
+          {intl.formatMessage(messages.archived)}
+        </Menu.Item>
+      </Menu>
+    );
 
     const stats = stepIndex >= 1 && (
       <div className='mcs-contextualTargetingDashboard_settingsCardContainer'>
@@ -138,6 +143,13 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
             </Card>
           )}
         <div className='mcs-contextualTargetingDashboard_settingsCardContainer_stats'>
+          <div className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_settings'>
+            {intl.formatMessage(messages.settings)}
+            <Dropdown overlay={settingsMenu} trigger={['click']} placement='bottomRight'>
+              <SettingOutlined className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_settings_dropdown' />
+            </Dropdown>
+          </div>
+          <hr className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_separator' />
           <Statistic
             className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'
             title={intl.formatMessage(messages.targetedRatio)}

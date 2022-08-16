@@ -197,7 +197,25 @@
       }
       .mcs-contextualTargetingDashboard_settingsCardContainer_stats {
         background-color: white;
-        padding: 15px;
+        padding: 10px;
+        .mcs-contextualTargetingDashboard_settingsCardContainer_stats_settings {
+          position: relative;
+          font-weight: 500;
+          font-size: 16px;
+          margin-bottom: 10px;
+          .mcs-contextualTargetingDashboard_settingsCardContainer_stats_settings_dropdown {
+            position: absolute;
+            right: 0px;
+            top: 4px;
+          }
+        }
+        .mcs-contextualTargetingDashboard_settingsCardContainer_stats_separator {
+          position: relative;
+          width: 115%;
+          left: -10px;
+          border-top-color: black;
+          border-top-width: 0.5px;
+        }
         .mcs-contextualTargetingDashboard_settingsCardContainer_stats_block {
           margin-bottom: 15px;
           .ant-statistic-title {
@@ -208,6 +226,9 @@
             font-size: 11px;
             font-style: italic;
             color: grey;
+          }
+          &:nth-child(3) {
+            margin-top: 10px;
           }
           &:last-child {
             margin-bottom: 0px;

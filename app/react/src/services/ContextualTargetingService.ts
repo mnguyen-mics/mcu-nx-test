@@ -21,6 +21,10 @@ export interface IContextualTargetingService {
     contextualTargetingId: string,
     volumeRatio: number,
   ) => Promise<DataResponse<ContextualTargetingResource>>;
+  archiveContextualTargeting: (
+    segmentId: string,
+    contextualTargetingId: string,
+  ) => Promise<DataResponse<ContextualTargetingResource>>;
   getContextualTargetingLiftFile: (
     segmentId: string,
     contextualTargetingId: string,
@@ -54,6 +58,19 @@ export class ContextualTargetingService implements IContextualTargetingService {
     const body = {
       type: 'PUBLISH',
       volume_ratio: volumeRatio,
+    };
+    return ApiService.postRequest(
+      `audience_segments/${segmentId}/contextual_targetings/${contextualTargetingId}/actions`,
+      body,
+    );
+  }
+
+  archiveContextualTargeting(
+    segmentId: string,
+    contextualTargetingId: string,
+  ): Promise<DataResponse<ContextualTargetingResource>> {
+    const body = {
+      type: 'ARCHIVE',
     };
     return ApiService.postRequest(
       `audience_segments/${segmentId}/contextual_targetings/${contextualTargetingId}/actions`,
