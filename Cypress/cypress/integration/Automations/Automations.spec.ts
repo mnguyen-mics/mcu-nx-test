@@ -1,3 +1,5 @@
+import ListPage from '../../pageobjects/Automations/ListPage';
+
 describe('Test Automations', () => {
   beforeEach(() => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
@@ -12,29 +14,29 @@ describe('Test Automations', () => {
 
   it('Should test the test function of an automation', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
+      const listPage = new ListPage();
       cy.switchOrg(data.organisationName);
 
       // Open automation
-      cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.list').click();
-      cy.get('.mcs-automation-link').first().click();
+      listPage.goToPage();
+      listPage.clickFirtAutomationName();
       //Waiting for automation view page to load
-      cy.get('.mcs-gears', { timeout: 50000 }).should('be.visible').click();
-      cy.get('.mcs-content-container').should('contain', 'Test your automation');
+      listPage.clickBtnTest();
+      listPage.pageContent.should('contain', 'Test your automation');
     });
   });
 
   it('Should see the number of users on each node', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
+      const listPage = new ListPage();
       cy.switchOrg(data.organisationName);
 
       // Open automation
-      cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.list').click();
-      cy.get('.mcs-automation-link').first().click();
+      listPage.goToPage();
+      listPage.clickFirtAutomationName();
       //Waiting for automation view page to load
-      cy.get('.mcs-breadcrumb', { timeout: 50000 }).should('be.visible');
-      cy.get('.mcs-automation-userCounter').should('have.length', 5);
+      listPage.nameBar.should('be.visible');
+      listPage.userCounter.should('have.length', 5);
     });
   });
 });

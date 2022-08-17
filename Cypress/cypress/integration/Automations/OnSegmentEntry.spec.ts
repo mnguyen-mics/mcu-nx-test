@@ -1,5 +1,7 @@
 import { createUserQuery } from '../helpers/SegmentHelper';
 import { createQuery } from '../helpers/QueryHelper';
+import ListPage from '../../pageobjects/Automations/ListPage';
+import BuilderPage from '../../pageobjects/Automations/BuilderPage';
 describe('OnSegmentEntry test', () => {
   beforeEach(() => {
     cy.login();
@@ -9,6 +11,8 @@ describe('OnSegmentEntry test', () => {
   });
 
   it('Should test the creation of an automation with On Segment Entry', () => {
+    const builderPage = new BuilderPage();
+    const listPage = new ListPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       cy.switchOrg(data.organisationName);
 
@@ -31,34 +35,31 @@ describe('OnSegmentEntry test', () => {
 
       // Automation Creation
 
-      cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.builder').click();
-      cy.get('.mcs-menu-list-onSegmentEntry').click();
+      builderPage.goToPage();
+      builderPage.selectOnSegmentEntryType();
 
-      cy.get('.mcs-formSearchInput').click().type('{enter}');
-      cy.get('.mcs-form_saveButton_automationNodeForm').click();
+      builderPage.startAutomationPopUp.clickSearchField();
+      builderPage.startAutomationPopUp.clickBtnUpdate();
 
       //Save Automation
-      cy.get('.mcs-actionbar').find('.mcs-primary').click();
+      builderPage.clickBtnSaveAutomation();
 
       const automationName = 'On Segment Entry Automation';
-      cy.get('.mcs-automationName').type(automationName);
-      cy.get('.mcs-form-modal-container').find('.mcs-primary').click();
+      builderPage.typeAutomationName(automationName);
+      builderPage.clickBtnSaveAutomationName();
 
       // Automation viewer
-      cy.get('.mcs-breadcrumb', { timeout: 50000 })
-        .should('be.visible')
-        .should('contain', automationName);
+      listPage.nameBar.should('be.visible').should('contain', automationName);
 
       // Edit
-      cy.get('.mcs-automationDashboardPage_editButton').click();
+      listPage.clickBtnEdit();
 
       // Open the drawer
-      cy.get('.mcs-automationNodeWidget_StartAutomation').parent().click();
-      cy.get('.mcs-automationNodeWidget_booleanMenu--edit').click();
+      listPage.clickStartAutomation();
+      listPage.clickBtnEditStartAutomation();
 
       // Check if the segment name in input is the one we had select on creation
-      cy.get('.mcs-formSearchInput').should('contain', userQuery.name);
+      builderPage.startAutomationPopUp.searchField.should('contain', userQuery.name);
     });
   });
 });

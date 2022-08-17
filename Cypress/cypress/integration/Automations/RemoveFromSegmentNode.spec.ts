@@ -1,3 +1,5 @@
+import BuilderPage from '../../pageobjects/Automations/BuilderPage';
+
 describe('Test RemoveFromSegment node creation', () => {
   beforeEach(() => {
     cy.login();
@@ -41,36 +43,36 @@ describe('Test RemoveFromSegment node creation', () => {
   });
 
   it('Should test the creation of RemoveFromSegment node', () => {
+    const builderPage = new BuilderPage();
     // Automation creation
-    cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
-    cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.builder').click();
-    cy.get('.mcs-menu-list-onSegmentEntry').click();
-    cy.get('.mcs-formSearchInput').click().type('{enter}');
-    cy.get('.mcs-form_saveButton_automationNodeForm').click();
+    builderPage.goToPage();
+    builderPage.selectOnSegmentEntryType();
+    builderPage.startAutomationPopUp.clickSearchField();
+    builderPage.startAutomationPopUp.clickBtnUpdate();
 
     // Drag and Drop the node
     const dataTransfer = new DataTransfer();
-    cy.get('.mcs-availableNode-DeletefromSegment')
+    builderPage.componentDeleteFromSegment
       .trigger('mousedown')
       .trigger('dragstart', { dataTransfer });
 
-    cy.get('.mcs-dropNodeWidget_area_node').trigger('drop');
+    builderPage.componentsArea.trigger('drop');
 
     // Node form
-    cy.get('.mcs-formSearchInput').click().type('{enter}');
-    cy.get('.mcs-form_saveButton_automationNodeForm').click();
+    builderPage.startAutomationPopUp.clickSearchField();
+    builderPage.startAutomationPopUp.clickBtnUpdate();
 
     //Save Automation
-    cy.get('.mcs-actionbar').find('.mcs-primary').click();
+    builderPage.clickBtnSaveAutomation();
 
     const automationName = 'Test RemoveFromSegment Node Automation';
 
-    cy.get('.mcs-form-modal-container').find('.mcs-automationName').type(automationName);
-    cy.get('.mcs-form-modal-container').find('.mcs-primary').click();
+    builderPage.typeAutomationName(automationName);
+    builderPage.clickBtnSaveAutomationName();
 
     //Wait for the automation to be saved
     cy.wait(20000);
 
-    cy.get('.mcs-actionbar').should('contain', automationName);
+    builderPage.actionBar.should('contain', automationName);
   });
 });
