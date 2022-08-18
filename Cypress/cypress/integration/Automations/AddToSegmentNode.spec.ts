@@ -1,4 +1,7 @@
+import BuilderPage from '../../pageobjects/Automations/BuilderPage';
 import faker from 'faker';
+import ListPage from '../../pageobjects/Automations/ListPage';
+
 describe('Test AddToSegment node creation', () => {
   beforeEach(() => {
     cy.login();
@@ -28,40 +31,37 @@ describe('Test AddToSegment node creation', () => {
   });
 
   it('Should test the creation of AddToSegment node', () => {
+    const builderPage = new BuilderPage();
+    const listPage = new ListPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       // Automation creation
-      cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.builder').click();
-      cy.get('.mcs-menu-list-onSegmentEntry').click();
-      cy.get('.mcs-formSearchInput').click().type('{enter}');
-      cy.get('.mcs-form_saveButton_automationNodeForm').click();
+      builderPage.goToPage();
+      builderPage.selectOnSegmentEntryType();
+      builderPage.startAutomationPopUp.clickSearchField();
+      builderPage.startAutomationPopUp.clickBtnUpdate();
 
       // Drag and Drop the node
       const dataTransfer = new DataTransfer();
-      cy.get('.mcs-availableNode-AddtoSegment')
-        .trigger('mousedown')
-        .trigger('dragstart', { dataTransfer });
+      builderPage.componentAddToSegment.trigger('mousedown').trigger('dragstart', { dataTransfer });
 
-      cy.get('.mcs-dropNodeWidget_area_node').trigger('drop');
+      builderPage.componentsArea.trigger('drop');
 
       // Node form
       const audienceSegmentName = faker.random.words(2);
-      cy.get('.mcs-audienceSegmentName').type(audienceSegmentName);
-      cy.get('.mcs-ttlValue').click().type('3');
-      cy.get('.mcs-form_saveButton_automationNodeForm').click();
+      builderPage.addToSegmentPopUp.typeAudienceSegmentName(audienceSegmentName);
+      builderPage.addToSegmentPopUp.typeTimeToLiveValue('3');
+      builderPage.addToSegmentPopUp.clickBtnUpdate();
 
       // Save Automation
-      cy.get('.mcs-actionbar').find('.mcs-primary').click();
+      builderPage.clickBtnSaveAutomation();
 
       const automationName = 'Test AddToSegment Node Automation';
 
-      cy.get('.mcs-form-modal-container').find('.mcs-automationName').type(automationName);
-      cy.get('.mcs-form-modal-container').find('.mcs-primary').click();
+      builderPage.typeAutomationName(automationName);
+      builderPage.clickBtnSaveAutomationName();
 
       // Wait for the automation to be saved
-      cy.get('.mcs-breadcrumb', { timeout: 50000 })
-        .should('be.visible')
-        .should('contain', automationName);
+      listPage.nameBar.should('be.visible').should('contain', automationName);
 
       // Get scenario id
       cy.request({
@@ -97,103 +97,99 @@ describe('Test AddToSegment node creation', () => {
 
     // Reload the page
     cy.reload();
-    cy.get('.mcs-breadcrumb', { timeout: 50000 }).should('be.visible');
+    listPage.nameBar.should('be.visible');
 
     // Check if the ttl value of the add_to_segment node has been updated
-    cy.get('.mcs-user-list').click();
-    cy.get('.mcs-automationNodeWidget_booleanMenu--view-node-config').click();
-    cy.get('.mcs-ttlValue').find('#ttl\\.value').should('have.value', '4');
+    builderPage.clickAnalystHandcrafted();
+    builderPage.clickBtnViewNodeConfig();
+    builderPage.addToSegmentPopUp.timeToLiveValue.should('have.value', '4');
   });
 
   it('Segment name field should not be empty in AddToSegment form', () => {
+    const builderPage = new BuilderPage();
     // Automation creation
-    cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
-    cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.builder').click();
-    cy.get('.mcs-menu-list-onSegmentEntry').click();
-    cy.get('.mcs-formSearchInput').click().type('{enter}');
-    cy.get('.mcs-form_saveButton_automationNodeForm').click();
+    builderPage.goToPage();
+    builderPage.selectOnSegmentEntryType();
+    builderPage.startAutomationPopUp.clickSearchField();
+    builderPage.startAutomationPopUp.clickBtnUpdate();
 
     // Drag and Drop the node
     const dataTransfer = new DataTransfer();
-    cy.get('.mcs-availableNode-AddtoSegment')
-      .trigger('mousedown')
-      .trigger('dragstart', { dataTransfer });
+    builderPage.componentAddToSegment.trigger('mousedown').trigger('dragstart', { dataTransfer });
 
-    cy.get('.mcs-dropNodeWidget_area_node').trigger('drop');
+    builderPage.componentsArea.trigger('drop');
 
     // Node form
-    cy.get('.mcs-form_saveButton_automationNodeForm').click();
-    cy.get('.mcs-addToSegmentSectionForm').should('contain', 'required');
+    builderPage.startAutomationPopUp.clickBtnUpdate();
+    builderPage.addToSegmentPopUp.addToSegmentSectionForm.should('contain', 'required');
   });
 
   it('Should have the valid input in the time to live field', () => {
+    const builderPage = new BuilderPage();
     // Automation creation
-    cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
-    cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.builder').click();
-    cy.get('.mcs-menu-list-onSegmentEntry').click();
-    cy.get('.mcs-formSearchInput').click().type('{enter}');
-    cy.get('.mcs-form_saveButton_automationNodeForm').click();
+    builderPage.goToPage();
+    builderPage.selectOnSegmentEntryType();
+    builderPage.startAutomationPopUp.clickSearchField();
+    builderPage.startAutomationPopUp.clickBtnUpdate();
 
     // Drag and Drop the node
     const dataTransfer = new DataTransfer();
-    cy.get('.mcs-availableNode-AddtoSegment')
-      .trigger('mousedown')
-      .trigger('dragstart', { dataTransfer });
+    builderPage.componentAddToSegment.trigger('mousedown').trigger('dragstart', { dataTransfer });
 
-    cy.get('.mcs-dropNodeWidget_area_node').trigger('drop');
+    builderPage.componentsArea.trigger('drop');
 
     // Node form
     const inputString = faker.random.word();
     // String input
-    cy.get('.mcs-ttlValue').click().type(inputString);
-    cy.get('.mcs-addToSegmentSectionForm').click();
-    cy.get('.mcs-addToSegmentSectionForm').should('contain', 'invalid number');
+    builderPage.addToSegmentPopUp.typeTimeToLiveValue(inputString);
+    builderPage.addToSegmentPopUp.addToSegmentSectionForm.click();
+    builderPage.addToSegmentPopUp.addToSegmentSectionForm.should('contain', 'invalid number');
 
     // Zero input
-    cy.get('.mcs-ttlValue').click().type('{selectall}{backspace}');
-    cy.get('.mcs-ttlValue').click().type('0');
-    cy.get('.mcs-addToSegmentSectionForm').should('contain', 'Number must be above 0');
+    builderPage.addToSegmentPopUp.typeTimeToLiveValue('{selectall}{backspace}');
+    builderPage.addToSegmentPopUp.typeTimeToLiveValue('0');
+    builderPage.addToSegmentPopUp.addToSegmentSectionForm.should(
+      'contain',
+      'Number must be above 0',
+    );
 
     // Float input
-    cy.get('.mcs-ttlValue').click().type('{selectall}{backspace}');
-    cy.get('.mcs-ttlValue').click().type('1.5');
-    cy.get('.mcs-addToSegmentSectionForm').should('contain', 'invalid number');
+    builderPage.addToSegmentPopUp.typeTimeToLiveValue('{selectall}{backspace}');
+    builderPage.addToSegmentPopUp.typeTimeToLiveValue('1.5');
+    builderPage.addToSegmentPopUp.addToSegmentSectionForm.should('contain', 'invalid number');
   });
 
   it('Should display a scenario containing an AddToSegment node with a deleted segment', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
+      const builderPage = new BuilderPage();
+      const listPage = new ListPage();
       // Automation creation
-      cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.builder').click();
-      cy.get('.mcs-menu-list-onSegmentEntry').click();
-      cy.get('.mcs-formSearchInput').click().type('{enter}');
-      cy.get('.mcs-form_saveButton_automationNodeForm').click();
+      builderPage.goToPage();
+      builderPage.selectOnSegmentEntryType();
+      builderPage.startAutomationPopUp.clickSearchField();
+      builderPage.startAutomationPopUp.clickBtnUpdate();
 
       // Drag and Drop the node
       const dataTransfer = new DataTransfer();
-      cy.get('.mcs-availableNode-AddtoSegment')
-        .trigger('mousedown')
-        .trigger('dragstart', { dataTransfer });
-      cy.get('.mcs-dropNodeWidget_area_node').trigger('drop');
+      builderPage.componentAddToSegment.trigger('mousedown').trigger('dragstart', { dataTransfer });
+      builderPage.componentsArea.trigger('drop');
 
       // Node form
       const audienceSegmentName = faker.random.words(2);
-      cy.get('.mcs-audienceSegmentName').type(audienceSegmentName);
-      cy.get('.mcs-ttlValue').click().type('3');
-      cy.get('.mcs-form_saveButton_automationNodeForm').click();
+      builderPage.addToSegmentPopUp.typeAudienceSegmentName(audienceSegmentName);
+      builderPage.addToSegmentPopUp.typeTimeToLiveValue('3');
+      builderPage.addToSegmentPopUp.clickBtnUpdate();
 
       // Save Automation
-      cy.get('.mcs-actionbar').find('.mcs-primary').click();
+      builderPage.clickBtnSaveAutomation();
 
       const automationName = 'Test AddToSegment Node Automation';
 
-      cy.get('.mcs-form-modal-container').find('.mcs-automationName').type(automationName);
-      cy.get('.mcs-form-modal-container').find('.mcs-primary').click();
+      builderPage.typeAutomationName(automationName);
+      builderPage.clickBtnSaveAutomationName();
 
       // Wait for the automation to be saved
-      cy.get('.mcs-breadcrumb', { timeout: 50000 })
-        .should('be.visible')
-        .should('contain', automationName);
+      listPage.nameBar.should('be.visible').should('contain', automationName);
 
       // Get scenario id
       cy.request({
@@ -219,9 +215,9 @@ describe('Test AddToSegment node creation', () => {
         });
 
         // Go to the automation view page
-        cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.list').click();
+        listPage.clickAutomationsList();
         cy.contains(automationName).click();
-        cy.get('.mcs-breadcrumb').should('contain', automationName);
+        listPage.nameBar.should('contain', automationName);
       });
     });
   });

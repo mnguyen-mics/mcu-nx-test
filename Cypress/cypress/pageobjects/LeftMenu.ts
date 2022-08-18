@@ -99,6 +99,11 @@ class LeftMenu extends Page {
   }
 
   @logFunction()
+  clickAutomationsList() {
+    cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.list').click();
+  }
+
+  @logFunction()
   clickDataStudioFunnel() {
     cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
   }
