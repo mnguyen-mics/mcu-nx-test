@@ -43,6 +43,7 @@ import ExitNodeAutomationDashboardStats, {
   ExitNodeAutomationDashboardStatsProps,
 } from './Dashboard/ExitNode/ExitNodeAutomationDashboardStats';
 import { ScenarioCountersData } from '../../../../utils/ScenarioAnalyticsReportHelper';
+import { ICustomActionService } from '../../../../services/CustomActionService';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -57,6 +58,7 @@ interface State {
   focus: boolean;
   hover: boolean;
   nodeName?: string;
+  nodeSubTitle?: string;
 }
 
 const messages = defineMessages({
@@ -100,6 +102,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
+  @lazyInject(TYPES.ICustomActionService)
+  private _customActionService: ICustomActionService;
+
   constructor(props: Props) {
     super(props);
 
@@ -112,7 +117,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   componentDidMount() {
     const { node } = this.props;
-
     if (
       isScenarioNodeShape(node.storylineNodeModel.node) &&
       node.storylineNodeModel.node.last_added_node
@@ -127,28 +131,90 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const { node, diagramEngine } = this.props;
 
     const nodeShape = node.storylineNodeModel.node;
+    let nodeName: string | undefined;
     switch (nodeShape.type) {
+      case 'ADD_TO_SEGMENT_NODE':
+        nodeName = 'Add to segment';
+        if (nodeShape.formData.audienceSegmentName) {
+          this.setState({ nodeName, nodeSubTitle: nodeShape.formData.audienceSegmentName });
+        } else if (nodeShape.formData.audienceSegmentId) {
+          this._audienceSegmentService
+            .getSegment(nodeShape.formData.audienceSegmentId)
+            .then(({ data: segment }) => {
+              this.setState({ nodeName, nodeSubTitle: segment.name });
+            })
+            .catch(() => {
+              this.setState({ nodeName, nodeSubTitle: undefined });
+            });
+        }
+        break;
       case 'DELETE_FROM_SEGMENT_NODE':
+        nodeName = 'Remove from segment';
         if (nodeShape.formData.segmentId) {
           if (!isFakeId(nodeShape.formData.segmentId)) {
             this._audienceSegmentService
               .getSegment(nodeShape.formData.segmentId)
               .then(({ data: segment }) => {
-                this.setState({ nodeName: segment.name });
+                this.setState({ nodeName, nodeSubTitle: segment.name });
               })
               .catch(() => {
-                this.setState({ nodeName: undefined });
+                this.setState({ nodeName, nodeSubTitle: undefined });
               });
           } else {
             const scenarioNodes = Object.values(diagramEngine.diagramModel.nodes)
               .filter(nodeModel => nodeModel.type === 'automation-node')
               .map((nodeModel: AutomationNodeModel) => nodeModel.storylineNodeModel);
-            const nodeName = this.findSegmentNameFromAddToSegmentNode(
+            const nodeSubTitle = this.findSegmentNameFromAddToSegmentNode(
               nodeShape.formData.segmentId,
               scenarioNodes,
             );
-            this.setState({ nodeName: nodeName });
+            this.setState({ nodeName, nodeSubTitle });
           }
+        }
+        break;
+      case 'CUSTOM_ACTION_NODE':
+        if (nodeShape.formData?.customActionId) {
+          this._customActionService
+            .getInstanceById(nodeShape.formData.customActionId)
+            .then(({ data: customAction }) => {
+              this.setState({ nodeSubTitle: customAction.name });
+            })
+            .catch(() => {
+              this.setState({ nodeSubTitle: undefined });
+            });
+        }
+        break;
+      case 'WAIT_NODE':
+        if (nodeShape.formData) {
+          const waitDuration = nodeShape.formData.wait_duration;
+          const formData = nodeShape.formData;
+          nodeName = `Wait ${waitDuration.value} ${
+            parseInt(waitDuration.value) === 1 ? waitDuration.unit.slice(0, -1) : waitDuration.unit
+          }`;
+          const subTitle: string[] = [];
+          if (formData.time_window_end && formData.time_window_start) {
+            subTitle.push(
+              `between ${formData.time_window_start.format(
+                'HH:MM',
+              )} and ${formData.time_window_end.format('HH:MM')}`,
+            );
+          }
+          if (formData.day_window && formData.day_window.length < 7) {
+            if (formData.day_window.length === 1) {
+              const dayName = formData.day_window[0];
+              const formattedDayName = `${dayName[0].toUpperCase()}${dayName
+                .slice(1)
+                .toLowerCase()}`;
+              subTitle.push(`on ${formattedDayName}s`);
+            } else {
+              subTitle.push(`on ${formData.day_window.length} days`);
+            }
+          }
+          if (subTitle.length > 0) {
+            const endStr = formData.time_window_end && formData.time_window_start ? '' : ',';
+            subTitle.unshift(`Move on${endStr}`);
+          }
+          this.setState({ nodeName, nodeSubTitle: subTitle.join(' ') });
         }
         break;
       default:
@@ -749,10 +815,48 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     return count ? +count : undefined;
   };
 
+  getNodeSubTitleMaxSize = (): number => {
+    const { node } = this.props;
+    switch (node.storylineNodeModel.node.type) {
+      case 'WAIT_NODE':
+        return 60;
+      default:
+        return 25;
+    }
+  };
+
+  getOnClickFunction = (menuItemCount: number): undefined | (() => void) => {
+    if (menuItemCount > 1) {
+      return;
+    }
+    const { node, viewer } = this.props;
+    const nodeType = node.storylineNodeModel.node.type;
+    switch (nodeType) {
+      case 'ABN_NODE':
+        return viewer ? this.editNode : undefined;
+      case 'QUERY_INPUT':
+        return viewer ? this.viewStats : this.editNode;
+      case 'END_NODE':
+        return this.viewStats;
+      case 'EMAIL_CAMPAIGN':
+      case 'CUSTOM_ACTION_NODE':
+      case 'IF_NODE':
+      case 'WAIT_NODE':
+      case 'PLUGIN_NODE':
+        return this.editNode;
+      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+      case 'ON_SEGMENT_EXIT_INPUT_NODE':
+        return viewer ? this.viewStats : this.editNode;
+      default:
+        return;
+    }
+  };
+
   render() {
     const { node, viewer } = this.props;
-    const { nodeName } = this.state;
-
+    const { nodeName, nodeSubTitle } = this.state;
+    const NODE_NAME_MAX_SIZE = 20;
+    const NODE_SUBTITLE_MAX_SIZE = this.getNodeSubTitleMaxSize();
     const icon = this.getIcon(node);
 
     const nodeCounter = viewer ? (
@@ -773,13 +877,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
 
     const nodeTitleToDisplayed = nodeName || node.title;
+    const nodeSubTitleToDisplay = nodeSubTitle ?? node.subtitle ?? '';
 
     const nodeType = node.storylineNodeModel.node.type;
 
     const editContent = this.renderEditMenu(nodeType);
-    const onClick = editContent.length ? onFocus : undefined;
+    const onClick: undefined | (() => void) =
+      editContent.length === 0 ? undefined : this.getOnClickFunction(editContent.length) ?? onFocus;
 
-    const NODE_NAME_MAX_SIZE = 20;
     const renderedAutomationNode = (
       <div
         className={`node-body mcs-automationNodeWidget${
@@ -806,7 +911,21 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             }`}
           </Tooltip>
         </div>
-        <div className='node-subtitle'>{node.subtitle ? node.subtitle : ''}</div>
+        <div className='node-subtitle'>
+          <Tooltip
+            title={
+              nodeSubTitleToDisplay.length > NODE_SUBTITLE_MAX_SIZE
+                ? nodeSubTitleToDisplay
+                : undefined
+            }
+            placement='bottom'
+          >
+            {`${
+              nodeSubTitleToDisplay.substring(0, NODE_SUBTITLE_MAX_SIZE) +
+              (nodeSubTitleToDisplay.length > NODE_SUBTITLE_MAX_SIZE ? '...' : '')
+            }`}
+          </Tooltip>
+        </div>
       </div>
     );
 
