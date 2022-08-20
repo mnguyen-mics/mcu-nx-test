@@ -13,6 +13,8 @@ import { RecommenderContent } from '../containers/Settings/CampaignSettings/Reco
 import { CreateEditRecommender } from '../containers/Settings/CampaignSettings/Recommender/Edit';
 import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/VisitAnalyzer/List';
 import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit';
+import { CustomActionContent } from '../containers/Settings/DatamartSettings/CustomAction/List';
+import { CreateEditCustomAction } from '../containers/Settings/DatamartSettings/CustomAction/Edit';
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportListPage';
 import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit/EditUserPage';
@@ -285,6 +287,29 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
+  // Custom Action
+  settingsDatamartCustomActionList: {
+    path: '/settings/datamart/custom_actions',
+    layout: 'settings',
+    contentComponent: CustomActionContent,
+    requiredFeature: 'automations',
+    requireDatamart: true,
+  },
+  settingsDatamartCustomActionEdition: {
+    path: '/settings/datamart/custom_actions/:customActionId(\\d+)/edit',
+    layout: 'edit',
+    editComponent: CreateEditCustomAction,
+    requiredFeature: 'automations',
+    requireDatamart: true,
+  },
+  settingsDatamartCustomActionCreation: {
+    path: '/settings/datamart/custom_actions/create',
+    layout: 'edit',
+    editComponent: CreateEditCustomAction,
+    requiredFeature: 'automations',
+    requireDatamart: true,
+  },
+
   // ml function
   settingsDatamartMlFunctionList: {
     path: '/settings/datamart/ml_functions',
@@ -410,7 +435,7 @@ export const settingsDefinition: NavigatorDefinition = {
 
   /*
   ACCOUNT SETTINGS
-  
+
   */
 
   settingsAccountProfileList: {
@@ -439,7 +464,7 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   /*
-  
+
     CAMPAIGNS SETTINGS
 
   */
@@ -506,9 +531,9 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   /*
-  
+
     SERVICE OFFERS SETTINGS
-  
+
   */
 
   settingsSubscribedOffersList: {

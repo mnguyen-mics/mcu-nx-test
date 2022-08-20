@@ -94,6 +94,10 @@ export default defineMessages({
     id: 'menu.library.activityAnalyzer',
     defaultMessage: 'Activity Analyzers',
   },
+  libraryCustomAction: {
+    id: 'menu.library.customAction',
+    defaultMessage: 'Custom Actions',
+  },
   libraryEmailRouter: {
     id: 'menu.library.EmailRouter',
     defaultMessage: 'Email Routers',
@@ -183,6 +187,10 @@ export default defineMessages({
   activityAnalyzerSettingsTitle: {
     id: 'menu.datamart.activity_analyzer',
     defaultMessage: 'Activity Analyzers',
+  },
+  customActionSettingsTitle: {
+    id: 'menu.datamart.custom_action',
+    defaultMessage: 'Custom Actions',
   },
   mlFunctionSettingsTitle: {
     id: 'menu.datamart.ml_functions',
