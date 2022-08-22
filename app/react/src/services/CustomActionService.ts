@@ -3,6 +3,7 @@ import {
   DataListResponse,
   DataResponse,
 } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
+import { ApiService } from '@mediarithmics-private/advanced-components';
 import { PluginLayout } from './../models/plugin/PluginLayout';
 import { injectable } from 'inversify';
 import PluginInstanceService from './PluginInstanceService';
@@ -30,6 +31,7 @@ export interface ICustomActionService {
     options: object,
   ) => Promise<DataResponse<CustomActionResource>>;
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>;
+  deleteInstanceById: (id: string, options?: object) => Promise<DataResponse<any>>;
 }
 
 @injectable()
@@ -54,5 +56,10 @@ export class CustomActionService
           );
         });
     });
+  }
+
+  deleteInstanceById(id: string, options: object = {}): Promise<DataResponse<any>> {
+    const endpoint = `scenario_custom_actions/${id}`;
+    return ApiService.deleteRequest(endpoint, options);
   }
 }

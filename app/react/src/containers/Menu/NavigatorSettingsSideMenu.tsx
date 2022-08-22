@@ -136,7 +136,6 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
       hasFeature,
       workspace,
     } = this.props;
-
     const isCommunity = workspace.organisation_id === workspace.community_id;
 
     const baseUrl = `/v2/o/${organisationId}`;

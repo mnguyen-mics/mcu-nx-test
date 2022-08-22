@@ -143,6 +143,13 @@ export interface VisitAnalyzer extends PluginInstance {
     | 'DROP';
 }
 
+export interface CustomAction extends PluginInstance {
+  id: string;
+  artifact_id: string;
+  name: string;
+  group_id: string;
+}
+
 export interface Recommender extends PluginInstance {
   id: string;
   artifact_id: string;

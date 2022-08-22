@@ -33,6 +33,7 @@
     'organisationSettings-user_roles',
     'organisationSettings-settings',
     'datamartSettings-visit_analyzers',
+    'automations',
     'datamartSettings-channels',
     'datamartSettings-datamarts',
     'datamartSettings-service_usage_report',
