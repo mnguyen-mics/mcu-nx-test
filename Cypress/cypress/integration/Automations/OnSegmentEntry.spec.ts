@@ -56,7 +56,6 @@ describe('OnSegmentEntry test', () => {
 
       // Open the drawer
       listPage.clickStartAutomation();
-      listPage.clickBtnEditStartAutomation();
 
       // Check if the segment name in input is the one we had select on creation
       builderPage.startAutomationPopUp.searchField.should('contain', userQuery.name);
