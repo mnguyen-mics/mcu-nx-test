@@ -42,7 +42,6 @@ describe('React To Event Advanced test', () => {
       const newEventName = faker.random.words(1);
       listPage.clickBtnEdit();
       listPage.clickStartAutomation();
-      listPage.clickBtnEditQuery();
       builderPage.startAutomationPopUp.searchField.should('contain', eventName);
       builderPage.startAutomationPopUp.typeEventName(
         '{selectall}{backspace}' + newEventName + '{enter}',
@@ -57,7 +56,6 @@ describe('React To Event Advanced test', () => {
       listPage.nameBar.should('contain', newAutomationName);
       listPage.clickBtnEdit();
       listPage.clickStartAutomation();
-      listPage.clickBtnEditQuery();
       listPage.startAutomationPopUp.searchField.should('contain', newEventName);
     });
   });
