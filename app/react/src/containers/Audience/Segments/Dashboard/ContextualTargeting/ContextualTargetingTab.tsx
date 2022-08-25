@@ -294,6 +294,35 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     });
   };
 
+  onArchiveContextualTargeting = () => {
+    const { segmentId } = this.props;
+    const { contextualTargeting } = this.state;
+    if (contextualTargeting) {
+      this.setState({ isLoading: true });
+      this._contextualTargetingService
+        .archiveContextualTargeting(segmentId, contextualTargeting.id)
+        .then(_ =>
+          this.setState({
+            contextualTargeting: undefined,
+            sortedContextualKeys: undefined,
+            targetedContextualKeyResources: undefined,
+            signatureScoredCategoryResources: undefined,
+            chartDataSelected: undefined,
+            totalPageViewVolume: undefined,
+            targetedPageViewVolume: undefined,
+            activeTabKey: '0',
+            isLoading: false,
+          }),
+        )
+        .catch(err => {
+          this.props.notifyError(err);
+          this.setState({
+            isLoading: false,
+          });
+        });
+    }
+  };
+
   renderStatsCard = () => {
     const {
       contextualTargeting,
@@ -308,6 +337,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
         chartDataSelected={chartDataSelected}
         numberOfTargetedContent={targetedContextualKeyResources?.length}
         onPublishContextualTargeting={this.onPublishContextualTargeting}
+        onArchiveContextualTargeting={this.onArchiveContextualTargeting}
         onEdit={this.onEdit}
         getTargetedVolumeRatio={this.getTargetedVolumeRatio}
       />

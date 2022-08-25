@@ -21,25 +21,13 @@ export const messages = defineMessages({
     id: 'audience.segment.dashboard.contextualTargeting.stepOneTitle',
     defaultMessage: 'Analyze content',
   },
-  stepOneDescription: {
-    id: 'audience.segment.dashboard.contextualTargeting.stepOneDescription',
-    defaultMessage: 'Content viewed by users',
-  },
   stepTwoTitle: {
     id: 'audience.segment.dashboard.contextualTargeting.stepTwoTitle',
     defaultMessage: 'Select targeted ratio',
   },
-  stepTwoDescription: {
-    id: 'audience.segment.dashboard.contextualTargeting.stepTwoDescription',
-    defaultMessage: 'Your settings',
-  },
   stepThreeTitle: {
     id: 'audience.segment.dashboard.contextualTargeting.stepThreeTitle',
-    defaultMessage: 'Activate',
-  },
-  stepThreeDescription: {
-    id: 'audience.segment.dashboard.contextualTargeting.stepThreeDescription',
-    defaultMessage: 'Integrated to your channels',
+    defaultMessage: 'Activate on your channels',
   },
   noUrls: {
     id: 'audience.segment.dashboard.contextualTargeting.noUrls',
@@ -56,6 +44,14 @@ export const messages = defineMessages({
   lift: {
     id: 'audience.segment.dashboard.contextualTargeting.lift',
     defaultMessage: 'Lift',
+  },
+  settings: {
+    id: 'audience.segment.dashboard.contextualTargeting.settings',
+    defaultMessage: 'Settings',
+  },
+  archived: {
+    id: 'audience.segment.dashboard.contextualTargeting.archived',
+    defaultMessage: 'Archive those settings',
   },
   numberOfEvents: {
     id: 'audience.segment.dashboard.contextualTargeting.numberOfEvents',
