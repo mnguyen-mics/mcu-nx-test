@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Descriptions, Upload, Spin, Image, Tag } from 'antd';
+import { Layout, Descriptions, Upload, Spin, Image, Tag, Tooltip } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -13,7 +13,7 @@ import {
   IOrganisationService,
 } from '@mediarithmics-private/advanced-components';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { Loading, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { OrganisationResource } from '@mediarithmics-private/advanced-components/lib/models/organisation/organisation';
 import { getLogo, putLogo } from '../../../../redux/Session/actions';
 import injectNotifications, {
@@ -276,6 +276,9 @@ class OrganisationAccount extends React.Component<Props, State> {
                     )}
                   </Upload>
                 </div>
+                <Tooltip placement='right' title={formatMessage(messages.logoTooltip)}>
+                  <McsIcon type='info' />
+                </Tooltip>
               </Descriptions.Item>
             </Descriptions>
           ) : null}
