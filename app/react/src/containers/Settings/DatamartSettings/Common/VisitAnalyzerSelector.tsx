@@ -23,7 +23,7 @@ const VisitAnalyzerTableSelector: React.ComponentClass<TableSelectorProps<VisitA
 const messages = defineMessages({
   visitAnalyzerSelectorTitle: {
     id: 'settings.visitAnalyzers.tableSelector.title',
-    defaultMessage: 'Add a Activity Analyzer',
+    defaultMessage: 'Add an Activity Analyzer',
   },
   visitAnalyzerSelectorColumnName: {
     id: 'settings.visitAnalyzers.tableSelector.column.name',

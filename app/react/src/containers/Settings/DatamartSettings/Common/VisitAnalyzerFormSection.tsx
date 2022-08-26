@@ -49,7 +49,7 @@ const messages = defineMessages({
   },
   addStepButton: {
     id: 'settings.form.activityAnalyzer.addStep',
-    defaultMessage: 'Add a Activity Analyzer',
+    defaultMessage: 'Add an Activity Analyzer',
   },
   sectionSubtitleVisitAnalyzer: {
     id: 'settings.form.activityAnalyzer.subtitle',
