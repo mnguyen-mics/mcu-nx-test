@@ -62,7 +62,7 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
 
   renderTargetedVolume = () => {
     const { chartDataSelected } = this.props;
-    return chartDataSelected ? chartDataSelected?.reach * 1000000 : 0;
+    return chartDataSelected ? Math.round(chartDataSelected?.reach * 1000000) : 0;
   };
 
   renderLiveDuration = () => {
