@@ -81,7 +81,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
       cumulativeReach += sortedContextualKeys
         .filter(ck => ck.lift > liftMax - liftStep * (i + 1) && ck.lift <= liftMax - liftStep * i)
         .reduce((acc, ck) => acc + ck.occurrences_in_datamart_count, 0);
-      chartData[i] = { lift: liftMax - liftStep * (i + 1), reach: cumulativeReach / 1000000 };
+      chartData[i] = { lift: liftMax - liftStep * (i + 1), reach: cumulativeReach };
     }
     return chartData;
   };
@@ -98,7 +98,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
     const chartData = this.buildChartData(sortedContextualKeys);
     let initialSliderIndex: number;
     if (contextualTargeting && contextualTargeting.volume_ratio) {
-      const ctReach = (contextualTargeting.volume_ratio * totalPageViewVolume) / 1000000;
+      const ctReach = contextualTargeting.volume_ratio * totalPageViewVolume;
       const index = chartData?.findIndex(data => ctReach <= data.reach);
       initialSliderIndex = index ? index : 20;
     } else {
@@ -164,7 +164,6 @@ class ContextualTargetingChart extends React.Component<Props, State> {
           }}
           yAxis={{
             key: 'reach',
-            labelFormat: '{value}M',
             title: 'Reach',
             subtitle: 'Page views over the past 30 days',
           }}
