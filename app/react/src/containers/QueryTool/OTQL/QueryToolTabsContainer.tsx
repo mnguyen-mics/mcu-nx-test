@@ -57,22 +57,25 @@ const messages = defineMessages({
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
-export interface McsTabsItem {
-  className?: string;
+interface SerializableMcsTabsItem {
   title: React.ReactChild;
-  display?: JSX.Element;
   key: string;
   closable: boolean;
   serieQueries: SerieQueryModel[];
-  runningQuery: boolean;
-  queryResult: OTQLResult | AggregateDataset | null;
-  queryAborted: boolean;
-  error?: any;
   precision: QueryPrecisionMode;
   evaluateGraphQl: boolean;
   useCache: boolean;
   showChartLegend?: boolean;
   chartItem?: ChartResource;
+}
+
+export interface McsTabsItem extends SerializableMcsTabsItem {
+  className?: string;
+  display?: JSX.Element;
+  runningQuery: boolean;
+  queryResult: OTQLResult | AggregateDataset | null;
+  queryAborted: boolean;
+  error?: any;
 }
 
 export interface QueryToolTabsContainerProps {
@@ -90,10 +93,11 @@ export interface QueryToolTabsContainerProps {
 interface State {
   schemaVizOpen: boolean;
   schemaLoading: boolean;
-  rawSchema?: ObjectLikeTypeInfoResource[];
-  noLiveSchemaFound: boolean;
   tabs: McsTabsItem[];
   activeKey: string;
+  loaded: boolean;
+  rawSchema?: ObjectLikeTypeInfoResource[];
+  noLiveSchemaFound: boolean;
   chartsSearchPanelKey: string;
   selectedChart?: ChartResource;
 }
@@ -103,6 +107,14 @@ type Props = QueryToolTabsContainerProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps &
   InjectedFeaturesProps;
+
+interface SavedQuery {
+  activeKey: string;
+  queries: SerializableMcsTabsItem[];
+  updateTs: number;
+}
+
+type SavedQueriesMap = Record<string, SavedQuery>;
 
 class QueryToolTabsContainer extends React.Component<Props, State> {
   asyncQuery: CancelablePromise<DataResponse<OTQLResult>>;
@@ -125,13 +137,14 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       activeKey: '1',
       tabs: [],
       chartsSearchPanelKey: cuid(),
+      loaded: false,
     };
   }
 
   componentDidMount() {
     const { datamartId } = this.props;
     this.fetchObjectTypes(datamartId).then(() => {
-      this.add();
+      this.tryLoadTabStateFromLocalStorage(datamartId);
     });
   }
 
@@ -142,14 +155,108 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       this.setState(
         {
           tabs: [],
+          activeKey: '1',
+          loaded: false,
         },
         () => {
-          this.add();
+          this.tryLoadTabStateFromLocalStorage(datamartId);
         },
       );
       this.fetchObjectTypes(datamartId);
+      return;
     }
+    this.saveTabStateToLocalStorage(this.state, datamartId);
   }
+
+  saveTabStateToLocalStorage = (state: State, datamartId: string): void => {
+    const { tabs, activeKey, loaded } = state;
+    if (!loaded) {
+      return;
+    }
+    const maxNumberOfSavedQueries = localStorage.getItem('maxNumberOfSavedQueries') ?? 100;
+    const currentSavedQueries: SavedQueriesMap = JSON.parse(
+      localStorage.getItem('savedQueries') ?? '{}',
+    );
+    const tabQueries = tabs.map((tab: McsTabsItem): SerializableMcsTabsItem => {
+      return {
+        title: tab.title,
+        key: tab.key,
+        closable: tab.closable,
+        serieQueries: tab.serieQueries,
+        precision: tab.precision,
+        evaluateGraphQl: tab.evaluateGraphQl,
+        useCache: tab.useCache,
+        showChartLegend: tab.showChartLegend,
+        chartItem: tab.chartItem,
+      };
+    });
+    const newSavedQueries = {
+      ...currentSavedQueries,
+      [datamartId]: { updateTs: new Date().getTime(), queries: tabQueries, activeKey },
+    };
+
+    // This code is to drop the oldest saved tabs when the limit (arbitrarily set to 100)
+    // is reached. This is to avoid bloat in the localStorage.
+    const numSavedQueries = Object.values(newSavedQueries).reduce(
+      (acc, savedQueries) => acc + savedQueries.queries.length,
+      0,
+    );
+    if (numSavedQueries > maxNumberOfSavedQueries) {
+      const sortedByOldestUpdate = Object.entries(newSavedQueries).sort(
+        (savedQuery1, savedQuery2) => savedQuery1[1].updateTs - savedQuery2[1].updateTs,
+      );
+      const oldestEditedDatamart = sortedByOldestUpdate[0][0];
+      newSavedQueries[oldestEditedDatamart].queries.pop();
+    }
+    localStorage.setItem('savedQueries', JSON.stringify(newSavedQueries));
+  };
+
+  tryLoadTabStateFromLocalStorage = (datamartId: string): void => {
+    const savedQueries: SavedQuery | undefined = JSON.parse(
+      localStorage.getItem('savedQueries') ?? '{}',
+    )[datamartId];
+    if (savedQueries) {
+      const tabs = savedQueries.queries.map(tabQueries => {
+        return {
+          ...tabQueries,
+          runningQuery: false,
+          queryAborted: false,
+          queryResult: null,
+        };
+      });
+
+      this.setState({
+        tabs,
+        activeKey: this.getValidActiveKey(savedQueries),
+        loaded: true,
+      });
+      return;
+    }
+    this.setState(
+      {
+        loaded: true,
+      },
+      () => {
+        this.add(true);
+      },
+    );
+  };
+
+  getValidActiveKey = (savedQueries: SavedQuery): string => {
+    // First get all the available tab ids from the saved data
+    const availableActiveKeys = savedQueries.queries.map(q => q.key);
+    // If the saved active key is in the available ones, great don't change it
+    if (availableActiveKeys.includes(savedQueries.activeKey)) {
+      return savedQueries.activeKey;
+    }
+    // If there are no available queries saved (I don't know how it could happen, but...)
+    // Return the '1' key which should correspond to the first tab
+    if (availableActiveKeys.length === 0) {
+      return '1';
+    }
+    // Otherwise, return the last element of the available keys. (key corresponding to the last tab)
+    return availableActiveKeys[-1];
+  };
 
   getDefaultSerieQuery = () => {
     return [getNewSerieQuery('Series 1', this.getInitialQuery())];
@@ -588,15 +695,18 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
   };
 
   onEdit = (targetKey: string, action: string) => {
-    // @ts-expect-error
-    this[action](targetKey);
+    if (action === 'add') {
+      this.add(false);
+    } else {
+      // @ts-expect-error
+      this[action](targetKey);
+    }
   };
 
   remove = (targetKey: string) => {
     const { tabs, activeKey } = this.state;
     let newActiveKey = activeKey;
     let lastIndex;
-
     tabs.forEach((pane, i) => {
       if (pane.key === targetKey) {
         lastIndex = i - 1;
@@ -622,14 +732,15 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     });
   };
 
-  add = () => {
+  add = (force_clear?: boolean) => {
     const { tabs } = this.state;
 
     if (tabs.length === 1) {
       tabs[0].closable = true;
     }
 
-    const newTabs = [...tabs];
+    const newTabs = force_clear ? [] : [...tabs];
+
     const newKey = newTabs.length > 0 ? parseInt(newTabs[newTabs.length - 1].key, 10) + 1 : 1;
     const activeKey = newKey.toString();
     newTabs.push({
@@ -696,7 +807,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
         tabs: tabs.filter(t => t.key !== activeKey),
       },
       () => {
-        this.add();
+        this.add(false);
       },
     );
   };
@@ -817,6 +928,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
         });
     }
   };
+
   onQueryParamsChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) => {
     const { tabs, activeKey } = this.state;
     const newTabs = tabs.map(tab => {
