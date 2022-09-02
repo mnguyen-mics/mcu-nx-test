@@ -21,7 +21,6 @@ interface ContextualTargetingStatsCardProps {
   onPublishContextualTargeting: () => void;
   onArchiveContextualTargeting: () => void;
   onEdit: () => void;
-  getTargetedVolumeRatio: () => number;
 }
 
 type Props = ContextualTargetingStatsCardProps & InjectedIntlProps;
@@ -44,20 +43,6 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
       case 'LIVE_PUBLISHED':
         return 2;
     }
-  };
-
-  renderTargetedVolumeRatio = () => {
-    const { chartDataSelected, getTargetedVolumeRatio } = this.props;
-    return (
-      <div>
-        <span className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_volumeRatioValue'>
-          {Math.round(getTargetedVolumeRatio() * 100) + '%'}
-        </span>
-        <span className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_liftValue'>
-          {`(Lift = ${chartDataSelected?.lift.toFixed(1)})`}
-        </span>
-      </div>
-    );
   };
 
   renderTargetedVolume = () => {
@@ -85,6 +70,7 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
   render() {
     const {
       contextualTargeting,
+      chartDataSelected,
       onPublishContextualTargeting,
       onArchiveContextualTargeting,
       onEdit,
@@ -152,8 +138,8 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
           <hr className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_separator' />
           <Statistic
             className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'
-            title={intl.formatMessage(messages.targetedRatio)}
-            valueRender={this.renderTargetedVolumeRatio}
+            title={intl.formatMessage(messages.lift)}
+            value={chartDataSelected ? chartDataSelected.lift.toFixed(2) : 0}
           />
           <Statistic
             className='mcs-contextualTargetingDashboard_settingsCardContainer_stats_block'

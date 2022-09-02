@@ -27,7 +27,6 @@ interface ContextualTargetingChartProps {
   totalPageViewVolume?: number;
   onSliderChange: (point: DataPoint) => void;
   createContextualTargeting: () => void;
-  getTargetedVolumeRatio: () => number;
 }
 
 type Props = ContextualTargetingChartProps & InjectedIntlProps;
@@ -141,8 +140,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
   };
 
   tipFormater = (selected: DataPoint, index?: number) => {
-    const { getTargetedVolumeRatio } = this.props;
-    return <div>{Math.round(getTargetedVolumeRatio() * 100) + '% of total page views'}</div>;
+    return <div>{selected.lift.toFixed(2)}</div>;
   };
 
   renderDraftStepChart = () => {

@@ -71,11 +71,11 @@ export const messages = defineMessages({
   },
   settingsCardButtonActivation: {
     id: 'audience.segment.dashboard.contextualTargeting.settingsCardButtonActivation',
-    defaultMessage: 'Activate theses settings',
+    defaultMessage: 'Activate those settings',
   },
   settingsCardButtonEdition: {
     id: 'audience.segment.dashboard.contextualTargeting.settingsCardButtonEdition',
-    defaultMessage: 'Edit theses settings',
+    defaultMessage: 'Edit those settings',
   },
   settingsCardButtonInProgress: {
     id: 'audience.segment.dashboard.contextualTargeting.settingsCardButtonInProgress',
