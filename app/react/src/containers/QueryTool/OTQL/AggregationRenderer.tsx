@@ -1038,7 +1038,7 @@ class AggregationRenderer extends React.Component<Props, State> {
           }
           onCancel={onDeleteModalClose}
         />
-        <div style={{ marginBottom: 14 }}>
+        <div>
           {showSelect && isOTQLAggregations(aggregations) && (
             <div>
               <div className='m-r-10' style={{ display: 'inline-block' }}>
