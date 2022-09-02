@@ -267,7 +267,6 @@ class ContextualTargetingTab extends React.Component<Props, State> {
         totalPageViewVolume={totalPageViewVolume}
         onSliderChange={this.onSliderChange}
         createContextualTargeting={this.onCreateContextualTargetingClick}
-        getTargetedVolumeRatio={this.getTargetedVolumeRatio}
       />
     );
   };
@@ -339,7 +338,6 @@ class ContextualTargetingTab extends React.Component<Props, State> {
         onPublishContextualTargeting={this.onPublishContextualTargeting}
         onArchiveContextualTargeting={this.onArchiveContextualTargeting}
         onEdit={this.onEdit}
-        getTargetedVolumeRatio={this.getTargetedVolumeRatio}
       />
     );
   };
