@@ -14,11 +14,12 @@ export const getFormattedExperimentationQuery = (
   intersectOperator: boolean,
 ): Promise<QueryResource> => {
   const buildQueryFragment = () => (acc: string, val: UserPartitionSegment, index: number) => {
-    const or = index !== segments.length - 1 ? 'OR ' : '';
-    return acc.concat(`segments { id = "${val.id}"} ${or}`);
+    const commaOrRightBrackets = index !== segments.length - 1 ? ',' : ']}';
+    return acc.concat(`"${val.id}"${commaOrRightBrackets}`);
   };
 
-  const innerQuery = segments.reduce(buildQueryFragment(), '');
+  const innerQuery =
+    segments.length === 0 ? '' : segments.reduce(buildQueryFragment(), 'segments { id IN [');
 
   const buildAdditionnalQuery = (query: string) => {
     const operator = intersectOperator ? '' : 'NOT ';
