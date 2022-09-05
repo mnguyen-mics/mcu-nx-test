@@ -193,6 +193,7 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
         onSelect={this.onDatamartSelect}
         actionbarProps={{
           pathItems: [formatMessage(messages.createBreadcrumb)],
+          onClose: this.redirect,
         }}
       />
     );
