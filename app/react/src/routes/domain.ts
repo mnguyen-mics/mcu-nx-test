@@ -19,18 +19,18 @@ export interface RouteDef {
 
 export interface RouteEdit extends RouteDef {
   layout: 'edit';
-  editComponent: React.ComponentClass;
+  editComponent: React.ComponentType;
 }
 
 export interface RouteStandard extends RouteDef {
   layout: 'main';
-  contentComponent: React.ComponentClass;
-  actionBarComponent?: React.ComponentClass;
+  contentComponent: React.ComponentType;
+  actionBarComponent?: React.ComponentType;
 }
 
 export interface RouteSettings extends RouteDef {
   layout: 'settings';
-  contentComponent: React.ComponentClass;
+  contentComponent: React.ComponentType;
 }
 
 export type NavigatorRoute = RouteEdit | RouteStandard | RouteSettings;

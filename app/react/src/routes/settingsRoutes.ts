@@ -45,9 +45,9 @@ import CleaningRulesDashboardPage from '../containers/Settings/DatamartSettings/
 import CleaningRuleEditPage from '../containers/Settings/DatamartSettings/CleaningRules/Edit/CleaningRuleEditPage';
 import AudienceFeatureEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/AudienceFeatureEditPage';
 import StandardSegmentBuilderEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/StandardSegmentBuilderEditPage';
-import IdentityProviders from '../containers/Settings/OrganisationSettings/IdentityProviders/IdentityProviders';
 import DeviceIdRegistriesList from '../containers/Settings/OrganisationSettings/DeviceIdRegistries/List/DeviceIdRegistriesList';
 import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UserListPage';
+import IdentityProviderSettings from '../containers/Settings/OrganisationSettings/IdentityProviders/IdentityProviderSettings';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -422,7 +422,7 @@ export const settingsDefinition: NavigatorDefinition = {
   settingsOrganisationIdentityProviderList: {
     path: '/settings/organisation/identity_providers',
     layout: 'settings',
-    contentComponent: IdentityProviders,
+    contentComponent: IdentityProviderSettings,
   },
 
   // device registries
