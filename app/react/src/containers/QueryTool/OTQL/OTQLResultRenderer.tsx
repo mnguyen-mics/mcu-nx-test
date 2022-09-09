@@ -18,6 +18,7 @@ import {
 import { CountRenderer } from './CountRenderer';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { McsTabsItem } from './QueryToolTabsContainer';
+import { QueryToolJsonResultRenderer } from './QueryToolJsonResultRenderer';
 
 export interface OTQLResultRendererProps {
   tab: McsTabsItem;
@@ -98,8 +99,8 @@ class OTQLResultRenderer extends React.Component<Props> {
       );
     } else if (result) {
       content = (
-        <div>
-          <pre>{JSON.stringify(result.rows, null, 2)}</pre>
+        <div className='mcs-otqlQuery_result_json'>
+          <QueryToolJsonResultRenderer rows={result.rows} organisationId={organisationId} />
         </div>
       );
     }
@@ -107,46 +108,50 @@ class OTQLResultRenderer extends React.Component<Props> {
     return !(result && isOTQLResult(result) && isAggregateResult(result.rows)) ? (
       <div className='mcs-otqlQuery_result'>
         {result && (
-          <React.Fragment>
-            <Tag className='mcs-otqlQuery_result_tag'>
-              <FormattedMessage
-                id='otql-result-renderer-card-subtitle-duration'
-                defaultMessage='Took {duration}ms'
-                values={{ duration: (result as OTQLResult).took }}
-              />
-            </Tag>
-            {(result as OTQLResult).cache_hit && (
-              <Tag color={colors['mcs-success']}>
+          <div className='mcs-otqlQuery_result_tag_container'>
+            <React.Fragment>
+              <Tag className='mcs-otqlQuery_result_tag'>
                 <FormattedMessage
-                  id='otql-result-renderer-card-subtitle-cache'
-                  defaultMessage='From Cache'
+                  id='otql-result-renderer-card-subtitle-duration'
+                  defaultMessage='Took {duration}ms'
+                  values={{ duration: (result as OTQLResult).took }}
                 />
               </Tag>
-            )}
-          </React.Fragment>
+              {(result as OTQLResult).cache_hit && (
+                <Tag color={colors['mcs-success']}>
+                  <FormattedMessage
+                    id='otql-result-renderer-card-subtitle-cache'
+                    defaultMessage='From Cache'
+                  />
+                </Tag>
+              )}
+            </React.Fragment>
+          </div>
         )}
         {content}
       </div>
     ) : (
       <div className='mcs-otqlQuery_result'>
         {result ? (
-          <React.Fragment>
-            <Tag className='mcs-otqlQuery_result_tag'>
-              <FormattedMessage
-                id='otql-result-renderer-card-subtitle-duration2'
-                defaultMessage='Took {duration}ms'
-                values={{ duration: result.took }}
-              />
-            </Tag>
-            {result.cache_hit && (
-              <Tag color={colors['mcs-success']}>
+          <div className='mcs-otqlQuery_result_tag_container'>
+            <React.Fragment>
+              <Tag className='mcs-otqlQuery_result_tag'>
                 <FormattedMessage
-                  id='otql-result-renderer-card-subtitle-cache2'
-                  defaultMessage='From Cache'
+                  id='otql-result-renderer-card-subtitle-duration2'
+                  defaultMessage='Took {duration}ms'
+                  values={{ duration: result.took }}
                 />
               </Tag>
-            )}
-          </React.Fragment>
+              {result.cache_hit && (
+                <Tag color={colors['mcs-success']}>
+                  <FormattedMessage
+                    id='otql-result-renderer-card-subtitle-cache2'
+                    defaultMessage='From Cache'
+                  />
+                </Tag>
+              )}
+            </React.Fragment>
+          </div>
         ) : undefined}
         {content}
       </div>

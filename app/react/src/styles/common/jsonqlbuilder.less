@@ -503,6 +503,7 @@
 .mcs-otqlQuery_result {
   position: relative;
   margin-bottom: 40px;
+  margin-top: 50px;
 
   .ant-tabs-tab + .ant-tabs-tab {
     margin: 0 0 0 5px;
@@ -536,10 +537,7 @@
   }
   .mcs-otqlQuery_result_tag {
     z-index: 1;
-    position: absolute;
-    right: 0px;
     margin-right: -1px;
-    top: 10px;
     color: @info-color;
     border-color: @info-color;
     background: #e8f7fc;
@@ -680,7 +678,7 @@
 }
 .mcs-otqlChart_items_container {
   position: absolute;
-  top: 14px;
+  top: 0;
   left: 148px;
   display: flex;
   flex-direction: 'row';
@@ -833,4 +831,16 @@
       }
     }
   }
+}
+
+.mcs-otqlQuery_result_json {
+  margin-top: 44px;
+  border-radius: 6px;
+  background-color: white;
+  padding: 10px 0;
+}
+
+.mcs-otqlQuery_result_tag_container {
+  text-align: right;
+  margin-bottom: -39px;
 }
