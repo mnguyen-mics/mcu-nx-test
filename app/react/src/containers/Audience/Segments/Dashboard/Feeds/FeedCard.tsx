@@ -331,6 +331,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     pluginInstance: AudienceFeedTyped,
     properties: PropertyResourceShape[],
     name?: string,
+    description?: string,
+    activate?: boolean,
   ) => {
     const { notifyError, organisationId, onFeedUpdate } = this.props;
 
@@ -347,8 +349,19 @@ class FeedCard extends React.Component<Props, FeedCardState> {
         return this.updatePropertiesValue(properties, organisationId, pluginInstance.id!);
       })
       .then(() => {
+        if (!activate) return Promise.resolve(undefined);
+        return this.feedService.updateAudienceFeed(pluginInstance.id, {
+          ...pluginInstance,
+          status: 'ACTIVE',
+        });
+      })
+      .then(() => {
         this.setState({ isLoadingCard: false, opened: false });
-        onFeedUpdate(name ? { ...pluginInstance, name: name } : pluginInstance);
+        onFeedUpdate(
+          name
+            ? { ...pluginInstance, name: name, status: activate ? 'ACTIVE' : pluginInstance.status }
+            : { ...pluginInstance, status: activate ? 'ACTIVE' : pluginInstance.status },
+        );
       })
       .catch((err: any) => {
         notifyError(err);
@@ -543,7 +556,13 @@ class FeedCard extends React.Component<Props, FeedCardState> {
             onClose={onClose}
             opened={!!this.state.opened}
             organisationId={organisationId}
-            plugin={feed}
+            plugin={{
+              ...feed,
+              plugin_type:
+                feed.type === 'EXTERNAL_FEED'
+                  ? 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+                  : 'AUDIENCE_SEGMENT_TAG_FEED',
+            }}
             pluginLayout={this.state.pluginLayout!}
             pluginProperties={this.state.pluginProperties!}
             pluginVersionId={feed.version_id}
