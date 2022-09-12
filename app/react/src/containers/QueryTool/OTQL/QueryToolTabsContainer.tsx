@@ -330,6 +330,8 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
               return {
                 ...t,
                 runningQuery: true,
+                queryResult: null,
+                error: undefined,
                 queryAborted: false,
               };
             } else return t;
