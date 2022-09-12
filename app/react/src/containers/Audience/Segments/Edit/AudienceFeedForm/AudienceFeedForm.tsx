@@ -136,15 +136,32 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
         : this._audienceTagFeedServiceFactory(props.match.params.segmentId);
   }
 
-  onSave = (audienceFeed: any, properties: PluginProperty[]) => {
-    const { onSave } = this.props;
+  onSave = (audienceFeed: any, properties: PluginProperty[], activate?: boolean) => {
+    const { onSave, notifyError } = this.props;
 
-    const returnValue = {
+    if (activate) {
+      const audienceFeedActivated = { ...audienceFeed, status: 'ACTIVE' };
+      return this.feedService
+        .updateAudienceFeed(audienceFeed.id, audienceFeedActivated)
+        .then(() => {
+          onSave({
+            plugin: audienceFeedActivated,
+            properties: properties,
+          } as any);
+        })
+        .catch(error => {
+          notifyError(error);
+          onSave({
+            plugin: audienceFeed,
+            properties: properties,
+          } as any);
+        });
+    }
+
+    return onSave({
       plugin: audienceFeed,
       properties: properties,
-    };
-
-    return onSave(returnValue as any);
+    } as any);
   };
 
   createTagFeedPluginInstance = (

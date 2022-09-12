@@ -242,6 +242,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
               selectedPlugin.plugin_layout &&
               selectedPlugin.plugin_properties && (
                 <PluginCardModal
+                  isPresetCreation={true}
                   onClose={this.modalOnClose}
                   organisationId={organisationId}
                   opened={!!selectedPlugin}

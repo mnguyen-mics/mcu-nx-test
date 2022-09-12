@@ -173,6 +173,8 @@ class EditPluginModal extends React.Component<Props, State> {
     pluginInstance: AudienceFeedTyped,
     properties: PropertyResourceShape[],
     name?: string,
+    description?: string,
+    activate?: boolean,
   ) => {
     const { notifyError, feed, onClose, onChange } = this.props;
 
@@ -185,6 +187,13 @@ class EditPluginModal extends React.Component<Props, State> {
         name ? { ...newPluginInstance, name: name } : newPluginInstance,
       )
       .then(() => this.updatePropertiesValue(properties, feed.organisation_id, pluginInstance.id))
+      .then(() => {
+        if (!activate) return Promise.resolve(undefined);
+        return this.feedService.updateAudienceFeed(pluginInstance.id, {
+          ...pluginInstance,
+          status: 'ACTIVE',
+        });
+      })
       .then(() => {
         onChange();
         onClose();
@@ -239,6 +248,10 @@ class EditPluginModal extends React.Component<Props, State> {
           artifact_id: feed.artifact_id,
           current_version_id: feed.version_id,
           plugin_layout: layout,
+          plugin_type:
+            feed.type === 'EXTERNAL_FEED'
+              ? 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+              : 'AUDIENCE_SEGMENT_TAG_FEED',
         }}
         pluginChart={
           <FeedChart

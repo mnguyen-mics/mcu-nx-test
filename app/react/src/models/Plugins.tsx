@@ -97,6 +97,7 @@ export interface PluginInstance {
   version_id: string;
   version_value: string;
   organisation_id: string;
+  plugin_type?: PluginType;
 }
 
 export interface CustomActionResource extends PluginInstance {
