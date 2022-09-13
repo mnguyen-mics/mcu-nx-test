@@ -523,7 +523,7 @@ class Funnel extends React.Component<Props, State> {
                 disabled={splitIndex === index && isStepLoading}
                 loading={splitIndex === index && isStepLoading}
                 className='mcs-funnel_splitBy_select'
-                value={filter[index - 1].group_by_dimensions?.at(0)}
+                value={filter[index - 1].group_by_dimensions?.[0]}
                 placeholder='Split by'
                 onChange={this.handleSplitByDimension.bind(this, index)}
                 getPopupContainer={getPopupContainer}
