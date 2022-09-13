@@ -166,10 +166,9 @@ export const exportFunnel = (
     dataSheet.push(blankLine);
     dataSheet.push(blankLine);
 
-    if (!!funnelResource.funnelData.grouped_by?.at(0)) {
-      const fieldValueResource = funnelResource.funnelData.grouped_by.at(
-        0,
-      ) as FieldValuesFunnelResource;
+    if (!!funnelResource.funnelData.grouped_by?.[0]) {
+      const fieldValueResource = funnelResource.funnelData
+        .grouped_by[0] as FieldValuesFunnelResource;
       if (isFieldValueFunnelResource(fieldValueResource)) {
         headersForSimpleGroupByDimension(fieldValueResource, formatMessage, dataSheet);
       } else {
