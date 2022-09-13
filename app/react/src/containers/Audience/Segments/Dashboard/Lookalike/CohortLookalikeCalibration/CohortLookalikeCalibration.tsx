@@ -114,11 +114,13 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
                   return bb.key === cohortId;
                 });
 
-                if (associatedAndSegmentB && nbUserpoints !== 0) {
+                const nbInCohortAndSegment = associatedAndSegmentB?.count || 0;
+
+                if (nbUserpoints !== 0) {
                   const cohort: CohortCalibrationGraphPoint = {
                     cohortNumber: +cohortId,
                     nbUserpoints: nbUserpoints,
-                    overlap: (associatedAndSegmentB.count / nbUserpoints) * 100,
+                    overlap: (nbInCohortAndSegment / nbUserpoints) * 100,
                   };
                   cohorts.push(cohort);
                 }
