@@ -4,12 +4,13 @@ import { Select } from 'antd';
 import moment from 'moment';
 import { AbstractSource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
 import {
+  AreaChartOptions,
   BarChartOptions,
   PieChartOptions,
   RadarChartOptions,
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 
-export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie' | 'table';
+export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie' | 'area';
 import { WrappedAbstractDataset } from '../QueryResultRenderer';
 import { ChartType } from '@mediarithmics-private/advanced-components';
 
@@ -98,6 +99,12 @@ export function getChartOption(chartType: ChartType, key: string, value?: string
           format: value,
         },
       };
+    case 'area':
+      return chartType === 'area'
+        ? {
+            type: value,
+          }
+        : {};
   }
   return undefined;
 }
@@ -126,7 +133,9 @@ export function formatDate(str: string, format?: string, toUtc?: boolean) {
  * @param chartType
  * @returns
  */
-export function getBaseChartProps(chartType: ChartType) {
+export function getBaseChartProps(
+  chartType: ChartType,
+): BarChartOptions | RadarChartOptions | PieChartOptions | AreaChartOptions | undefined {
   switch (chartType) {
     case 'bars':
       return {
@@ -165,6 +174,19 @@ export function getBaseChartProps(chartType: ChartType) {
           enabled: true,
         },
       } as PieChartOptions;
+    case 'area':
+      return {
+        xKey: { key: 'key', mode: 'DEFAULT' },
+        yKeys: [
+          {
+            key: 'count',
+            message: 'count',
+          },
+        ],
+        legend: {
+          enabled: true,
+        },
+      } as AreaChartOptions;
     default:
       return {
         xKey: '',
@@ -255,6 +277,22 @@ export function getQuickOptionsForChartType(
     ],
   };
 
+  const areaOptions: QuickOptionsSelector = {
+    title: 'area',
+    options: [
+      {
+        key: 'area',
+        value: 'area',
+        label: 'Area',
+      },
+      {
+        key: 'line',
+        value: 'line',
+        label: 'Line',
+      },
+    ],
+  };
+
   const formatDateOptions: QuickOptionsSelector = {
     title: 'date_format',
     options: [
@@ -310,6 +348,8 @@ export function getQuickOptionsForChartType(
       return result.concat([legendOptions, formatOptions]);
     case 'metric':
       return result.concat([formatOptions]);
+    case 'area':
+      return result.concat([legendOptions, formatOptions, areaOptions]);
   }
   return [];
 }
