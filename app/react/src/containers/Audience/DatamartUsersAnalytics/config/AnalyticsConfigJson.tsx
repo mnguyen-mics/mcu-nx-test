@@ -4,7 +4,7 @@ import {
   generateTooltip,
 } from '../../../../components/Charts/domain';
 import chroma from 'chroma-js';
-import { DashboardConfig } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import { DashboardConfig } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 
 const timezoneOffset = new Date().getTimezoneOffset();
 

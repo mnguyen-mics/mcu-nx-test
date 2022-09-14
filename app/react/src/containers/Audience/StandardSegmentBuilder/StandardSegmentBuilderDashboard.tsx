@@ -24,7 +24,7 @@ import {
   TYPES as TYPESA,
   lazyInject as lazyInjectA,
 } from '@mediarithmics-private/advanced-components';
-import { DashboardPageContent } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import { DashboardPageContent } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 
 interface StandardSegmentBuilderDashboardProps {
   organisationId: string;

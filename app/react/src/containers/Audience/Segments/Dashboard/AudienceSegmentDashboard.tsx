@@ -45,7 +45,7 @@ import {
   DashboardPageContent,
   DataFileDashboardResource,
   DatamartUsersAnalyticsWrapperProps,
-} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 import ContextualTargetingTab from './ContextualTargeting/ContextualTargetingTab';
 import CohortLookalikeCalibration from './Lookalike/CohortLookalikeCalibration/CohortLookalikeCalibration';
 

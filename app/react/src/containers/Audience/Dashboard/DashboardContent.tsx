@@ -23,7 +23,7 @@ import {
 import {
   Component,
   ComponentLayout,
-} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 
 const BASE_FRAMEWORK_HEIGHT = 96;
 const BASE_PADDING = 5;

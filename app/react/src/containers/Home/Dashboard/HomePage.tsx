@@ -30,7 +30,7 @@ import DashboardWrapper from '../../Audience/Dashboard/DashboardWrapper';
 import {
   DashboardPageContent,
   DatamartUsersAnalyticsWrapperProps,
-} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 import { defaultDashboard } from './DefaultDashboard';
 import { DashboardContentSchema } from '@mediarithmics-private/advanced-components/lib/models/customDashboards/customDashboards';
 
