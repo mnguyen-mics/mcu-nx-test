@@ -40,7 +40,7 @@ import {
   mcsDateRangePickerMessages,
 } from '../../../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
-import { DatamartUsersAnalyticsWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import { DatamartUsersAnalyticsWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];

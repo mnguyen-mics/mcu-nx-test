@@ -21,7 +21,7 @@ import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnaly
 import DatamartReplicationTab from './DatamartReplicationTab';
 import SegmentBuildersTab from './SegmentBuildersTab';
 import AudienceFeatureListPage from '../../StandardSegmentBuilder/List/AudienceFeatureListPage';
-import { DashboardConfig } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import { DashboardConfig } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 
 interface McsTabsItem {
   className?: string;

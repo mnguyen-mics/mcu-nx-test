@@ -1,4 +1,4 @@
-import { TooltipChart } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import { TooltipChart } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 import * as Highcharts from 'highcharts';
 import moment from 'moment';
 

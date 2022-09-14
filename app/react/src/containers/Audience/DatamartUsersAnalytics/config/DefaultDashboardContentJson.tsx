@@ -1,6 +1,6 @@
-import { DashboardContentSections } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import { DashboardContentSchema } from '@mediarithmics-private/advanced-components/lib/models/customDashboards/customDashboards';
 
-export const defaultDashboardContent: DashboardContentSections = {
+export const defaultDashboardContent: DashboardContentSchema = {
   sections: [
     {
       title: 'General Information',

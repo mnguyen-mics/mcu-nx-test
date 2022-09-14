@@ -2,7 +2,7 @@ import * as React from 'react';
 import DashboardContent from './DashboardContent';
 import { Layout, Layouts } from 'react-grid-layout';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
-import { DashboardWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+import { DashboardWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 
 interface State {
   layout: Layout[];

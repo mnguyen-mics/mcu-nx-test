@@ -36,7 +36,7 @@ import { chartColors } from '../../../../components/Funnel/Utils';
 import {
   TooltipChart,
   DataLabel,
-} from '@mediarithmics-private/advanced-components/lib/models/dashboards/old-dashboards-model';
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 
 export interface MapBarChartProps {
   title?: string;
