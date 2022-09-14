@@ -188,7 +188,10 @@ class CohortLookalikeCalibrationSettings extends React.Component<
       { currentGraphData: [] },
     ).currentGraphData;
 
-    const researchedOverlap = previousCurrentGraphData?.overlap || lookalikeSegmentMinOverlap;
+    const researchedOverlap =
+      previousCurrentGraphData?.overlap !== undefined
+        ? previousCurrentGraphData?.overlap
+        : lookalikeSegmentMinOverlap;
 
     const newInitialIndex =
       initialIndex ||
@@ -197,12 +200,14 @@ class CohortLookalikeCalibrationSettings extends React.Component<
       }) + 1 ||
       0;
 
+    const newCurrentGraphPoint =
+      newGraphData.find(graphPoint => {
+        return graphPoint.overlap === researchedOverlap;
+      }) || newGraphData[0];
+
     this.setState({
       graphData: {
-        currentGraphPoint:
-          newGraphData.find(graphPoint => {
-            return graphPoint.overlap === researchedOverlap;
-          }) || newGraphData[0],
+        currentGraphPoint: newCurrentGraphPoint,
         data: newGraphData,
       },
       initialIndex: newInitialIndex,
