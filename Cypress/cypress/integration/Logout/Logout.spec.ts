@@ -3,7 +3,6 @@ import LoginPage from '../../pageobjects/LoginPage';
 
 describe('Should test logout on the new NavBar', () => {
   beforeEach(() => {
-    window.localStorage.setItem('features', '["new-navigation-system"]');
     cy.login();
   });
 

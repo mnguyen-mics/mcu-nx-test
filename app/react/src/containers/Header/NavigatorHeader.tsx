@@ -39,13 +39,10 @@ class NavigatorHeader extends React.Component<Props> {
       match: {
         params: { organisationId },
       },
-      workspace,
       userEmail,
       menu,
-      hasFeature,
     } = this.props;
 
-    const organisationName = workspace(organisationId).organisation_name;
 
     const logoutMessage = (
       <FormattedMessage id='components.header.logOut' defaultMessage='Log out' />
@@ -93,11 +90,6 @@ class NavigatorHeader extends React.Component<Props> {
                 </Dropdown>
               </span>
             ) : null}
-            {!hasFeature('new-navigation-system') && (
-              <Link to={`/v2/o/${organisationId}/campaigns/display`} className='organisation-name'>
-                {organisationName}
-              </Link>
-            )}
           </span>
           {process.env.API_ENV === 'prod' ? ProductionApiEnvironment : null}
         </div>

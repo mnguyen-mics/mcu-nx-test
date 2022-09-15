@@ -4,9 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { BarsOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
-import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
-import { NavigatorHeader } from '../../Header';
 import { NavigatorSettingsMainMenu, NavigatorSettingsSideMenu, NavigatorMenu } from '../../Menu';
 import * as MenuActions from '../../../redux/Menu/actions';
 import { Button } from '@mediarithmics-private/mcs-components-library';
@@ -36,9 +34,6 @@ const messages = defineMessages({
 export interface SettingLayoutProps {
   contentComponent: React.ComponentType;
   actionBarComponent: React.ComponentType | null;
-  showOrgSelector: boolean;
-  organisationSelector: any;
-  orgSelectorSize: number;
 }
 
 interface SettingLayoutStoreProps {
@@ -59,7 +54,6 @@ type Props = SettingLayoutProps &
   SettingLayoutStoreProps;
 
 const LayoutId = Layout as any;
-const ColAny = Col as any;
 
 // waiting for https://github.com/ant-design/ant-design/commit/518c424ca4a023f3faebce0adf64219989be0018 to be released to remove any
 
@@ -101,14 +95,6 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
   };
 
   renderTrigger = () => {
-    const { showOrgSelector } = this.props;
-
-    const orgSelector = () => {
-      this.setState(prevState => {
-        return { ...prevState, isOpen: !prevState.isOpen };
-      });
-    };
-
     const onCollapse = () => {
       this.onCollapse(!this.props.collapsed);
     };
@@ -124,46 +110,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
       }
     };
 
-    return showOrgSelector ? (
-      <Row>
-        <ColAny
-          span={this.state.left}
-          className='left'
-          onMouseEnter={resizeBox('left')}
-          onMouseLeave={resizeBox()}
-        >
-          <Button onClick={orgSelector} style={{ width: '100%' }}>
-            <span>
-              <BarsOutlined />{' '}
-              <span
-                className={this.state.left > 12 && !this.props.collapsed ? 'visible' : 'hidden'}
-              >
-                <FormattedMessage {...messages.switchOrg} />
-              </span>
-            </span>
-          </Button>
-        </ColAny>
-        <ColAny
-          span={this.state.right}
-          className='right'
-          onMouseEnter={resizeBox('right')}
-          onMouseLeave={resizeBox()}
-        >
-          <Button onClick={onCollapse} style={{ width: '100%' }}>
-            {this.props.collapsed ? (
-              <RightOutlined />
-            ) : (
-              <span>
-                <LeftOutlined />{' '}
-                <span className={this.state.right > 12 ? 'visible' : 'hidden'}>
-                  <FormattedMessage {...messages.collapse} />
-                </span>
-              </span>
-            )}
-          </Button>
-        </ColAny>
-      </Row>
-    ) : (
+    return (
       <Row>
         <Col span={24} className='all'>
           <Button
@@ -214,18 +161,13 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
   render() {
     const {
       contentComponent: ContentComponent,
-      organisationSelector: OrganisationSelector,
       collapsed,
       mode,
-      orgSelectorSize,
-      hasFeature,
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    const onStateChange = (state: State) => this.setState({ isOpen: state.isOpen });
-    const onClick = () => this.setState({ isOpen: false });
     const accounts = buildAccountsMenu(organisationId);
     const settings = buildSettingsButton(organisationId);
 
@@ -239,73 +181,37 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
 
     return (
       <div id='mcs-full-page' className='mcs-fullscreen'>
-        <PushMenu
-          pageWrapId={'mcs-main-layout'}
-          outerContainerId={'mcs-full-page'}
-          isOpen={this.state.isOpen}
-          onStateChange={onStateChange}
-          width={orgSelectorSize}
-        >
-          <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} />
-        </PushMenu>
-        {hasFeature('new-navigation-system') ? (
-          <LayoutId id='mcs-main-layout' className='mcs-fullscreen mcs-newDesign'>
-            <TopBar
-              organisationId={organisationId}
-              userAccount={accounts}
-              headerSettings={settings}
-              linkPath={`/v2/o/${organisationId}/campaigns/display`}
-              prodEnv={process.env.API_ENV === 'prod'}
-              className='mcs-themed-header'
-            />
+        <LayoutId id='mcs-main-layout' className='mcs-fullscreen mcs-newDesign'>
+          <TopBar
+            organisationId={organisationId}
+            userAccount={accounts}
+            headerSettings={settings}
+            linkPath={`/v2/o/${organisationId}/campaigns/display`}
+            prodEnv={process.env.API_ENV === 'prod'}
+            className='mcs-themed-header'
+          />
+          <Layout>
+            <NavigatorSettingsMainMenu menu={menu} />
             <Layout>
-              <NavigatorSettingsMainMenu menu={menu} />
-              <Layout>
-                <Sider
-                  className={'new-mcs-sider'}
-                  collapsible={!hasFeature('new-navigation-system')}
+              <Sider
+                className={'new-mcs-sider'}
+                collapsible={false}
+                collapsed={collapsed}
+                trigger={this.renderTrigger()}
+              >
+                <NavigatorSettingsSideMenu
+                  mode={mode}
                   collapsed={collapsed}
-                  trigger={this.renderTrigger()}
-                >
-                  <NavigatorSettingsSideMenu
-                    mode={mode}
-                    collapsed={collapsed}
-                    onMenuItemClick={this.onMenuItemClick}
-                  />
-                </Sider>
+                  onMenuItemClick={this.onMenuItemClick}
+                />
+              </Sider>
 
-                <Layout>
-                  <ContentComponent />
-                </Layout>
-              </Layout>
-            </Layout>
-          </LayoutId>
-        ) : (
-          <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
-            <NavigatorHeader menu={menu} isInSettings={true} />
-            <Layout>
-              <NavigatorSettingsMainMenu />
               <Layout>
-                <Sider
-                  className='mcs-sider'
-                  collapsible={true}
-                  collapsed={false}
-                  trigger={this.renderSettingsTrigger()}
-                >
-                  <NavigatorSettingsSideMenu
-                    mode={mode}
-                    collapsed={collapsed}
-                    onMenuItemClick={this.onMenuItemClick}
-                  />
-                </Sider>
-
-                <Layout>
-                  <ContentComponent />
-                </Layout>
+                <ContentComponent />
               </Layout>
             </Layout>
-          </LayoutId>
-        )}
+          </Layout>
+        </LayoutId>
       </div>
     );
   }

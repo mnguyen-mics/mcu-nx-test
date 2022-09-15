@@ -219,7 +219,6 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
     const {
       mode,
       location: { pathname },
-      hasFeature,
     } = this.props;
 
     const getSelectedKeys = (): string[] => {
@@ -244,9 +243,7 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
         openKeys={getOpenKeysInMode()}
         onOpenChange={this.onOpenChange}
         onClick={this.onClick}
-        className={`mcs-menu-antd-customized${
-          hasFeature('new-navigation-system') ? '-newDesign' : ''
-        }`}
+        className='mcs-menu-antd-customized-newDesign'
       >
         {this.buildItems()}
       </Menu>

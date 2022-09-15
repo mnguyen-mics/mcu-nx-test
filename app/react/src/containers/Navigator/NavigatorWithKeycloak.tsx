@@ -13,7 +13,6 @@ import log from '../../utils/Logger';
 import * as loginActions from '../../redux/Login/actions';
 import { setColorsStore } from '../../redux/Theme/actions';
 import * as SessionHelper from '../../redux/Session/selectors';
-import OrgSelector from './OrgSelector';
 import errorMessages from './messages';
 import DrawerManager from '../../components/Drawer/DrawerManager';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
@@ -114,17 +113,7 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
     if (error) {
       return <Error message={formatMessage(errorMessages.generic)} />;
     }
-
-    let selectorSize = 200;
-
-    const nbWorkspaces = this.props.workspaces ? Object.keys(this.props.workspaces).length : 0;
-
-    if (nbWorkspaces > 20) {
-      selectorSize = 800;
-    } else if (nbWorkspaces > 8) {
-      selectorSize = 400;
-    }
-
+ 
     const basePath = '/v2/o/:organisationId(\\d+)';
 
     const buildHomeUrl = (organisationId: string) => {
@@ -195,9 +184,6 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
               </div>
               <LayoutManager
                 layout={route.layout}
-                organisationSelector={OrgSelector}
-                showOrgSelector={nbWorkspaces > 0}
-                orgSelectorSize={selectorSize}
                 {...comps}
                 {...props}
               />

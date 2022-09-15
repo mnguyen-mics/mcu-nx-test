@@ -168,8 +168,8 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
   };
 
   render() {
-    const { menu, hasFeature } = this.props;
-    return hasFeature('new-navigation-system') ? (
+    const { menu } = this.props;
+    return (
       <div className='mcs-settingsMainMenu_container'>
         {menu && (
           <Dropdown
@@ -195,19 +195,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
           {this.generateMenuItems()}
         </Menu>
       </div>
-    ) : (
-      <Menu
-        onClick={this.handleClick}
-        selectedKeys={[this.state.current]}
-        mode='horizontal'
-        style={{ padding: '0 40px' }}
-        className={`mcs-settingsMainMenu${
-          hasFeature('new-navigation-system1') ? '--newDesign' : ''
-        }`}
-      >
-        {this.generateMenuItems()}
-      </Menu>
-    );
+    )
   }
 }
 

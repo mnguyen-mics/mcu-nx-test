@@ -2,7 +2,6 @@ import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
-  BarsOutlined,
   BookFilled,
   CodeSandboxCircleFilled,
   CompassFilled,
@@ -12,9 +11,7 @@ import {
 } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
-import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
-import { NavigatorHeader } from '../../../containers/Header';
 import { NavigatorMenu } from '../../../containers/Menu';
 import { Logo } from '../../../containers/Logo';
 import * as MenuActions from '../../../redux/Menu/actions';
@@ -43,9 +40,6 @@ const messages = defineMessages({
 export interface MainLayoutProps {
   contentComponent: React.ComponentType;
   actionBarComponent: React.ComponentType | null;
-  showOrgSelector: boolean;
-  organisationSelector: any;
-  orgSelectorSize: number;
 }
 
 interface MainLayoutStoreProps {
@@ -68,7 +62,6 @@ type Props = MainLayoutProps &
   MainLayoutStoreProps;
 
 const LayoutId = Layout as any;
-const ColAny = Col as any;
 
 // waiting for https://github.com/ant-design/ant-design/commit/518c424ca4a023f3faebce0adf64219989be0018 to be released to remove any
 
@@ -110,12 +103,6 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
   };
 
   renderTrigger = () => {
-    const { showOrgSelector } = this.props;
-
-    const orgSelector = () => {
-      this.setState({ isSelectorOpen: !this.state.isSelectorOpen });
-    };
-
     const onCollapse = () => {
       this.onCollapse(!this.props.collapsed);
     };
@@ -131,42 +118,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       }
     };
 
-    return showOrgSelector ? (
-      <Row>
-        <ColAny
-          span={this.state.leftColumnSize}
-          className='left'
-          onMouseEnter={resizeBox('left')}
-          onMouseLeave={resizeBox()}
-        >
-          <Button onClick={orgSelector} style={{ width: '100%' }}>
-            <React.Fragment>
-              <BarsOutlined />{' '}
-              {this.state.leftColumnSize > 12 && !this.props.collapsed && (
-                <FormattedMessage {...messages.switchOrg} />
-              )}
-            </React.Fragment>
-          </Button>
-        </ColAny>
-        <ColAny
-          span={this.state.rightColumnSize}
-          className='right'
-          onMouseEnter={resizeBox('right')}
-          onMouseLeave={resizeBox()}
-        >
-          <Button onClick={onCollapse} style={{ width: '100%' }}>
-            {this.props.collapsed ? (
-              <RightOutlined />
-            ) : (
-              <React.Fragment>
-                <LeftOutlined />{' '}
-                {this.state.rightColumnSize > 12 && <FormattedMessage {...messages.collapse} />}
-              </React.Fragment>
-            )}
-          </Button>
-        </ColAny>
-      </Row>
-    ) : (
+    return (
       <Row>
         <Col span={24} className='all'>
           <Button
@@ -238,84 +190,35 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     const {
       contentComponent: ContentComponent,
       actionBarComponent: ActionBarComponent,
-      organisationSelector: OrganisationSelector,
       collapsed,
       mode,
-      orgSelectorSize,
-      hasFeature,
       match: {
         params: { organisationId },
       },
     } = this.props;
-
-    const listOrganizationSwitcher = hasFeature('new-navigation-system');
-
-    const onStateChange = (state: State) => this.setState({ isSelectorOpen: state.isOpen });
-    const onClick = () => this.setState({ isSelectorOpen: false });
     const accounts = buildAccountsMenu(organisationId);
     const settings = buildSettingsButton(organisationId);
 
     return (
       <div id='mcs-full-page' className='mcs-fullscreen'>
-        <PushMenu
-          pageWrapId={'mcs-main-layout'}
-          outerContainerId={'mcs-full-page'}
-          isOpen={this.state.isSelectorOpen}
-          onStateChange={onStateChange}
-          width={orgSelectorSize}
-        >
-          {this.state.isSelectorOpen && (
-            <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} />
-          )}
-        </PushMenu>
-        {hasFeature('new-navigation-system') ? (
-          <LayoutId id='mcs-main-layout' className='mcs-fullscreen mcs-newDesign'>
-            <TopBar
-              organisationId={organisationId}
-              userAccount={accounts}
-              headerSettings={settings}
-              linkPath={`/v2/o/${organisationId}/campaigns/display`}
-              prodEnv={process.env.API_ENV === 'prod'}
-              className='mcs-themed-header'
-            />
-            <Layout>
-              <Sider
-                className={'new-mcs-sider'}
-                collapsible={!listOrganizationSwitcher}
-                collapsed={collapsed}
-                trigger={this.renderTrigger()}
-              >
-                <Logo mode={mode} />
-
-                <NavigatorMenu
-                  mode={mode}
-                  onMenuItemClick={this.onMenuItemClick}
-                  className='mcs-mainLayout-menu'
-                />
-              </Sider>
-              <Layout>
-                {ActionBarComponent ? <ActionBarComponent /> : null}
-                {ActionBarComponent ? (
-                  <div className='ant-layout'>
-                    <Content className='mcs-content-container'>
-                      <ContentComponent />
-                    </Content>
-                  </div>
-                ) : (
-                  <ContentComponent />
-                )}
-              </Layout>
-            </Layout>
-          </LayoutId>
-        ) : (
-          <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
+        <LayoutId id='mcs-main-layout' className='mcs-fullscreen mcs-newDesign'>
+          <TopBar
+            organisationId={organisationId}
+            userAccount={accounts}
+            headerSettings={settings}
+            linkPath={`/v2/o/${organisationId}/campaigns/display`}
+            prodEnv={process.env.API_ENV === 'prod'}
+            className='mcs-themed-header'
+          />
+          <Layout>
             <Sider
-              className='mcs-sider'
-              collapsible={true}
+              className={'new-mcs-sider'}
+              collapsible={false}
               collapsed={collapsed}
               trigger={this.renderTrigger()}
             >
               <Logo mode={mode} />
+
               <NavigatorMenu
                 mode={mode}
                 onMenuItemClick={this.onMenuItemClick}
@@ -323,7 +226,6 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
               />
             </Sider>
             <Layout>
-              <NavigatorHeader isInSettings={false} />
               {ActionBarComponent ? <ActionBarComponent /> : null}
               {ActionBarComponent ? (
                 <div className='ant-layout'>
@@ -335,8 +237,8 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
                 <ContentComponent />
               )}
             </Layout>
-          </LayoutId>
-        )}
+          </Layout>
+        </LayoutId>
       </div>
     );
   }
