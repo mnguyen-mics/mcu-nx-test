@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   BookFilled,
   CodeSandboxCircleFilled,
   CompassFilled,
-  LeftOutlined,
   ReadOutlined,
-  RightOutlined,
+  DoubleLeftOutlined,
+  DoubleRightOutlined,
 } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
@@ -25,17 +24,6 @@ import { buildAccountsMenu, buildSettingsButton } from './LayoutHelper';
 import { MicsReduxState, TopBar } from '@mediarithmics-private/advanced-components';
 
 const { Content, Sider } = Layout;
-
-const messages = defineMessages({
-  switchOrg: {
-    id: 'navigator.layout.mainLayout.sideMenu.switchOrg.label',
-    defaultMessage: 'Switch Org.',
-  },
-  collapse: {
-    id: 'navigator.layout.mainLayout.sideMenu.collapse',
-    defaultMessage: 'Collapse',
-  },
-});
 
 export interface MainLayoutProps {
   contentComponent: React.ComponentType;
@@ -106,35 +94,17 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     const onCollapse = () => {
       this.onCollapse(!this.props.collapsed);
     };
-
-    const resizeBox = (type?: 'left' | 'right') => () => {
-      switch (type) {
-        case 'left':
-          return this.setState({ leftColumnSize: 20, rightColumnSize: 4 });
-        case 'right':
-          return this.setState({ leftColumnSize: 4, rightColumnSize: 20 });
-        default:
-          return this.setState({ leftColumnSize: 12, rightColumnSize: 12 });
-      }
-    };
-
     return (
       <Row>
-        <Col span={24} className='all'>
+        <Col span={this.props.collapsed ? 24 : 6} className='all'>
           <Button
             onClick={onCollapse}
-            style={{ width: '100%' }}
-            onMouseEnter={resizeBox('right')}
-            onMouseLeave={resizeBox()}
           >
             {this.props.collapsed ? (
-              <RightOutlined />
+              <DoubleRightOutlined />
             ) : (
               <span>
-                <LeftOutlined />{' '}
-                <span className={this.state.rightColumnSize > 12 ? 'visible' : 'hidden'}>
-                  <FormattedMessage {...messages.collapse} />
-                </span>
+                <DoubleLeftOutlined />
               </span>
             )}
           </Button>
@@ -201,7 +171,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
 
     return (
       <div id='mcs-full-page' className='mcs-fullscreen'>
-        <LayoutId id='mcs-main-layout' className='mcs-fullscreen mcs-newDesign'>
+        <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
           <TopBar
             organisationId={organisationId}
             userAccount={accounts}
@@ -213,7 +183,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           <Layout>
             <Sider
               className={'new-mcs-sider'}
-              collapsible={false}
+              collapsible={true}
               collapsed={collapsed}
               trigger={this.renderTrigger()}
             >

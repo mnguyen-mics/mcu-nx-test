@@ -1,9 +1,20 @@
+.ant-menu:not(.ant-menu-horizontal) {
+  .ant-menu-item{
+    a:hover{
+      color: @info-color;
+    }
+  }
+  .ant-menu-item-selected{
+  background-color: #e6fcff;
+  a{color: @info-color;}
+  }
+}
+
 #mcs-main-layout {
   .ant-layout-sider {
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12),
-      0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     z-index: 2;
-
+ 
     .ant-menu-submenu-title {
       .mcs-icon {
         vertical-align: middle;
@@ -38,26 +49,41 @@
     }
   }
 
-  .ant-layout-sider-trigger {
-    background: @border-color-base;
+  .ant-menu-sub.ant-menu-inline {
+    background: #fff;
   }
 
-  .ant-menu-inline:not(.ant-menu-sub) {
+  .ant-menu-inline:not(.ant-menu-sub), .ant-menu-vertical {
     border: none;
   }
 
   .ant-menu {
     .mcs-icon {
-      font-size: 26px;
+      font-size: 20px;
       min-width: 14px;
-      margin-right: 16px;
+      margin-right: 15px;
     }
   }
 
   .ant-menu-submenu-selected {
     .ant-menu-submenu-title {
-      border-left: 5px solid @info-color;
-      padding-left: 20px !important;
+      border-left: none;
+      color: @text-color;
+    }
+  }
+
+  
+  .ant-menu-vertical {
+    .ant-menu-submenu-popup{
+      .ant-menu-item-selected{
+        border-left: 5px solid @info-color;
+        background:none;
+      }
+    }
+    .ant-menu-submenu-selected{
+      .ant-menu-submenu-title{
+        color: @info-color;
+      }
     }
   }
 
@@ -77,33 +103,13 @@
       }
     }
   }
-
   .ant-layout-sider-trigger {
-    .left {
-      background: darken(@background-color-base, 20%);
-      -moz-transition: all 0.51s;
-      -o-transition: all 0.51s;
-      -webkit-transition: all 0.51s;
-      transition: all 0.51s;
-    }
-
-    .right {
-      background: darken(@background-color-base, 30%);
-      -moz-transition: all 0.51s;
-      -o-transition: all 0.51s;
-      -webkit-transition: all 0.51s;
-      transition: all 0.51s;
-    }
-
-    .all {
-      background: darken(@background-color-base, 20%);
-      -moz-transition: all 0.51s;
-      -o-transition: all 0.51s;
-      -webkit-transition: all 0.51s;
-      transition: all 0.51s;
-      &.primary {
-        background: @primary-2;
-      }
+    background:none;
+    color: @text-color;
+    .ant-row {
+      flex-direction: row-reverse;
+      margin: 0 20px;
+      border-top: 1px solid @border-color-base;
     }
   }
 }

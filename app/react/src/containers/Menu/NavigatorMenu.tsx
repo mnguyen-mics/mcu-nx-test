@@ -232,7 +232,6 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
           <Link to={`${baseUrl}${itemDef.path}`} className={'mcs-sideBar-menuItem_simple'}>
             <McsIcon
               type={itemDef.iconType}
-              style={mode === 'vertical' ? { fontSize: '16px' } : {}}
             />
             <span className='nav-text'>
               <FormattedMessage {...itemDef.translation} />

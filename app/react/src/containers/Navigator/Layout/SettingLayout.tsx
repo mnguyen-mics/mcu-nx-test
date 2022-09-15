@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { BarsOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { BarsOutlined, DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { Row, Col } from 'antd/lib/grid';
@@ -98,35 +98,17 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
     const onCollapse = () => {
       this.onCollapse(!this.props.collapsed);
     };
-
-    const resizeBox = (type?: 'left' | 'right') => () => {
-      switch (type) {
-        case 'left':
-          return this.setState({ left: 20, right: 4 });
-        case 'right':
-          return this.setState({ left: 4, right: 20 });
-        default:
-          return this.setState({ left: 12, right: 12 });
-      }
-    };
-
     return (
       <Row>
-        <Col span={24} className='all'>
+        <Col span={this.props.collapsed ? 24 : 6} className='all'>
           <Button
             onClick={onCollapse}
-            style={{ width: '100%' }}
-            onMouseEnter={resizeBox('right')}
-            onMouseLeave={resizeBox()}
           >
             {this.props.collapsed ? (
-              <RightOutlined />
+              <DoubleRightOutlined />
             ) : (
               <span>
-                <LeftOutlined />{' '}
-                <span className={this.state.right > 12 ? 'visible' : 'hidden'}>
-                  <FormattedMessage {...messages.collapse} />
-                </span>
+                <DoubleLeftOutlined />
               </span>
             )}
           </Button>
@@ -181,7 +163,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
 
     return (
       <div id='mcs-full-page' className='mcs-fullscreen'>
-        <LayoutId id='mcs-main-layout' className='mcs-fullscreen mcs-newDesign'>
+        <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
           <TopBar
             organisationId={organisationId}
             userAccount={accounts}
