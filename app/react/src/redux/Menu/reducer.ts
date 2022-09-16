@@ -3,8 +3,8 @@ import { Action } from 'redux-actions';
 import { Payload } from '@mediarithmics-private/advanced-components/lib/utils/ReduxHelper';
 
 const openMenuDefaultState = {
-  collapsed: false,
-  mode: 'inline',
+  collapsed: localStorage.getItem('collapsed_menu') === 'true',
+  mode: localStorage.getItem('collapsed_menu') === 'true' ? 'vertical' : 'inline',
 };
 
 const menu = (state = openMenuDefaultState, action: Action<Payload>) => {

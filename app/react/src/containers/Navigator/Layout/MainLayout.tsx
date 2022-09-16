@@ -38,11 +38,7 @@ interface MainLayoutStoreProps {
   userEmail: string;
 }
 
-interface MainLayoutState {
-  isSelectorOpen: boolean;
-  leftColumnSize: number;
-  rightColumnSize: number;
-}
+interface MainLayoutState {}
 
 type Props = MainLayoutProps &
   InjectedFeaturesProps &
@@ -50,7 +46,6 @@ type Props = MainLayoutProps &
   MainLayoutStoreProps;
 
 const LayoutId = Layout as any;
-
 // waiting for https://github.com/ant-design/ant-design/commit/518c424ca4a023f3faebce0adf64219989be0018 to be released to remove any
 
 class MainLayout extends React.Component<Props, MainLayoutState> {
@@ -62,11 +57,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      isSelectorOpen: false,
-      leftColumnSize: 12,
-      rightColumnSize: 12,
-    };
+    this.state = {};
   }
 
   onCollapse = (collapsed: boolean) => {
@@ -77,8 +68,9 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       mode: collapsed ? 'vertical' : 'inline',
     });
 
-    const event = new Event('redraw');
+    localStorage.setItem('collapsed_menu', collapsed ? 'true' : 'false');
 
+    const event = new Event('redraw');
     window.dispatchEvent(event);
   };
 
