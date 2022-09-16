@@ -145,32 +145,42 @@ class UserRoleForm extends React.Component<Props, State> {
   };
 
   save = () => {
-    const { intl } = this.props;
-    const { user, userInput, orgInput, roleInput, submittedWithoutOrg } = this.state;
+    const { user, userInput, orgInput, roleInput } = this.state;
     // edition
     if (user) {
       const userId = userInput?.id || user.id;
       const userRoleId = user.role?.id;
-      const orgId = orgInput.id || user.organisation_id;
+      const orgId = orgInput.id;
       if (userId) {
-        if (userRoleId && orgId)
-          this.props.save(userId, orgId, roleInput, userRoleId, user.role?.is_inherited);
-        else if (orgId) this.props.save(userId, orgId, roleInput);
+        if (orgId) {
+          if (userRoleId)
+            this.props.save(userId, orgId, roleInput, userRoleId, user.role?.is_inherited);
+          else this.props.save(userId, orgId, roleInput);
+        } else {
+          this.manageSubmittedWithoutOrg();
+        }
       }
     } else if (userInput.id && orgInput.id && roleInput) {
       // creation
       this.props.save(userInput.id, orgInput.id, roleInput);
     } else {
-      message.error(intl.formatMessage(messages.selectAvailableValue), 3);
-      if (orgInput.id === undefined) {
-        this.setState({
-          submittedWithoutOrg: true,
-        });
-      } else if (submittedWithoutOrg) {
-        this.setState({
-          submittedWithoutOrg: false,
-        });
-      }
+      this.manageSubmittedWithoutOrg();
+    }
+  };
+
+  manageSubmittedWithoutOrg = () => {
+    const { intl } = this.props;
+    const { orgInput, submittedWithoutOrg } = this.state;
+
+    message.error(intl.formatMessage(messages.selectAvailableValue), 3);
+    if (orgInput.id === undefined) {
+      this.setState({
+        submittedWithoutOrg: true,
+      });
+    } else if (submittedWithoutOrg) {
+      this.setState({
+        submittedWithoutOrg: false,
+      });
     }
   };
 
