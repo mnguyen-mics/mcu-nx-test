@@ -43,7 +43,6 @@ class NavigatorHeader extends React.Component<Props> {
       menu,
     } = this.props;
 
-
     const logoutMessage = (
       <FormattedMessage id='components.header.logOut' defaultMessage='Log out' />
     );

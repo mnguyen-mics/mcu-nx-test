@@ -113,7 +113,7 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
     if (error) {
       return <Error message={formatMessage(errorMessages.generic)} />;
     }
- 
+
     const basePath = '/v2/o/:organisationId(\\d+)';
 
     const buildHomeUrl = (organisationId: string) => {
@@ -182,11 +182,7 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
               <div className='drawer-wrapper'>
                 <DrawerManager />
               </div>
-              <LayoutManager
-                layout={route.layout}
-                {...comps}
-                {...props}
-              />
+              <LayoutManager layout={route.layout} {...comps} {...props} />
               <div id='mcs-edit-modal' />
             </Datalayer>
           );

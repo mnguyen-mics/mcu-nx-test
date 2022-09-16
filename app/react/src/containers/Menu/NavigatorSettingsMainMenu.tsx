@@ -195,7 +195,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
           {this.generateMenuItems()}
         </Menu>
       </div>
-    )
+    );
   }
 }
 

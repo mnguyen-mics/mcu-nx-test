@@ -1,12 +1,14 @@
 .ant-menu:not(.ant-menu-horizontal) {
-  .ant-menu-item{
-    a:hover{
+  .ant-menu-item {
+    a:hover {
       color: @info-color;
     }
   }
-  .ant-menu-item-selected{
-  background-color: #e6fcff;
-  a{color: @info-color;}
+  .ant-menu-item-selected {
+    background-color: #e6fcff;
+    a {
+      color: @info-color;
+    }
   }
 }
 
@@ -14,7 +16,7 @@
   .ant-layout-sider {
     box-shadow: none;
     z-index: 2;
- 
+
     .ant-menu-submenu-title {
       .mcs-icon {
         vertical-align: middle;
@@ -53,7 +55,8 @@
     background: #fff;
   }
 
-  .ant-menu-inline:not(.ant-menu-sub), .ant-menu-vertical {
+  .ant-menu-inline:not(.ant-menu-sub),
+  .ant-menu-vertical {
     border: none;
   }
 
@@ -72,16 +75,15 @@
     }
   }
 
-  
   .ant-menu-vertical {
-    .ant-menu-submenu-popup{
-      .ant-menu-item-selected{
+    .ant-menu-submenu-popup {
+      .ant-menu-item-selected {
         border-left: 5px solid @info-color;
-        background:none;
+        background: none;
       }
     }
-    .ant-menu-submenu-selected{
-      .ant-menu-submenu-title{
+    .ant-menu-submenu-selected {
+      .ant-menu-submenu-title {
         color: @info-color;
       }
     }
@@ -104,7 +106,7 @@
     }
   }
   .ant-layout-sider-trigger {
-    background:none;
+    background: none;
     color: @text-color;
     .ant-row {
       flex-direction: row-reverse;

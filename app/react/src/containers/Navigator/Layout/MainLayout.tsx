@@ -97,9 +97,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     return (
       <Row>
         <Col span={this.props.collapsed ? 24 : 6} className='all'>
-          <Button
-            onClick={onCollapse}
-          >
+          <Button onClick={onCollapse}>
             {this.props.collapsed ? (
               <DoubleRightOutlined />
             ) : (

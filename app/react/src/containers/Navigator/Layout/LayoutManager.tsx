@@ -12,7 +12,7 @@ interface LayoutManagerProps {
   layout: LayoutType;
   contentComponent?: React.ComponentType;
   editComponent?: React.ComponentType;
-  actionBarComponent?: React.ComponentType | null
+  actionBarComponent?: React.ComponentType | null;
 }
 
 interface LayoutManagerDefaultProps {
@@ -25,16 +25,11 @@ class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDe
   public static defaultProps: LayoutManagerDefaultProps = {
     contentComponent: () => <div>no content</div>,
     editComponent: () => <div>no edit</div>,
-    actionBarComponent: null
+    actionBarComponent: null,
   };
 
   render() {
-    const {
-      layout,
-      contentComponent,
-      editComponent,
-      actionBarComponent
-    } = this.props;
+    const { layout, contentComponent, editComponent, actionBarComponent } = this.props;
 
     log.trace(`Render ${layout} layout with component`, contentComponent);
 

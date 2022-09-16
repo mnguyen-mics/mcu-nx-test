@@ -201,11 +201,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             <div className='drawer-wrapper'>
               <DrawerManager />
             </div>
-            <LayoutManager
-              layout={route.layout}
-              {...comps}
-              {...props}
-            />
+            <LayoutManager layout={route.layout} {...comps} {...props} />
             <div id='mcs-edit-modal' />
           </Datalayer>
         );
@@ -231,11 +227,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             <div className='drawer-wrapper'>
               <DrawerManager />
             </div>
-            <LayoutManager
-              layout={route.layout}
-              {...comps}
-              {...props}
-            />
+            <LayoutManager layout={route.layout} {...comps} {...props} />
             <div id='mcs-edit-modal' />
           </Datalayer>
         );
