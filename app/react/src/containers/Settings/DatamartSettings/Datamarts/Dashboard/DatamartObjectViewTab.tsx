@@ -219,7 +219,10 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       return this._runtimeSchemaService
         .validateRuntimeSchema(selectedSchema.datamart_id, selectedSchema.id)
         .then(r => this.setState({ schemaValidation: r.data, loadingSingle: false }))
-        .catch(() => this.setState({ loadingSingle: false }));
+        .catch(error => {
+          this.props.notifyError(error);
+          this.setState({ loadingSingle: false });
+        });
     }
     return Promise.resolve();
   };
