@@ -178,7 +178,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
               <Sider
                 className={'new-mcs-sider'}
                 collapsible={false}
-                collapsed={collapsed}
+                collapsed={false}
                 trigger={this.renderTrigger()}
               >
                 <NavigatorSettingsSideMenu
