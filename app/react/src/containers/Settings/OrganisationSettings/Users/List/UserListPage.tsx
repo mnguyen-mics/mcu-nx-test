@@ -119,7 +119,7 @@ class UserListPage extends React.Component<Props, State> {
           .then(res => {
             this.setState({
               isLoadingOrganisations: false,
-              organisations: res.data,
+              organisations: res.data.filter(org => org.archived === false),
             });
           })
           .catch(err => {
