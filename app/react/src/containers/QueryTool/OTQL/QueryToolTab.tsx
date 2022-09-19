@@ -14,7 +14,7 @@ import { ChartType } from '@mediarithmics-private/advanced-components/lib/servic
 import { McsTabsItem } from './QueryToolTabsContainer';
 import { SettingOutlined } from '@ant-design/icons';
 import OTQLSeries from './OTQLSeries';
-import { ChartResource } from '../../../models/chart/Chart';
+import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 
 export interface QueryToolTabProps {
   datamartId: string;

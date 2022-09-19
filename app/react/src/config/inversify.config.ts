@@ -163,8 +163,9 @@ import {
   TagService,
   ChartDatasetService,
   IChartDatasetService,
+  ChartService,
+  IChartService,
 } from '@mediarithmics-private/advanced-components';
-import ChartService, { IChartService } from '../services/ChartsService';
 import {
   ContextualTargetingService,
   IContextualTargetingService,

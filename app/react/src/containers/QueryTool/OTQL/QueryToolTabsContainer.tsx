@@ -24,25 +24,25 @@ import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/Run
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import QueryToolTab, { QueryListModel, SerieQueryModel } from './QueryToolTab';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import ChartsSearchPanel from '../ChartsSearchPanel';
 import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
 import { getChartDataset } from './utils/ChartOptionsUtils';
 import {
   IChartDatasetService,
   QueryExecutionSource,
   QueryExecutionSubSource,
+  ChartsSearchPanel,
 } from '@mediarithmics-private/advanced-components';
 import _ from 'lodash';
 import cuid from 'cuid';
-import {
-  ChartResource,
-  ChartSource,
-  isChartSource,
-  isSerieDataset,
-  SerieDatasetSources,
-} from '../../../models/chart/Chart';
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
+import { SerieDatasetSources } from '../../../models/chart/Chart';
+import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
+import {
+  AbstractParentSource,
+  AbstractSource,
+  OTQLSource,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
 
 interface SerieDatasetSourcesModel {
   sources: SerieDatasetSources;
@@ -66,6 +66,10 @@ const messages = defineMessages({
   chartDeleted: {
     id: 'queryTool.OtqlConsole.tab.chartDeleted',
     defaultMessage: 'Chart is deleted',
+  },
+  loadAChart: {
+    id: 'queryTool.OtqlConsole.tab.loadAChart',
+    defaultMessage: 'Load a chart',
   },
 });
 
@@ -821,17 +825,18 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
     const dataset = chartItem.content.dataset;
 
-    const buildSerieQueryTree = (sources: SerieDatasetSources, sourceType: SourceType) => {
-      const queryPromises: Array<Promise<Partial<QueryListModel> | SerieDatasetSourcesModel>> =
+    const buildSerieQueryTree = (sources: AbstractSource[], sourceType: SourceType) => {
+      const queryPromises: Array<Promise<Partial<QueryListModel | AbstractParentSource>>> =
         sources.map(s => {
-          if (isChartSource(s)) {
-            return this._queryService.getQuery(datamartId, s.query_id).then(res => {
+          const queryId = (s as OTQLSource).query_id;
+          if (queryId) {
+            return this._queryService.getQuery(datamartId, queryId).then(res => {
               return {
                 query: res.data.query_text,
                 name: s.series_title || '',
               };
             });
-          } else return Promise.resolve({ sources: s.sources });
+          } else return Promise.resolve({ sources: (s as AbstractParentSource).sources });
         });
 
       Promise.all(queryPromises)
@@ -848,17 +853,17 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
             }
             queryResponses.forEach(async (res, i) => {
               // If sources
-              if (isSerieDatasetSources(res)) {
-                const subQueryPromises = res.sources
-                  .filter(source => isChartSource(source))
+              const sources = (res as AbstractParentSource).sources;
+              if (sources) {
+                const subQueryPromises = sources
+                  .filter(source => (source as OTQLSource).query_id)
                   .map(s => {
-                    const source = s as ChartSource;
                     return this._queryService
-                      .getQuery(datamartId, source.query_id)
+                      .getQuery(datamartId, (s as OTQLSource).query_id!)
                       .then(queryRes => {
                         return Promise.resolve({
                           query_text: queryRes.data.query_text,
-                          name: source.series_title,
+                          name: s.series_title,
                         });
                       });
                   });
@@ -885,19 +890,20 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                     notifyError(err);
                   });
               } else {
+                const queryListModel = res as QueryListModel;
                 if (sourceType === 'to-list' && isQueryListModel(newSerieQueries[0].queryModel)) {
                   newSerieQueries[0].queryModel.push({
                     id: cuid(),
-                    name: res.name || '',
+                    name: queryListModel.name || '',
                     inputVisible: false,
-                    query: res.query || '',
+                    query: queryListModel.query || '',
                   });
                 } else {
                   newSerieQueries.push({
                     id: cuid(),
-                    name: res.name || '',
+                    name: queryListModel.name || '',
                     inputVisible: false,
-                    queryModel: res.query || '',
+                    queryModel: queryListModel.query || '',
                   });
                 }
               }
@@ -915,9 +921,10 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     };
     switch (dataset.type.toLowerCase()) {
       case 'otql':
-        if (isChartSource(dataset)) {
+        const queryId = (dataset as OTQLSource).query_id;
+        if (queryId) {
           this._queryService
-            .getQuery(datamartId, dataset.query_id)
+            .getQuery(datamartId, queryId)
             .then(res => {
               this.setNewSerieQueries(
                 [
@@ -940,8 +947,8 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       case 'to-list':
       case 'to-percentages':
       case 'format-dates':
-        if (isSerieDataset(dataset))
-          buildSerieQueryTree(dataset.sources, dataset.type.toLowerCase() as SourceType);
+        const sources = (dataset as AbstractParentSource).sources;
+        if (sources) buildSerieQueryTree(sources, dataset.type.toLowerCase() as SourceType);
         break;
 
       default:
@@ -1077,10 +1084,11 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                           <Tabs.TabPane tab='Schema' key={1}>
                             {this.renderSchemaVisualizer(startType)}
                           </Tabs.TabPane>
-                          <Tabs.TabPane tab='Charts' key={2}>
+                          <Tabs.TabPane tab='Charts' key={2} style={{ paddingLeft: '10px' }}>
                             <ChartsSearchPanel
                               key={chartsSearchPanelKey}
                               organisationId={organisationId}
+                              title={intl.formatMessage(messages.loadAChart)}
                               onItemClick={this.onChartItemClick}
                               chartItem={tab.chartItem}
                             />

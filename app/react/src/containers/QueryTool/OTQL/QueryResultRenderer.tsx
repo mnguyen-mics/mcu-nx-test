@@ -16,7 +16,6 @@ import {
   isCountDataset,
   isQueryListModel,
 } from '../../../models/datamart/graphdb/OTQLResult';
-import { IChartService } from '../../../services/ChartsService';
 import { compose } from 'recompose';
 import { McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
@@ -46,6 +45,7 @@ import { IQueryService } from '../../../services/QueryService';
 import snakeCaseKeys from 'snakecase-keys';
 import {
   DatasetDateFormatter,
+  IChartService,
   ManagedChart,
   TransformationProcessor,
 } from '@mediarithmics-private/advanced-components';
@@ -61,7 +61,7 @@ import {
   OTQLBuckets,
   OTQLMetric,
 } from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
-import { ChartResource } from '../../../models/chart/Chart';
+import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 
 const messages = defineMessages({
   copiedToClipboard: {
