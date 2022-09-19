@@ -17,7 +17,7 @@ describe('Should test the query tool', () => {
       queryToolPage.goToPage();
       queryToolPage.typeQuery(' ', 0);
       queryToolPage.typeQuery('select @count{} from UserAccount', 0);
-      queryToolPage.clickBtnRun(0);
+      queryToolPage.clickBtnRun();
       queryToolPage.resultMetrics.should('be.visible');
       queryToolPage.schemaVizualize.should('not.contain', 'activity_events');
       queryToolPage.clickBtnAddQuery();
@@ -59,7 +59,7 @@ describe('Should test the query tool', () => {
               'SELECT {nature @cardinality} FROM ActivityEvent where nature = "test_cardinality_1" or nature = "test_cardinality_2"',
               0,
             );
-            queryToolPage.clickBtnRun(0);
+            queryToolPage.clickBtnRun();
             queryToolPage.tableContainer
               .should('contain', '2')
               .and('contain', 'cardinality_nature');

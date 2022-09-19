@@ -106,8 +106,8 @@ class QueryToolPage extends Page {
   }
 
   @logFunction()
-  clickBtnRun(pos: number) {
-    cy.get('.mcs-otqlInputEditor_run_button').eq(pos).click();
+  clickBtnRun() {
+    cy.get('.mcs-otqlInputEditor_run_button').eq(0).click();
   }
 
   @logFunction()

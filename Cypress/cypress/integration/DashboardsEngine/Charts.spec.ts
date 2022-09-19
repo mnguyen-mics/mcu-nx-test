@@ -1,4 +1,5 @@
 import faker from 'faker';
+import QueryToolPage from '../../pageobjects/DataStudio/QueryTool/QueryToolPage';
 
 describe('Charts Tests', () => {
   beforeEach(() => {
@@ -96,6 +97,7 @@ describe('Charts Tests', () => {
   });
 
   it('test the charts on the query tool', () => {
+    const queryToolPage = new QueryToolPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
         data.accessToken,
@@ -119,25 +121,15 @@ describe('Charts Tests', () => {
             'SELECT {nature @map} FROM ActivityEvent where nature = "test_clipboard_1" or nature = "test_clipboard_2"',
           ).then(() => {
             cy.switchOrg(data.organisationName);
-            cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
-            cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.query').click();
-            cy.get('.mcs-otqlInputEditor_otqlConsole')
-              .find('textarea')
-              .type('{selectall}{selectall}{backspace}{backspace}', {
-                force: true,
-              })
-              .type(
-                'SELECT {nature @map} FROM ActivityEvent where nature = "test_clipboard_1" or nature = "test_clipboard_2"',
-                { force: true, parseSpecialCharSequences: false },
-              );
-            cy.get('.mcs-otqlInputEditor_run_button').click();
-            cy.get('.mcs-otqlChart_icons_bar').click();
-            cy.wait(1000);
-            cy.get('.mcs-otqlChart_items_share_button').click();
-            cy.get('.mcs-notification').should(
-              'contain',
-              'Copied chart configuration to clipboard',
+            queryToolPage.goToPage();
+            queryToolPage.typeQuery(
+              'SELECT {nature @map} FROM ActivityEvent where nature = "test_clipboard_1" or nature = "test_clipboard_2"',
+              0,
             );
+            queryToolPage.clickBtnRun();
+            queryToolPage.clickBarIcon();
+            queryToolPage.clickBtnShare();
+            cy.wait(1000);
             cy.task('getClipboard')
               .should('contain', '"title": ""')
               .and('contain', '"type": "bars"')
