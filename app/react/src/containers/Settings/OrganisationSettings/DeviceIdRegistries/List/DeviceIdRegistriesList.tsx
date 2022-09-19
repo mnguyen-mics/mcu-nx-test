@@ -17,6 +17,7 @@ import { TableViewFilters } from '@mediarithmics-private/mcs-components-library'
 import {
   DeviceIdRegistryOfferResource,
   DeviceIdRegistryResource,
+  DeviceIdRegistryType,
 } from '../../../../../models/deviceIdRegistry/DeviceIdRegistryResource';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 import DeviceIdRegistriesEditForm from '../Edit/DeviceIdRegistriesEditForm';
@@ -36,7 +37,7 @@ type Props = RouteComponentProps<RouterProps> &
 interface DeviceIdRegistriesListState {
   isLoadingRegistries: boolean;
   isLoadingRegistryOffers: boolean;
-  deviceIdRegistries: DeviceIdRegistryResource[];
+  firstPartyDeviceIdRegistries: DeviceIdRegistryResource[];
   deviceIdRegistryOffers: DeviceIdRegistryOfferResource[];
   registriesTotal: number;
   offersTotal: number;
@@ -53,7 +54,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     this.state = {
       isLoadingRegistries: false,
       isLoadingRegistryOffers: false,
-      deviceIdRegistries: [],
+      firstPartyDeviceIdRegistries: [],
       deviceIdRegistryOffers: [],
       registriesTotal: 0,
       offersTotal: 0,
@@ -61,20 +62,26 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     };
   }
 
-  fetchRegistries = (communityId: string) => {
+  fetchFirstPartyRegistries = (communityId: string) => {
     const { notifyError } = this.props;
 
     this.setState({
       isLoadingRegistries: true,
     });
 
-    const registriesOptions = {
-      ...getPaginatedApiParam(1, 500),
-    };
-
     return Promise.all([
-      this._deviceIdRegistryService.getDeviceIdRegistries('1', registriesOptions),
-      this._deviceIdRegistryService.getDeviceIdRegistries(communityId, registriesOptions),
+      this._deviceIdRegistryService.getDeviceIdRegistries(communityId, {
+        type: 'CUSTOM_DEVICE_ID' as DeviceIdRegistryType,
+        ...getPaginatedApiParam(1, 500),
+      }),
+      this._deviceIdRegistryService.getDeviceIdRegistries(communityId, {
+        type: 'MOBILE_VENDOR_ID' as DeviceIdRegistryType,
+        ...getPaginatedApiParam(1, 500),
+      }),
+      this._deviceIdRegistryService.getDeviceIdRegistries(communityId, {
+        type: 'INSTALLATION_ID' as DeviceIdRegistryType,
+        ...getPaginatedApiParam(1, 500),
+      }),
     ])
       .then((results: DataListResponse<DeviceIdRegistryResource>[]) => {
         const registries = results.reduce((acc: DeviceIdRegistryResource[], val) => {
@@ -82,14 +89,14 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         }, []);
         this.setState({
           isLoadingRegistries: false,
-          deviceIdRegistries: registries,
+          firstPartyDeviceIdRegistries: registries,
           registriesTotal: registries.length,
         });
       })
       .catch(err => {
         this.setState({
           isLoadingRegistries: false,
-          deviceIdRegistries: [],
+          firstPartyDeviceIdRegistries: [],
           registriesTotal: 0,
         });
         notifyError(err);
@@ -142,7 +149,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     this.setState({
       isLoadingRegistries: false,
       isLoadingRegistryOffers: false,
-      deviceIdRegistries: [],
+      firstPartyDeviceIdRegistries: [],
       deviceIdRegistryOffers: [],
       registriesTotal: 0,
       offersTotal: 0,
@@ -155,7 +162,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     } = this.props;
 
     if (organisation_id === community_id) {
-      this.fetchRegistries(organisation_id);
+      this.fetchFirstPartyRegistries(organisation_id);
       this.fetchRegistryOffers(organisation_id);
     } else {
       this.makeEmptyState();
@@ -178,7 +185,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
     if (previousOrganisationId !== organisationId) {
       if (organisation_id === community_id) {
-        this.fetchRegistries(organisation_id);
+        this.fetchFirstPartyRegistries(organisation_id);
         this.fetchRegistryOffers(organisation_id);
       } else this.makeEmptyState();
     }
@@ -233,7 +240,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       .catch(err => {
         this.setState({
           isLoadingRegistries: false,
-          deviceIdRegistries: [],
+          firstPartyDeviceIdRegistries: [],
           registriesTotal: 0,
         });
         notifyError(err);
@@ -246,7 +253,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     } = this.props;
 
     if (organisation_id === community_id) {
-      this.fetchRegistries(organisation_id);
+      this.fetchFirstPartyRegistries(organisation_id);
     } else {
       this.makeEmptyState();
     }
@@ -373,13 +380,13 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           </Drawer>
           <Row className='mcs-table-container'>
             {simpleTableHeader(
-              messages.deviceIdRegistries,
+              messages.firstPartyDeviceIdRegistries,
               this.hasRightToCreateRegistry() ? newRegistryButton : undefined,
             )}
             <TableViewFilters
               pagination={false}
               columns={deviceIdRegistryColumnsDefinition}
-              dataSource={this.state.deviceIdRegistries}
+              dataSource={this.state.firstPartyDeviceIdRegistries}
               className='mcs-deviceIdRegistriesList_deviceIdRegistrytable'
               loading={this.state.isLoadingRegistries}
             />
