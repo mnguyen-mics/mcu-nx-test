@@ -230,10 +230,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
           className={`mcs-sideBar-subMenu_${itemDef.translation.id}`}
         >
           <Link to={`${baseUrl}${itemDef.path}`} className={'mcs-sideBar-menuItem_simple'}>
-            <McsIcon
-              type={itemDef.iconType}
-              style={mode === 'vertical' ? { fontSize: '16px' } : {}}
-            />
+            <McsIcon type={itemDef.iconType} />
             <span className='nav-text'>
               <FormattedMessage {...itemDef.translation} />
             </span>
@@ -282,7 +279,6 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     const {
       mode,
       location: { pathname },
-      hasFeature,
     } = this.props;
 
     const getSelectedKeys = (): string[] => {
@@ -307,9 +303,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
         openKeys={getOpenKeysInMode()}
         onOpenChange={this.onOpenChange}
         onClick={this.onClick}
-        className={`${this.props.className} mcs-menu-antd-customized${
-          hasFeature('new-navigation-system') ? '-newDesign' : ''
-        }`}
+        className={`${this.props.className} mcs-menu-antd-customized-newDesign`}
       >
         {this.buildItems()}
       </Menu>

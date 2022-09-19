@@ -17,7 +17,6 @@ import { isAppInitialized } from '../../redux/App/selectors';
 import * as loginActions from '../../redux/Login/actions';
 import { setColorsStore } from '../../redux/Theme/actions';
 import * as SessionHelper from '../../redux/Session/selectors';
-import OrgSelector from './OrgSelector';
 import errorMessages from './messages';
 import DrawerManager from '../../components/Drawer/DrawerManager';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
@@ -140,16 +139,6 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     if (!initialized) return <Loading isFullScreen={false} />; // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
-    let selectorSize = 200;
-
-    const nbWorkspaces = this.props.workspaces ? Object.keys(this.props.workspaces).length : 0;
-
-    if (nbWorkspaces > 20) {
-      selectorSize = 800;
-    } else if (nbWorkspaces > 8) {
-      selectorSize = 400;
-    }
-
     const basePath = '/v2/o/:organisationId(\\d+)';
     const homeUrl =
       workspaces &&
@@ -212,14 +201,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             <div className='drawer-wrapper'>
               <DrawerManager />
             </div>
-            <LayoutManager
-              layout={route.layout}
-              organisationSelector={OrgSelector}
-              showOrgSelector={nbWorkspaces > 0}
-              orgSelectorSize={selectorSize}
-              {...comps}
-              {...props}
-            />
+            <LayoutManager layout={route.layout} {...comps} {...props} />
             <div id='mcs-edit-modal' />
           </Datalayer>
         );
@@ -245,14 +227,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             <div className='drawer-wrapper'>
               <DrawerManager />
             </div>
-            <LayoutManager
-              layout={route.layout}
-              organisationSelector={OrgSelector}
-              showOrgSelector={nbWorkspaces > 0}
-              orgSelectorSize={selectorSize}
-              {...comps}
-              {...props}
-            />
+            <LayoutManager layout={route.layout} {...comps} {...props} />
             <div id='mcs-edit-modal' />
           </Datalayer>
         );

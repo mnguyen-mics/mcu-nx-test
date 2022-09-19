@@ -49,7 +49,6 @@
     'datamartSettings-datamart_replication',
     'datamartSettings-event_hubs_replication',
     'audience-feature-search',
-    'new-navigation-system',
     'datastudio-query_tool-charts_loader',
   ];
 

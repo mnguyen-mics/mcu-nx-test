@@ -13,40 +13,23 @@ interface LayoutManagerProps {
   contentComponent?: React.ComponentType;
   editComponent?: React.ComponentType;
   actionBarComponent?: React.ComponentType | null;
-  organisationSelector?: React.ComponentType;
-  showOrgSelector?: boolean;
-  orgSelectorSize?: number;
 }
 
 interface LayoutManagerDefaultProps {
   contentComponent: React.ComponentType;
   editComponent: React.ComponentType;
   actionBarComponent: React.ComponentType | null;
-  organisationSelector: React.ComponentType;
-  showOrgSelector: boolean;
-  orgSelectorSize: number;
 }
 
 class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDefaultProps> {
   public static defaultProps: LayoutManagerDefaultProps = {
     contentComponent: () => <div>no content</div>,
     editComponent: () => <div>no edit</div>,
-    organisationSelector: () => <div>no org selector</div>,
-    showOrgSelector: false,
     actionBarComponent: null,
-    orgSelectorSize: 200,
   };
 
   render() {
-    const {
-      layout,
-      contentComponent,
-      editComponent,
-      actionBarComponent,
-      organisationSelector,
-      showOrgSelector,
-      orgSelectorSize,
-    } = this.props;
+    const { layout, contentComponent, editComponent, actionBarComponent } = this.props;
 
     log.trace(`Render ${layout} layout with component`, contentComponent);
 
@@ -56,11 +39,6 @@ class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDe
           <MainLayout
             contentComponent={contentComponent}
             actionBarComponent={actionBarComponent ? actionBarComponent : null}
-            organisationSelector={
-              organisationSelector ? organisationSelector : () => <div>no org selector</div>
-            }
-            showOrgSelector={showOrgSelector ? showOrgSelector : false}
-            orgSelectorSize={orgSelectorSize ? orgSelectorSize : 200}
           />
         );
       case 'settings':
@@ -68,11 +46,6 @@ class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDe
           <SettingLayout
             contentComponent={contentComponent}
             actionBarComponent={actionBarComponent ? actionBarComponent : null}
-            organisationSelector={
-              organisationSelector ? organisationSelector : () => <div>no org selector</div>
-            }
-            showOrgSelector={showOrgSelector ? showOrgSelector : false}
-            orgSelectorSize={orgSelectorSize ? orgSelectorSize : 200}
           />
         );
       case 'edit':
