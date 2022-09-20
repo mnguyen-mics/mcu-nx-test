@@ -172,7 +172,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           />
           <Layout>
             <Sider
-              className={'new-mcs-sider'}
+              className={'mcs-sider'}
               collapsible={true}
               collapsed={collapsed}
               trigger={this.renderTrigger()}
