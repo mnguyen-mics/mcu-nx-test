@@ -40,7 +40,7 @@ describe('Should test the datamart selector', () => {
       datamrtsPage.datamartsContent
         .should('contain', 'Datamarts')
         .and('contain', 'Choose your datamart');
-      datamrtsPage.datamartsSelctor
+      datamrtsPage.datamartsSelector
         .should('contain', datamartName)
         .and('contain', data.datamartName);
     });
