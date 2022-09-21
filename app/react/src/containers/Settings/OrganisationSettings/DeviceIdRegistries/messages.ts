@@ -1,9 +1,9 @@
 import { defineMessages } from 'react-intl';
 
 const messages = defineMessages({
-  deviceIdRegistries: {
-    id: 'settings.organisation.device.registries.list.title',
-    defaultMessage: 'Available Device Registries',
+  firstPartyDeviceIdRegistries: {
+    id: 'settings.organisation.device.registries.firstParty.list.title',
+    defaultMessage: 'First-party device registries',
   },
   emptyDeviceIdRegistries: {
     id: 'settings.organisation.device.registries.list.empty',
