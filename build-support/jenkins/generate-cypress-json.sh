@@ -90,11 +90,11 @@ cat << EOF
   },
   "watchForFileChanges": false,
 
-  "defaultCommandTimeout": 120000,
-  "responseTimeout": 300000,
-  "pageLoadTimeout": 120000,
-  "execTimeout": 300000,
-  "requestTimeout": 120000,
+  "defaultCommandTimeout": 30000,
+  "responseTimeout": 30000,
+  "pageLoadTimeout": 30000,
+  "execTimeout": 30000,
+  "requestTimeout": 30000,
 
   "video": ${RECORD_VIDEO},
   "viewportHeight": 1080,
