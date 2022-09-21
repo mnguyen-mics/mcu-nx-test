@@ -21,6 +21,7 @@ import {
 import { InjectedWorkspaceProps } from '../../../Datamart';
 import IdentityProviderForm from './IdentityProviderForm';
 import { Subject, Subscription } from 'rxjs';
+import { ACTION_AUTHORIZATIONS } from '../../../../common/authorizations/ActionAuthorizations';
 
 interface IdentityProviderSettingsProps {
   newIdentityProviderSubject?: Subject<IdentityProviderResource>;
@@ -130,7 +131,7 @@ class IdentityProviders extends React.Component<Props, State> {
   render() {
     const {
       intl: { formatMessage },
-      workspace: { community_id },
+      workspace: { community_id, role },
       newIdentityProviderSubject,
       notifyError,
     } = this.props;
@@ -239,45 +240,47 @@ class IdentityProviders extends React.Component<Props, State> {
           <span className='mcs-card-title'>
             <FormattedMessage {...messages.identityProvidersTitle} />
           </span>
-          <div className='mcs-card-button'>
-            <Button
-              key='new'
-              type='primary'
-              className='mcs-primary'
-              htmlType='submit'
-              onClick={() => this.setState({ isIdentityProviderFormDrawerVisible: true })}
-            >
-              <McsIcon type='plus' />
-              <FormattedMessage {...messages.newIdentityProvider} />
-            </Button>
-            <Drawer
-              className='mcs-identityProviderList_drawer'
-              width='800'
-              bodyStyle={{ padding: '0' }}
-              title={
-                <FormattedMessage
-                  id='identityProviders.drawer.identityProviderForm.title'
-                  defaultMessage={`Identity Providers > {mode} Identity Provider`}
-                  values={{ mode: selectedIdentityProviderId ? 'Edit' : 'Add' }}
+          {ACTION_AUTHORIZATIONS.CREATE_IDENTITY_PROVIDER.includes(role) && (
+            <div className='mcs-card-button'>
+              <Button
+                key='new'
+                type='primary'
+                className='mcs-primary'
+                htmlType='submit'
+                onClick={() => this.setState({ isIdentityProviderFormDrawerVisible: true })}
+              >
+                <McsIcon type='plus' />
+                <FormattedMessage {...messages.newIdentityProvider} />
+              </Button>
+              <Drawer
+                className='mcs-identityProviderList_drawer'
+                width='800'
+                bodyStyle={{ padding: '0' }}
+                title={
+                  <FormattedMessage
+                    id='identityProviders.drawer.identityProviderForm.title'
+                    defaultMessage={`Identity Providers > {mode} Identity Provider`}
+                    values={{ mode: selectedIdentityProviderId ? 'Edit' : 'Add' }}
+                  />
+                }
+                placement={'right'}
+                closable={true}
+                onClose={() =>
+                  this.setState({
+                    isIdentityProviderFormDrawerVisible: false,
+                    selectedIdentityProviderId: undefined,
+                  })
+                }
+                visible={isIdentityProviderFormDrawerVisible}
+                destroyOnClose={true}
+              >
+                <IdentityProviderForm
+                  newIdentityProviderSubject={newIdentityProviderSubject}
+                  identityProviderId={selectedIdentityProviderId}
                 />
-              }
-              placement={'right'}
-              closable={true}
-              onClose={() =>
-                this.setState({
-                  isIdentityProviderFormDrawerVisible: false,
-                  selectedIdentityProviderId: undefined,
-                })
-              }
-              visible={isIdentityProviderFormDrawerVisible}
-              destroyOnClose={true}
-            >
-              <IdentityProviderForm
-                newIdentityProviderSubject={newIdentityProviderSubject}
-                identityProviderId={selectedIdentityProviderId}
-              />
-            </Drawer>
-          </div>
+              </Drawer>
+            </div>
+          )}
         </div>
         <TableViewFilters
           pagination={false}

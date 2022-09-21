@@ -22,6 +22,7 @@ import { FakeMicsIdentityProvider } from './IdentityProviderList';
 import Search from 'antd/lib/input/Search';
 import { notifyError } from '../../../../redux/Notifications/actions';
 import { Subject, Subscription } from 'rxjs';
+import { ACTION_AUTHORIZATIONS } from '../../../../common/authorizations/ActionAuthorizations';
 
 const { Option } = Select;
 
@@ -234,6 +235,7 @@ class IdentityProviderAssociationList extends React.Component<Props, State> {
   render() {
     const {
       intl: { formatMessage },
+      workspace: { role },
     } = this.props;
     const { mode, associations, newAssociations, filters, identityProviders, isLoading } =
       this.state;
@@ -344,35 +346,37 @@ class IdentityProviderAssociationList extends React.Component<Props, State> {
         <div className='mcs-card-header'>
           <div className='mcs-card-title'>
             <FormattedMessage {...messages.title} />
-            <span className='mcs-identityProviderAssociationList_buttons mcs-card-button'>
-              {mode === 'EDIT' && (
-                <Button
-                  key='cancel'
-                  type='link'
-                  className='mcs-primary'
-                  onClick={() => this.setState({ mode: 'READ', newAssociations: [] })}
-                  block
-                >
-                  <FormattedMessage {...messages.cancel} />
-                </Button>
-              )}
-              &nbsp;
-              <Button
-                key='new'
-                type='primary'
-                className='mcs-primary'
-                htmlType='submit'
-                onClick={mode === 'EDIT' ? this.save : () => this.setState({ mode: 'EDIT' })}
-                disabled={isLoading}
-              >
-                {mode === 'READ' ? <LockOutlined /> : <UnlockOutlined />}
-                {mode === 'READ' ? (
-                  <FormattedMessage {...messages.edit} />
-                ) : (
-                  <FormattedMessage {...messages.save} />
+            {ACTION_AUTHORIZATIONS.ASSOCIATE_IDENTITY_PROVIDER.includes(role) && (
+              <span className='mcs-identityProviderAssociationList_buttons mcs-card-button'>
+                {mode === 'EDIT' && (
+                  <Button
+                    key='cancel'
+                    type='link'
+                    className='mcs-primary'
+                    onClick={() => this.setState({ mode: 'READ', newAssociations: [] })}
+                    block
+                  >
+                    <FormattedMessage {...messages.cancel} />
+                  </Button>
                 )}
-              </Button>
-            </span>
+                &nbsp;
+                <Button
+                  key='new'
+                  type='primary'
+                  className='mcs-primary'
+                  htmlType='submit'
+                  onClick={mode === 'EDIT' ? this.save : () => this.setState({ mode: 'EDIT' })}
+                  disabled={isLoading}
+                >
+                  {mode === 'READ' ? <LockOutlined /> : <UnlockOutlined />}
+                  {mode === 'READ' ? (
+                    <FormattedMessage {...messages.edit} />
+                  ) : (
+                    <FormattedMessage {...messages.save} />
+                  )}
+                </Button>
+              </span>
+            )}
           </div>
           <FormattedMessage {...messages.subtitle} />
         </div>
