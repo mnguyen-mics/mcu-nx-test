@@ -17,7 +17,7 @@ class DatamartsPage extends Page {
   }
 
   @logGetter()
-  get datamartsSelctor() {
+  get datamartsSelector() {
     return cy.get('.mcs-selector_container');
   }
 
@@ -34,6 +34,11 @@ class DatamartsPage extends Page {
   @logFunction()
   clickStandardSegmentBuilder() {
     cy.get('.mcs-tabs_tab--segmentBuilder').click();
+  }
+
+  @logFunction()
+  clickOnAudienceFeaturesTab() {
+    cy.get('.mcs-tabs_tab--audienceFeatures').click();
   }
 
   @logFunction()
