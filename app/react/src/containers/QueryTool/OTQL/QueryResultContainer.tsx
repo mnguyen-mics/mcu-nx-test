@@ -66,7 +66,7 @@ class QueryResultContainer extends React.Component<Props> {
         </div>
       );
     } else if (result) {
-      let commonProps = {
+      const commonProps = {
         tab,
         query,
         datamartId,

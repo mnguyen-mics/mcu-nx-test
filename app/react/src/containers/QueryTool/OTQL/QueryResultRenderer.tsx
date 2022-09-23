@@ -1,5 +1,5 @@
 import * as React from 'react';
-import _ from 'lodash';
+import _, { omit } from 'lodash';
 import {
   BarChartOutlined,
   BorderlessTableOutlined,
@@ -56,7 +56,6 @@ import {
   CountDataset,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
-import { omit } from 'lodash';
 import { McsTabsItem } from './QueryToolTabsContainer';
 import {
   OTQLBuckets,
@@ -514,7 +513,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
             });
         };
 
-        let sources = getSources('join');
+        const sources = getSources('join');
         const listSources = getSources('to-list');
 
         if (sources.length === 1 && listSources.length === 0) {
@@ -685,7 +684,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
     // There should be no more OTQLAggration here, only datasets
     if ((viewBuckets || aggregateData) && dataset) {
       const aggregateDataset = dataset as AggregateDataset;
-      let displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
+      const displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
       if (isOTQLAggregations(datasource)) {
         // Reformat dataset to expected key and value
         if (selectedChart === 'radar') {
