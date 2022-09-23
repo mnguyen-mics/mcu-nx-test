@@ -75,7 +75,10 @@ class QueryToolTab extends React.Component<Props, State> {
       tab: { runningQuery },
     } = this.props;
 
-    const handleOnRunButtonClick = () => runQuery();
+    const handleOnRunButtonClick = () => {
+      const { noLiveSchemaFound } = this.props;
+      if (!noLiveSchemaFound) runQuery();
+    };
 
     const runButton = (
       <Button
@@ -144,7 +147,7 @@ class QueryToolTab extends React.Component<Props, State> {
     const errorMsg = tab.error && (
       <Alert
         message='Error'
-        style={{ marginBottom: 40 }}
+        style={{ marginTop: 50 }}
         description={
           tab.error.error_id ? (
             <span>
@@ -166,14 +169,14 @@ class QueryToolTab extends React.Component<Props, State> {
     const noLiveSchemaErrorMsg = noLiveSchemaFound && (
       <Alert
         message='Error'
-        style={{ marginBottom: 40 }}
+        style={{ marginTop: 50 }}
         description={intl.formatMessage(messages.noLiveSchemaFound)}
         type='error'
         showIcon={true}
       />
     );
 
-    const queryResultRenderer: React.ReactNode = (
+    const queryResultRenderer: React.ReactNode = !errorMsg && !noLiveSchemaErrorMsg && (
       <QueryResultContainer
         tab={tab}
         query={query}
@@ -185,9 +188,6 @@ class QueryToolTab extends React.Component<Props, State> {
 
     return (
       <span className='mcs-otqlQuery_container'>
-        {errorMsg}
-        {noLiveSchemaErrorMsg}
-
         <OTQLSeries
           datamartId={datamartId}
           actionButtons={this.buildEditorActions(tab)}
@@ -244,7 +244,7 @@ class QueryToolTab extends React.Component<Props, State> {
             </Select>
           </div>
         </Modal>
-        {queryResultRenderer}
+        {noLiveSchemaErrorMsg || errorMsg || queryResultRenderer}
       </span>
     );
   }
