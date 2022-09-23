@@ -264,7 +264,7 @@ export const indexTransformationContent = (queryId: string) => {
                   bigBars: true,
                   stacking: false,
                   plotLineValue: 100,
-                  type: 'bar',
+                  type: 'bars',
                 },
               },
             ],

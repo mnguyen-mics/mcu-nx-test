@@ -1,6 +1,8 @@
 import * as React from 'react';
+import _ from 'lodash';
 import {
   BarChartOutlined,
+  BorderlessTableOutlined,
   PieChartOutlined,
   RadarChartOutlined,
   TableOutlined,
@@ -11,6 +13,8 @@ import {
   OTQLBucket,
   isOTQLAggregations,
   isAggregateDataset,
+  isCountDataset,
+  isQueryListModel,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { IChartService } from '../../../services/ChartsService';
 import { compose } from 'recompose';
@@ -19,20 +23,18 @@ import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import {
-  BarChartOptions,
   ChartConfig,
   ChartOptions,
   ChartType,
   PieChartOptions,
-  RadarChartOptions,
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import {
-  chartType,
   formatDate,
   getBaseChartProps,
   getChartDataset,
   getChartOption,
   getQuickOptionsForChartType,
+  getSelectLegend,
   renderQuickOptions,
 } from './utils/ChartOptionsUtils';
 import injectNotifications, {
@@ -51,6 +53,7 @@ import {
   AbstractDataset,
   AbstractDatasetTree,
   AggregateDataset,
+  CountDataset,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
 import { omit } from 'lodash';
@@ -59,6 +62,7 @@ import {
   OTQLBuckets,
   OTQLMetric,
 } from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
+import { ChartResource } from '../../../models/chart/Chart';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -72,10 +76,6 @@ const messages = defineMessages({
   chartSavePopupTitle: {
     id: 'queryTool.AggregationRenderer.savedChartPopup',
     defaultMessage: 'Save chart',
-  },
-  chartDeletePopupTitle: {
-    id: 'queryTool.AggregationRenderer.deleteChartPopup',
-    defaultMessage: 'Are you sure you want to delete this chart?',
   },
 });
 
@@ -91,16 +91,16 @@ export interface WrappedAbstractDataset {
   dataset: AbstractDataset;
 }
 
-export interface AggregationRendererProps {
-  rootAggregations: OTQLAggregations | AggregateDataset;
+export interface QueryResultRendererProps {
+  datasource: OTQLAggregations | AggregateDataset | CountDataset;
   datamartId: string;
   tab: McsTabsItem;
   organisationId: string;
   query?: string;
-  onSaveChart?: () => void;
+  onSaveChart?: (chart: ChartResource) => void;
   onDeleteChart: () => void;
 }
-type Props = AggregationRendererProps &
+type Props = QueryResultRendererProps &
   InjectedFeaturesProps &
   InjectedNotificationProps &
   InjectedIntlProps;
@@ -110,15 +110,16 @@ interface State {
   // can be a bucket or metrics
   selectedView: string;
   numberItems: number;
-  selectedChart: chartType;
+  selectedChart: ChartType;
   dataset?: AbstractDataset;
   isSaveModalVisible: boolean;
   isDeleteModalVisible: boolean;
   chartToSaveName: string;
-  selectedQuickOptions: { [key: string]: string };
+  selectedQuickOptions?: { [key: string]: string | undefined };
+  queryHasChanged: boolean;
 }
 
-class AggregationRenderer extends React.Component<Props, State> {
+class QueryResultRenderer extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
@@ -133,46 +134,75 @@ class AggregationRenderer extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const defaultQuickOptions: { [key: string]: string } = props.tab.showChartLegend
-      ? {}
-      : {
-          legend: 'no_legend',
-        };
+    const selectedChart = isCountDataset(props.datasource)
+      ? 'metric'
+      : props.tab.chartItem?.type
+      ? props.tab.chartItem?.type
+      : this.hasDateHistogram()
+      ? 'bars'
+      : 'table';
     this.state = {
-      chartToSaveName: '',
+      chartToSaveName: props.tab.chartItem?.type ? props.tab.title.toString() : '',
       isSaveModalVisible: false,
       isDeleteModalVisible: false,
       aggregationsPath: [],
-      selectedView: this.getDefaultView(props.rootAggregations),
+      selectedView: this.getDefaultView(props.datasource),
       numberItems: this.getNumberItems(),
-      selectedChart: 'table',
-      selectedQuickOptions: defaultQuickOptions,
+      selectedChart: selectedChart,
+      selectedQuickOptions: this.getQuickOptions(),
+      queryHasChanged: false,
     };
   }
 
+  async componentDidMount() {
+    if (this.hasDateHistogram()) this.setNbrOfShowedItems();
+    const { selectedChart } = this.state;
+    const quickOptions = this.getChartProps(selectedChart);
+    await this.updateDataset(quickOptions);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      tab: { serieQueries, chartItem, title },
+    } = this.props;
+    const {
+      tab: { serieQueries: prevSerieQueries, chartItem: prevChartItem },
+    } = prevProps;
+    if (!_.isEqual(serieQueries, prevSerieQueries)) {
+      this.setState({
+        queryHasChanged: true,
+      });
+    } else if (!_.isEqual(chartItem, prevChartItem)) {
+      this.setState({
+        chartToSaveName: title.toString(),
+      });
+    }
+  }
+
   getNumberItems = () => {
-    const { rootAggregations } = this.props;
-    if (rootAggregations) {
-      if (isOTQLAggregations(rootAggregations)) {
-        return rootAggregations.buckets &&
-          rootAggregations.buckets[0] &&
-          rootAggregations.buckets[0].buckets &&
-          rootAggregations.buckets[0].buckets.length <= 6
-          ? rootAggregations.buckets[0].buckets.length
+    const { datasource } = this.props;
+    if (datasource) {
+      if (isOTQLAggregations(datasource)) {
+        return datasource.buckets &&
+          datasource.buckets[0] &&
+          datasource.buckets[0].buckets &&
+          datasource.buckets[0].buckets.length <= 6
+          ? datasource.buckets[0].buckets.length
           : 6;
-      } else if (isAggregateDataset(rootAggregations)) {
-        return rootAggregations.dataset.length <= 6 ? rootAggregations.dataset.length : 6;
+      } else if (isAggregateDataset(datasource)) {
+        return datasource.dataset.length <= 6 ? datasource.dataset.length : 6;
       }
     }
     return 0;
   };
 
   private async updateDataset(chartProps: any) {
-    const { rootAggregations } = this.props;
+    const { datasource } = this.props;
     const { selectedChart, aggregationsPath, selectedView } = this.state;
     let data;
-    if (isOTQLAggregations(rootAggregations)) {
-      const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
+    let abstractDataset;
+    if (isOTQLAggregations(datasource)) {
+      const aggregations = this.findAggregations(datasource, aggregationsPath)!;
       const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
       const numberOfItems = Math.min(MAX_ELEMENTS, buckets.buckets.length);
       const dataset: Dataset =
@@ -185,24 +215,23 @@ class AggregationRenderer extends React.Component<Props, State> {
         dataset: dataset,
       };
 
-      const abstractDataset = getChartDataset(
+      abstractDataset = getChartDataset(
         {
           dataset: aggregateDataset,
         },
         true,
         chartProps,
       );
-
-      data = await this.applyTransformations(this.adaptChartType(selectedChart), abstractDataset);
-    } else if (isAggregateDataset(rootAggregations)) {
-      const abstractDataset = getChartDataset(
+      data = await this.applyTransformations(selectedChart, abstractDataset);
+    } else if (isAggregateDataset(datasource) || isCountDataset(datasource)) {
+      abstractDataset = getChartDataset(
         {
-          dataset: rootAggregations,
+          dataset: datasource,
         },
         true,
         chartProps,
       );
-      data = await this.applyTransformations(this.adaptChartType(selectedChart), abstractDataset);
+      data = await this.applyTransformations(selectedChart, abstractDataset);
     }
 
     this.setState({
@@ -210,14 +239,9 @@ class AggregationRenderer extends React.Component<Props, State> {
     });
   }
 
-  async componentDidMount() {
-    if (this.hasDateHistogram()) this.setNbrOfShowedItems();
-    const { selectedChart } = this.state;
-    const quickOptions = this.getChartProps(selectedChart);
-    await this.updateDataset(quickOptions);
-  }
-
-  getDefaultView = (aggregations: OTQLAggregations | AggregateDataset | undefined) => {
+  getDefaultView = (
+    aggregations: OTQLAggregations | CountDataset | AggregateDataset | undefined,
+  ) => {
     if (aggregations && isOTQLAggregations(aggregations) && aggregations.buckets.length > 0) {
       return '0';
     } else {
@@ -225,16 +249,45 @@ class AggregationRenderer extends React.Component<Props, State> {
     }
   };
 
-  private getChartOptionsMap(_chartType: chartType): any[] {
+  getQuickOptions = () => {
+    const {
+      tab: { chartItem },
+    } = this.props;
+    const options = chartItem?.content.options as any;
+    let quickOptions: { [key: string]: any } = {};
+    if (options) {
+      quickOptions = {
+        legend: getSelectLegend(options?.legend),
+        format: options?.format,
+        type: options?.type,
+        pie: options?.inner_radius ? 'donut' : 'pie',
+      };
+    }
+    const dateOptions = (chartItem as any)?.content?.dataset?.date_options;
+    if (dateOptions) {
+      quickOptions.date_format = dateOptions.format;
+    }
+    return quickOptions;
+  };
+
+  private getChartOptionsMap(chartType: ChartType): any[] {
     const { selectedQuickOptions } = this.state;
-    return Object.keys(selectedQuickOptions).map(selectedOptionKey => {
-      return getChartOption(_chartType, selectedOptionKey, selectedQuickOptions[selectedOptionKey]);
-    });
+    if (!selectedQuickOptions) {
+      return [];
+    } else {
+      return Object.keys(selectedQuickOptions).map(selectedOptionKey => {
+        return getChartOption(
+          chartType,
+          selectedOptionKey,
+          selectedQuickOptions[selectedOptionKey],
+        );
+      });
+    }
   }
 
-  private getChartProps = (_chartType: chartType) => {
-    const chartPropsMap = this.getChartOptionsMap(_chartType);
-    const baseProps: ChartOptions | undefined = getBaseChartProps(_chartType);
+  private getChartProps = (chartType: ChartType) => {
+    const chartPropsMap = this.getChartOptionsMap(chartType);
+    const baseProps: ChartOptions | undefined = getBaseChartProps(chartType);
     const newChartProps = chartPropsMap.reduce((acc, property) => {
       return { ...acc, ...property };
     }, baseProps);
@@ -262,10 +315,10 @@ class AggregationRenderer extends React.Component<Props, State> {
   };
 
   setNbrOfShowedItems = () => {
-    const { rootAggregations } = this.props;
+    const { datasource } = this.props;
     const { aggregationsPath, selectedView } = this.state;
-    if (isOTQLAggregations(rootAggregations)) {
-      const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
+    if (isOTQLAggregations(datasource)) {
+      const aggregations = this.findAggregations(datasource, aggregationsPath)!;
       const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
       this.setState({
         numberItems: Math.min(MAX_ELEMENTS, buckets.buckets.length),
@@ -274,11 +327,11 @@ class AggregationRenderer extends React.Component<Props, State> {
   };
 
   async updateAggregatePath(newAggregationPath: BucketPath[], defaultView: string) {
-    const { rootAggregations } = this.props;
+    const { datasource } = this.props;
     const { selectedView, selectedChart } = this.state;
 
-    if (isOTQLAggregations(rootAggregations)) {
-      const aggregations = this.findAggregations(rootAggregations, newAggregationPath)!;
+    if (isOTQLAggregations(datasource)) {
+      const aggregations = this.findAggregations(datasource, newAggregationPath)!;
       const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
 
       this.setState({
@@ -286,10 +339,10 @@ class AggregationRenderer extends React.Component<Props, State> {
         numberItems: Math.min(MAX_ELEMENTS, buckets.buckets.length),
         selectedView: defaultView,
       });
-    } else {
+    } else if (!isCountDataset(datasource)) {
       this.setState({
         aggregationsPath: newAggregationPath,
-        numberItems: Math.min(MAX_ELEMENTS, rootAggregations.dataset.length),
+        numberItems: Math.min(MAX_ELEMENTS, datasource.dataset.length),
         selectedView: defaultView,
       });
     }
@@ -298,12 +351,23 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 
   hasDateHistogram = () => {
-    const { query } = this.props;
-    return !!query && query.indexOf('@date_histogram') > -1;
+    const {
+      query,
+      tab: { serieQueries },
+    } = this.props;
+    const audienceFeatureFormQueryHasDateHistogram =
+      !!query && query.indexOf('@date_histogram') > -1;
+    const serieQueryHasDateHistogram = serieQueries.some(q => {
+      if (!isQueryListModel(q.queryModel)) {
+        return q.queryModel.indexOf('@date_histogram') > -1;
+      }
+      return false;
+    });
+    return audienceFeatureFormQueryHasDateHistogram || serieQueryHasDateHistogram;
   };
 
-  handleChartTypeChange = (value: chartType) => {
-    const { rootAggregations } = this.props;
+  handleChartTypeChange = (value: ChartType) => {
+    const { datasource } = this.props;
     const { aggregationsPath } = this.state;
     const hasDateHistogram = this.hasDateHistogram();
     const defaultSelectedOptions = getQuickOptionsForChartType(value, hasDateHistogram).reduce(
@@ -319,21 +383,21 @@ class AggregationRenderer extends React.Component<Props, State> {
       },
       () => {
         // on chart type change we also want to keep buckets view path
-        if (isOTQLAggregations(rootAggregations)) {
-          const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
+        if (isOTQLAggregations(datasource)) {
+          const aggregations = this.findAggregations(datasource, aggregationsPath)!;
           this.updateAggregatePath(aggregationsPath, this.getDefaultView(aggregations));
         }
       },
     );
   };
 
-  private async applyTransformations(_chartType: ChartType, _dataset: AbstractDatasetTree) {
+  private async applyTransformations(chartType: ChartType, _dataset: AbstractDatasetTree) {
     const { organisationId, datamartId } = this.props;
     const X_KEY = 'key';
     const dataset = await this.transactionProcessor.applyTransformations(
       datamartId,
       organisationId,
-      _chartType,
+      chartType,
       X_KEY,
       _dataset,
     );
@@ -369,15 +433,6 @@ class AggregationRenderer extends React.Component<Props, State> {
     }
   }
 
-  private adaptChartType(selectedChart: chartType): ChartType {
-    switch (selectedChart.toLowerCase()) {
-      case 'bar':
-        return 'bars';
-      default:
-        return selectedChart as ChartType;
-    }
-  }
-
   private cleanUnusedKeysForExport(chartConfig: ChartConfig) {
     switch (chartConfig.type) {
       case 'bars':
@@ -393,10 +448,10 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 
   async generateChartJson(title?: string): Promise<string | undefined> {
-    const { query, datamartId, rootAggregations, tab } = this.props;
+    const { query, datamartId, datasource, tab } = this.props;
     const { selectedChart } = this.state;
     let _dataset: any;
-    if (isOTQLAggregations(rootAggregations)) {
+    if (isOTQLAggregations(datasource)) {
       const queryResponse = await this._queryService
         .createQuery(datamartId, {
           query_language: 'OTQL',
@@ -458,21 +513,43 @@ class AggregationRenderer extends React.Component<Props, State> {
               };
             });
         };
-        _dataset = {
-          type: 'join',
-          sources: getSources('join').concat({
+
+        let sources = getSources('join');
+        const listSources = getSources('to-list');
+
+        if (sources.length === 1 && listSources.length === 0) {
+          _dataset = {
+            ...getSources('join')[0],
+          };
+        } else if (sources.length === 0 && listSources.length > 0) {
+          _dataset = {
             type: 'to-list',
-            sources: getSources('to-list'),
-          } as any),
-        };
+            sources: listSources,
+          };
+        } else if (sources.length >= 1) {
+          if (listSources.length === 0) {
+            _dataset = {
+              type: 'join',
+              sources: sources,
+            };
+          } else {
+            _dataset = {
+              type: 'join',
+              sources: sources.concat({
+                type: 'to-list',
+                sources: listSources,
+              } as any),
+            };
+          }
+        }
       });
     }
-    const chartProps = this.getChartProps(selectedChart);
+    const chartProps = { ...this.getChartProps(selectedChart) };
     const dataset = getChartDataset(_dataset, false, chartProps);
 
     const chart: ChartConfig = {
       title: title || '',
-      type: this.adaptChartType(selectedChart),
+      type: selectedChart,
       options: omit(chartProps, ['date_options']),
       dataset: dataset,
     };
@@ -501,7 +578,7 @@ class AggregationRenderer extends React.Component<Props, State> {
     });
   }
 
-  async handleSaveChart() {
+  handleSaveChart = (chartId?: string) => async () => {
     const { organisationId, onSaveChart } = this.props;
     const { chartToSaveName } = this.state;
     this.setState({
@@ -515,11 +592,15 @@ class AggregationRenderer extends React.Component<Props, State> {
       type: type || 'bars',
       content: parsedJson,
     };
-    await this._chartService.createChart(organisationId, dashboardResource);
-    if (onSaveChart) onSaveChart();
-  }
+    const chartPromise = chartId
+      ? this._chartService.updateChart(chartId, organisationId, dashboardResource)
+      : this._chartService.createChart(organisationId, dashboardResource);
+    chartPromise.then(res => {
+      if (onSaveChart) onSaveChart(res.data);
+    });
+  };
 
-  handleDeleteChart() {
+  handleDeleteChart = () => {
     const { organisationId, tab, notifyError, onDeleteChart } = this.props;
 
     if (tab.chartItem?.id) {
@@ -542,7 +623,7 @@ class AggregationRenderer extends React.Component<Props, State> {
           });
         });
     }
-  }
+  };
 
   private isSelectedTypeExportable(): boolean {
     const { selectedChart } = this.state;
@@ -555,17 +636,15 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 
   getBuckets = () => {
-    const { hasFeature, intl, rootAggregations, tab } = this.props;
-    const { selectedChart, dataset, aggregationsPath, selectedView } = this.state;
+    const { hasFeature, intl, datasource, tab } = this.props;
+    const { selectedChart, dataset, aggregationsPath, selectedView, queryHasChanged } = this.state;
     const datasetOptions = this.getChartOptionsMap(selectedChart);
-    const viewBuckets = isOTQLAggregations(rootAggregations)
-      ? this.findAggregations(rootAggregations, aggregationsPath)?.buckets[
-          parseInt(selectedView, 0)
-        ]
+    const viewBuckets = isOTQLAggregations(datasource)
+      ? this.findAggregations(datasource, aggregationsPath)?.buckets[parseInt(selectedView, 0)]
       : undefined;
-    const aggregateData = !isOTQLAggregations(rootAggregations) ? rootAggregations : undefined;
+    const aggregateData = !isOTQLAggregations(datasource) ? datasource : undefined;
 
-    if (!dataset || !this.isAggregate(dataset) || dataset.dataset.length === 0)
+    if (!dataset || (this.isAggregate(dataset) && dataset.dataset.length === 0))
       return (
         <FormattedMessage
           id='queryTool.otql-result-renderer-aggrations-no-result'
@@ -602,10 +681,12 @@ class AggregationRenderer extends React.Component<Props, State> {
       if (bucketHasData(record)) return 'mcs-table-cursor';
       return '';
     };
-    if ((viewBuckets || aggregateData) && dataset && dataset.type === 'aggregate') {
-      const aggregateDataset = dataset;
-      const displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
-      if (isOTQLAggregations(rootAggregations)) {
+
+    // There should be no more OTQLAggration here, only datasets
+    if ((viewBuckets || aggregateData) && dataset) {
+      const aggregateDataset = dataset as AggregateDataset;
+      let displayedDataset = JSON.parse(JSON.stringify(aggregateDataset));
+      if (isOTQLAggregations(datasource)) {
         // Reformat dataset to expected key and value
         if (selectedChart === 'radar') {
           const RADAR_Y_KEY = 'value';
@@ -631,9 +712,41 @@ class AggregationRenderer extends React.Component<Props, State> {
         } else if (selectedChart === 'table') {
           displayedDataset.dataset = viewBuckets?.buckets;
         }
+      } else if (
+        selectedChart === 'metric' &&
+        (datasource as any)?.dataset &&
+        (datasource as any)?.dataset[0]?.value
+      ) {
+        displayedDataset.value = (datasource as any)?.dataset[0]?.value;
       }
 
-      const tabs = [
+      let tabs = [
+        {
+          title: <BorderlessTableOutlined className='mcs-otqlChart_icons' />,
+          key: 'metric',
+          display: (
+            <Card bordered={false} className='mcs-otqlChart_content_metric'>
+              <ManagedChart
+                chartConfig={{
+                  title: '',
+                  type: 'metric',
+                }}
+                formattedData={
+                  {
+                    metadata: {
+                      seriesTitles: ['count'],
+                    },
+                    ...datasetOptions,
+                    ...displayedDataset,
+                    type: 'count',
+                  } as any
+                }
+                loading={false}
+                stillLoading={false}
+              />
+            </Card>
+          ),
+        },
         {
           title: <TableOutlined className='mcs-otqlChart_icons mcs-otqlChart_icons_table' />,
           key: 'table',
@@ -670,17 +783,14 @@ class AggregationRenderer extends React.Component<Props, State> {
         },
         {
           title: <BarChartOutlined className='mcs-otqlChart_icons mcs-otqlChart_icons_bar' />,
-          key: 'bar',
+          key: 'bars',
           display: (
             <Card bordered={false} className='mcs-otqlChart_content_bar'>
               <ManagedChart
                 chartConfig={{
                   title: '',
                   options: {
-                    ...(omit(this.getChartProps('bar'), ['date_options']) as BarChartOptions),
-                    legend: {
-                      enabled: !!tab.showChartLegend,
-                    },
+                    ...this.getChartProps('bars'),
                     drilldown: true,
                   },
                   type: 'bars',
@@ -709,10 +819,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                 chartConfig={{
                   title: '',
                   options: {
-                    ...(omit(this.getChartProps('radar'), [
-                      'date_options',
-                      'xKey',
-                    ]) as RadarChartOptions),
+                    ...omit(this.getChartProps('radar'), ['date_options', 'xKey']),
                   },
                   type: 'radar',
                 }}
@@ -741,9 +848,6 @@ class AggregationRenderer extends React.Component<Props, State> {
                   title: '',
                   options: {
                     ...(omit(this.getChartProps('pie'), ['date_options']) as PieChartOptions),
-                    legend: {
-                      enabled: !!tab.showChartLegend,
-                    },
                   },
                   type: 'pie',
                 }}
@@ -766,6 +870,29 @@ class AggregationRenderer extends React.Component<Props, State> {
       const handleCopyToClipboard = this.handleCopyToClipboard.bind(this);
       const handleOnSaveButtonClick = this.openSaveModal.bind(this);
       const handleOnDeleteButtonClick = this.openDeleteModal.bind(this);
+
+      const options = tab?.chartItem?.content.options as any;
+      const dateOptions = (tab as any)?.chartItem?.content?.dataset?.date_options;
+      if (dateOptions) {
+        options.date_format = dateOptions.format;
+      }
+
+      const isMetricCase =
+        isCountDataset(datasource) ||
+        ((datasource as any)?.dataset &&
+          (datasource as any)?.dataset[0]?.value &&
+          (datasource as any)?.type !== 'aggregate');
+
+      if (isMetricCase) {
+        tabs = tabs.filter(t => t.key === 'metric');
+      } else {
+        if (tab?.serieQueries.length > 1) {
+          tabs = tabs.filter(t => t.key !== 'metric' && t.key !== 'pie');
+        } else {
+          tabs = tabs.filter(t => t.key !== 'metric');
+        }
+      }
+
       return (
         <div>
           <McsTabs
@@ -773,14 +900,16 @@ class AggregationRenderer extends React.Component<Props, State> {
             animated={false}
             className='mcs-otqlChart_tabs'
             onChange={this.handleChartTypeChange}
-            defaultActiveKey={this.hasDateHistogram() ? 'bar' : tab.chartItem?.type || 'table'}
+            defaultActiveKey={selectedChart}
           />
           <div className={'mcs-otqlChart_items_container'}>
-            {renderQuickOptions(
-              this.state.selectedChart,
-              onChangeQuickOption,
-              this.hasDateHistogram(),
-            )}
+            {!isMetricCase &&
+              renderQuickOptions(
+                selectedChart,
+                onChangeQuickOption,
+                this.hasDateHistogram(),
+                options,
+              )}
           </div>
           {this.isSelectedTypeExportable() ? (
             <div className={'mcs-otqlChart_chartConfig_clipboard_container'}>
@@ -814,6 +943,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                     className='mcs-otqlInputEditor_save_button'
                     onClick={handleOnSaveButtonClick}
                     hidden={!hasFeature('datastudio-query_tool-charts_loader')}
+                    disabled={queryHasChanged}
                   >
                     <FormattedMessage
                       id='queryTool.otql.edit.new.save.label'
@@ -931,7 +1061,7 @@ class AggregationRenderer extends React.Component<Props, State> {
   };
 
   render() {
-    const { rootAggregations, tab } = this.props;
+    const { datasource, tab } = this.props;
     const {
       aggregationsPath,
       selectedView,
@@ -940,9 +1070,9 @@ class AggregationRenderer extends React.Component<Props, State> {
       chartToSaveName,
     } = this.state;
 
-    const aggregations = isOTQLAggregations(rootAggregations)
-      ? this.findAggregations(rootAggregations, aggregationsPath)!
-      : rootAggregations;
+    const aggregations = isOTQLAggregations(datasource)
+      ? this.findAggregations(datasource, aggregationsPath)!
+      : datasource;
     let selectedAggregationData = null;
 
     if (selectedView === 'metrics' && isOTQLAggregations(aggregations)) {
@@ -957,7 +1087,9 @@ class AggregationRenderer extends React.Component<Props, State> {
     const showSelect = isOTQLAggregations(aggregations)
       ? (aggregations.buckets.length > 0 && aggregations.metrics.length > 0) ||
         aggregations.buckets.length > 1
-      : aggregations.dataset.length > 0;
+      : !isCountDataset(aggregations)
+      ? aggregations.dataset.length > 0
+      : false;
 
     const onSaveModalClose = () => {
       this.setState({
@@ -971,8 +1103,6 @@ class AggregationRenderer extends React.Component<Props, State> {
       });
     };
 
-    const handleSaveChart = this.handleSaveChart.bind(this);
-    const handleDeleteChart = this.handleDeleteChart.bind(this);
     const editChartName = (name: any) => {
       this.setState({
         chartToSaveName: name.target.value || '',
@@ -995,12 +1125,12 @@ class AggregationRenderer extends React.Component<Props, State> {
                 Return
               </AntButton>
               <AntButton
-                disabled={false}
+                disabled={!chartToSaveName}
                 key='submit'
                 type='primary'
                 size='large'
                 className='mcs-aggregationRenderer_charts_submit'
-                onClick={handleSaveChart}
+                onClick={this.handleSaveChart(tab.chartItem?.id)}
               >
                 Submit
               </AntButton>
@@ -1009,14 +1139,22 @@ class AggregationRenderer extends React.Component<Props, State> {
           onCancel={onSaveModalClose}
         >
           <Input
-            value={tab.chartItem?.type ? tab.title.toString() : chartToSaveName}
+            value={chartToSaveName}
             className='mcs-aggregationRenderer_chart_name'
             placeholder='Chart name'
             onChange={editChartName}
           />
         </Modal>
         <Modal
-          title={<FormattedMessage {...messages.chartDeletePopupTitle} />}
+          title={
+            <FormattedMessage
+              id='queryTool.AggregationRenderer.deleteChartPopup'
+              defaultMessage='Are you sure you want to delete {chartName} ?'
+              values={{
+                chartName: tab.chartItem?.title,
+              }}
+            />
+          }
           wrapClassName='vertical-center-modal'
           visible={isDeleteModalVisible}
           footer={
@@ -1030,7 +1168,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                 type='primary'
                 size='large'
                 className='mcs-aggregationRenderer_delete_chart'
-                onClick={handleDeleteChart}
+                onClick={this.handleDeleteChart}
               >
                 Delete
               </AntButton>
@@ -1071,8 +1209,8 @@ class AggregationRenderer extends React.Component<Props, State> {
   }
 }
 
-export default compose<{}, AggregationRendererProps>(
+export default compose<{}, QueryResultRendererProps>(
   injectFeatures,
   injectNotifications,
   injectIntl,
-)(AggregationRenderer);
+)(QueryResultRenderer);

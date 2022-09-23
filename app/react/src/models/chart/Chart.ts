@@ -12,9 +12,11 @@ export interface ChartSource {
   type: QueryLanguage;
 }
 
+export type SerieDatasetSources = Array<ChartSource | SerieDataset>;
+
 export interface SerieDataset {
   type: SourceType;
-  sources: Array<ChartSource | SerieDataset>;
+  sources: SerieDatasetSources;
 }
 
 export interface DashboardChartContent {
@@ -38,4 +40,8 @@ export interface ChartResource {
 
 export function isChartSource(dataset: SerieDataset | ChartSource): dataset is ChartSource {
   return !!(dataset as ChartSource).query_id;
+}
+
+export function isSerieDataset(dataset: SerieDataset | ChartSource): dataset is SerieDataset {
+  return !!(dataset as SerieDataset).sources;
 }
