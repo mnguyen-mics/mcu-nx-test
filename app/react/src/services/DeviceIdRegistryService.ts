@@ -21,10 +21,18 @@ export interface IDeviceIdRegistryService {
   ) => Promise<DataResponse<DeviceIdRegistryResource>>;
 
   createDeviceIdRegistryDatamartSelection: (
-    datamartId: string,
     deviceIdRegistryId: string,
-    options?: object,
+    datamartId: string,
   ) => Promise<DataResponse<DeviceIdRegistryDatamartSelectionResource>>;
+
+  getDeviceIdRegistryDatamartSelections: (
+    deviceIdRegistryId: string,
+  ) => Promise<DataListResponse<DeviceIdRegistryDatamartSelectionResource>>;
+
+  updateDeviceIdRegistryDatamartSelections: (
+    deviceIdRegistryId: string,
+    datamartIds: string[],
+  ) => Promise<any>;
 
   getDeviceIdRegistryOffers: (
     options?: object,
@@ -58,8 +66,8 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
   }
 
   createDeviceIdRegistryDatamartSelection(
-    datamartId: string,
     deviceIdRegistryId: string,
+    datamartId: string,
   ): Promise<DataResponse<DeviceIdRegistryDatamartSelectionResource>> {
     const endpoint = `datamarts/${datamartId}/device_id_registries`;
     const body: Partial<DeviceIdRegistryDatamartSelectionResource> = {
@@ -67,6 +75,31 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
       datamart_id: datamartId,
     };
     return ApiService.postRequest(endpoint, body);
+  }
+
+  getDeviceIdRegistryDatamartSelections(
+    deviceIdRegistryId: string,
+  ): Promise<DataListResponse<DeviceIdRegistryDatamartSelectionResource>> {
+    //TODO
+    return ApiService.getRequest(`device_id_registries/${deviceIdRegistryId}/datamart_selections`);
+  }
+
+  updateDeviceIdRegistryDatamartSelections(
+    deviceIdRegistryId: string,
+    datamartIds: string[],
+  ): Promise<any> {
+    const body = {
+      datamart_selections: datamartIds.map(datamartId => {
+        return {
+          datamart_id: datamartId,
+        };
+      }),
+    };
+    //TODO
+    return ApiService.putRequest(
+      `device_id_registries/${deviceIdRegistryId}/datamart_selections`,
+      body,
+    );
   }
 
   getDeviceIdRegistryOffers(

@@ -1,10 +1,13 @@
 import * as React from 'react';
 import messages from '../messages';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Button, Drawer, Layout, Row } from 'antd';
+import { Button, Drawer, Layout, Modal, Row } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { IDeviceIdRegistryService } from '../../../../../services/DeviceIdRegistryService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -21,7 +24,8 @@ import {
 } from '../../../../../models/deviceIdRegistry/DeviceIdRegistryResource';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 import DeviceIdRegistriesEditForm from '../Edit/DeviceIdRegistriesEditForm';
-import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
+import DeviceIdRegistryDatamartSelectionsEditForm from '../Edit/DeviceIdRegistryDatamartSelectionsEditForm';
+import { ExclamationCircleOutlined } from '@ant-design/icons/lib/icons';
 
 const { Content } = Layout;
 
@@ -42,6 +46,9 @@ interface DeviceIdRegistriesListState {
   registriesTotal: number;
   offersTotal: number;
   isNewRegistryDrawerVisible: boolean;
+  isDatamartSelectionsDrawerVisible: boolean;
+  currentRegistry?: DeviceIdRegistryResource;
+  isDatamartsSelectionModalVisible: boolean;
 }
 
 class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesListState> {
@@ -59,6 +66,9 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       registriesTotal: 0,
       offersTotal: 0,
       isNewRegistryDrawerVisible: false,
+      isDatamartSelectionsDrawerVisible: false,
+      currentRegistry: undefined,
+      isDatamartsSelectionModalVisible: false,
     };
   }
 
@@ -153,6 +163,9 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       deviceIdRegistryOffers: [],
       registriesTotal: 0,
       offersTotal: 0,
+      isNewRegistryDrawerVisible: false,
+      isDatamartSelectionsDrawerVisible: false,
+      currentRegistry: undefined,
     });
   };
 
@@ -191,59 +204,112 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     }
   }
 
-  handleDrawer = (isVisible: boolean) => () => {
+  newRegistryOnClick = () => {
     this.setState({
-      isNewRegistryDrawerVisible: isVisible,
+      isNewRegistryDrawerVisible: true,
     });
   };
 
-  saveRegistry = (registry: Partial<DeviceIdRegistryResource>, datamartIds: string[]) => {
+  newRegistryDrawerOnClose = () => {
+    this.setState({
+      isNewRegistryDrawerVisible: false,
+    });
+  };
+
+  saveRegistry = (registry: Partial<DeviceIdRegistryResource>) => {
     const {
       notifyError,
       notifySuccess,
       intl: { formatMessage },
     } = this.props;
 
-    const datamartSelectiontasks: Task[] = [];
-
     return this._deviceIdRegistryService
       .createDeviceIdRegistry(registry)
-      .then(registryRes => {
-        datamartIds.forEach(datamartId =>
-          datamartSelectiontasks.push(() =>
-            this._deviceIdRegistryService.createDeviceIdRegistryDatamartSelection(
-              datamartId,
-              registryRes.data.id,
-            ),
-          ),
+      .then(res => {
+        this.setState(
+          {
+            isNewRegistryDrawerVisible: false,
+          },
+          () => {
+            this.refresh();
+            notifySuccess({
+              message: formatMessage(messages.newRegistryCreationSuccess),
+              description: '',
+            });
+          },
         );
-        return executeTasksInSequence(datamartSelectiontasks)
-          .then(() => {
-            this.setState(
-              {
-                isNewRegistryDrawerVisible: false,
-              },
-              () => {
-                this.refresh();
-                notifySuccess({
-                  message: formatMessage(messages.newRegistryCreationSuccess),
-                  description: '',
-                });
-              },
-            );
-            return undefined;
-          })
-          .catch(err => {
-            notifyError(err);
-          });
+        return res.data;
+      })
+      .then(createdRegistry => {
+        this.setState({
+          isDatamartsSelectionModalVisible: true,
+          currentRegistry: createdRegistry,
+        });
+        Modal.confirm({
+          title: formatMessage(messages.datamartsSelectionModalTitle),
+          content: formatMessage(messages.datamartsSelectionModalMessage),
+          icon: <ExclamationCircleOutlined />,
+          okText: 'OK',
+          cancelText: formatMessage(messages.modalCancel),
+          onOk: () => {
+            this.datamartsSelectionModalOnOk();
+          },
+          onCancel: () => {
+            this.datamartsSelectionDrawerOnClose();
+          },
+        });
       })
       .catch(err => {
-        this.setState({
-          isLoadingRegistries: false,
-          firstPartyDeviceIdRegistries: [],
-          registriesTotal: 0,
-        });
         notifyError(err);
+        this.setState({
+          currentRegistry: undefined,
+        });
+      });
+  };
+
+  editDatamartsSelectionAction = (registry: DeviceIdRegistryResource) => {
+    this.setState({
+      currentRegistry: registry,
+      isDatamartSelectionsDrawerVisible: true,
+    });
+  };
+
+  datamartsSelectionDrawerOnClose = () => {
+    this.setState({
+      currentRegistry: undefined,
+      isDatamartSelectionsDrawerVisible: false,
+    });
+  };
+
+  saveDatamartSelections = (deviceIdRegistryId: string, datamartIds: string[]) => {
+    const {
+      notifyError,
+      notifySuccess,
+      intl: { formatMessage },
+    } = this.props;
+
+    this._deviceIdRegistryService
+      .updateDeviceIdRegistryDatamartSelections(deviceIdRegistryId, datamartIds)
+      .then(() => {
+        this.setState(
+          {
+            currentRegistry: undefined,
+            isDatamartSelectionsDrawerVisible: false,
+          },
+          () => {
+            this.refresh();
+            notifySuccess({
+              message: formatMessage(messages.datamartSelectionsEditSuccess),
+              description: '',
+            });
+          },
+        );
+      })
+      .catch(err => {
+        notifyError(err);
+        this.setState({
+          currentRegistry: undefined,
+        });
       });
   };
 
@@ -267,12 +333,27 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     return role === 'COMMUNITY_ADMIN' || role === 'CUSTOMER_ADMIN' || role === 'SUPER_ADMIN';
   }
 
+  closeDatamartsSelectionModal = () => {
+    this.setState({ isDatamartsSelectionModalVisible: false });
+  };
+
+  datamartsSelectionModalOnOk = () => {
+    this.setState({
+      isDatamartsSelectionModalVisible: false,
+      isDatamartSelectionsDrawerVisible: true,
+    });
+  };
+
   render() {
     const {
       intl: { formatMessage },
     } = this.props;
 
-    const { isNewRegistryDrawerVisible } = this.state;
+    const {
+      isNewRegistryDrawerVisible,
+      isDatamartSelectionsDrawerVisible,
+      // isDatamartsSelectionModalVisible
+    } = this.state;
 
     const deviceIdRegistryColumnsDefinition: Array<DataColumnDefinition<DeviceIdRegistryResource>> =
       [
@@ -340,7 +421,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           key='create'
           type='primary'
           className='mcs-primary'
-          onClick={this.handleDrawer(true)}
+          onClick={this.newRegistryOnClick}
         >
           {formatMessage(messages.newDeviceIdRegistry)}
         </Button>
@@ -362,22 +443,61 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       </div>
     );
 
+    const firstPartyRegistryActions: Array<ActionsColumnDefinition<DeviceIdRegistryResource>> = [
+      {
+        key: 'action',
+        actions: (record: DeviceIdRegistryResource) => [
+          {
+            message: formatMessage(messages.editRegistryDatamartsSelection),
+            callback: this.editDatamartsSelectionAction,
+            disabled: record.type == 'INSTALLATION_ID',
+          },
+        ],
+      },
+    ];
+
     return (
+      // TODO
       <div className='ant-layout mcs-modal_container'>
         <Content className='mcs-content-container'>
           <Drawer
-            className='mcs-userEdit_drawer'
+            className='mcs-deviceRegistriesEdit_drawer'
             width='800'
             bodyStyle={{ padding: '0' }}
-            title={formatMessage(messages.newRegistryDrawerTitle)}
+            title={formatMessage(messages.newFirstPartyRegistryDrawerTitle)}
             placement={'right'}
             closable={true}
-            onClose={this.handleDrawer(false)}
+            onClose={this.newRegistryDrawerOnClose}
             visible={isNewRegistryDrawerVisible}
             destroyOnClose={true}
           >
             <DeviceIdRegistriesEditForm save={this.saveRegistry} />
           </Drawer>
+
+          <Drawer
+            className='mcs-deviceRegistriesEdit_drawer'
+            width='800'
+            bodyStyle={{ padding: '0' }}
+            title={
+              this.state.currentRegistry &&
+              formatMessage(messages.firstPartyDatamartSelectionsDrawerTitle, {
+                registryName: `${this.state.currentRegistry.name}`,
+              })
+            }
+            placement={'right'}
+            closable={true}
+            onClose={this.datamartsSelectionDrawerOnClose}
+            visible={isDatamartSelectionsDrawerVisible}
+            destroyOnClose={true}
+          >
+            {this.state.currentRegistry && (
+              <DeviceIdRegistryDatamartSelectionsEditForm
+                deviceIdRegistry={this.state.currentRegistry as DeviceIdRegistryResource}
+                save={this.saveDatamartSelections}
+              />
+            )}
+          </Drawer>
+
           <Row className='mcs-table-container'>
             {simpleTableHeader(
               messages.firstPartyDeviceIdRegistries,
@@ -389,6 +509,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
               dataSource={this.state.firstPartyDeviceIdRegistries}
               className='mcs-deviceIdRegistriesList_deviceIdRegistrytable'
               loading={this.state.isLoadingRegistries}
+              actionsColumnsDefinition={firstPartyRegistryActions}
             />
           </Row>
           <Row className='mcs-table-container'>

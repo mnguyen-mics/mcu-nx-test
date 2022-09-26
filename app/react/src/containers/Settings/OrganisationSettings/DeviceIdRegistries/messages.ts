@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.list.type',
     defaultMessage: 'Type',
   },
+  editRegistryDatamartsSelection: {
+    id: 'settings.organisation.device.registries.list.edit.datamarts',
+    defaultMessage: 'Edit linked datamarts',
+  },
   editDeviceIdRegistry: {
     id: 'settings.organisation.device.registries.list.edit',
     defaultMessage: 'Edit registry',
@@ -33,9 +37,17 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.list.delete',
     defaultMessage: 'Delete registry',
   },
-  newRegistryDrawerTitle: {
-    id: 'settings.organisation.device.registries.new.title',
-    defaultMessage: 'Device Registries > New Device Registry',
+  newFirstPartyRegistryDrawerTitle: {
+    id: 'settings.organisation.device.registries.firstParty.new.title',
+    defaultMessage: 'New Device Registry',
+  },
+  newThirdPartyRegistryDrawerTitle: {
+    id: 'settings.organisation.device.registries.new.thirdParty.title',
+    defaultMessage: 'Device Registries > New Third-party Device Registry',
+  },
+  firstPartyDatamartSelectionsDrawerTitle: {
+    id: 'settings.organisation.device.registries.new.thirdParty.title',
+    defaultMessage: 'Edit linked datamarts for device registry: {registryName}',
   },
   generalInformation: {
     id: 'settings.organisation.device.registries.new.generalInformation',
@@ -78,6 +90,23 @@ const messages = defineMessages({
     defaultMessage: 'Please fill in the required fields',
   },
   newRegistryCreationSuccess: {
+    id: 'settings.organisation.device.registries.new.creation.success',
+    defaultMessage: 'Device registry successfully created',
+  },
+  datamartsSelectionModalTitle: {
+    id: 'settings.organisation.device.registries.datamarts.selection.modal.title',
+    defaultMessage: 'This registry is not enabled on any datamart yet',
+  },
+  datamartsSelectionModalMessage: {
+    id: 'settings.organisation.device.registries.datamarts.selection.modal.message',
+    defaultMessage:
+      'To use your new registry in a datamart, you need to edit your registry and select the datamarts on which you want to use it.',
+  },
+  modalCancel: {
+    id: 'settings.organisation.device.registries.modal.cancel',
+    defaultMessage: 'Cancel',
+  },
+  datamartSelectionsEditSuccess: {
     id: 'settings.organisation.device.registries.new.creation.success',
     defaultMessage: 'Device registry successfully created',
   },
