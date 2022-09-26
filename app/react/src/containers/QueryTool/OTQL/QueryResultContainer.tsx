@@ -18,7 +18,7 @@ import {
 import { RouteComponentProps, withRouter } from 'react-router';
 import { McsTabsItem } from './QueryToolTabsContainer';
 import { QueryToolJsonResultRenderer } from './QueryToolJsonResultRenderer';
-import { ChartResource } from '../../../models/chart/Chart';
+import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 
 export interface QueryResultContainerProps {
   tab: McsTabsItem;
