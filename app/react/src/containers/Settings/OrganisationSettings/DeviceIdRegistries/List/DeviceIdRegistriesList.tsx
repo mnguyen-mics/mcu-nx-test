@@ -49,6 +49,7 @@ interface DeviceIdRegistriesListState {
   isDatamartSelectionsDrawerVisible: boolean;
   currentRegistry?: DeviceIdRegistryResource;
   isDatamartsSelectionModalVisible: boolean;
+  isEditRegistryDrawerVisible: boolean;
 }
 
 class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesListState> {
@@ -67,6 +68,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       offersTotal: 0,
       isNewRegistryDrawerVisible: false,
       isDatamartSelectionsDrawerVisible: false,
+      isEditRegistryDrawerVisible: false,
       currentRegistry: undefined,
       isDatamartsSelectionModalVisible: false,
     };
@@ -216,7 +218,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     });
   };
 
-  saveRegistry = (registry: Partial<DeviceIdRegistryResource>) => {
+  createRegistry = (registry: Partial<DeviceIdRegistryResource>) => {
     const {
       notifyError,
       notifySuccess,
@@ -267,6 +269,57 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       });
   };
 
+  editRegistry = (registry: DeviceIdRegistryResource): void => {
+    this.setState({
+      currentRegistry: registry,
+      isEditRegistryDrawerVisible: true,
+    });
+  };
+
+  editRegistryDrawerOnClose = (isVisible: boolean) => () => {
+    this.setState({
+      isEditRegistryDrawerVisible: isVisible,
+    });
+  };
+
+  updateRegistry = (id: string) => {
+    const {
+      workspace: { community_id },
+    } = this.props;
+
+    return (updatedData: Partial<DeviceIdRegistryResource>) => {
+      const {
+        notifyError,
+        notifySuccess,
+        intl: { formatMessage },
+      } = this.props;
+
+      return this._deviceIdRegistryService
+        .updateDeviceIdRegistry(id, community_id, updatedData)
+        .then(() => {
+          this.setState(
+            {
+              isEditRegistryDrawerVisible: false,
+              currentRegistry: undefined,
+            },
+            () => {
+              this.refresh();
+              notifySuccess({
+                message: formatMessage(messages.registryEditionSuccess),
+                description: '',
+              });
+            },
+          );
+        })
+        .catch(err => {
+          this.setState({
+            currentRegistry: undefined,
+          });
+          notifyError(err);
+        });
+    };
+  };
+
   editDatamartsSelectionAction = (registry: DeviceIdRegistryResource) => {
     this.setState({
       currentRegistry: registry,
@@ -299,7 +352,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           () => {
             this.refresh();
             notifySuccess({
-              message: formatMessage(messages.datamartSelectionsEditSuccess),
+              message: formatMessage(messages.datamartSelectionsEditionSuccess),
               description: '',
             });
           },
@@ -352,7 +405,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     const {
       isNewRegistryDrawerVisible,
       isDatamartSelectionsDrawerVisible,
-      // isDatamartsSelectionModalVisible
+      isEditRegistryDrawerVisible,
     } = this.state;
 
     const deviceIdRegistryColumnsDefinition: Array<DataColumnDefinition<DeviceIdRegistryResource>> =
@@ -452,12 +505,16 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             callback: this.editDatamartsSelectionAction,
             disabled: record.type == 'INSTALLATION_ID',
           },
+          {
+            message: formatMessage(messages.editDeviceIdRegistry),
+            callback: this.editRegistry,
+            disabled: record.type == 'INSTALLATION_ID',
+          },
         ],
       },
     ];
 
     return (
-      // TODO
       <div className='ant-layout mcs-modal_container'>
         <Content className='mcs-content-container'>
           <Drawer
@@ -471,7 +528,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             visible={isNewRegistryDrawerVisible}
             destroyOnClose={true}
           >
-            <DeviceIdRegistriesEditForm save={this.saveRegistry} />
+            <DeviceIdRegistriesEditForm save={this.createRegistry} />
           </Drawer>
 
           <Drawer
@@ -494,6 +551,28 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
               <DeviceIdRegistryDatamartSelectionsEditForm
                 deviceIdRegistry={this.state.currentRegistry as DeviceIdRegistryResource}
                 save={this.saveDatamartSelections}
+              />
+            )}
+          </Drawer>
+
+          <Drawer
+            className='mcs-deviceRegistriesEdit_drawer'
+            width='800'
+            bodyStyle={{ padding: '0' }}
+            title={formatMessage(messages.editFirstPartyRegistryDrawerTitle)}
+            placement={'right'}
+            closable={true}
+            onClose={this.editRegistryDrawerOnClose(false)}
+            visible={isEditRegistryDrawerVisible}
+            destroyOnClose={true}
+          >
+            {this.state.currentRegistry && (
+              <DeviceIdRegistriesEditForm
+                initialValues={this.state.currentRegistry}
+                deviceIdRegistry={this.state.currentRegistry as DeviceIdRegistryResource}
+                save={this.updateRegistry(
+                  (this.state.currentRegistry as DeviceIdRegistryResource).id,
+                )}
               />
             )}
           </Drawer>
