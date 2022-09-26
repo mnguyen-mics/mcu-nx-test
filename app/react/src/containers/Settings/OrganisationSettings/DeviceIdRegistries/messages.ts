@@ -33,6 +33,10 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.list.edit',
     defaultMessage: 'Edit registry',
   },
+  registryEditionSuccess: {
+    id: 'settings.organisation.device.registries.edit.success',
+    defaultMessage: 'Device registry successfully updated',
+  },
   deleteDeviceIdRegistry: {
     id: 'settings.organisation.device.registries.list.delete',
     defaultMessage: 'Delete registry',
@@ -40,6 +44,10 @@ const messages = defineMessages({
   newFirstPartyRegistryDrawerTitle: {
     id: 'settings.organisation.device.registries.firstParty.new.title',
     defaultMessage: 'New Device Registry',
+  },
+  editFirstPartyRegistryDrawerTitle: {
+    id: 'settings.organisation.device.registries.firstParty.edit.title',
+    defaultMessage: 'Edit Device Registry',
   },
   newThirdPartyRegistryDrawerTitle: {
     id: 'settings.organisation.device.registries.new.thirdParty.title',
@@ -106,9 +114,9 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.modal.cancel',
     defaultMessage: 'Cancel',
   },
-  datamartSelectionsEditSuccess: {
+  datamartSelectionsEditionSuccess: {
     id: 'settings.organisation.device.registries.new.creation.success',
-    defaultMessage: 'Device registry successfully created',
+    defaultMessage: 'Linked datamarts list successfully updated',
   },
   deviceIdRegistryOffers: {
     id: 'settings.organisation.device.registry.offers.list.title',

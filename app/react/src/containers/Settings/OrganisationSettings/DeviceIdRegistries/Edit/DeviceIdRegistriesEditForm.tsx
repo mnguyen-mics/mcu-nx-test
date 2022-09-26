@@ -34,6 +34,8 @@ import { DefaultOptionProps } from '../../../../../components/Form/FormSelect/De
 
 export const FORM_ID = 'newRegistryForm';
 
+type DeviceIdRegistryFormData = Partial<DeviceIdRegistryResource>;
+
 interface DeviceIdRegistriesEditFormState {
   isLoadingDatamarts: boolean;
   datamarts: DatamartWithOrgNameResource[];
@@ -43,7 +45,9 @@ interface DeviceIdRegistriesEditFormState {
 }
 
 interface DeviceIdRegistriesEditFormProps {
-  save: (registry: Partial<DeviceIdRegistryResource>, datamartIds: string[]) => void;
+  initialValues?: Partial<DeviceIdRegistryFormData>;
+  deviceIdRegistry?: DeviceIdRegistryResource;
+  save: (registry: Partial<DeviceIdRegistryResource>) => void;
 }
 interface RouterProps {
   organisationId: string;
@@ -56,9 +60,6 @@ type Props = DeviceIdRegistriesEditFormProps &
   InjectedFormProps<any, DeviceIdRegistriesEditFormProps> &
   ValidatorProps &
   InjectedWorkspaceProps;
-
-type DeviceIdRegistryFormData = Partial<DeviceIdRegistryResource>;
-
 interface DatamartWithOrgNameResource extends DatamartResource {
   organisation_name: string;
 }
@@ -84,18 +85,26 @@ class DeviceIdRegistriesEditForm extends React.Component<Props, DeviceIdRegistri
 
   save = (formData: DeviceIdRegistryFormData): any => {
     const {
+      deviceIdRegistry,
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    const { selectedRowKeys } = this.state;
-
-    const registryResource: Partial<DeviceIdRegistryResource> = {
-      ...formData,
-      community_id: organisationId,
-    };
-    this.props.save(registryResource, selectedRowKeys);
+    if (deviceIdRegistry) {
+      this.props.save({
+        id: deviceIdRegistry.id,
+        community_id: deviceIdRegistry.community_id,
+        type: deviceIdRegistry.type,
+        ...formData,
+      });
+    } else {
+      const registryResource: Partial<DeviceIdRegistryResource> = {
+        ...formData,
+        community_id: organisationId,
+      };
+      this.props.save(registryResource);
+    }
   };
 
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -179,6 +188,7 @@ class DeviceIdRegistriesEditForm extends React.Component<Props, DeviceIdRegistri
       fieldValidators: { isRequired },
       intl: { formatMessage },
       handleSubmit,
+      deviceIdRegistry,
     } = this.props;
 
     const registryTypes: DeviceIdRegistryType[] = ['CUSTOM_DEVICE_ID', 'MOBILE_VENDOR_ID'];
@@ -233,6 +243,7 @@ class DeviceIdRegistriesEditForm extends React.Component<Props, DeviceIdRegistri
             required: true,
           }}
           options={registryTypeOptions}
+          disabled={!!deviceIdRegistry}
         />
 
         <Button

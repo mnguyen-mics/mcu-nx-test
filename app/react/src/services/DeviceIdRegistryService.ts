@@ -20,6 +20,12 @@ export interface IDeviceIdRegistryService {
     body: Partial<DeviceIdRegistryResource>,
   ) => Promise<DataResponse<DeviceIdRegistryResource>>;
 
+  updateDeviceIdRegistry: (
+    deviceIdRegistryId: string,
+    communityId: string,
+    body: Partial<DeviceIdRegistryResource>,
+  ) => Promise<DataResponse<DeviceIdRegistryResource>>;
+
   createDeviceIdRegistryDatamartSelection: (
     deviceIdRegistryId: string,
     datamartId: string,
@@ -63,6 +69,18 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
   ): Promise<DataResponse<DeviceIdRegistryResource>> {
     const endpoint = 'device_id_registries';
     return ApiService.postRequest(endpoint, body);
+  }
+
+  updateDeviceIdRegistry(
+    deviceIdRegistryId: string,
+    communityId: string,
+    body: Partial<DeviceIdRegistryResource>,
+  ): Promise<DataResponse<DeviceIdRegistryResource>> {
+    const endpoint = `device_id_registries/${deviceIdRegistryId}`;
+    const params = {
+      community_id: communityId,
+    };
+    return ApiService.putRequest(endpoint, body, params);
   }
 
   createDeviceIdRegistryDatamartSelection(
