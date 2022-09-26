@@ -1,6 +1,7 @@
 import * as React from 'react';
 import _, { omit } from 'lodash';
 import {
+  AreaChartOutlined,
   BarChartOutlined,
   BorderlessTableOutlined,
   PieChartOutlined,
@@ -23,10 +24,13 @@ import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import {
+  AreaChartOptions,
   ChartConfig,
   ChartOptions,
   ChartType,
+  ManagedChartConfig,
   PieChartOptions,
+  WithOptionalComplexXKey,
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import {
   formatDate,
@@ -719,6 +723,25 @@ class QueryResultRenderer extends React.Component<Props, State> {
         displayedDataset.value = (datasource as any)?.dataset[0]?.value;
       }
 
+      const areaTab: ManagedChartConfig = {
+        title: '',
+        options: {
+          ...(omit(this.getChartProps('area'), ['date_options']) as AreaChartOptions &
+            WithOptionalComplexXKey),
+          drilldown: true,
+        },
+        type: 'area',
+      };
+
+      const areaData = {
+        metadata: {
+          seriesTitles: ['count'],
+        },
+        ...datasetOptions,
+        ...displayedDataset,
+        type: 'aggregate',
+      };
+
       let tabs = [
         {
           title: <BorderlessTableOutlined className='mcs-otqlChart_icons' />,
@@ -858,6 +881,20 @@ class QueryResultRenderer extends React.Component<Props, State> {
                   ...displayedDataset,
                   type: 'aggregate',
                 }}
+                loading={false}
+                stillLoading={false}
+              />
+            </Card>
+          ),
+        },
+        {
+          title: <AreaChartOutlined className='mcs-otqlChart_icons mcs-otqlChart_icons_area' />,
+          key: 'area',
+          display: (
+            <Card bordered={false} className='mcs-otqlChart_content_area'>
+              <ManagedChart
+                chartConfig={areaTab}
+                formattedData={areaData}
                 loading={false}
                 stillLoading={false}
               />
