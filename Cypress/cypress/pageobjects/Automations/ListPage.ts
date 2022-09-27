@@ -1,27 +1,32 @@
 import Page from '../Page';
 import LeftMenu from '../LeftMenu';
-import StartAutomationPopUp from './StartAutomationPopUp';
 import { logFunction, logGetter } from '../log/LoggingDecorator';
-import AddToSegmentPopUp from './AddToSegmentPopUp';
+
 class ListPage extends Page {
-  startAutomationPopUp: StartAutomationPopUp;
-  addToSegmentPopUp: AddToSegmentPopUp;
+  public name: string;
 
   constructor() {
     super();
-    this.startAutomationPopUp = new StartAutomationPopUp();
-    this.addToSegmentPopUp = new AddToSegmentPopUp();
+    this.name = 'Automation name';
   }
 
   @logFunction()
   goToPage() {
     LeftMenu.clickAutomationsMenu();
     LeftMenu.clickAutomationsList();
+    cy.wait(3000);
   }
 
   @logGetter()
   get nameBar() {
-    return cy.get('.mcs-breadcrumb');
+    // after the creation of an automation, the loading animation can stay at
+    // least 30 seconds
+    return cy.get('.mcs-breadcrumb', { timeout: 60000 });
+  }
+
+  @logGetter()
+  get table() {
+    return cy.get('.ant-table-content');
   }
 
   @logGetter()
@@ -50,6 +55,24 @@ class ListPage extends Page {
   }
 
   @logFunction()
+  edit(name: string = this.name) {
+    this.clickDropdown(name);
+    cy.get('.mcs-dropdown-actions').contains('Edit').click();
+  }
+
+  @logFunction()
+  clickDropdown(name: string = this.name) {
+    this.table.within($table => {
+      this.getLineByName(name).get('.mcs-chevron').first().click();
+    });
+  }
+
+  @logFunction()
+  getLineByName(name: string) {
+    return this.table.contains(name);
+  }
+
+  @logFunction()
   clickBtnEdit() {
     cy.get('.mcs-automationDashboardPage_editButton').click();
   }
@@ -67,6 +90,16 @@ class ListPage extends Page {
   @logFunction()
   clickBtnEditQuery() {
     cy.get('.mcs-automationNodeWidget_booleanMenu_item_queryEdit').click();
+  }
+
+  @logFunction()
+  nameBarShouldBeVisible() {
+    this.nameBar.should('be.visible');
+  }
+
+  @logFunction()
+  nameBarshouldContain(str: string) {
+    this.nameBar.should('contain', str);
   }
 }
 
