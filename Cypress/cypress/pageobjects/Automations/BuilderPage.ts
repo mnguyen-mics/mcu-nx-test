@@ -1,10 +1,17 @@
 import Page from '../Page';
 import LeftMenu from '../LeftMenu';
 import { logFunction, logGetter } from '../log/LoggingDecorator';
+import StartAutomationPopUp from './StartAutomationPopUp';
+import AddToSegmentPopUp from './AddToSegmentPopUp';
 
 class BuilderPage extends Page {
+  public startAutomationPopUp: StartAutomationPopUp;
+  public addToSegmentPopUp = new AddToSegmentPopUp();
+
   constructor() {
     super();
+    this.startAutomationPopUp = new StartAutomationPopUp();
+    this.addToSegmentPopUp = new AddToSegmentPopUp();
   }
 
   @logFunction()
