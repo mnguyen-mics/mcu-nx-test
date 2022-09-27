@@ -51,7 +51,7 @@ class ListPage extends Page {
 
   @logFunction()
   clickBtnTest() {
-    cy.get('.mcs-gears').should('be.visible').click();
+    cy.get('.mcs-gears', { timeout: 60000 }).should('be.visible').click();
   }
 
   @logFunction()
