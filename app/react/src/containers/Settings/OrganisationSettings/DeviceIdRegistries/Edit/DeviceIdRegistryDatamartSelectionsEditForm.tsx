@@ -23,7 +23,10 @@ import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { FormSection } from '../../../../../components/Form';
 import { IDeviceIdRegistryService } from '../../../../../services/DeviceIdRegistryService';
 import { notifyError } from '../../../../../redux/Notifications/actions';
-import { DeviceIdRegistryResource } from '../../../../../models/deviceIdRegistry/DeviceIdRegistryResource';
+import {
+  DeviceIdRegistryDatamartSelectionResource,
+  DeviceIdRegistryResource,
+} from '../../../../../models/deviceIdRegistry/DeviceIdRegistryResource';
 
 export const FORM_ID = 'newRegistryForm';
 
@@ -35,11 +38,16 @@ interface DeviceIdRegistryDatamartSelectionsEditFormState {
   allRowsAreSelected: boolean;
   datamartsTotal: number;
   selectionsTotal: number;
+  previousSelections: DeviceIdRegistryDatamartSelectionResource[];
 }
 
 interface DeviceIdRegistryDatamartSelectionsEditFormProps {
   deviceIdRegistry: DeviceIdRegistryResource;
-  save: (deviceIdRegistryId: string, datamartIds: string[]) => void;
+  handleSave: (
+    deviceIdRegistryId: string,
+    selectedDatamartIds: string[],
+    previousSelections: DeviceIdRegistryDatamartSelectionResource[],
+  ) => void;
 }
 interface RouterProps {
   organisationId: string;
@@ -81,14 +89,15 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
       allRowsAreSelected: false,
       datamartsTotal: 0,
       selectionsTotal: 0,
+      previousSelections: [],
     };
   }
 
   save = (): any => {
     const { deviceIdRegistry } = this.props;
-    const { selectedRowKeys } = this.state;
+    const { selectedRowKeys, previousSelections } = this.state;
 
-    this.props.save(deviceIdRegistry.id, selectedRowKeys);
+    this.props.handleSave(deviceIdRegistry.id, selectedRowKeys, previousSelections);
   };
 
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -167,6 +176,7 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
             isLoadingSelections: false,
             selectedRowKeys: datamartIds,
             selectionsTotal: datamartIds.length,
+            previousSelections: selectionsRes.data,
           });
         })
         .catch(err => {

@@ -18,6 +18,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import {
+  DeviceIdRegistryDatamartSelectionResource,
   DeviceIdRegistryOfferResource,
   DeviceIdRegistryResource,
   DeviceIdRegistryType,
@@ -26,6 +27,7 @@ import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 import DeviceIdRegistriesEditForm from '../Edit/DeviceIdRegistriesEditForm';
 import DeviceIdRegistryDatamartSelectionsEditForm from '../Edit/DeviceIdRegistryDatamartSelectionsEditForm';
 import { ExclamationCircleOutlined } from '@ant-design/icons/lib/icons';
+import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
 
 const { Content } = Layout;
 
@@ -334,15 +336,40 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     });
   };
 
-  saveDatamartSelections = (deviceIdRegistryId: string, datamartIds: string[]) => {
+  handleDatamartSelectionsUpdate = (
+    deviceIdRegistryId: string,
+    selectedDatamartIds: string[],
+    previousSelections: DeviceIdRegistryDatamartSelectionResource[],
+  ) => {
     const {
       notifyError,
       notifySuccess,
       intl: { formatMessage },
     } = this.props;
 
-    this._deviceIdRegistryService
-      .updateDeviceIdRegistryDatamartSelections(deviceIdRegistryId, datamartIds)
+    const updateSelectionsP = (): Promise<any> => {
+      if (selectedDatamartIds.length === 0 && previousSelections.length !== 0) {
+        const deleteTasks: Task[] = [];
+        previousSelections.forEach(selection => {
+          deleteTasks.push(() =>
+            this._deviceIdRegistryService.deleteDeviceIdRegistryDatamartSelection(
+              selection.id,
+              selection.datamart_id,
+            ),
+          );
+        });
+        return executeTasksInSequence(deleteTasks);
+      } else if (selectedDatamartIds.length === 0 && previousSelections.length === 0) {
+        return Promise.resolve();
+      } else {
+        return this._deviceIdRegistryService.updateDeviceIdRegistryDatamartSelections(
+          deviceIdRegistryId,
+          selectedDatamartIds,
+        );
+      }
+    };
+
+    updateSelectionsP()
       .then(() => {
         this.setState(
           {
@@ -550,7 +577,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             {this.state.currentRegistry && (
               <DeviceIdRegistryDatamartSelectionsEditForm
                 deviceIdRegistry={this.state.currentRegistry as DeviceIdRegistryResource}
-                save={this.saveDatamartSelections}
+                handleSave={this.handleDatamartSelectionsUpdate}
               />
             )}
           </Drawer>
