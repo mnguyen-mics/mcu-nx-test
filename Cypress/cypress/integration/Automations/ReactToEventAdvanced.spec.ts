@@ -1,6 +1,7 @@
 import faker from 'faker';
 import ListPage from '../../pageobjects/Automations/ListPage';
 import BuilderPage from '../../pageobjects/Automations/BuilderPage';
+import StartAutomationPopUp from '../../pageobjects/Automations/StartAutomationPopUp';
 
 describe('React To Event Advanced test', () => {
   beforeEach(() => {
@@ -14,20 +15,18 @@ describe('React To Event Advanced test', () => {
   it('Should test the creation of an automation with React to Event Advanced', () => {
     const builderPage = new BuilderPage();
     const listPage = new ListPage();
+    const startAutomationPopUp = new StartAutomationPopUp();
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       cy.switchOrg(data.organisationName);
       // Automation Creation
       builderPage.goToPage();
       builderPage.selectReactToEventType();
       // Wait for the button to be enabled
-      builderPage.startAutomationPopUp.btnStandarsEventsCofiguration.should(
-        'not.have.attr',
-        'disabled',
-      );
-      builderPage.startAutomationPopUp.clickBtnAdvancedConfiguration();
+      startAutomationPopUp.btnStandarsEventsCofiguration.should('not.have.attr', 'disabled');
+      startAutomationPopUp.clickBtnAdvancedConfiguration();
       const eventName = 'test_event_name';
-      builderPage.startAutomationPopUp.typeEventName(eventName + '{enter}');
-      builderPage.startAutomationPopUp.clickBtnSaveEditStartAutomation();
+      startAutomationPopUp.typeEventName(eventName + '{enter}');
+      startAutomationPopUp.clickBtnSaveEditStartAutomation();
       builderPage.clickBtnSaveAutomation();
       const automationName = 'React to an Event Advanced';
       builderPage.typeAutomationName(automationName);
@@ -35,28 +34,9 @@ describe('React To Event Advanced test', () => {
 
       // Automation viewer
       // Wait for the automation to save
-      listPage.nameBar.should('be.visible');
-      listPage.nameBar.should('contain', automationName);
-
-      // Edit
-      const newEventName = faker.random.words(1);
-      listPage.clickBtnEdit();
+      listPage.nameBarShouldBeVisible();
+      listPage.nameBarshouldContain(automationName);
       listPage.clickStartAutomation();
-      builderPage.startAutomationPopUp.searchField.should('contain', eventName);
-      builderPage.startAutomationPopUp.typeEventName(
-        '{selectall}{backspace}' + newEventName + '{enter}',
-      );
-      builderPage.startAutomationPopUp.clickBtnSaveEditStartAutomation();
-      builderPage.clickBtnSaveAutomation();
-      const newAutomationName = faker.random.words(2);
-      builderPage.typeAutomationName('{selectall}{backspace}' + newAutomationName);
-      builderPage.clickBtnSaveAutomationName();
-      // Wait for the automation to save
-      listPage.nameBar.should('be.visible');
-      listPage.nameBar.should('contain', newAutomationName);
-      listPage.clickBtnEdit();
-      listPage.clickStartAutomation();
-      listPage.startAutomationPopUp.searchField.should('contain', newEventName);
     });
   });
 });
