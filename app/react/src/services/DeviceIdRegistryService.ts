@@ -40,6 +40,8 @@ export interface IDeviceIdRegistryService {
     datamartIds: string[],
   ) => Promise<any>;
 
+  deleteDeviceIdRegistryDatamartSelection: (id: string, datamartId: string) => Promise<any>;
+
   getDeviceIdRegistryOffers: (
     options?: object,
   ) => Promise<DataListResponse<DeviceIdRegistryOfferResource>>;
@@ -98,7 +100,6 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
   getDeviceIdRegistryDatamartSelections(
     deviceIdRegistryId: string,
   ): Promise<DataListResponse<DeviceIdRegistryDatamartSelectionResource>> {
-    //TODO
     return ApiService.getRequest(`device_id_registries/${deviceIdRegistryId}/datamart_selections`);
   }
 
@@ -113,11 +114,14 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
         };
       }),
     };
-    //TODO
     return ApiService.putRequest(
       `device_id_registries/${deviceIdRegistryId}/datamart_selections`,
       body,
     );
+  }
+
+  deleteDeviceIdRegistryDatamartSelection(id: string, datamartId: string): Promise<any> {
+    return ApiService.deleteRequest(`datamarts/${datamartId}/device_id_registries/${id}`);
   }
 
   getDeviceIdRegistryOffers(

@@ -39,8 +39,6 @@ type DeviceIdRegistryFormData = Partial<DeviceIdRegistryResource>;
 interface DeviceIdRegistriesEditFormState {
   isLoadingDatamarts: boolean;
   datamarts: DatamartWithOrgNameResource[];
-  selectedRowKeys: string[];
-  allRowsAreSelected: boolean;
   total: number;
 }
 
@@ -77,8 +75,6 @@ class DeviceIdRegistriesEditForm extends React.Component<Props, DeviceIdRegistri
     this.state = {
       isLoadingDatamarts: false,
       datamarts: [],
-      selectedRowKeys: [],
-      allRowsAreSelected: false,
       total: 0,
     };
   }
@@ -105,29 +101,6 @@ class DeviceIdRegistriesEditForm extends React.Component<Props, DeviceIdRegistri
       };
       this.props.save(registryResource);
     }
-  };
-
-  onSelectChange = (selectedRowKeys: string[]) => {
-    this.setState({ selectedRowKeys });
-  };
-
-  selectAllItemIds = () => {
-    this.setState({
-      allRowsAreSelected: true,
-    });
-  };
-
-  unselectAllItemIds = () => {
-    this.setState({
-      selectedRowKeys: [],
-      allRowsAreSelected: false,
-    });
-  };
-
-  unsetAllItemsSelectedFlag = () => {
-    this.setState({
-      allRowsAreSelected: false,
-    });
   };
 
   fetchDatamarts = (communityId: string) => {
