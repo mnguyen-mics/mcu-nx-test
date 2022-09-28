@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.list.type',
     defaultMessage: 'Type',
   },
+  noDatamartsSelectionWarningTooltipText: {
+    id: 'settings.organisation.device.registries.list.warning.tooltip.text',
+    defaultMessage: "This registry isn't enabled on any datamart.",
+  },
   editRegistryDatamartsSelection: {
     id: 'settings.organisation.device.registries.list.edit.datamarts',
     defaultMessage: 'Edit linked datamarts',
@@ -76,10 +80,6 @@ const messages = defineMessages({
   enableDatamarts: {
     id: 'settings.organisation.device.registries.new.enableDatamarts',
     defaultMessage: 'Enable Datamarts',
-  },
-  tootltipRegistryType: {
-    id: 'settings.organisation.device.registries.new.tooltip.type',
-    defaultMessage: 'Help message TODO',
   },
   save: {
     id: 'settings.organisation.device.registries.new.save',
