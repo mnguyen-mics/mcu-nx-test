@@ -21,8 +21,6 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { FormSection } from '../../../../../components/Form';
-import { IDeviceIdRegistryService } from '../../../../../services/DeviceIdRegistryService';
-import { notifyError } from '../../../../../redux/Notifications/actions';
 import {
   DeviceIdRegistryDatamartSelectionResource,
   DeviceIdRegistryResource,
@@ -32,23 +30,19 @@ export const FORM_ID = 'newRegistryForm';
 
 interface DeviceIdRegistryDatamartSelectionsEditFormState {
   isLoadingDatamarts: boolean;
-  isLoadingSelections: boolean;
   datamarts: DatamartWithOrgNameResource[];
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   datamartsTotal: number;
   selectionsTotal: number;
-  previousSelections: DeviceIdRegistryDatamartSelectionResource[];
 }
 
 interface DeviceIdRegistryDatamartSelectionsEditFormProps {
+  initialSelections: DeviceIdRegistryDatamartSelectionResource[];
   deviceIdRegistry: DeviceIdRegistryResource;
-  handleSave: (
-    deviceIdRegistryId: string,
-    selectedDatamartIds: string[],
-    previousSelections: DeviceIdRegistryDatamartSelectionResource[],
-  ) => void;
+  handleSave: (deviceIdRegistryId: string, selectedDatamartIds: string[]) => void;
 }
+
 interface RouterProps {
   organisationId: string;
 }
@@ -75,29 +69,24 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
 
-  @lazyInject(TYPES.IDeviceIdRegistryService)
-  private _deviceIdRegistryService: IDeviceIdRegistryService;
-
   constructor(props: Props) {
     super(props);
 
     this.state = {
       isLoadingDatamarts: false,
-      isLoadingSelections: false,
       datamarts: [],
       selectedRowKeys: [],
       allRowsAreSelected: false,
       datamartsTotal: 0,
       selectionsTotal: 0,
-      previousSelections: [],
     };
   }
 
   save = (): any => {
     const { deviceIdRegistry } = this.props;
-    const { selectedRowKeys, previousSelections } = this.state;
+    const { selectedRowKeys } = this.state;
 
-    this.props.handleSave(deviceIdRegistry.id, selectedRowKeys, previousSelections);
+    this.props.handleSave(deviceIdRegistry.id, selectedRowKeys);
   };
 
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -166,34 +155,16 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
     });
   };
 
-  fetchDatamartSelections = (deviceIdRegistryId: string) => {
-    this.setState({ isLoadingSelections: true }, () => {
-      return this._deviceIdRegistryService
-        .getDeviceIdRegistryDatamartSelections(deviceIdRegistryId)
-        .then(selectionsRes => {
-          const datamartIds = selectionsRes.data.map(selection => selection.datamart_id);
-          this.setState({
-            isLoadingSelections: false,
-            selectedRowKeys: datamartIds,
-            selectionsTotal: datamartIds.length,
-            previousSelections: selectionsRes.data,
-          });
-        })
-        .catch(err => {
-          console.log('error in fetchDatamartSelections');
-          this.setState({
-            isLoadingSelections: false,
-          });
-          notifyError(err);
-        });
-    });
-  };
-
   fetchDatamartsAndSelections = (communityId: string, deviceIdRegistryId: string) => {
-    return Promise.all([
-      this.fetchDatamarts(communityId),
-      this.fetchDatamartSelections(deviceIdRegistryId),
-    ]);
+    const { initialSelections } = this.props;
+    const datamartIds = initialSelections.map(selection => selection.datamart_id);
+
+    this.setState({
+      selectedRowKeys: datamartIds,
+      selectionsTotal: datamartIds.length,
+    });
+
+    return Promise.all([this.fetchDatamarts(communityId)]);
   };
 
   componentDidMount() {
@@ -258,7 +229,7 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
             columns={dataColumns}
             dataSource={this.state.datamarts}
             className='mcs-deviceIdRegistryDatamartSelectionsTable'
-            loading={this.state.isLoadingDatamarts || this.state.isLoadingSelections}
+            loading={this.state.isLoadingDatamarts}
             rowSelection={rowSelection}
           />
         </Row>

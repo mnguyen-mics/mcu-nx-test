@@ -1,7 +1,7 @@
 import * as React from 'react';
 import messages from '../messages';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Button, Drawer, Layout, Modal, Row } from 'antd';
+import { Button, Drawer, Layout, Modal, Row, Tooltip } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import {
@@ -26,7 +26,7 @@ import {
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 import DeviceIdRegistriesEditForm from '../Edit/DeviceIdRegistriesEditForm';
 import DeviceIdRegistryDatamartSelectionsEditForm from '../Edit/DeviceIdRegistryDatamartSelectionsEditForm';
-import { ExclamationCircleOutlined } from '@ant-design/icons/lib/icons';
+import { ExclamationCircleOutlined, WarningOutlined } from '@ant-design/icons/lib/icons';
 import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
 
 const { Content } = Layout;
@@ -40,16 +40,20 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedIntlProps &
   InjectedWorkspaceProps;
 
+interface DeviceIdRegistryWithDatamartSelectionsResource extends DeviceIdRegistryResource {
+  datamart_selections: DeviceIdRegistryDatamartSelectionResource[];
+}
+
 interface DeviceIdRegistriesListState {
   isLoadingRegistries: boolean;
   isLoadingRegistryOffers: boolean;
-  firstPartyDeviceIdRegistries: DeviceIdRegistryResource[];
+  firstPartyDeviceIdRegistries: DeviceIdRegistryWithDatamartSelectionsResource[];
   deviceIdRegistryOffers: DeviceIdRegistryOfferResource[];
   registriesTotal: number;
   offersTotal: number;
   isNewRegistryDrawerVisible: boolean;
   isDatamartSelectionsDrawerVisible: boolean;
-  currentRegistry?: DeviceIdRegistryResource;
+  currentRegistry?: DeviceIdRegistryWithDatamartSelectionsResource;
   isDatamartsSelectionModalVisible: boolean;
   isEditRegistryDrawerVisible: boolean;
 }
@@ -98,15 +102,40 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       }),
     ])
       .then((results: DataListResponse<DeviceIdRegistryResource>[]) => {
-        const registries = results.reduce((acc: DeviceIdRegistryResource[], val) => {
+        return results.reduce((acc: DeviceIdRegistryResource[], val) => {
           return acc.concat(val.data);
         }, []);
-        this.setState({
-          isLoadingRegistries: false,
-          firstPartyDeviceIdRegistries: registries,
-          registriesTotal: registries.length,
-        });
       })
+      .then(registries => {
+        Promise.all(
+          registries.map(registry =>
+            this._deviceIdRegistryService
+              .getDeviceIdRegistryDatamartSelections(registry.id)
+              .then(selections => {
+                return {
+                  datamart_selections: selections.data,
+                  ...registry,
+                } as DeviceIdRegistryWithDatamartSelectionsResource;
+              }),
+          ),
+        )
+          .then(registries => {
+            this.setState({
+              isLoadingRegistries: false,
+              firstPartyDeviceIdRegistries: registries,
+              registriesTotal: registries.length,
+            });
+          })
+          .catch(err => {
+            this.setState({
+              isLoadingRegistries: false,
+              firstPartyDeviceIdRegistries: [],
+              registriesTotal: 0,
+            });
+            notifyError(err);
+          });
+      })
+
       .catch(err => {
         this.setState({
           isLoadingRegistries: false,
@@ -247,7 +276,10 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       .then(createdRegistry => {
         this.setState({
           isDatamartsSelectionModalVisible: true,
-          currentRegistry: createdRegistry,
+          currentRegistry: {
+            datamart_selections: [],
+            ...createdRegistry,
+          },
         });
         Modal.confirm({
           title: formatMessage(messages.datamartsSelectionModalTitle),
@@ -271,7 +303,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       });
   };
 
-  editRegistry = (registry: DeviceIdRegistryResource): void => {
+  editRegistry = (registry: DeviceIdRegistryWithDatamartSelectionsResource): void => {
     this.setState({
       currentRegistry: registry,
       isEditRegistryDrawerVisible: true,
@@ -322,7 +354,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     };
   };
 
-  editDatamartsSelectionAction = (registry: DeviceIdRegistryResource) => {
+  editDatamartsSelectionAction = (registry: DeviceIdRegistryWithDatamartSelectionsResource) => {
     this.setState({
       currentRegistry: registry,
       isDatamartSelectionsDrawerVisible: true,
@@ -336,16 +368,14 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     });
   };
 
-  handleDatamartSelectionsUpdate = (
-    deviceIdRegistryId: string,
-    selectedDatamartIds: string[],
-    previousSelections: DeviceIdRegistryDatamartSelectionResource[],
-  ) => {
+  handleDatamartSelectionsUpdate = (deviceIdRegistryId: string, selectedDatamartIds: string[]) => {
     const {
       notifyError,
       notifySuccess,
       intl: { formatMessage },
     } = this.props;
+
+    const previousSelections = this.state.currentRegistry!.datamart_selections;
 
     const updateSelectionsP = (): Promise<any> => {
       if (selectedDatamartIds.length === 0 && previousSelections.length !== 0) {
@@ -450,6 +480,23 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           sorter: (a: DeviceIdRegistryResource, b: DeviceIdRegistryResource) =>
             a.name.localeCompare(b.name),
           isHideable: false,
+          render: (text: string, record: DeviceIdRegistryWithDatamartSelectionsResource) => {
+            return (
+              <span>
+                {text}{' '}
+                {record.datamart_selections.length === 0 && (
+                  <span className='field-type'>
+                    <Tooltip
+                      placement='bottom'
+                      title={formatMessage(messages.noDatamartsSelectionWarningTooltipText)}
+                    >
+                      <WarningOutlined style={{ color: 'orange' }} />
+                    </Tooltip>
+                  </span>
+                )}
+              </span>
+            );
+          },
         },
         {
           title: formatMessage(messages.deviceIdRegistryType),
@@ -576,7 +623,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           >
             {this.state.currentRegistry && (
               <DeviceIdRegistryDatamartSelectionsEditForm
-                deviceIdRegistry={this.state.currentRegistry as DeviceIdRegistryResource}
+                initialSelections={this.state.currentRegistry!.datamart_selections}
+                deviceIdRegistry={this.state.currentRegistry!}
                 handleSave={this.handleDatamartSelectionsUpdate}
               />
             )}
@@ -596,10 +644,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             {this.state.currentRegistry && (
               <DeviceIdRegistriesEditForm
                 initialValues={this.state.currentRegistry}
-                deviceIdRegistry={this.state.currentRegistry as DeviceIdRegistryResource}
-                save={this.updateRegistry(
-                  (this.state.currentRegistry as DeviceIdRegistryResource).id,
-                )}
+                deviceIdRegistry={this.state.currentRegistry!}
+                save={this.updateRegistry(this.state.currentRegistry!.id)}
               />
             )}
           </Drawer>
