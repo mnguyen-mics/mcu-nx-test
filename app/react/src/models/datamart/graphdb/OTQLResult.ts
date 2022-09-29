@@ -1,6 +1,7 @@
 import {
   AggregateDataset,
   CountDataset,
+  JsonDataset,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import {
   OTQLBuckets,
@@ -62,6 +63,12 @@ export function isCountDataset(
   dataset: OTQLResult | AggregateDataset | CountDataset | OTQLAggregations,
 ): dataset is CountDataset {
   return !!((dataset as CountDataset).value !== undefined);
+}
+
+export function isJsonDataset(
+  dataset: OTQLResult | AggregateDataset | CountDataset | JsonDataset | OTQLAggregations,
+): dataset is JsonDataset {
+  return !!((dataset as JsonDataset).rows !== undefined);
 }
 
 export function isOTQLAggregations(

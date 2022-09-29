@@ -581,6 +581,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
           title: '',
           type: tabQuery.chartItem?.type || 'table',
           dataset,
+          useCache: tabQuery.useCache,
         },
         queryExecutionSource,
         queryExecutionSubSource,

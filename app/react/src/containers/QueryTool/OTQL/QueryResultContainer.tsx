@@ -7,6 +7,7 @@ import {
   isAggregateDataset,
   isOTQLResult,
   isCountDataset,
+  isJsonDataset,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import QueryResultRenderer from './QueryResultRenderer';
 import { compose } from 'recompose';
@@ -79,7 +80,7 @@ class QueryResultContainer extends React.Component<Props> {
         content = <QueryResultRenderer datasource={result.rows[0].aggregations} {...commonProps} />;
       } else if (isAggregateDataset(result) || isCountDataset(result)) {
         content = <QueryResultRenderer datasource={result} {...commonProps} />;
-      } else {
+      } else if (isJsonDataset(result)) {
         content = (
           <div className='mcs-otqlQuery_result_json'>
             <QueryToolJsonResultRenderer rows={result.rows} organisationId={organisationId} />
