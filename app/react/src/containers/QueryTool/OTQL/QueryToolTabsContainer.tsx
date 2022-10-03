@@ -159,9 +159,27 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { datamartId } = this.props;
+    const { datamartId, editionMode, intl } = this.props;
     this.fetchObjectTypes(datamartId).then(() => {
-      this.tryLoadTabStateFromLocalStorage(datamartId);
+      editionMode
+        ? this.setState({
+            tabs: [
+              {
+                title: intl.formatMessage(messages.queryToSave),
+                key: '1',
+                closable: false,
+                serieQueries: this.getDefaultSerieQuery(),
+                precision: 'FULL_PRECISION',
+                evaluateGraphQl: true,
+                useCache: false,
+                runningQuery: false,
+                queryResult: null,
+                queryAborted: false,
+                error: undefined,
+              },
+            ],
+          })
+        : this.tryLoadTabStateFromLocalStorage(datamartId);
     });
   }
 
@@ -1036,25 +1054,15 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                 activeKey={activeKey}
                 onEdit={this.onEdit}
                 tabBarExtraContent={saveExtraOptions}
+                hideAdd={editionMode}
               >
-                {tabs.map((tab, i) => (
+                {editionMode && tabs[0] ? (
                   <TabPane
                     className={'mcs-OTQLConsoleContainer_tabs_tab'}
-                    tab={
-                      i === 0 && editionMode ? intl.formatMessage(messages.queryToSave) : tab.title
-                    }
-                    key={tab.key}
-                    closable={tab.closable}
+                    tab={intl.formatMessage(messages.queryToSave)}
+                    key={1}
+                    closable={false}
                   >
-                    {createdQueryId && (
-                      <Alert
-                        className={'mcs-OTQLConsoleContainer_tabs_createdQueryMessage'}
-                        message={`Query ${createdQueryId} created.`}
-                        type='success'
-                        closable={true}
-                        showIcon={true}
-                      />
-                    )}
                     <div className={'mcs-OTQLConsoleContainer_tab_content'}>
                       <QueryToolTab
                         datamartId={this.props.datamartId}
@@ -1064,7 +1072,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                             : this.getStringFirstQuery()
                         }
                         editionMode={editionMode}
-                        tab={tab}
+                        tab={tabs[0]}
                         runQuery={this.runQuery}
                         onInputChange={this.onInputChange}
                         updateNameModel={this.updateNameModel}
@@ -1075,32 +1083,81 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                         rawSchema={rawSchema}
                         dismissError={this.dismissError}
                         abortQuery={this.abortQuery}
-                        onSaveChart={this.onSaveChart}
                         onDeleteChart={this.onDeleteChart}
                         onQueryParamsChange={this.onQueryParamsChange}
                       />
 
-                      {hasFeature('datastudio-query_tool-charts_loader') && (
-                        <Tabs key={0} type='line' className='mcs-OTQLConsoleContainer_right-tab'>
-                          <Tabs.TabPane tab='Schema' key={1}>
-                            {this.renderSchemaVisualizer(startType)}
-                          </Tabs.TabPane>
-                          <Tabs.TabPane tab='Charts' key={2} style={{ paddingLeft: '10px' }}>
-                            <ChartsSearchPanel
-                              key={chartsSearchPanelKey}
-                              organisationId={organisationId}
-                              title={intl.formatMessage(messages.loadAChart)}
-                              onItemClick={this.onChartItemClick}
-                              chartItem={tab.chartItem}
-                            />
-                          </Tabs.TabPane>
-                        </Tabs>
-                      )}
-                      {!hasFeature('datastudio-query_tool-charts_loader') &&
-                        this.renderSchemaVisualizer(startType)}
+                      {this.renderSchemaVisualizer(startType)}
                     </div>
                   </TabPane>
-                ))}
+                ) : (
+                  tabs.map((tab, i) => (
+                    <TabPane
+                      className={'mcs-OTQLConsoleContainer_tabs_tab'}
+                      tab={
+                        i === 0 && editionMode
+                          ? intl.formatMessage(messages.queryToSave)
+                          : tab.title
+                      }
+                      key={tab.key}
+                      closable={tab.closable}
+                    >
+                      {createdQueryId && (
+                        <Alert
+                          className={'mcs-OTQLConsoleContainer_tabs_createdQueryMessage'}
+                          message={`Query ${createdQueryId} created.`}
+                          type='success'
+                          closable={true}
+                          showIcon={true}
+                        />
+                      )}
+                      <div className={'mcs-OTQLConsoleContainer_tab_content'}>
+                        <QueryToolTab
+                          datamartId={this.props.datamartId}
+                          query={
+                            editionMode && query?.includes('where')
+                              ? query
+                              : this.getStringFirstQuery()
+                          }
+                          editionMode={editionMode}
+                          tab={tab}
+                          runQuery={this.runQuery}
+                          onInputChange={this.onInputChange}
+                          updateNameModel={this.updateNameModel}
+                          updateQueryModel={this.updateQueryModel}
+                          displaySerieInput={this.displaySerieInput}
+                          onSeriesChange={this.onSeriesChange}
+                          noLiveSchemaFound={noLiveSchemaFound}
+                          rawSchema={rawSchema}
+                          dismissError={this.dismissError}
+                          abortQuery={this.abortQuery}
+                          onSaveChart={this.onSaveChart}
+                          onDeleteChart={this.onDeleteChart}
+                          onQueryParamsChange={this.onQueryParamsChange}
+                        />
+
+                        {hasFeature('datastudio-query_tool-charts_loader') && (
+                          <Tabs key={0} type='line' className='mcs-OTQLConsoleContainer_right-tab'>
+                            <Tabs.TabPane tab='Schema' key={1}>
+                              {this.renderSchemaVisualizer(startType)}
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab='Charts' key={2} style={{ paddingLeft: '10px' }}>
+                              <ChartsSearchPanel
+                                key={chartsSearchPanelKey}
+                                organisationId={organisationId}
+                                title={intl.formatMessage(messages.loadAChart)}
+                                onItemClick={this.onChartItemClick}
+                                chartItem={tab.chartItem}
+                              />
+                            </Tabs.TabPane>
+                          </Tabs>
+                        )}
+                        {!hasFeature('datastudio-query_tool-charts_loader') &&
+                          this.renderSchemaVisualizer(startType)}
+                      </div>
+                    </TabPane>
+                  ))
+                )}
               </Tabs>
             )}
           </Content>
