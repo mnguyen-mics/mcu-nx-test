@@ -639,7 +639,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
   }
 
   getBuckets = () => {
-    const { hasFeature, intl, datasource, tab } = this.props;
+    const { hasFeature, intl, datasource, tab, onSaveChart } = this.props;
     const { selectedChart, dataset, aggregationsPath, selectedView, queryHasChanged } = this.state;
     const datasetOptions = this.getChartOptionsMap(selectedChart);
     const viewBuckets = isOTQLAggregations(datasource)
@@ -947,7 +947,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
                 options,
               )}
           </div>
-          {this.isSelectedTypeExportable() ? (
+          {this.isSelectedTypeExportable() && onSaveChart ? (
             <div className={'mcs-otqlChart_chartConfig_clipboard_container'}>
               <AntButton
                 type='ghost'
