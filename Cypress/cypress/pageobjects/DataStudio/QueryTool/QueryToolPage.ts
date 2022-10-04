@@ -5,13 +5,17 @@ import RightTab from './RightTab';
 import { logFunction, logGetter } from '../../log/LoggingDecorator';
 
 class QueryToolPage extends Page {
-  saveChartPopUp: SaveChartPopUp;
-  rightTab: RightTab;
+  public query: string;
+  public queryId: number;
+  public rightTab: RightTab;
+  public saveChartPopUp: SaveChartPopUp;
 
   constructor() {
     super();
     this.saveChartPopUp = new SaveChartPopUp();
     this.rightTab = new RightTab();
+    this.query = '';
+    this.queryId = 0;
   }
 
   @logFunction()
@@ -23,6 +27,17 @@ class QueryToolPage extends Page {
   @logGetter()
   get consoleContainer() {
     return cy.get('.mcs-OTQLConsoleContainer_tabs');
+  }
+
+  @logGetter()
+  get resultsArea() {
+    const re = /@count/;
+    var selector = '.mcs-dashboardMetric';
+    // query does not contain count
+    if (re.exec(this.query) === null) {
+      selector = '.mcs-otqlQuery_result_json';
+    }
+    return cy.get(selector, { timeout: 60000 });
   }
 
   @logGetter()
@@ -50,9 +65,65 @@ class QueryToolPage extends Page {
     return cy.get('.mcs-otqlInputEditor_save_button');
   }
 
+  @logGetter()
+  get saveAsButton() {
+    return cy.get('.mcs-otqlInputEditor_save_as_button');
+  }
+
+  @logGetter()
+  get alertMessage() {
+    return cy.get('.ant-alert-message', { timeout: 60000 }).filter(':visible');
+  }
+
+  @logGetter()
+  get alertMessageCloseButton() {
+    return cy.get('.ant-alert-close-icon').filter(':visible');
+  }
+
+  @logFunction()
+  closeAlertMessage() {
+    this.alertMessageCloseButton.click();
+  }
+
+  @logFunction()
+  getQueryId() {
+    this.queryId = 0;
+    this.clickSaveAsTechnicalQuery();
+    this.alertMessage.invoke('text').then(text => {
+      var pattern = /[0-9]+/g;
+      var result = text.match(pattern);
+      if (result !== null) {
+        this.queryId = result[0];
+      }
+      expect(this.queryId).to.not.equal(0);
+      cy.log('Query id: ' + this.queryId);
+    });
+    this.closeAlertMessage();
+    return this.queryId;
+  }
+
   @logFunction()
   clickBtnSave() {
     this.btnSave.click();
+  }
+
+  @logFunction()
+  clickSaveAsTechnicalQuery() {
+    this.clickSaveAsGeneric('Technical query');
+  }
+
+  @logFunction()
+  clickSaveAsUserQuerySegment() {
+    this.clickSaveAsGeneric('User Query Segment');
+  }
+
+  @logFunction()
+  private clickSaveAsGeneric(pattern: string) {
+    this.saveAsButton.click();
+    cy.get('.ant-dropdown-menu').then($element => {
+      cy.wait(1000);
+      cy.get('.ant-dropdown-menu').contains(pattern).click();
+    });
   }
 
   @logGetter()
@@ -111,6 +182,16 @@ class QueryToolPage extends Page {
   }
 
   @logFunction()
+  executeQuery(query: string = '') {
+    // if no query is pass as argument, simply run the current query
+    //cy.get('.mcs-otqlInputEditor_run_button').eq(0).click();
+    if (query !== '') {
+      this.typeQuery(query);
+    }
+    cy.get('.mcs-otqlInputEditor_run_button').filter(':visible').click();
+  }
+
+  @logFunction()
   clickBarIcon() {
     cy.get('.mcs-otqlChart_icons_bar').click();
   }
@@ -138,13 +219,39 @@ class QueryToolPage extends Page {
   }
 
   @logFunction()
-  typeQuery(query: string, pos: number) {
-    cy.get('.mcs-otqlInputEditor_otqlConsole > textarea')
-      .eq(pos)
-      .type('{selectall}{backspace}{backspace}', {
-        force: true,
-      })
-      .type(query, { force: true, parseSpecialCharSequences: false });
+  typeQuery(query: string, pos: number = 0) {
+    // FIXME pos is not use anymore
+    this.query = query;
+    cy.get('.mcs-otqlInputEditor_otqlConsole')
+      .filter(':visible')
+      .within(() => {
+        cy.get('textarea')
+          .type('{selectall}{backspace}{backspace}', { force: true })
+          .type(query, { force: true, parseSpecialCharSequences: false });
+      });
+  }
+
+  @logFunction()
+  resultsShouldContain(result: string) {
+    this.resultsArea.should('contain', result);
+  }
+
+  @logFunction()
+  addTab() {
+    cy.get('.ant-tabs-nav-add').filter(':visible').last().click();
+    cy.wait(500);
+  }
+
+  @logFunction()
+  selectTab(id: number) {
+    // first tab has 0 index
+    id = id - 1;
+    cy.get('.ant-tabs-tab').eq(id).click();
+  }
+
+  @logFunction()
+  schemaShouldContain(field: string) {
+    cy.get('.ant-tree-list').should('contain', field);
   }
 }
 
