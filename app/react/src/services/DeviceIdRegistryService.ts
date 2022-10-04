@@ -26,6 +26,8 @@ export interface IDeviceIdRegistryService {
     body: Partial<DeviceIdRegistryResource>,
   ) => Promise<DataResponse<DeviceIdRegistryResource>>;
 
+  deleteDeviceIdRegistry: (deviceIdRegistryId: string, communityId: string) => Promise<any>;
+
   createDeviceIdRegistryDatamartSelection: (
     deviceIdRegistryId: string,
     datamartId: string,
@@ -83,6 +85,14 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
       community_id: communityId,
     };
     return ApiService.putRequest(endpoint, body, params);
+  }
+
+  deleteDeviceIdRegistry(deviceIdRegistryId: string, communityId: string): Promise<any> {
+    const endpoint = `device_id_registries/${deviceIdRegistryId}`;
+    const params = {
+      community_id: communityId,
+    };
+    return ApiService.deleteRequest(endpoint, params);
   }
 
   createDeviceIdRegistryDatamartSelection(

@@ -264,7 +264,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             isNewRegistryDrawerVisible: false,
           },
           () => {
-            this.refresh();
+            this.refreshFirstPartyRegistries();
             notifySuccess({
               message: formatMessage(messages.newRegistryCreationSuccess),
               description: '',
@@ -303,7 +303,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       });
   };
 
-  editRegistry = (registry: DeviceIdRegistryWithDatamartSelectionsResource): void => {
+  editRegistryAction = (registry: DeviceIdRegistryWithDatamartSelectionsResource): void => {
     this.setState({
       currentRegistry: registry,
       isEditRegistryDrawerVisible: true,
@@ -337,7 +337,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
               currentRegistry: undefined,
             },
             () => {
-              this.refresh();
+              this.refreshFirstPartyRegistries();
               notifySuccess({
                 message: formatMessage(messages.registryEditionSuccess),
                 description: '',
@@ -352,6 +352,60 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           notifyError(err);
         });
     };
+  };
+
+  deleteRegistryOnOk = (registry: DeviceIdRegistryWithDatamartSelectionsResource) => {
+    const {
+      workspace: { community_id },
+      notifyError,
+      notifySuccess,
+      intl: { formatMessage },
+    } = this.props;
+
+    return this._deviceIdRegistryService
+      .deleteDeviceIdRegistry(registry.id, community_id)
+      .then(() => {
+        this.refreshFirstPartyRegistries();
+        notifySuccess({
+          message: formatMessage(messages.registryDeletionSuccess),
+          description: '',
+        });
+      })
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
+  deleteRegistryAction = (registry: DeviceIdRegistryWithDatamartSelectionsResource) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
+    if (registry.datamart_selections.length !== 0) {
+      return Modal.error({
+        className: 'mcs-modal--errorDialog',
+        icon: <ExclamationCircleOutlined />,
+        title: formatMessage(messages.datamartSelectionsExistTitle),
+        content: formatMessage(messages.datamartSelectionsExistMessage),
+        okText: 'OK',
+        onOk() {
+          // closing modal
+        },
+      });
+    } else {
+      return Modal.confirm({
+        title: formatMessage(messages.registryDeletionConfirmationTitle),
+        content: formatMessage(messages.registryDeletionConfirmationMessage, {
+          registryName: `${registry.name}`,
+        }),
+        icon: <ExclamationCircleOutlined />,
+        okText: 'Yes',
+        cancelText: formatMessage(messages.modalCancel),
+        onOk: () => {
+          this.deleteRegistryOnOk(registry);
+        },
+      });
+    }
   };
 
   editDatamartsSelectionAction = (registry: DeviceIdRegistryWithDatamartSelectionsResource) => {
@@ -407,7 +461,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             isDatamartSelectionsDrawerVisible: false,
           },
           () => {
-            this.refresh();
+            this.refreshFirstPartyRegistries();
             notifySuccess({
               message: formatMessage(messages.datamartSelectionsEditionSuccess),
               description: '',
@@ -423,7 +477,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       });
   };
 
-  refresh = () => {
+  refreshFirstPartyRegistries = () => {
     const {
       workspace: { community_id, organisation_id },
     } = this.props;
@@ -575,13 +629,18 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         key: 'action',
         actions: (record: DeviceIdRegistryResource) => [
           {
+            message: formatMessage(messages.editDeviceIdRegistry),
+            callback: this.editRegistryAction,
+            disabled: record.type == 'INSTALLATION_ID',
+          },
+          {
             message: formatMessage(messages.editRegistryDatamartsSelection),
             callback: this.editDatamartsSelectionAction,
             disabled: record.type == 'INSTALLATION_ID',
           },
           {
-            message: formatMessage(messages.editDeviceIdRegistry),
-            callback: this.editRegistry,
+            message: formatMessage(messages.deleteDeviceIdRegistry),
+            callback: this.deleteRegistryAction,
             disabled: record.type == 'INSTALLATION_ID',
           },
         ],
