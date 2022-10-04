@@ -1,5 +1,5 @@
-import QueryToolPage from '../../../pageobjects/DataStudio/QueryTool/QueryToolPage';
 import ImportsPage from '../../../pageobjects/DataStudio/ImportsPage';
+import QueryToolPage from '../../../pageobjects/DataStudio/QueryTool/QueryToolPage';
 
 describe('Query tool - Query builder', () => {
   Cypress.Cookies.defaults({
@@ -11,7 +11,7 @@ describe('Query tool - Query builder', () => {
       cy.login();
       cy.switchOrg(data.organisationName);
       const importsPage = new ImportsPage();
-      const importName = `Test Import Activities ${Math.random().toString(36).substring(2, 10)}`;
+      const importName = `Test Import Profiles ${Math.random().toString(36).substring(2, 10)}`;
       importsPage.goToPage();
       importsPage.clickBtnImportsCreation();
       cy.contains(data.datamartName).click();
@@ -30,75 +30,21 @@ describe('Query tool - Query builder', () => {
       importsPage.clickOK();
       importsPage.importExecutionTable.should('contain', 'RUNNING');
       importsPage.importExecutionTable.should('contain', 'SUCCEEDED');
+
       // Wait the elasticsearch indexation for otql request
       cy.wait(30000);
     });
   });
 
-  afterEach(() => {
-    // cy.clearLocalStorage();
-    //Code to Handle the Sesssions in cypress.
-    //Keep the Session alive when you jump to another test
-    const str: string[] = [];
-    cy.getCookies().then(cook => {
-      for (let l = 0; l < cook.length; l++) {
-        if (cook.length > 0 && l == 0) {
-          str[l] = cook[l].name;
-          Cypress.Cookies.preserveOnce(str[l]);
-        } else if (cook.length > 1 && l > 1) {
-          str[l] = cook[l].name;
-          Cypress.Cookies.preserveOnce(str[l]);
-        }
-      }
+  beforeEach(() => {
+    cy.login();
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.switchOrg(data.organisationName);
     });
   });
 
-  it('Create two tabs, each with one different working query and run the queries', () => {
-    const queryToolPage = new QueryToolPage();
-    queryToolPage.goToPage();
-
-    // Create two tabs, each with one different working query and run the queries
-    queryToolPage.typeQuery(' ', 0);
-    queryToolPage.typeQuery('select @count{} from UserAccount', 0);
-    queryToolPage.clickBtnRun();
-    queryToolPage.resultsShouldContain('5');
-    queryToolPage.resultMetrics.should('be.visible');
-    queryToolPage.schemaVizualize.should('not.contain', 'activity_events');
-
-    queryToolPage.clickBtnAddQuery();
-    queryToolPage.typeQuery(' ', 1);
-    queryToolPage.typeQuery('select @count{} from UserActivity', 1);
-    queryToolPage.clickBtnRun(1);
-    queryToolPage.resultsShouldContainByTab('0', 1);
-    queryToolPage.resultMetricsByTab(1).should('be.visible');
-    queryToolPage.schemaVizualizeByTab(1).should('not.contain', 'activity_events');
-
-    // Check that the first query result did not dissapeared
-    queryToolPage.clickOnTab(0);
-    queryToolPage.resultsShouldContain('5');
-    queryToolPage.resultMetrics.should('be.visible');
-    queryToolPage.schemaVizualize.should('not.contain', 'activity_events');
-
-    // In the second tab, change the query so that it is invalid and run the query
-    queryToolPage.clickOnTab(1);
-    queryToolPage.typeQuery(' ', 1);
-    queryToolPage.typeQuery('select @count{} from UserActivitE', 1);
-    queryToolPage.clickBtnRun(1);
-    queryToolPage.alertErrorIsPresentOnTab(1);
-    queryToolPage.resultMetricsByTab(1).should('not.exist');
-
-    // Correct the query and run it again
-    queryToolPage.typeQuery(' ', 1);
-    queryToolPage.typeQuery('select @count{} from UserActivity', 1);
-    queryToolPage.clickBtnRun(1);
-
-    // - The error message disappears
-    queryToolPage.alertErrorIsMissingOnTab(1);
-
-    // - The result is correctly displayed
-    queryToolPage.resultsShouldContainByTab('0', 1);
-    queryToolPage.resultMetricsByTab(1).should('be.visible');
-    queryToolPage.schemaVizualizeByTab(1).should('not.contain', 'activity_events');
+  afterEach(() => {
+    cy.clearLocalStorage();
   });
 
   it('Check the Tabs management', () => {
@@ -108,39 +54,58 @@ describe('Query tool - Query builder', () => {
     const queryToolPage = new QueryToolPage();
     queryToolPage.goToPage();
     queryToolPage.typeQuery('SELECT @count{} FROM UserPoint');
-    queryToolPage.schemaShouldContain('accounts');
+    queryToolPage.schemaVisualizer.shouldContain('accounts');
     queryToolPage.executeQuery();
     queryToolPage.resultsShouldContain('5');
     const queryId1 = queryToolPage.getQueryId();
-    queryToolPage.clickSaveAsUserQuerySegment();
-    queryToolPage.saveAsUserQuerySegmentPopUp.typeName('failed');
-    // queryToolPage.saveAsUserQuerySegmentPopUp.clickCancel();
-    // queryToolPage.clickSaveAsUserQuerySegment();
-    // queryToolPage.saveAsUserQuerySegmentPopUp.typeName("failed");
-    // queryToolPage.saveAsUserQuerySegmentPopUp.clickOk();
 
     // [MICS-14520 In the query tool, "save as > technical query" works only one time properly](https://mediarithmics.atlassian.net/browse/MICS-14520)
     // queryToolPage.getQueryId()
-    queryToolPage.addTab();
+    queryToolPage.tab.clickAdd();
     queryToolPage.typeQuery('SELECT @count{} FROM UserAgent');
-    queryToolPage.schemaShouldContain('user_agent_info');
+    queryToolPage.schemaVisualizer.shouldContain('user_agent_info');
     queryToolPage.executeQuery();
     queryToolPage.resultsShouldContain('0');
     const queryId2 = queryToolPage.getQueryId();
 
-    queryToolPage.addTab();
+    queryToolPage.tab.clickAdd();
     queryToolPage.typeQuery('SELECT @count{} FROM UserEmail');
-    queryToolPage.schemaShouldContain('email');
+    queryToolPage.schemaVisualizer.shouldContain('email');
     queryToolPage.executeQuery();
     queryToolPage.resultsShouldContain('0');
     const queryId3 = queryToolPage.getQueryId();
 
-    queryToolPage.selectTab(1);
-    queryToolPage.schemaShouldContain('accounts');
-    queryToolPage.selectTab(2);
-    queryToolPage.schemaShouldContain('user_agent_info');
-    queryToolPage.selectTab(3);
-    queryToolPage.schemaShouldContain('email');
+    // create multiple tabs with different queries such as SELECT {id} FROM UserPoint in one, SELECT {id} FROM UserPoint WHERE emails{} in the second and SELECT {id} FROM UserPoint WHERE events{} in the third. In each tab, hit Save as... then User query segment.
+    queryToolPage.tab.select(1);
+    queryToolPage.schemaVisualizer.shouldContain('accounts');
+    queryToolPage.typeQuery('SELECT {id} FROM UserPoint');
+    queryToolPage.clickSaveAsUserQuerySegment();
+    queryToolPage.saveAsUserQuerySegmentPopUp.clickCancel();
+    queryToolPage.clickSaveAsUserQuerySegment();
+    queryToolPage.saveAsUserQuerySegmentPopUp.typeName('tab1');
+    queryToolPage.saveAsUserQuerySegmentPopUp.clickOk();
+    cy.url({ timeout: 60000 }).should('contain', 'segment');
+    queryToolPage.goToPage();
+
+    queryToolPage.tab.select(2);
+    queryToolPage.schemaVisualizer.shouldContain('user_agent_info');
+    queryToolPage.typeQuery('SELECT {id} FROM UserPoint WHERE emails{}');
+    queryToolPage.clickSaveAsExport();
+    queryToolPage.exportPopUp.typeInInput('export name 1');
+    queryToolPage.exportPopUp.clickOk();
+    cy.url({ timeout: 60000 }).should('contain', 'exports');
+    queryToolPage.goToPage();
+
+    queryToolPage.tab.select(3);
+    queryToolPage.schemaVisualizer.shouldContain('email');
+    queryToolPage.typeQuery('SELECT {id} FROM UserPoint WHERE emails{}');
+    queryToolPage.clickSaveAsUserQuerySegment();
+    queryToolPage.saveAsUserQuerySegmentPopUp.clickCancel();
+    queryToolPage.clickSaveAsUserQuerySegment();
+    queryToolPage.saveAsUserQuerySegmentPopUp.typeName('tab3');
+    queryToolPage.saveAsUserQuerySegmentPopUp.clickOk();
+    cy.url({ timeout: 60000 }).should('contain', 'segment');
+    queryToolPage.goToPage();
 
     // force synchrone test
     // cy.get('html').then(() => {
@@ -150,28 +115,48 @@ describe('Query tool - Query builder', () => {
     // });
   });
 
-  it.skip('should test the query tool multi tab function', () => {
+  it('Error handling in multi-tabs case', () => {
     const queryToolPage = new QueryToolPage();
-    // cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-    // cy.login();
-    // cy.switchOrg(data.organisationName);
     queryToolPage.goToPage();
-    queryToolPage.typeQuery(' ');
+
+    // Create two tabs, each with one different working query and run the queries
     queryToolPage.typeQuery('select @count{} from UserAccount');
     queryToolPage.clickBtnRun();
     queryToolPage.resultsShouldContain('5');
-    queryToolPage.resultMetrics.should('be.visible');
-    queryToolPage.schemaVizualize.should('not.contain', 'activity_events');
-    queryToolPage.clickBtnAddQuery();
+    queryToolPage.schemaVisualizer.shouldNotContain('activity_events');
+
+    queryToolPage.tab.clickAdd();
+    queryToolPage.typeQuery('select @count{} from UserActivity');
+    queryToolPage.clickBtnRun();
+    queryToolPage.resultsShouldContain('0');
+    queryToolPage.schemaVisualizer.shouldNotContain('activity_events');
+
+    // Check that the first query result did not dissapeared
+    queryToolPage.tab.select(1);
+    queryToolPage.resultsShouldContain('5');
+    queryToolPage.schemaVisualizer.shouldNotContain('activity_events');
+
+    // In the second tab, change the query so that it is invalid and run the query
+    queryToolPage.tab.select(2);
+    queryToolPage.typeQuery('select @count{} from UserActivitE');
+    queryToolPage.clickBtnRun();
+    queryToolPage.alertErrorIsPresent();
     queryToolPage.resultMetrics.should('not.be.visible');
-    queryToolPage.schemaVizualize.eq(1).should('contain', 'activity_events');
-    queryToolPage.clickBtnRemoveQuery();
+
+    // Correct the query and run it again
+    queryToolPage.typeQuery('select @count{} from UserActivity');
+    queryToolPage.clickBtnRun();
+
+    // - The error message disappears
+    queryToolPage.alertErrorIsMissing();
+
+    // - The result is correctly displayed
+    queryToolPage.resultsShouldContain('0');
     queryToolPage.resultMetrics.should('be.visible');
-    queryToolPage.schemaVizualize.should('not.contain', 'activity_events');
-    // });
+    queryToolPage.schemaVisualizer.shouldNotContain('activity_events');
   });
 
-  it.skip('test @cardinality query', () => {
+  it('test @cardinality query', () => {
     const queryToolPage = new QueryToolPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.createChannel(
@@ -195,16 +180,14 @@ describe('Query tool - Query builder', () => {
             data.datamartId,
             'SELECT {nature @cardinality} FROM ActivityEvent where nature = "test_cardinality_1" or nature = "test_cardinality_2"',
           ).then(() => {
-            cy.switchOrg(data.organisationName);
+            //cy.switchOrg(data.organisationName);
             queryToolPage.goToPage();
             queryToolPage.typeQuery(
               'SELECT {nature @cardinality} FROM ActivityEvent where nature = "test_cardinality_1" or nature = "test_cardinality_2"',
-              0,
             );
             queryToolPage.clickBtnRun();
-            queryToolPage.tableContainer
-              .should('contain', '2')
-              .and('contain', 'cardinality_nature');
+            queryToolPage.resultsShouldContain('2');
+            queryToolPage.resultsShouldContain('cardinality_id');
           });
         });
       });
