@@ -101,7 +101,11 @@ export const getFormattedQuery = (
           }
         });
     }
-    return Promise.resolve(formatQuery(dashboardQuery, `segments { id = \"${source.id}\"}`));
+    return Promise.resolve({
+      ...dashboardQuery,
+      query_language: 'OTQL',
+      query_text: `${dashboardQuery.query_text} JOIN UserSegment WHERE id = \"${source.id}\"`,
+    });
   } else if (
     isStandardSegmentBuilderQueryDocument(source) &&
     source.language_version === 'JSON_OTQL'
