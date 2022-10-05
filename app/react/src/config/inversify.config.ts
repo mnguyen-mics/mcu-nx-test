@@ -173,6 +173,10 @@ import {
 import DeviceIdRegistryService, {
   IDeviceIdRegistryService,
 } from '../services/DeviceIdRegistryService';
+import {
+  ExternalFeedSessionService,
+  IExternalFeedSessionService,
+} from '../services/ExternalFeedSessionService';
 
 export const container = new Container();
 
@@ -335,6 +339,9 @@ container
 container
   .bind<IDeviceIdRegistryService>(TYPES.IDeviceIdRegistryService)
   .to(DeviceIdRegistryService);
+container
+  .bind<IExternalFeedSessionService>(TYPES.IExternalFeedSessionService)
+  .to(ExternalFeedSessionService);
 
 export const { lazyInject } = getDecorators(container, false);
 

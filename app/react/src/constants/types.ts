@@ -74,6 +74,7 @@ const TYPES = {
   IChartService: Symbol.for('chartService'),
   IContextualTargetingService: Symbol.for('contextualTargetingService'),
   IDeviceIdRegistryService: Symbol.for('deviceIdRegistryService'),
+  IExternalFeedSessionService: Symbol.for('externalFeedSessionService'),
 };
 
 export { TYPES };

@@ -167,6 +167,7 @@ export enum StatusEnum {
   'PAUSED',
   'ACTIVE',
   'PUBLISHED',
+  'ERROR',
 }
 export type Status = keyof typeof StatusEnum;
 
