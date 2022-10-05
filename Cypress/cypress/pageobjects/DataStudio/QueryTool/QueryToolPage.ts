@@ -32,12 +32,23 @@ class QueryToolPage extends Page {
   @logGetter()
   get resultsArea() {
     const re = /@count/;
-    var selector = '.mcs-dashboardMetric';
+    let selector = '.mcs-dashboardMetric';
     // query does not contain count
     if (re.exec(this.query) === null) {
       selector = '.mcs-otqlQuery_result_json';
     }
     return cy.get(selector, { timeout: 60000 });
+  }
+
+  @logFunction()
+  resultsAreaByTab(tabIndex: number) {
+    const re = /@count/;
+    let selector = '.mcs-dashboardMetric';
+    // query does not contain count
+    if (re.exec(this.query) === null) {
+      selector = '.mcs-otqlQuery_result_json';
+    }
+    return this.getTabPanel(tabIndex).find(selector, { timeout: 60000 });
   }
 
   @logGetter()
@@ -151,6 +162,11 @@ class QueryToolPage extends Page {
     return cy.get('.mcs-otqlChart_resultMetrics');
   }
 
+  @logFunction()
+  resultMetricsByTab(tabIndex: number) {
+    return this.getTabPanel(tabIndex).find('.mcs-otqlChart_resultMetrics');
+  }
+
   @logGetter()
   get chartContainer() {
     return cy.get('.mcs-chart_content_container');
@@ -171,14 +187,37 @@ class QueryToolPage extends Page {
     return cy.get('.mcs-schemaVizualize_content');
   }
 
+  @logFunction()
+  schemaVizualizeByTab(tabIndex: number) {
+    return this.getTabPanel(tabIndex).find('.mcs-schemaVizualize_content');
+  }
+
   @logGetter()
   get tableContainer() {
     return cy.get('.mcs-table-container');
   }
 
   @logFunction()
-  clickBtnRun() {
-    cy.get('.mcs-otqlInputEditor_run_button').eq(0).click();
+  clickBtnRun(tabIndex?: number) {
+    this.getTabPanel(!!tabIndex ? tabIndex : 0)
+      .find('.mcs-otqlInputEditor_run_button')
+      .eq(0)
+      .click();
+  }
+
+  @logFunction()
+  getTabPanel(tabIndex: number) {
+    return cy.get(`div[id="rc-tabs-1-panel-${tabIndex + 1}"]`);
+  }
+
+  @logFunction()
+  getActiveTabPanel() {
+    return cy.get(`ant-tabs-tab-active`).eq(0);
+  }
+
+  @logFunction()
+  clickOnTab(tabIndex: number) {
+    cy.get('.mcs-OTQLConsoleContainer_tabs').find(`.ant-tabs-tab-with-remove`).eq(tabIndex).click();
   }
 
   @logFunction()
@@ -252,6 +291,32 @@ class QueryToolPage extends Page {
   @logFunction()
   schemaShouldContain(field: string) {
     cy.get('.ant-tree-list').should('contain', field);
+  }
+
+  @logFunction()
+  resultsShouldContainByTab(result: string, tabIndex: number) {
+    this.resultsAreaByTab(tabIndex).should('contain', result);
+  }
+
+  @logFunction()
+  resultsAreaShouldContain(result: string, tabIndex: number) {
+    const re = /@count/;
+    let selector = '.mcs-dashboardMetric';
+    // query does not contain count
+    if (re.exec(this.query) === null) {
+      selector = '.mcs-otqlQuery_result_json';
+    }
+    this.getTabPanel(tabIndex).find(selector, { timeout: 60000 }).should('contain', result);
+  }
+
+  @logFunction()
+  alertErrorIsPresentOnTab(tabIndex: number) {
+    this.getTabPanel(tabIndex).find('.ant-alert-error', { timeout: 20000 }).should('exist'); // .its('length').should('eq', 1);
+  }
+
+  @logFunction()
+  alertErrorIsMissingOnTab(tabIndex: number) {
+    this.getTabPanel(tabIndex).find('.ant-alert-error', { timeout: 20000 }).should('not.exist'); // .its('length').should('eq', 0);
   }
 }
 

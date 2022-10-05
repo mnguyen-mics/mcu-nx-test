@@ -53,6 +53,54 @@ describe('Query tool - Query builder', () => {
     });
   });
 
+  it('Create two tabs, each with one different working query and run the queries', () => {
+    const queryToolPage = new QueryToolPage();
+    queryToolPage.goToPage();
+
+    // Create two tabs, each with one different working query and run the queries
+    queryToolPage.typeQuery(' ', 0);
+    queryToolPage.typeQuery('select @count{} from UserAccount', 0);
+    queryToolPage.clickBtnRun();
+    queryToolPage.resultsShouldContain('5');
+    queryToolPage.resultMetrics.should('be.visible');
+    queryToolPage.schemaVizualize.should('not.contain', 'activity_events');
+
+    queryToolPage.clickBtnAddQuery();
+    queryToolPage.typeQuery(' ', 1);
+    queryToolPage.typeQuery('select @count{} from UserActivity', 1);
+    queryToolPage.clickBtnRun(1);
+    queryToolPage.resultsShouldContainByTab('0', 1);
+    queryToolPage.resultMetricsByTab(1).should('be.visible');
+    queryToolPage.schemaVizualizeByTab(1).should('not.contain', 'activity_events');
+
+    // Check that the first query result did not dissapeared
+    queryToolPage.clickOnTab(0);
+    queryToolPage.resultsShouldContain('5');
+    queryToolPage.resultMetrics.should('be.visible');
+    queryToolPage.schemaVizualize.should('not.contain', 'activity_events');
+
+    // In the second tab, change the query so that it is invalid and run the query
+    queryToolPage.clickOnTab(1);
+    queryToolPage.typeQuery(' ', 1);
+    queryToolPage.typeQuery('select @count{} from UserActivitE', 1);
+    queryToolPage.clickBtnRun(1);
+    queryToolPage.alertErrorIsPresentOnTab(1);
+    queryToolPage.resultMetricsByTab(1).should('not.exist');
+
+    // Correct the query and run it again
+    queryToolPage.typeQuery(' ', 1);
+    queryToolPage.typeQuery('select @count{} from UserActivity', 1);
+    queryToolPage.clickBtnRun(1);
+    
+    // - The error message disappears
+    queryToolPage.alertErrorIsMissingOnTab(1);
+
+    // - The result is correctly displayed
+    queryToolPage.resultsShouldContainByTab('0', 1);
+    queryToolPage.resultMetricsByTab(1).should('be.visible');
+    queryToolPage.schemaVizualizeByTab(1).should('not.contain', 'activity_events');
+  });
+
   it('Check the Tabs management', () => {
     // Create multiple tabs with different scopes such as SELECT @count FROM
     //  UserPoint in one, SELECT @count FROM UserAgent in the second and SELECT
