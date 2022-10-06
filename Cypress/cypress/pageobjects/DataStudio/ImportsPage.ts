@@ -24,7 +24,7 @@ class ImportsPage extends Page {
 
   @logGetter()
   get importExecutionTable() {
-    return cy.get('.mcs-importExecution_table');
+    return cy.get('.mcs-importExecution_table', { timeout: 60000 });
   }
 
   @logGetter()
