@@ -39,7 +39,7 @@ describe('Query tool - Query builder', () => {
     // cy.clearLocalStorage();
     //Code to Handle the Sesssions in cypress.
     //Keep the Session alive when you jump to another test
-    let str: string[] = [];
+    const str: string[] = [];
     cy.getCookies().then(cook => {
       for (let l = 0; l < cook.length; l++) {
         if (cook.length > 0 && l == 0) {
@@ -91,7 +91,7 @@ describe('Query tool - Query builder', () => {
     queryToolPage.typeQuery(' ', 1);
     queryToolPage.typeQuery('select @count{} from UserActivity', 1);
     queryToolPage.clickBtnRun(1);
-    
+
     // - The error message disappears
     queryToolPage.alertErrorIsMissingOnTab(1);
 

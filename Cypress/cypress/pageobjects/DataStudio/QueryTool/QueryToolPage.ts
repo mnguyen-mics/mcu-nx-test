@@ -101,10 +101,10 @@ class QueryToolPage extends Page {
     this.queryId = 0;
     this.clickSaveAsTechnicalQuery();
     this.alertMessage.invoke('text').then(text => {
-      var pattern = /[0-9]+/g;
-      var result = text.match(pattern);
+      const pattern = /[0-9]+/g;
+      const result = text.match(pattern);
       if (result !== null) {
-        this.queryId = result[0];
+        this.queryId = +result[0];
       }
       expect(this.queryId).to.not.equal(0);
       cy.log('Query id: ' + this.queryId);
