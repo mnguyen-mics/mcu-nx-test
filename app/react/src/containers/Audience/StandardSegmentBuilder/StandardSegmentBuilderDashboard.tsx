@@ -109,6 +109,7 @@ class StandardSegmentBuilderDashboard extends React.Component<Props> {
           stats.otqlQueries,
           stats.activitiesAnalyticsQueries,
           stats.collectionVolumesQueries,
+          stats.resourcesUsageQueries,
           stats.datafileQueries,
         );
       }

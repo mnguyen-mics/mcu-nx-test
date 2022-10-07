@@ -236,6 +236,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
           stats.otqlQueries,
           stats.activitiesAnalyticsQueries,
           stats.collectionVolumesQueries,
+          stats.resourcesUsageQueries,
           stats.datafileQueries,
         );
       }

@@ -391,6 +391,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           stats.otqlQueries,
           stats.activitiesAnalyticsQueries,
           stats.collectionVolumesQueries,
+          stats.resourcesUsageQueries,
           stats.datafileQueries,
         );
       }
