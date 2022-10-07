@@ -105,7 +105,6 @@ const organisationSettingsDefinition: NavigatorMenuDefinition = {
         settingsDefinition.settingsOrganisationDeviceIdRegistryList,
       ),
       translation: messages.deviceIdRegistriesSettingsTitle,
-      communityOnly: true,
     },
   ],
 };

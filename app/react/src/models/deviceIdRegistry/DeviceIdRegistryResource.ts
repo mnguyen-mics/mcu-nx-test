@@ -11,7 +11,7 @@ export interface DeviceIdRegistryResource {
   name: string;
   description?: string;
   type: DeviceIdRegistryType;
-  community_id: string;
+  organisation_id: string;
 }
 
 export interface DeviceIdRegistryOfferResource {

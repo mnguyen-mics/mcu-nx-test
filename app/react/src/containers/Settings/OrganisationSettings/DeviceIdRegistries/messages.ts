@@ -48,7 +48,7 @@ const messages = defineMessages({
   registryDeletionConfirmationMessage: {
     id: 'settings.organisation.device.registries.delete.confirm.message',
     defaultMessage:
-      'You are about to definitively delete the device registry {registryName}. Are you sure you want to continue?',
+      'You are about to delete the device registry {registryName}. Are you sure you want to continue?',
   },
   registryDeletionSuccess: {
     id: 'settings.organisation.device.registries.delete.success',
