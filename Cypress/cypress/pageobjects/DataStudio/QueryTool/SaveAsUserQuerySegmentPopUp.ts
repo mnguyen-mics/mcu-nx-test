@@ -1,7 +1,7 @@
-import Page from '../../Page';
+import GenericPopUp from './GenericPopUp';
 import { logFunction, logGetter } from '../../log/LoggingDecorator';
 
-class SaveAsUserQuerySegmentPopUp extends Page {
+class SaveAsUserQuerySegmentPopUp extends GenericPopUp {
   constructor() {
     super();
   }
@@ -12,43 +12,15 @@ class SaveAsUserQuerySegmentPopUp extends Page {
   }
 
   @logGetter()
-  get btnCancel() {
-    return cy.get('.ant-btn').contains('Cancel');
-  }
-
-  @logGetter()
-  get btnClose() {
-    return cy.get('.ant-modal-close');
-  }
-
-  @logGetter()
-  get btnOk() {
-    return cy.get('.mcs-saveAsUserQuerySegmentModal_ok_button');
-  }
-
-  @logGetter()
   get inputName() {
     return this.popUp.find('.mcs-newUserQuerySegmentSimpleForm_name_input');
   }
 
-  @logGetter()
-  get popUp() {
-    return cy.get('.ant-modal-content');
-  }
-
-  @logFunction()
-  clickCancel() {
-    this.btnCancel.click();
-  }
-
-  @logFunction()
-  clickCloseButton() {
-    this.btnClose.click();
-  }
-
   @logFunction()
   clickOk() {
-    this.btnOk.click();
+    super.clickOk();
+    // it redirect to the segment page
+    cy.wait(5000);
   }
 
   @logFunction()

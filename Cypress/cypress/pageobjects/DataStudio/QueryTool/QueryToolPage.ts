@@ -1,27 +1,33 @@
 import Page from '../../Page';
 import LeftMenu from '../../LeftMenu';
 import SaveChartPopUp from './SaveChartPopUp';
+import SaveAsUserQuerySegmentPopUp from './SaveAsUserQuerySegmentPopUp';
+import ExportPopUp from './ExportPopUp';
 import RightTab from './RightTab';
+import Tab from './Tab';
+import SchemaVisualizer from './SchemaVisualizer';
 import { logFunction, logGetter } from '../../log/LoggingDecorator';
 
 class QueryToolPage extends Page {
+  public exportPopUp: ExportPopUp;
   public query: string;
   public queryId: number;
   public rightTab: RightTab;
+  public saveAsUserQuerySegmentPopUp: SaveAsUserQuerySegmentPopUp;
   public saveChartPopUp: SaveChartPopUp;
+  public tab: Tab;
+  public schemaVisualizer: SchemaVisualizer;
 
   constructor() {
     super();
-    this.saveChartPopUp = new SaveChartPopUp();
-    this.rightTab = new RightTab();
+    this.exportPopUp = new ExportPopUp();
     this.query = '';
     this.queryId = 0;
-  }
-
-  @logFunction()
-  goToPage() {
-    LeftMenu.clickDataStudioMenu();
-    LeftMenu.clickDataStudioQuerryTool();
+    this.rightTab = new RightTab();
+    this.saveAsUserQuerySegmentPopUp = new SaveAsUserQuerySegmentPopUp();
+    this.saveChartPopUp = new SaveChartPopUp();
+    this.tab = new Tab();
+    this.schemaVisualizer = new SchemaVisualizer();
   }
 
   @logGetter()
@@ -30,45 +36,38 @@ class QueryToolPage extends Page {
   }
 
   @logGetter()
-  get resultsArea() {
-    const re = /@count/;
-    let selector = '.mcs-dashboardMetric';
+  get areaResult() {
+    const reCount = /@count/;
+    const reCardinality = /@[Cc]ardinality/;
+    var selector = '.mcs-otqlQuery_result_json';
     // query does not contain count
-    if (re.exec(this.query) === null) {
-      selector = '.mcs-otqlQuery_result_json';
+    if (reCount.exec(this.query) !== null) {
+      selector = '.mcs-dashboardMetric';
+    }
+    if (reCardinality.exec(this.query) !== null) {
+      selector = '.mcs-aggregationRendered_table';
     }
     return cy.get(selector, { timeout: 60000 });
   }
 
-  @logFunction()
-  resultsAreaByTab(tabIndex: number) {
-    const re = /@count/;
-    let selector = '.mcs-dashboardMetric';
-    // query does not contain count
-    if (re.exec(this.query) === null) {
-      selector = '.mcs-otqlQuery_result_json';
-    }
-    return this.getTabPanel(tabIndex).find(selector, { timeout: 60000 });
+  @logGetter()
+  get areaAlertMessage() {
+    return cy.get('.ant-alert-message', { timeout: 60000 }).filter(':visible');
   }
 
   @logGetter()
-  get btnAddQuery() {
-    return cy.get('.mcs-OTQLConsoleContainer_tabs').find('.ant-tabs-nav-add').eq(1);
+  get alertMessage() {
+    return this.areaAlertMessage;
   }
 
-  @logFunction()
-  clickBtnAddQuery() {
-    this.btnAddQuery.click({ force: true });
+  @logGetter()
+  get btnCloseAlertMessage() {
+    return cy.get('.ant-alert-close-icon').filter(':visible');
   }
 
   @logGetter()
   get btnRemoveQuery() {
     return cy.get('.mcs-OTQLConsoleContainer_tabs').find('.ant-tabs-tab-remove').eq(1);
-  }
-
-  @logFunction()
-  clickBtnRemoveQuery() {
-    this.btnRemoveQuery.click({ force: true });
   }
 
   @logGetter()
@@ -77,13 +76,13 @@ class QueryToolPage extends Page {
   }
 
   @logGetter()
-  get saveAsButton() {
+  get btnSaveAs() {
     return cy.get('.mcs-otqlInputEditor_save_as_button');
   }
 
   @logGetter()
-  get alertMessage() {
-    return cy.get('.ant-alert-message', { timeout: 60000 }).filter(':visible');
+  get saveAsButton() {
+    return this.btnSaveAs;
   }
 
   @logGetter()
@@ -91,31 +90,77 @@ class QueryToolPage extends Page {
     return cy.get('.ant-alert-close-icon').filter(':visible');
   }
 
-  @logFunction()
-  closeAlertMessage() {
-    this.alertMessageCloseButton.click();
+  @logGetter()
+  get btnShare() {
+    return cy.get('.mcs-otqlChart_items_share_button');
+  }
+
+  @logGetter()
+  get barContent() {
+    return cy.get('.mcs-otqlChart_content_bar');
+  }
+
+  @logGetter()
+  get chartContainer() {
+    return cy.get('.mcs-chart_content_container');
+  }
+
+  @logGetter()
+  get pieContent() {
+    return cy.get('.mcs-otqlChart_content_pie');
+  }
+
+  @logGetter()
+  get radarContent() {
+    return cy.get('.mcs-otqlChart_content_radar');
+  }
+
+  @logGetter()
+  get resultMetrics() {
+    return cy.get('.mcs-otqlChart_resultMetrics');
+  }
+
+  @logGetter()
+  get successNotification() {
+    return cy.get('.ant-notification-notice-success');
+  }
+
+  @logGetter()
+  get tableContainer() {
+    return cy.get('.mcs-table-container');
   }
 
   @logFunction()
-  getQueryId() {
-    this.queryId = 0;
-    this.clickSaveAsTechnicalQuery();
-    this.alertMessage.invoke('text').then(text => {
-      const pattern = /[0-9]+/g;
-      const result = text.match(pattern);
-      if (result !== null) {
-        this.queryId = +result[0];
-      }
-      expect(this.queryId).to.not.equal(0);
-      cy.log('Query id: ' + this.queryId);
-    });
-    this.closeAlertMessage();
-    return this.queryId;
+  clickBarIcon() {
+    cy.get('.mcs-otqlChart_icons_bar').click();
+  }
+
+  @logFunction()
+  clickBtnRemoveQuery() {
+    this.btnRemoveQuery.click({ force: true });
+  }
+
+  @logFunction()
+  clickBtnShare() {
+    this.btnShare.click();
   }
 
   @logFunction()
   clickBtnSave() {
     this.btnSave.click();
+  }
+
+  private clickSaveAsGeneric(pattern: string) {
+    this.btnSaveAs.click();
+    cy.get('.ant-dropdown-menu').then($element => {
+      cy.wait(1000);
+      cy.get('.ant-dropdown-menu').contains(pattern).click();
+    });
+  }
+
+  @logFunction()
+  clickSaveAsExport() {
+    this.clickSaveAsGeneric('Export');
   }
 
   @logFunction()
@@ -129,110 +174,31 @@ class QueryToolPage extends Page {
   }
 
   @logFunction()
-  private clickSaveAsGeneric(pattern: string) {
-    this.saveAsButton.click();
-    cy.get('.ant-dropdown-menu').then($element => {
-      cy.wait(1000);
-      cy.get('.ant-dropdown-menu').contains(pattern).click();
-    });
+  closeAlertMessage() {
+    this.btnCloseAlertMessage.click();
   }
 
-  @logGetter()
-  get btnShare() {
-    return cy.get('.mcs-otqlChart_items_share_button');
-  }
-
+  // click functions
   @logFunction()
-  clickBtnShare() {
-    this.btnShare.click();
-  }
-
-  @logGetter()
-  get successNotification() {
-    return cy.get('.ant-notification-notice-success');
-  }
-
-  @logGetter()
-  get pieContent() {
-    return cy.get('.mcs-otqlChart_content_pie');
-  }
-
-  @logGetter()
-  get resultMetrics() {
-    return cy.get('.mcs-otqlChart_resultMetrics');
-  }
-
-  @logFunction()
-  resultMetricsByTab(tabIndex: number) {
-    return this.getTabPanel(tabIndex).find('.mcs-otqlChart_resultMetrics');
-  }
-
-  @logGetter()
-  get chartContainer() {
-    return cy.get('.mcs-chart_content_container');
-  }
-
-  @logGetter()
-  get barContent() {
-    return cy.get('.mcs-otqlChart_content_bar');
-  }
-
-  @logGetter()
-  get radarContent() {
-    return cy.get('.mcs-otqlChart_content_radar');
-  }
-
-  @logGetter()
-  get schemaVizualize() {
-    return cy.get('.mcs-schemaVizualize_content');
-  }
-
-  @logFunction()
-  schemaVizualizeByTab(tabIndex: number) {
-    return this.getTabPanel(tabIndex).find('.mcs-schemaVizualize_content');
-  }
-
-  @logGetter()
-  get tableContainer() {
-    return cy.get('.mcs-table-container');
-  }
-
-  @logFunction()
-  clickBtnRun(tabIndex?: number) {
-    this.getTabPanel(!!tabIndex ? tabIndex : 0)
-      .find('.mcs-otqlInputEditor_run_button')
-      .eq(0)
-      .click();
-  }
-
-  @logFunction()
-  getTabPanel(tabIndex: number) {
-    return cy.get(`div[id="rc-tabs-1-panel-${tabIndex + 1}"]`);
-  }
-
-  @logFunction()
-  getActiveTabPanel() {
-    return cy.get(`ant-tabs-tab-active`).eq(0);
-  }
-
-  @logFunction()
-  clickOnTab(tabIndex: number) {
-    cy.get('.mcs-OTQLConsoleContainer_tabs').find(`.ant-tabs-tab-with-remove`).eq(tabIndex).click();
-  }
-
-  @logFunction()
-  executeQuery(query: string = '') {
-    // if no query is pass as argument, simply run the current query
-    //cy.get('.mcs-otqlInputEditor_run_button').eq(0).click();
-    if (query !== '') {
-      this.typeQuery(query);
-    }
+  clickBtnRun() {
     cy.get('.mcs-otqlInputEditor_run_button').filter(':visible').click();
   }
 
   @logFunction()
-  clickBarIcon() {
-    cy.get('.mcs-otqlChart_icons_bar').click();
+  getQueryId() {
+    this.queryId = 0;
+    this.clickSaveAsTechnicalQuery();
+    this.areaAlertMessage.invoke('text').then(text => {
+      var pattern = /[0-9]+/g;
+      var result = text.match(pattern);
+      if (result !== null) {
+        this.queryId = result[0];
+      }
+      expect(this.queryId).to.not.equal(0);
+      cy.log('Query id: ' + this.queryId);
+    });
+    this.closeAlertMessage();
+    return this.queryId;
   }
 
   @logFunction()
@@ -271,52 +237,35 @@ class QueryToolPage extends Page {
   }
 
   @logFunction()
-  resultsShouldContain(result: string) {
-    this.resultsArea.should('contain', result);
+  goToPage() {
+    LeftMenu.clickDataStudioMenu();
+    LeftMenu.clickDataStudioQuerryTool();
   }
 
   @logFunction()
-  addTab() {
-    cy.get('.ant-tabs-nav-add').filter(':visible').last().click();
-    cy.wait(500);
+  alertErrorIsPresent() {
+    cy.get('.ant-alert-error', { timeout: 20000 }).filter(':visible').should('exist');
   }
 
   @logFunction()
-  selectTab(id: number) {
-    // first tab has 0 index
-    id = id - 1;
-    cy.get('.ant-tabs-tab').eq(id).click();
+  alertErrorIsMissing() {
+    cy.get('.ant-alert-error', { timeout: 20000 }).should('not.exist');
   }
 
+  // Advanced functionS
   @logFunction()
-  schemaShouldContain(field: string) {
-    cy.get('.ant-tree-list').should('contain', field);
-  }
-
-  @logFunction()
-  resultsShouldContainByTab(result: string, tabIndex: number) {
-    this.resultsAreaByTab(tabIndex).should('contain', result);
-  }
-
-  @logFunction()
-  resultsAreaShouldContain(result: string, tabIndex: number) {
-    const re = /@count/;
-    let selector = '.mcs-dashboardMetric';
-    // query does not contain count
-    if (re.exec(this.query) === null) {
-      selector = '.mcs-otqlQuery_result_json';
+  executeQuery(query: string = '') {
+    // if no query is pass as argument, simply run the current query
+    //cy.get(".mcs-otqlInputEditor_run_button").eq(0).click();
+    if (query !== '') {
+      this.typeQuery(query);
     }
-    this.getTabPanel(tabIndex).find(selector, { timeout: 60000 }).should('contain', result);
+    this.clickBtnRun();
   }
 
   @logFunction()
-  alertErrorIsPresentOnTab(tabIndex: number) {
-    this.getTabPanel(tabIndex).find('.ant-alert-error', { timeout: 20000 }).should('exist'); // .its('length').should('eq', 1);
-  }
-
-  @logFunction()
-  alertErrorIsMissingOnTab(tabIndex: number) {
-    this.getTabPanel(tabIndex).find('.ant-alert-error', { timeout: 20000 }).should('not.exist'); // .its('length').should('eq', 0);
+  resultsShouldContain(result: string) {
+    this.areaResult.should('contain', result);
   }
 }
 
