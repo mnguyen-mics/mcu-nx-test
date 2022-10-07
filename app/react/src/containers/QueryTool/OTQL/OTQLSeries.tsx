@@ -246,7 +246,7 @@ class OTQLSeries extends React.Component<Props> {
             <FormattedMessage
               {...{
                 id: 'queryTool.newSerieButton',
-                defaultMessage: 'New serie',
+                defaultMessage: 'New series',
               }}
             />
           </Button>

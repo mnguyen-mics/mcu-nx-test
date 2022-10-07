@@ -949,47 +949,39 @@ class QueryResultRenderer extends React.Component<Props, State> {
           </div>
           {this.isSelectedTypeExportable() && onSaveChart ? (
             <div className={'mcs-otqlChart_chartConfig_clipboard_container'}>
-              <AntButton
-                type='ghost'
-                className={
-                  hasFeature('datastudio-query_tool-charts_loader')
-                    ? 'mcs-otqlChart_items_share_button m-r-10'
-                    : 'mcs-otqlChart_items_share_button_right'
-                }
-                onClick={handleCopyToClipboard}
-              >
-                {intl.formatMessage(messages.share)}
-              </AntButton>
+              {hasFeature('datastudio-query_tool-charts_loader') && tab.chartItem?.id && (
+                <AntButton
+                  className='mcs-otqlInputEditor_delete_button'
+                  onClick={handleOnDeleteButtonClick}
+                  hidden={!hasFeature('datastudio-query_tool-charts_loader')}
+                >
+                  <FormattedMessage
+                    id='queryTool.otql.edit.deleteChart.label'
+                    defaultMessage='Delete this chart'
+                  />
+                </AntButton>
+              )}
+              {!hasFeature('datastudio-query_tool-charts_loader') && (
+                <AntButton type='ghost' onClick={handleCopyToClipboard}>
+                  {intl.formatMessage(messages.share)}
+                </AntButton>
+              )}
               {hasFeature('datastudio-query_tool-charts_loader') && (
-                <React.Fragment>
-                  {tab.chartItem?.id && (
-                    <AntButton
-                      className='mcs-otqlInputEditor_delete_button'
-                      onClick={handleOnDeleteButtonClick}
-                      hidden={!hasFeature('datastudio-query_tool-charts_loader')}
-                    >
-                      <FormattedMessage
-                        id='queryTool.otql.edit.deleteChart.label'
-                        defaultMessage='Delete this chart'
-                      />
-                    </AntButton>
-                  )}
-                  <AntButton
-                    type='primary'
-                    className='mcs-otqlInputEditor_save_button'
-                    onClick={handleOnSaveButtonClick}
-                    hidden={!hasFeature('datastudio-query_tool-charts_loader')}
-                    disabled={queryHasChanged}
-                  >
-                    <FormattedMessage
-                      id='queryTool.otql.edit.new.save.label'
-                      defaultMessage='{action} this chart'
-                      values={{
-                        action: !!tab.chartItem?.type ? 'Update' : 'Save',
-                      }}
-                    />
-                  </AntButton>
-                </React.Fragment>
+                <AntButton
+                  type='primary'
+                  className='mcs-otqlInputEditor_save_button'
+                  onClick={handleOnSaveButtonClick}
+                  hidden={!hasFeature('datastudio-query_tool-charts_loader')}
+                  disabled={queryHasChanged}
+                >
+                  <FormattedMessage
+                    id='queryTool.otql.edit.new.save.label'
+                    defaultMessage='{action} this chart'
+                    values={{
+                      action: !!tab.chartItem?.type ? 'Update' : 'Save',
+                    }}
+                  />
+                </AntButton>
               )}
             </div>
           ) : undefined}

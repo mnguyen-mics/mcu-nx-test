@@ -67,10 +67,6 @@ const messages = defineMessages({
     id: 'queryTool.OtqlConsole.tab.chartDeleted',
     defaultMessage: 'Chart is deleted',
   },
-  loadAChart: {
-    id: 'queryTool.OtqlConsole.tab.loadAChart',
-    defaultMessage: 'Load a chart',
-  },
 });
 
 const { Content } = Layout;
@@ -1145,7 +1141,6 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                               <ChartsSearchPanel
                                 key={chartsSearchPanelKey}
                                 organisationId={organisationId}
-                                title={intl.formatMessage(messages.loadAChart)}
                                 onItemClick={this.onChartItemClick}
                                 chartItem={tab.chartItem}
                               />
