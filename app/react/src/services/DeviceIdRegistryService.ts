@@ -12,7 +12,7 @@ import {
 
 export interface IDeviceIdRegistryService {
   getDeviceIdRegistries: (
-    communityId: string,
+    organisationId: string,
     options?: object,
   ) => Promise<DataListResponse<DeviceIdRegistryResource>>;
 
@@ -22,11 +22,11 @@ export interface IDeviceIdRegistryService {
 
   updateDeviceIdRegistry: (
     deviceIdRegistryId: string,
-    communityId: string,
+    organisationId: string,
     body: Partial<DeviceIdRegistryResource>,
   ) => Promise<DataResponse<DeviceIdRegistryResource>>;
 
-  deleteDeviceIdRegistry: (deviceIdRegistryId: string, communityId: string) => Promise<any>;
+  deleteDeviceIdRegistry: (deviceIdRegistryId: string, organisationId: string) => Promise<any>;
 
   createDeviceIdRegistryDatamartSelection: (
     deviceIdRegistryId: string,
@@ -57,12 +57,12 @@ export interface IDeviceIdRegistryService {
 @injectable()
 export default class DeviceIdRegistryService implements IDeviceIdRegistryService {
   getDeviceIdRegistries(
-    communityId: string,
+    organisationId: string,
     options: object = {},
   ): Promise<DataListResponse<DeviceIdRegistryResource>> {
     const endpoint = 'device_id_registries';
     const params = {
-      community_id: communityId,
+      organisation_id: organisationId,
       ...options,
     };
     return ApiService.getRequest(endpoint, params);
@@ -77,20 +77,20 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
 
   updateDeviceIdRegistry(
     deviceIdRegistryId: string,
-    communityId: string,
+    organisationId: string,
     body: Partial<DeviceIdRegistryResource>,
   ): Promise<DataResponse<DeviceIdRegistryResource>> {
     const endpoint = `device_id_registries/${deviceIdRegistryId}`;
     const params = {
-      community_id: communityId,
+      organisation_id: organisationId,
     };
     return ApiService.putRequest(endpoint, body, params);
   }
 
-  deleteDeviceIdRegistry(deviceIdRegistryId: string, communityId: string): Promise<any> {
+  deleteDeviceIdRegistry(deviceIdRegistryId: string, organisationId: string): Promise<any> {
     const endpoint = `device_id_registries/${deviceIdRegistryId}`;
     const params = {
-      community_id: communityId,
+      organisation_id: organisationId,
     };
     return ApiService.deleteRequest(endpoint, params);
   }

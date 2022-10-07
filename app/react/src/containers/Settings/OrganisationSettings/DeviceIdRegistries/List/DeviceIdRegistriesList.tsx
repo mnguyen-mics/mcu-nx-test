@@ -80,7 +80,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     };
   }
 
-  fetchFirstPartyRegistries = (communityId: string) => {
+  fetchFirstPartyRegistries = (organisationId: string) => {
     const { notifyError } = this.props;
 
     this.setState({
@@ -88,15 +88,15 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     });
 
     return Promise.all([
-      this._deviceIdRegistryService.getDeviceIdRegistries(communityId, {
+      this._deviceIdRegistryService.getDeviceIdRegistries(organisationId, {
         type: 'CUSTOM_DEVICE_ID' as DeviceIdRegistryType,
         ...getPaginatedApiParam(1, 500),
       }),
-      this._deviceIdRegistryService.getDeviceIdRegistries(communityId, {
+      this._deviceIdRegistryService.getDeviceIdRegistries(organisationId, {
         type: 'MOBILE_VENDOR_ID' as DeviceIdRegistryType,
         ...getPaginatedApiParam(1, 500),
       }),
-      this._deviceIdRegistryService.getDeviceIdRegistries(communityId, {
+      this._deviceIdRegistryService.getDeviceIdRegistries(organisationId, {
         type: 'INSTALLATION_ID' as DeviceIdRegistryType,
         ...getPaginatedApiParam(1, 500),
       }),
@@ -146,7 +146,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       });
   };
 
-  fetchRegistryOffers = (communityId: string) => {
+  fetchRegistryOffers = (organisationId: string) => {
     const { notifyError } = this.props;
 
     this.setState({ isLoadingRegistryOffers: true }, () => {
@@ -157,7 +157,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       const offers = this._deviceIdRegistryService.getDeviceIdRegistryOffers(offersOptions);
 
       const subscribedOffers = this._deviceIdRegistryService.getSubscribedDeviceIdRegistryOffers(
-        communityId,
+        organisationId,
         offersOptions,
       );
 
@@ -204,15 +204,11 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
   componentDidMount() {
     const {
-      workspace: { community_id, organisation_id },
+      workspace: { organisation_id },
     } = this.props;
 
-    if (organisation_id === community_id) {
-      this.fetchFirstPartyRegistries(organisation_id);
-      this.fetchRegistryOffers(organisation_id);
-    } else {
-      this.makeEmptyState();
-    }
+    this.fetchFirstPartyRegistries(organisation_id);
+    this.fetchRegistryOffers(organisation_id);
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -226,14 +222,12 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       match: {
         params: { organisationId },
       },
-      workspace: { community_id, organisation_id },
+      workspace: { organisation_id },
     } = this.props;
 
     if (previousOrganisationId !== organisationId) {
-      if (organisation_id === community_id) {
-        this.fetchFirstPartyRegistries(organisation_id);
-        this.fetchRegistryOffers(organisation_id);
-      } else this.makeEmptyState();
+      this.fetchFirstPartyRegistries(organisation_id);
+      this.fetchRegistryOffers(organisation_id);
     }
   }
 
@@ -318,7 +312,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
   updateRegistry = (id: string) => {
     const {
-      workspace: { community_id },
+      workspace: { organisation_id },
     } = this.props;
 
     return (updatedData: Partial<DeviceIdRegistryResource>) => {
@@ -329,7 +323,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       } = this.props;
 
       return this._deviceIdRegistryService
-        .updateDeviceIdRegistry(id, community_id, updatedData)
+        .updateDeviceIdRegistry(id, organisation_id, updatedData)
         .then(() => {
           this.setState(
             {
@@ -356,14 +350,14 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
   deleteRegistryOnOk = (registry: DeviceIdRegistryWithDatamartSelectionsResource) => {
     const {
-      workspace: { community_id },
+      workspace: { organisation_id },
       notifyError,
       notifySuccess,
       intl: { formatMessage },
     } = this.props;
 
     return this._deviceIdRegistryService
-      .deleteDeviceIdRegistry(registry.id, community_id)
+      .deleteDeviceIdRegistry(registry.id, organisation_id)
       .then(() => {
         this.refreshFirstPartyRegistries();
         notifySuccess({
@@ -479,14 +473,10 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
   refreshFirstPartyRegistries = () => {
     const {
-      workspace: { community_id, organisation_id },
+      workspace: { organisation_id },
     } = this.props;
 
-    if (organisation_id === community_id) {
-      this.fetchFirstPartyRegistries(organisation_id);
-    } else {
-      this.makeEmptyState();
-    }
+    this.fetchFirstPartyRegistries(organisation_id);
   };
 
   hasRightToCreateRegistry(): boolean {
@@ -494,7 +484,12 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       workspace: { role },
     } = this.props;
 
-    return role === 'COMMUNITY_ADMIN' || role === 'CUSTOMER_ADMIN' || role === 'SUPER_ADMIN';
+    return (
+      role === 'ORGANISATION_ADMIN' ||
+      role === 'COMMUNITY_ADMIN' ||
+      role === 'CUSTOMER_ADMIN' ||
+      role === 'SUPER_ADMIN'
+    );
   }
 
   closeDatamartsSelectionModal = () => {

@@ -30,7 +30,7 @@ export const FORM_ID = 'newRegistryForm';
 
 interface DeviceIdRegistryDatamartSelectionsEditFormState {
   isLoadingDatamarts: boolean;
-  datamarts: DatamartWithOrgNameResource[];
+  datamarts: DatamartWithOrgInfoResource[];
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   datamartsTotal: number;
@@ -55,7 +55,7 @@ type Props = DeviceIdRegistryDatamartSelectionsEditFormProps &
   ValidatorProps &
   InjectedWorkspaceProps;
 
-interface DatamartWithOrgNameResource extends DatamartResource {
+interface DatamartWithOrgInfoResource extends DatamartResource {
   organisation_name: string;
 }
 
@@ -112,35 +112,33 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
     });
   };
 
-  fetchDatamarts = (communityId: string) => {
+  fetchDatamarts = (organisationId: string) => {
     const { notifyError } = this.props;
 
     const datamartsOptions = {
+      archived: false,
       ...getPaginatedApiParam(1, 1000),
     };
 
     this.setState({ isLoadingDatamarts: true }, () => {
       return this._organisationService
-        .getOrganisations(communityId)
-        .then(orgsRes => {
-          Promise.all(
-            orgsRes.data.map(org =>
-              this._datamartService.getDatamarts(org.id, datamartsOptions).then(res =>
-                res.data.map(datamart => {
-                  return {
-                    organisation_name: org.name,
-                    ...datamart,
-                  } as DatamartWithOrgNameResource;
-                }),
-              ),
-            ),
-          )
-            .then(res => {
-              const datamarts: DatamartWithOrgNameResource[] = res.flat();
+        .getOrganisation(organisationId)
+        .then(org => {
+          this._datamartService
+            .getDatamarts(organisationId, datamartsOptions)
+            .then(datamarts =>
+              datamarts.data.map(datamart => {
+                return {
+                  organisation_name: org.data.name,
+                  ...datamart,
+                } as DatamartWithOrgInfoResource;
+              }),
+            )
+            .then(datamartsWithOrg => {
               this.setState({
                 isLoadingDatamarts: false,
-                datamarts: datamarts,
-                datamartsTotal: datamarts.length,
+                datamarts: datamartsWithOrg,
+                datamartsTotal: datamartsWithOrg.length,
               });
             })
             .catch(err => {
@@ -155,7 +153,7 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
     });
   };
 
-  fetchDatamartsAndSelections = (communityId: string, deviceIdRegistryId: string) => {
+  fetchDatamartsAndSelections = (organisationId: string) => {
     const { initialSelections } = this.props;
     const datamartIds = initialSelections.map(selection => selection.datamart_id);
 
@@ -164,18 +162,17 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
       selectionsTotal: datamartIds.length,
     });
 
-    return Promise.all([this.fetchDatamarts(communityId)]);
+    this.fetchDatamarts(organisationId);
   };
 
   componentDidMount() {
     const {
-      deviceIdRegistry,
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    this.fetchDatamartsAndSelections(organisationId, deviceIdRegistry.id);
+    this.fetchDatamartsAndSelections(organisationId);
   }
 
   render() {
@@ -186,18 +183,18 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
 
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
-    const dataColumns: Array<DataColumnDefinition<DatamartWithOrgNameResource>> = [
+    const dataColumns: Array<DataColumnDefinition<DatamartWithOrgInfoResource>> = [
       {
         title: formatMessage(messages.organisationName),
         key: 'organisation_name',
-        sorter: (a: DatamartWithOrgNameResource, b: DatamartWithOrgNameResource) =>
+        sorter: (a: DatamartWithOrgInfoResource, b: DatamartWithOrgInfoResource) =>
           a.organisation_name.localeCompare(b.organisation_name),
         isHideable: false,
       },
       {
         title: formatMessage(messages.datamartName),
         key: 'name',
-        sorter: (a: DatamartWithOrgNameResource, b: DatamartWithOrgNameResource) =>
+        sorter: (a: DatamartWithOrgInfoResource, b: DatamartWithOrgInfoResource) =>
           a.name.localeCompare(b.name),
         isHideable: false,
       },

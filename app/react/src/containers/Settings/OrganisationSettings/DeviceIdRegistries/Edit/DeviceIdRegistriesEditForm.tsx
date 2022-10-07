@@ -90,14 +90,14 @@ class DeviceIdRegistriesEditForm extends React.Component<Props, DeviceIdRegistri
     if (deviceIdRegistry) {
       this.props.save({
         id: deviceIdRegistry.id,
-        community_id: deviceIdRegistry.community_id,
+        organisation_id: deviceIdRegistry.organisation_id,
         type: deviceIdRegistry.type,
         ...formData,
       });
     } else {
       const registryResource: Partial<DeviceIdRegistryResource> = {
         ...formData,
-        community_id: organisationId,
+        organisation_id: organisationId,
       };
       this.props.save(registryResource);
     }
