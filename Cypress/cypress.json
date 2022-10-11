@@ -1,1 +1,64 @@
-{}
+{
+  "baseUrl": "https://navigator.loving-jones.mics-sandbox.com",
+  "chromeWebSecurity": false,
+
+  "testFiles": ["**/*.spec.js", "**/*.spec.ts"],
+  "ignoreTestFiles": [
+    "CreateJobExecution.spec.js",
+    "EditAllReplicationFields.spec.js",
+    "Sites.spec.ts",
+    "DisplayLiveEventWithoutUserPoint.spec.ts",
+    "OnSegmentExit.spec.ts",
+    "DisplayCampaignResourceHistory.spec.ts",
+    "MobileApplication.spec.ts",
+    "StandardSegmentBuilderLimits.spec.ts",
+    "**/__snapshots__/*",
+    "**/__image_snapshots__/*"
+  ],
+
+  "env": {
+    "cypress-plugin-snapshots": {
+      "serverPort": 12696,
+      "imageConfig": {
+        "threshold": 0.1,
+        "thresholdType": "percent"
+      }
+    },
+    "apiDomain": "https://api.loving-jones.mics-sandbox.com",
+    "eventDomain": "https://events.loving-jones.mics-sandbox.com",
+    "devMail": "dev@mediarithmics.com",
+    "devPwd": "38kpPCc2j#DqVHfLZsLeC*JVGU$vT3K44L832axydkad4^^Y!H",
+    "virtualPlatformName": "loving-jones",
+    "userName": "",
+    "root": "https://auth.loving-jones.mics-sandbox.com",
+    "realm": "mediarithmics",
+    "client_id": "mediarithmics-computing-console",
+    "allure": true,
+    "allureResultsPath": "allure-results",
+    "allureAttachRequests": true,
+    "allureOmitPreviousAttemptScreenshots": true,
+    "logLevel": 1
+  },
+  "retries": {
+    "runMode": 4,
+    "openMode": 1
+  },
+  "watchForFileChanges": false,
+
+  "defaultCommandTimeout": 30000,
+  "responseTimeout": 30000,
+  "pageLoadTimeout": 30000,
+  "execTimeout": 30000,
+  "requestTimeout": 30000,
+
+  "video": false,
+  "viewportHeight": 1080,
+  "viewportWidth": 1920,
+  "projectId": "px499y",
+  "reporter": "mochawesome",
+  "reporterOptions": {
+    "overwrite": false,
+    "html": false,
+    "json": true
+  }
+}

@@ -1,3 +1,5 @@
+import Tab from '../../../pageobjects/DataStudio/QueryTool/Tab';
+import RightTab from '../../../pageobjects/DataStudio/QueryTool/RightTab';
 import ImportsPage from '../../../pageobjects/DataStudio/ImportsPage';
 import QueryToolPage from '../../../pageobjects/DataStudio/QueryTool/QueryToolPage';
 
@@ -45,6 +47,117 @@ describe('Query tool - Query builder', () => {
 
   afterEach(() => {
     cy.clearLocalStorage();
+  });
+
+  it('Elements visibility and user actions', () => {
+    const queryToolPage = new QueryToolPage();
+    const tab = new Tab();
+    const rightTab = new RightTab();
+    queryToolPage.goToPage();
+
+    const checkSecondSeries = (numOfDimensions: number) => {
+      queryToolPage.getQueriesForSeries(1).should('have.length', numOfDimensions);
+      queryToolPage.getSeriesTitleButtonsWithinSeries(1).should('have.length', 1);
+      queryToolPage.getSeriesTitleButtonsWithinSeries(1).eq(0).should('contain', 'Series 2');
+      queryToolPage.getDimensionTitleButtonsWithinSeries(1).should('have.length', numOfDimensions);
+      for (let i = 0; i < numOfDimensions; i++) {
+        queryToolPage
+          .getDimensionTitleButtonsWithinSeries(1)
+          .eq(i)
+          .should('contain', `Dimension ${i + 1}`);
+      }
+      queryToolPage.getNewValueButtonWithinSeries(1).should('have.length', 1);
+    };
+
+    const checkCommonParameters = (numOfDimensions: number) => {
+      tab.getNewSeriesButtonByTab(0, 0).should('be.visible');
+      //tab.getNewSeriesButtonByTab(0, 1).should('not.exist');
+      queryToolPage.getSeriesDeleteButtons(0).should('be.visible');
+      queryToolPage.getSeriesDeleteButtons(1).should('be.visible');
+      queryToolPage.getDimensionDeleteButtonsWithinSeries(1).should('have.length', numOfDimensions);
+      // queryToolPage.getDimensionDeleteButtonsWithinSeries(0).should('not.exist');
+    };
+
+    // tab modify the page a little
+    queryToolPage.tab.clickAdd();
+    queryToolPage.tab.select(1);
+
+    // Replace query
+    const query = 'SELECT {nature @map} FROM ActivityEvent';
+    const defaultQuery = 'SELECT @count{} FROM UserPoint';
+    queryToolPage.typeQuery(query);
+    rightTab.fieldNodeContent.eq(0).should('contain', 'app_id');
+
+    // Create a second series
+    tab.getNewSeriesButtonByTab(0, 0).click();
+
+    tab.getQueryInputByTab(0, 0).should('contain', query);
+    tab.getQueryInputByTab(1, 0).should('contain', defaultQuery);
+    queryToolPage.getSeriesTitleButtonsWithinSeries(0).should('be.visible');
+    queryToolPage.getSeriesTitleButtonsWithinSeries(0).should('contain', 'Series 1');
+    queryToolPage.getSeriesTitleButtonsWithinSeries(1).should('be.visible');
+    queryToolPage.getSeriesTitleButtonsWithinSeries(1).should('contain', 'Series 2');
+    //queryToolPage.getDimensionTitleButtonsWithinSeries(0).should('not.exist');
+    tab.getNewValueButtonByTab(0, 0).should('be.visible');
+    tab.getNewValueButtonByTab(0, 1).should('be.visible');
+    tab.getNewSeriesButtonByTab(0, 0).should('be.visible');
+    tab.getRemoveStepButtonByTab(0, 0).should('be.visible');
+    tab.getRemoveStepButtonByTab(0, 1).should('be.visible');
+
+    // Replace query on the second series and hit the New value button
+    queryToolPage.typeQuery('SELECT @count FROM UserPoint WHERE events {}', 1);
+    tab.getNewValueButtonByTab(0, 1).click();
+
+    queryToolPage.getQueriesForSeries(0).should('have.length', 1);
+    checkSecondSeries(2);
+    checkCommonParameters(2);
+
+    // In the second series, add a new query via the New value button
+    queryToolPage.getNewValueButtonWithinSeries(1).eq(0).click();
+
+    queryToolPage.getQueriesForSeries(0).should('have.length', 1);
+    checkSecondSeries(3);
+    checkCommonParameters(3);
+
+    // In the second series, delete a query
+    queryToolPage.getDimensionDeleteButtonsWithinSeries(1).eq(2).click();
+
+    queryToolPage.getQueriesForSeries(0).should('have.length', 1);
+    checkSecondSeries(2);
+    checkCommonParameters(2);
+
+    // Use the delete button from the second series to delete the entire series
+    queryToolPage.getSeriesDeleteButtons(1).eq(0).click();
+
+    // Use the new series button to add a third series
+    tab.getNewSeriesButtonByTab(0, 0).click();
+    tab.getNewSeriesButtonByTab(0, 0).click();
+
+    queryToolPage.getSeries().should('have.length', 3);
+    queryToolPage.getSeriesTitleButtonsWithinSeries(0).should('have.length', 1);
+    queryToolPage.getSeriesTitleButtonsWithinSeries(0).eq(0).should('contain', 'Series 1');
+    queryToolPage.getSeriesTitleButtonsWithinSeries(1).should('have.length', 1);
+    queryToolPage.getSeriesTitleButtonsWithinSeries(1).eq(0).should('contain', 'Series 2');
+    queryToolPage.getSeriesTitleButtonsWithinSeries(2).should('have.length', 1);
+    queryToolPage.getSeriesTitleButtonsWithinSeries(2).eq(0).should('contain', 'Series 3');
+
+    queryToolPage.getNewValueButtonWithinSeries(0).should('have.length', 1);
+    queryToolPage.getNewValueButtonWithinSeries(1).should('have.length', 1);
+    queryToolPage.getNewValueButtonWithinSeries(2).should('have.length', 1);
+
+    tab.getNewSeriesButtonByTab(0, 0).should('be.visible');
+    queryToolPage.getSeriesDeleteButtons(0).should('be.visible');
+    queryToolPage.getSeriesDeleteButtons(1).should('be.visible');
+    queryToolPage.getSeriesDeleteButtons(2).should('be.visible');
+
+    // Delete the first series
+    queryToolPage.getSeriesDeleteButtons(0).eq(0).click();
+    queryToolPage.getSeries().should('have.length', 2);
+    queryToolPage.getSeriesTitleButtonsWithinSeries(0).eq(0).should('contain', 'Series 2');
+    queryToolPage.getSeriesTitleButtonsWithinSeries(1).eq(0).should('contain', 'Series 3');
+    tab.getNewSeriesButtonByTab(0, 0).should('be.visible');
+    queryToolPage.getSeriesDeleteButtons(0).should('be.visible');
+    queryToolPage.getSeriesDeleteButtons(1).should('be.visible');
   });
 
   it('Check the Tabs management', () => {

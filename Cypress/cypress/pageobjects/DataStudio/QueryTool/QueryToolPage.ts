@@ -1,33 +1,39 @@
-import Page from '../../Page';
-import LeftMenu from '../../LeftMenu';
-import SaveChartPopUp from './SaveChartPopUp';
-import SaveAsUserQuerySegmentPopUp from './SaveAsUserQuerySegmentPopUp';
+import Charts from './Charts';
 import ExportPopUp from './ExportPopUp';
+import LeftMenu from '../../LeftMenu';
+import Page from '../../Page';
 import RightTab from './RightTab';
-import Tab from './Tab';
+import SaveAsUserQuerySegmentPopUp from './SaveAsUserQuerySegmentPopUp';
+import SaveChartPopUp from './SaveChartPopUp';
 import SchemaVisualizer from './SchemaVisualizer';
+import Tab from './Tab';
+import Visualizer from './Visualizer';
 import { logFunction, logGetter } from '../../log/LoggingDecorator';
 
 class QueryToolPage extends Page {
+  public charts: Charts;
   public exportPopUp: ExportPopUp;
   public query: string;
   public queryId: number;
   public rightTab: RightTab;
   public saveAsUserQuerySegmentPopUp: SaveAsUserQuerySegmentPopUp;
   public saveChartPopUp: SaveChartPopUp;
-  public tab: Tab;
   public schemaVisualizer: SchemaVisualizer;
+  public tab: Tab;
+  public visualizer: Visualizer;
 
   constructor() {
     super();
+    this.charts = new Charts();
     this.exportPopUp = new ExportPopUp();
     this.query = '';
     this.queryId = 0;
     this.rightTab = new RightTab();
     this.saveAsUserQuerySegmentPopUp = new SaveAsUserQuerySegmentPopUp();
     this.saveChartPopUp = new SaveChartPopUp();
-    this.tab = new Tab();
     this.schemaVisualizer = new SchemaVisualizer();
+    this.tab = new Tab();
+    this.visualizer = new Visualizer();
   }
 
   @logGetter()
@@ -38,7 +44,7 @@ class QueryToolPage extends Page {
   @logGetter()
   get areaResult() {
     const reCount = /@count/;
-    const reCardinality = /@[Cc]ardinality/;
+    const reCardinality = /(@[Cc]ardinality|@map)/;
     var selector = '.mcs-otqlQuery_result_json';
     // query does not contain count
     if (reCount.exec(this.query) !== null) {
@@ -96,26 +102,6 @@ class QueryToolPage extends Page {
   }
 
   @logGetter()
-  get barContent() {
-    return cy.get('.mcs-otqlChart_content_bar');
-  }
-
-  @logGetter()
-  get chartContainer() {
-    return cy.get('.mcs-chart_content_container');
-  }
-
-  @logGetter()
-  get pieContent() {
-    return cy.get('.mcs-otqlChart_content_pie');
-  }
-
-  @logGetter()
-  get radarContent() {
-    return cy.get('.mcs-otqlChart_content_radar');
-  }
-
-  @logGetter()
   get resultMetrics() {
     return cy.get('.mcs-otqlChart_resultMetrics');
   }
@@ -131,11 +117,6 @@ class QueryToolPage extends Page {
   }
 
   @logFunction()
-  clickBarIcon() {
-    cy.get('.mcs-otqlChart_icons_bar').click();
-  }
-
-  @logFunction()
   clickBtnRemoveQuery() {
     this.btnRemoveQuery.click({ force: true });
   }
@@ -143,6 +124,7 @@ class QueryToolPage extends Page {
   @logFunction()
   clickBtnShare() {
     this.btnShare.click();
+    cy.wait(1000);
   }
 
   @logFunction()
@@ -202,38 +184,20 @@ class QueryToolPage extends Page {
   }
 
   @logFunction()
-  clickPercentageOption() {
-    cy.get('.mcs-otqlChart_items_quick_option').eq(1).click();
-    cy.get('.mcs-chartOptions_percentage').click();
-  }
-
-  @logFunction()
-  clickIndexOption() {
-    cy.get('.mcs-otqlChart_items_quick_option').eq(1).click();
-    cy.get('.mcs-chartOptions_index').click();
-  }
-
-  @logFunction()
-  clickRadarIcon() {
-    cy.get('.mcs-otqlChart_icons_radar').click();
-  }
-
-  @logFunction()
-  clickPieIcon() {
-    cy.get('.mcs-otqlChart_icons_pie').click();
-  }
-
-  @logFunction()
-  typeQuery(query: string, pos: number = 0) {
-    // FIXME pos is not use anymore
-    this.query = query;
-    cy.get('.mcs-otqlInputEditor_otqlConsole')
+  typeQuery(query: string, pos: number = -1) {
+    let selector = '.mcs-otqlInputEditor_otqlConsole';
+    if (pos >= 0) {
+      selector = '.mcs-otqlSeries_mainStep';
+    } else {
+      pos = 0;
+    }
+    cy.get(selector)
       .filter(':visible')
-      .within(() => {
-        cy.get('textarea')
-          .type('{selectall}{backspace}{backspace}', { force: true })
-          .type(query, { force: true, parseSpecialCharSequences: false });
-      });
+      .find('textarea')
+      .eq(pos)
+      .type('{selectall}{backspace}{backspace}', { force: true })
+      .type(query, { force: true, parseSpecialCharSequences: false });
+    this.query = query;
   }
 
   @logFunction()
@@ -266,6 +230,57 @@ class QueryToolPage extends Page {
   @logFunction()
   resultsShouldContain(result: string) {
     this.areaResult.should('contain', result);
+  }
+
+  @logFunction()
+  getSeries() {
+    return this.tab.activeTabPanel.find('.mcs-otqlSeries_mainStep');
+  }
+
+  @logFunction()
+  getQueriesForSeries(seriesIndex: number) {
+    return this.getSeries().eq(seriesIndex).find('.mcs-otqlInputEditor_otqlConsole');
+  }
+
+  @logFunction()
+  getSeriesTitleButtonsWithinSeries(seriesIndex: number) {
+    return this.getSeries()
+      .eq(seriesIndex)
+      .children()
+      .filter('.mcs-otqlInputEditor_stepNameButton');
+  }
+
+  @logFunction()
+  getSeriesSubStep(seriesIndex: number) {
+    return this.getSeries().eq(seriesIndex).find('.mcs-otqlSeries_subStep', { timeout: 2000 });
+  }
+
+  @logFunction()
+  getDimensionTitleButtonsWithinSeries(seriesIndex: number) {
+    return this.getSeriesSubStep(seriesIndex)
+      .children()
+      .filter('.mcs-otqlInputEditor_stepNameButton');
+  }
+
+  @logFunction()
+  getNewValueButtonWithinSeries(seriesIndex: number) {
+    return this.getSeries().eq(seriesIndex).find('.mcs-otqlSeries_newValue');
+  }
+
+  @logFunction()
+  getSeriesDeleteButtons(seriesIndex: number) {
+    return this.getSeries().eq(seriesIndex).children().filter('.mcs-otqlSeries_removeStepBtn');
+  }
+
+  @logFunction()
+  getDimensionDeleteButtonsWithinSeries(seriesIndex: number) {
+    return this.getSeriesSubStep(seriesIndex).children().filter('.mcs-otqlSeries_removeStepBtn');
+  }
+
+  @logFunction()
+  clickAddStep() {
+    cy.get('.mcs-timelineStepBuilder_addStepBtn').click();
+    this.charts.multisteps = 1;
   }
 }
 
