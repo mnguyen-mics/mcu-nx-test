@@ -21,7 +21,7 @@ describe('Should test keycloak update password', () => {
         '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ProxyCommand="ssh -W %h:%p ' +
         bastion +
         '"';
-      const hostname = '10.0.1.7';
+      const hostname = '10.0.1.8';
       cy.exec(
         'scp ' +
           ssh_options +
@@ -61,7 +61,7 @@ describe('Should test keycloak update password', () => {
         '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ProxyCommand="ssh -W %h:%p ' +
         bastion +
         '"';
-      const hostname = '10.0.1.7';
+      const hostname = '10.0.1.8';
       cy.exec(
         'scp ' +
           ssh_options +
@@ -145,7 +145,7 @@ describe('Should test keycloak update password', () => {
         '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ProxyCommand="ssh -W %h:%p ' +
         bastion +
         '"';
-      const hostname = '10.0.1.7';
+      const hostname = '10.0.1.8';
 
       cy.exec(
         'scp ' +
@@ -206,8 +206,8 @@ describe('Should test keycloak update password', () => {
       '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -o ProxyCommand="ssh -W %h:%p ' +
       bastion +
       '"';
-    const db1 = '10.0.1.7';
-    const front3 = '10.0.1.14';
+    const db1 = '10.0.1.8';
+    const front3 = '10.0.1.15';
 
     cy.exec(
       'scp ' +
