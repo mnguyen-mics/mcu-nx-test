@@ -394,7 +394,7 @@ Cypress.Commands.add('initTestContext', () => {
                   'active: Boolean @TreeIndex(index:"USER_INDEX")\n' +
                   '}\n' +
                   '######\n' +
-                  'type UserAgent  {\n' +
+                  'type UserAgent @Mirror(object_type:"UserDevicePoint") {\n' +
                   'creation_ts:Timestamp!\n' +
                   'id:ID! @TreeIndex(index:"USER_INDEX")\n' +
                   'creation_date:Date! @Function(name:"ISODate", params:["creation_ts"]) @TreeIndex(index:"USER_INDEX")\n' +
