@@ -71,10 +71,16 @@ import {
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 import {
   AbstractSource,
-  GenericSource,
+  AnalyticsSource,
+  OTQLSource,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
 import { QueryToolTabContext } from './QueryToolTabContext';
 import log from '../../../utils/Logger';
+import { AnalyticsQueryModel, OTQLQueryModel } from './QueryToolTab';
+import {
+  AnalyticsDimension,
+  AnalyticsMetric,
+} from '@mediarithmics-private/advanced-components/lib/utils/analytics/Common';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -320,11 +326,20 @@ class QueryResultRenderer extends React.Component<Props, State> {
               dataset: {
                 type: 'get-decorators' as SourceType,
                 sources: [
-                  {
-                    query_text: query.queryModel,
-                    series_title: query.name,
-                    type: 'otql',
-                  } as GenericSource,
+                  !query.type || query.type === 'otql'
+                    ? ({
+                        query_text: (query.queryModel as OTQLQueryModel).query,
+                        series_title: query.name,
+                        type: 'otql',
+                      } as OTQLSource)
+                    : ({
+                        query_json: query.queryModel as AnalyticsQueryModel<
+                          AnalyticsMetric,
+                          AnalyticsDimension
+                        >,
+                        series_title: query.name,
+                        type: query.type,
+                      } as AnalyticsSource<AnalyticsMetric, AnalyticsDimension>),
                 ],
                 decorators_options: {
                   model_type: options.decorators,
@@ -517,8 +532,8 @@ class QueryResultRenderer extends React.Component<Props, State> {
     const audienceFeatureFormQueryHasDateHistogram =
       !!query && query.indexOf('@date_histogram') > -1;
     const serieQueryHasDateHistogram = serieQueries.some(q => {
-      if (!isQueryListModel(q.queryModel)) {
-        return q.queryModel.indexOf('@date_histogram') > -1;
+      if (q.type === 'otql') {
+        return (q.queryModel as OTQLQueryModel).query.indexOf('@date_histogram') > -1;
       }
       return false;
     });
@@ -700,12 +715,42 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
       const promises: Array<Promise<any>> = [];
       tab.serieQueries?.forEach(serieQuery => {
-        if (typeof serieQuery.queryModel === 'string') {
-          promises.push(createQueryPromise(serieQuery.queryModel, serieQuery.name, 'join'));
+        if (!isQueryListModel(serieQuery.queryModel)) {
+          if (!serieQuery.type || serieQuery.type === 'otql')
+            promises.push(
+              createQueryPromise(
+                (serieQuery.queryModel as OTQLQueryModel).query,
+                serieQuery.name,
+                'join',
+              ),
+            );
+          else
+            promises.push(
+              Promise.resolve({
+                query_json: serieQuery.queryModel,
+                type: serieQuery.type,
+                series_title: serieQuery.name,
+              }),
+            );
         } else {
           const listPromises: Array<Promise<any>> = [];
           serieQuery.queryModel.forEach(model => {
-            listPromises.push(createQueryPromise(model.query, model.name, 'to-list'));
+            if (!model.type || model.type === 'otql')
+              listPromises.push(
+                createQueryPromise(
+                  (model.queryModel as OTQLQueryModel).query,
+                  model.name,
+                  'to-list',
+                ),
+              );
+            else
+              listPromises.push(
+                Promise.resolve({
+                  query_json: model.queryModel,
+                  type: model.type,
+                  series_title: model.name,
+                }),
+              );
           });
           const p = new Promise((resolve, reject) => {
             return resolve({

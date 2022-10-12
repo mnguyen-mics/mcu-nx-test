@@ -6,7 +6,6 @@ import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { CancelablePromise } from '../../../utils/ApiHelper';
 import {
   isQueryListModel,
-  isSerieQueryModel,
   OTQLResult,
   QueryPrecisionMode,
 } from '../../../models/datamart/graphdb/OTQLResult';
@@ -22,11 +21,16 @@ import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import QueryToolTab, { QueryListModel, SerieQueryModel } from './QueryToolTab';
+import QueryToolTab, {
+  AbstractListQueryModel,
+  AbstractQueryModel,
+  OTQLQueryModel,
+  QueryModelType,
+  SerieQueryModel,
+} from './QueryToolTab';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
-import { getChartDataset } from './utils/ChartOptionsUtils';
+import { DEFAULT_OTQL_QUERY, getNewSerieQuery, getSources } from './utils/QueryUtils';
 import {
   IChartDatasetService,
   QueryExecutionSource,
@@ -43,8 +47,13 @@ import {
   AbstractParentSource,
   AbstractSource,
   OTQLSource,
+  AnalyticsSource,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
 import { QueryToolTabContext } from './QueryToolTabContext';
+import {
+  AnalyticsDimension,
+  AnalyticsMetric,
+} from '@mediarithmics-private/advanced-components/lib/utils/analytics/Common';
 
 const messages = defineMessages({
   queryToSave: {
@@ -253,9 +262,15 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     const { organisationId } = match.params;
 
     // Load tab state from LocalStorage
-    const savedQueries: SavedQuery | undefined = JSON.parse(
+    let savedQueries: SavedQuery | undefined = JSON.parse(
       localStorage.getItem('savedQueries') ?? '{}',
     )[datamartId];
+
+    // Reset savedQueries if it matches the old data model
+    if (typeof savedQueries?.queries?.[0]?.serieQueries?.[0]?.queryModel === 'string') {
+      savedQueries = undefined;
+      localStorage.removeItem('savedQueries');
+    }
 
     // Get McsTabsItem from local storage
     const tabs: McsTabsItem[] =
@@ -391,7 +406,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     }
   };
 
-  updateQueryModel = (serieId: string, queryId?: string) => (query: string) => {
+  updateQueryModel = (serieId: string, subStepId?: string) => (query: AbstractQueryModel) => {
     const { activeKey, tabs } = this.state;
     const { editionMode } = this.props;
     if (editionMode) {
@@ -419,14 +434,14 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
               ...tab,
               serieQueries: tab.serieQueries.map(serie => {
                 const serieQueryModel = serie.queryModel;
-                if (isQueryListModel(serieQueryModel) && queryId) {
+                if (isQueryListModel(serieQueryModel) && subStepId) {
                   return {
                     ...serie,
                     queryModel: serieQueryModel.map(model => {
-                      if (model.id === queryId) {
+                      if (model.id === subStepId) {
                         return {
                           ...model,
-                          query,
+                          queryModel: query,
                         };
                       }
                       return model;
@@ -454,15 +469,15 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     event: any,
     inputVisible: boolean,
     serieQueries: SerieQueryModel[],
-    queryId?: string,
+    subStepId?: string,
   ) => {
     return serieQueries.map(serie => {
       const serieQueryModel = serie.queryModel;
-      if (isQueryListModel(serieQueryModel) && queryId) {
+      if (isQueryListModel(serieQueryModel) && subStepId) {
         return {
           ...serie,
           queryModel: serieQueryModel.map(model => {
-            if (model.id === queryId) {
+            if (model.id === subStepId) {
               return {
                 ...model,
                 inputVisible: inputVisible,
@@ -485,35 +500,35 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     });
   };
 
-  updateNameModel = (serieId: string, queryId?: string) => (event: any) => {
+  updateNameModel = (serieId: string, subStepId?: string) => (event: any) => {
     const { activeKey, tabs } = this.state;
     this.setState({
       tabs: tabs.map(tab => {
         if (tab.key === activeKey) {
           return {
             ...tab,
-            serieQueries: this.updateTree(serieId, event, false, tab.serieQueries, queryId),
+            serieQueries: this.updateTree(serieId, event, false, tab.serieQueries, subStepId),
           };
         } else return tab;
       }),
     });
   };
 
-  onInputChange = (serieId: string, queryId?: string) => (event: any) => {
+  onInputChange = (serieId: string, subStepId?: string) => (event: any) => {
     const { activeKey, tabs } = this.state;
     this.setState({
       tabs: tabs.map(tab => {
         if (tab.key === activeKey) {
           return {
             ...tab,
-            serieQueries: this.updateTree(serieId, event, true, tab.serieQueries, queryId),
+            serieQueries: this.updateTree(serieId, event, true, tab.serieQueries, subStepId),
           };
         } else return tab;
       }),
     });
   };
 
-  displaySerieInput = (serieId: string, queryId?: string) => (e: any) => {
+  displaySerieInput = (serieId: string, subStepId?: string) => (e: any) => {
     const { activeKey, tabs } = this.state;
 
     this.setState({
@@ -523,11 +538,11 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
             ...tab,
             serieQueries: tab.serieQueries.map(serie => {
               const serieQueryModel = serie.queryModel;
-              if (isQueryListModel(serieQueryModel) && queryId) {
+              if (isQueryListModel(serieQueryModel) && subStepId) {
                 return {
                   ...serie,
                   queryModel: serieQueryModel.map(model => {
-                    if (model.id === queryId) {
+                    if (model.id === subStepId) {
                       return {
                         ...model,
                         inputVisible: !model.inputVisible,
@@ -563,58 +578,24 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     } = this.props;
     const { tabs, activeKey } = this.state;
     // TODO: improve typings of 'sources' and chart configs in ADV library
-    const getSources = () => {
-      return tabQuery.serieQueries.map(serieQuery => {
-        if (isSerieQueryModel(serieQuery)) {
-          if (typeof serieQuery.queryModel === 'string') {
-            return getChartDataset(
-              {
-                query_text: serieQuery.queryModel,
-                type: 'otql',
-                series_title: serieQuery.name || 'count',
-              } as any,
-              true,
-              {},
-            );
-          } else {
-            return {
-              type: 'to-list',
-              series_title: serieQuery.name,
-              sources: serieQuery.queryModel.map(queryListModel => {
-                return getChartDataset(
-                  {
-                    query_text: queryListModel.query,
-                    type: 'otql',
-                    series_title: queryListModel.name,
-                  } as any,
-                  true,
-                  {},
-                );
-              }),
-            };
-          }
-        }
-      });
-    };
 
     let dataset;
     const serieQueries = tabs.find(t => t.key === activeKey)?.serieQueries;
     if (serieQueries && serieQueries.length === 1) {
-      if (typeof serieQueries[0].queryModel === 'string') {
-        dataset = {
-          type: 'otql',
-          ...getSources()[0],
-        } as any;
-      } else {
+      if (isQueryListModel(serieQueries[0].queryModel))
         dataset = {
           type: 'to-list',
-          ...getSources()[0],
+          ...getSources(tabQuery)[0],
         } as any;
-      }
+      else
+        dataset = {
+          type: serieQueries[0].type,
+          ...getSources(tabQuery)[0],
+        } as any;
     } else {
       dataset = {
         type: 'join',
-        sources: getSources(),
+        sources: getSources(tabQuery),
       };
     }
     return this._chartDatasetService
@@ -797,8 +778,8 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     const { tabs } = this.state;
     const firstTabQuery = tabs.find(t => t.key === '1');
     const queryToUse =
-      firstTabQuery && !isQueryListModel(firstTabQuery.serieQueries[0]?.queryModel)
-        ? firstTabQuery.serieQueries[0]?.queryModel
+      firstTabQuery && firstTabQuery.serieQueries[0]?.type === 'otql'
+        ? (firstTabQuery.serieQueries[0]?.queryModel as OTQLQueryModel).query
         : DEFAULT_OTQL_QUERY;
     return queryToUse;
   };
@@ -873,17 +854,27 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     const dataset = chartItem.content.dataset;
 
     const buildSerieQueryTree = (sources: AbstractSource[], sourceType: SourceType) => {
-      const queryPromises: Array<Promise<Partial<QueryListModel | AbstractParentSource>>> =
+      const queryPromises: Array<Promise<Partial<AbstractListQueryModel | AbstractParentSource>>> =
         sources.map(s => {
           const queryId = (s as OTQLSource).query_id;
+          const queryJson = (s as AnalyticsSource<AnalyticsMetric, AnalyticsDimension>).query_json;
           if (queryId) {
             return this._queryService.getQuery(datamartId, queryId).then(res => {
               return {
-                query: res.data.query_text,
+                id: cuid(),
+                queryModel: { query: res.data.query_text },
                 name: s.series_title || '',
+                type: 'otql' as QueryModelType,
               };
             });
-          } else return Promise.resolve({ sources: (s as AbstractParentSource).sources });
+          } else if (queryJson)
+            return Promise.resolve({
+              id: cuid(),
+              name: s.series_title || '',
+              queryModel: (s as AnalyticsSource<AnalyticsMetric, AnalyticsDimension>).query_json,
+              type: s.type as QueryModelType,
+            });
+          else return Promise.resolve({ sources: (s as AbstractParentSource).sources });
         });
 
       Promise.all(queryPromises)
@@ -902,19 +893,26 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
               // If sources
               const sources = (res as AbstractParentSource).sources;
               if (sources) {
-                const subQueryPromises = sources
-                  .filter(source => (source as OTQLSource).query_id)
-                  .map(s => {
-                    return this._queryService
-                      .getQuery(datamartId, (s as OTQLSource).query_id!)
-                      .then(queryRes => {
-                        return Promise.resolve({
-                          query_text: queryRes.data.query_text,
-                          name: s.series_title,
-                          operation_type: (s as any).operation_type,
-                        });
+                const subQueryPromises: Array<Promise<any>> = sources.map(s => {
+                  const queryId = (s as OTQLSource).query_id;
+                  if (queryId)
+                    return this._queryService.getQuery(datamartId, queryId).then(queryRes => {
+                      return Promise.resolve({
+                        name: s.series_title,
+                        operation_type: (s as any).operation_type,
+                        queryModel: { query: queryRes.data.query_text },
+                        type: 'otql' as QueryModelType,
                       });
-                  });
+                    });
+                  else
+                    return Promise.resolve({
+                      name: s.series_title,
+                      operation_type: (s as any).operation_type,
+                      queryModel: (s as AnalyticsSource<AnalyticsMetric, AnalyticsDimension>)
+                        .query_json,
+                      type: s.type as QueryModelType,
+                    });
+                });
                 await Promise.all(subQueryPromises)
                   .then(subResponse => {
                     if (subResponse[0].operation_type === 'join') {
@@ -923,7 +921,8 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                           id: cuid(),
                           name: resp.name || '',
                           inputVisible: false,
-                          queryModel: resp.query_text,
+                          queryModel: resp.queryModel,
+                          type: resp.type,
                         });
                       });
                     } else {
@@ -933,15 +932,17 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                         inputVisible: false,
                         queryModel:
                           subResponse.length === 1
-                            ? subResponse[0].query_text
+                            ? subResponse[0].queryModel
                             : subResponse.map((source, j) => {
                                 return {
+                                  queryModel: source.queryModel,
                                   id: cuid(),
                                   name: source.name || `Dimension ${j}`,
                                   inputVisible: false,
-                                  query: source.query_text,
+                                  type: source.type,
                                 };
                               }),
+                        type: subResponse.length === 1 ? subResponse[0].type : undefined,
                       });
                     }
                   })
@@ -949,20 +950,17 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                     notifyError(err);
                   });
               } else {
-                const queryListModel = res as QueryListModel;
-                if (sourceType === 'to-list' && isQueryListModel(newSerieQueries[0].queryModel)) {
-                  newSerieQueries[0].queryModel.push({
-                    id: cuid(),
-                    name: queryListModel.name || '',
-                    inputVisible: false,
-                    query: queryListModel.query || '',
-                  });
+                const serieQuery = res as SerieQueryModel;
+                if (sourceType === 'to-list' && isQueryListModel(serieQuery.queryModel)) {
+                  newSerieQueries[0].queryModel = serieQuery.queryModel as AbstractListQueryModel[];
                 } else {
+                  const serieQuery = res as SerieQueryModel;
                   newSerieQueries.push({
                     id: cuid(),
-                    name: queryListModel.name || '',
+                    name: serieQuery.name || '',
                     inputVisible: false,
-                    queryModel: queryListModel.query || '',
+                    queryModel: serieQuery.queryModel || '',
+                    type: serieQuery.type,
                   });
                 }
               }
@@ -991,7 +989,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                     id: cuid(),
                     name: chartItem.title || '',
                     inputVisible: false,
-                    queryModel: res.data.query_text,
+                    queryModel: { query: res.data.query_text },
                   },
                 ],
                 chartItem,
@@ -1009,7 +1007,24 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
         const sources = (dataset as AbstractParentSource).sources;
         if (sources) buildSerieQueryTree(sources, dataset.type.toLowerCase() as SourceType);
         break;
-
+      case 'activities_analytics':
+      case 'collection_volumes':
+      case 'resources_usage':
+      case 'data_ingestion':
+        this.setNewSerieQueries(
+          [
+            {
+              id: cuid(),
+              name: chartItem.title || '',
+              inputVisible: false,
+              queryModel: (dataset as AnalyticsSource<AnalyticsMetric, AnalyticsDimension>)
+                .query_json,
+              type: dataset.type as QueryModelType,
+            },
+          ],
+          chartItem,
+        );
+        break;
       default:
         break;
     }
@@ -1073,18 +1088,21 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
     const currentTab = tabs.length > 0 ? tabs.find(t => t.key === activeKey) : undefined;
 
-    const queryToUse = currentTab?.serieQueries[0]?.queryModel;
+    const serieQueryToUse = currentTab?.serieQueries[0];
 
     let startType = 'UserPoint';
 
     if (
       rawSchema &&
-      typeof queryToUse === 'string' &&
+      serieQueryToUse &&
+      serieQueryToUse.type === 'otql' &&
       currentTab &&
       currentTab.serieQueries.length < 2
     ) {
       const foundType = rawSchema.find(ot => {
-        const matchResult = queryToUse?.match(/FROM(?:\W*)(\w+)/i);
+        const matchResult = (serieQueryToUse.queryModel as OTQLQueryModel).query.match(
+          /FROM(?:\W*)(\w+)/i,
+        );
         if (!matchResult || matchResult.length === 0) return false;
         return matchResult[1] === ot.name;
       });
@@ -1105,18 +1123,19 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
             </Button>
           </CopyToClipboard>
         )}
-        {currentTab?.serieQueries.length === 1 &&
-          typeof queryToUse === 'string' &&
+        {currentTab &&
+          currentTab.serieQueries.length === 1 &&
+          serieQueryToUse?.type === 'otql' &&
           renderSaveAsButton &&
-          renderSaveAsButton(queryToUse, datamartId)}
+          renderSaveAsButton((serieQueryToUse.queryModel as OTQLQueryModel).query, datamartId)}
       </Row>
     );
 
     return (
       <Layout>
         {renderActionBar &&
-          typeof queryToUse === 'string' &&
-          renderActionBar(queryToUse, datamartId)}
+          serieQueryToUse?.type === 'otql' &&
+          renderActionBar((serieQueryToUse.queryModel as OTQLQueryModel).query, datamartId)}
         <Layout>
           <QueryToolTabContext.Provider value={{ queryExecutionSource, queryExecutionSubSource }}>
             <Content className='mcs-content-container'>

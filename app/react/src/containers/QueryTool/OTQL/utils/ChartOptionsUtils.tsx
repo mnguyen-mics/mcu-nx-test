@@ -518,6 +518,5 @@ export const getChartDataset = (
       [childProperty]: [source],
     };
   }
-
   return source;
 };

@@ -13,11 +13,17 @@ import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/Run
 import { ChartType } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import { McsTabsItem } from './QueryToolTabsContainer';
 import { SettingOutlined } from '@ant-design/icons';
-import OTQLSeries from './OTQLSeries';
+import QueryToolSeries from './QueryToolSeries';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { ITagService } from '@mediarithmics-private/advanced-components';
+import { AnalyticsSourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
+import { ReportRequestBody } from '@mediarithmics-private/advanced-components/lib/models/report/ReportRequestBody';
+import {
+  AnalyticsDimension,
+  AnalyticsMetric,
+} from '@mediarithmics-private/advanced-components/lib/utils/analytics/Common';
 
 export interface QueryToolTabProps {
   datamartId: string;
@@ -28,7 +34,7 @@ export interface QueryToolTabProps {
   onSeriesChange: (newSeries: SerieQueryModel[]) => void;
   runQuery: (chartType?: ChartType) => void;
   onInputChange: (id: string) => (e: any) => void;
-  updateQueryModel: (id: string) => (query: string) => void;
+  updateQueryModel: (serieId: string, subStepId?: string) => (query: AbstractQueryModel) => void;
   updateNameModel: (id: string) => (e: any) => void;
   displaySerieInput: (id: string) => (e: any) => void;
   noLiveSchemaFound: boolean;
@@ -40,17 +46,33 @@ export interface QueryToolTabProps {
   onQueryParamsChange: (eg: boolean, c: boolean, p: QueryPrecisionMode) => void;
 }
 
-interface AbstractSerieQueryModel {
+export type QueryModelType = 'otql' | AnalyticsSourceType;
+
+export interface OTQLQueryModel {
+  query: string;
+}
+
+export type AnalyticsQueryModel<M, D> = Omit<
+  ReportRequestBody<M, D>,
+  'order_by' | 'first_result' | 'max_result' | 'sample_factor'
+>;
+
+export type AbstractQueryModel =
+  | OTQLQueryModel
+  | AnalyticsQueryModel<AnalyticsMetric, AnalyticsDimension>;
+
+export interface AbstractSerieQueryModel {
   id: string;
   name: string;
   inputVisible?: boolean;
-}
-
-export interface QueryListModel extends AbstractSerieQueryModel {
-  query: string;
+  type?: QueryModelType;
 }
 export interface SerieQueryModel extends AbstractSerieQueryModel {
-  queryModel: string | QueryListModel[];
+  queryModel: AbstractQueryModel | AbstractListQueryModel[];
+}
+
+export interface AbstractListQueryModel extends AbstractSerieQueryModel {
+  queryModel: AbstractQueryModel;
 }
 
 interface State {
@@ -195,7 +217,7 @@ class QueryToolTab extends React.Component<Props, State> {
 
     return (
       <span className='mcs-otqlQuery_container'>
-        <OTQLSeries
+        <QueryToolSeries
           datamartId={datamartId}
           actionButtons={this.buildEditorActions(tab)}
           seriesQueries={tab.serieQueries}
