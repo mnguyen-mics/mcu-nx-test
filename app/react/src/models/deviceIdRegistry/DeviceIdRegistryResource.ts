@@ -16,7 +16,7 @@ export interface DeviceIdRegistryResource {
 
 export interface DeviceIdRegistryOfferResource {
   id: string;
-  device_id_registry_type: DeviceIdRegistryType;
+  device_id_registries: DeviceIdRegistryResource[];
   name: string;
   subscribed: boolean;
 }

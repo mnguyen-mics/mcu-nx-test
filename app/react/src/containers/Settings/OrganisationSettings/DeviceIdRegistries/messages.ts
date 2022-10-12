@@ -141,11 +141,7 @@ const messages = defineMessages({
   },
   deviceIdRegistryOffers: {
     id: 'settings.organisation.device.registry.offers.list.title',
-    defaultMessage: 'Device Registries Offer',
-  },
-  emptyDeviceIdRegistryOffers: {
-    id: 'settings.organisation.device.registry.offers.list.empty',
-    defaultMessage: 'There are no device registry offers.',
+    defaultMessage: 'Third-party device registries',
   },
   deviceIdRegistryOfferId: {
     id: 'settings.organisation.device.registry.offers.list.id',
