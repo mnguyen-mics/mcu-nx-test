@@ -48,7 +48,7 @@ else
 fi
 RANDOM=$$
 DEV_MAIL="dev@mediarithmics.com"
-DEV_PWD='38kpPCc2j#DqVHfLZsLeC*JVGU$vT3K44L832axydkad4^^Y!H'
+DEV_PWD='goLA&B$5wsULd0PIU7TS#b!5oI6w11uadLztFev0hdUUp99!H8'
 SNAPSHOTS_PORT=$(( ( RANDOM % 60000 )  + 5000 ))
 
 set -u
@@ -85,7 +85,7 @@ cat << EOF
     "logLevel":1
   },
   "retries": {
-    "runMode": 4,
+    "runMode": 2,
     "openMode": 1
   },
   "watchForFileChanges": false,
