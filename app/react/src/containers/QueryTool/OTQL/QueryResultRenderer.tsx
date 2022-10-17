@@ -628,12 +628,6 @@ class QueryResultRenderer extends React.Component<Props, State> {
     }
   };
 
-  private isSelectedTypeExportable(): boolean {
-    const { selectedChart } = this.state;
-    const { tab } = this.props;
-    return selectedChart !== 'table' || tab.chartItem?.type !== 'table';
-  }
-
   private isAggregate(dataset: AbstractDataset): dataset is AggregateDataset {
     return dataset.type === 'aggregate';
   }
@@ -947,7 +941,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
                 options,
               )}
           </div>
-          {this.isSelectedTypeExportable() && onSaveChart ? (
+          {onSaveChart ? (
             <div className={'mcs-otqlChart_chartConfig_clipboard_container'}>
               {hasFeature('datastudio-query_tool-charts_loader') && tab.chartItem?.id && (
                 <AntButton
