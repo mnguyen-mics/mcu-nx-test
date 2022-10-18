@@ -33,7 +33,7 @@ const messages = defineMessages({
   },
   stats: {
     id: 'audienceFeed.card.actions.stats',
-    defaultMessage: 'Stats (BETA)',
+    defaultMessage: 'Stats',
   },
   delete: {
     id: 'audienceFeed.card.actions.delete',

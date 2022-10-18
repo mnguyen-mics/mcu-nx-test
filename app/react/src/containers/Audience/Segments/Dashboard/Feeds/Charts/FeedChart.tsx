@@ -2,6 +2,8 @@ import * as React from 'react';
 import {
   buildFeedStatsByFeedRequestBody,
   FeedStatsUnit,
+  SyncResult,
+  SyncType,
 } from '../../../../../../utils/FeedsStatsReportHelper';
 import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService';
 import { TYPES } from '../../../../../../constants/types';
@@ -14,12 +16,11 @@ import {
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
 import { formatMcsDate } from '../../../../../../utils/McsMoment';
-import { Card } from 'antd';
-import { BarChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
-import moment from 'moment';
+import { LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { getAllDates } from '../../../../../../utils/DateHelper';
-import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import HighchartsReact from 'highcharts-react-official';
+import Highcharts from 'highcharts';
 
 interface FeedChartProps {
   title?: React.ReactNode;
@@ -31,17 +32,38 @@ interface FeedChartProps {
 
 type Props = FeedChartProps & InjectedThemeColorsProps & InjectedIntlProps;
 
-interface FeedReport {
-  day: string;
-  upserted: number;
-  deleted: number;
-  unit: FeedStatsUnit;
+interface NormalizedFeedStats {
+  hour: string;
+  date_yyyy_mm_dd: string;
+  sync_type: SyncType;
+  sync_result: SyncResult;
+  uniq_user_points_count: number;
+  uniq_user_identifiers_count: number;
 }
 
 interface State {
-  dataSource: FeedReport[];
+  normalizedFeedStats?: NormalizedFeedStats[];
   isLoading: boolean;
 }
+
+const COLORS: {
+  [key in SyncType]: { [key in SyncResult]: string };
+} = {
+  UPSERT: {
+    SUCCESS: '#00AB67',
+    PROCESSED: '#00A1DF',
+    FAILURE: '#FC3F48',
+    NO_ELIGIBLE_IDENTIFIER: '#513FAB',
+    REJECTED: '#FD7C12',
+  },
+  DELETE: {
+    SUCCESS: '#D3EBDD',
+    PROCESSED: '#CCE8FF',
+    FAILURE: '#FFBAB5',
+    NO_ELIGIBLE_IDENTIFIER: '#BEAEEB',
+    REJECTED: '#FFCB8C',
+  },
+};
 
 class FeedChart extends React.Component<Props, State> {
   @lazyInject(TYPES.IFeedsStatsService)
@@ -51,7 +73,6 @@ class FeedChart extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      dataSource: [],
       isLoading: true,
     };
   }
@@ -77,23 +98,13 @@ class FeedChart extends React.Component<Props, State> {
   }
 
   fetchStats() {
-    const { organisationId, feedId, feedStatsUnit, dateRange } = this.props;
+    const { organisationId, feedId, dateRange } = this.props;
 
     this.setState({
       isLoading: true,
     });
 
-    if (!feedStatsUnit) {
-      throw new Error(`Undefined 'feedStatsUnit'`);
-    }
-
     const formatedInclusiveDateRange = formatMcsDate(dateRange, true);
-
-    const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
-
-    const timeUnit = this.getTimeUnit();
-
-    const allDates = getAllDates(timeUnit, formatedNonInclusiveDateRange);
 
     const reportBody = buildFeedStatsByFeedRequestBody(
       feedId,
@@ -101,54 +112,17 @@ class FeedChart extends React.Component<Props, State> {
         start_date: formatedInclusiveDateRange.from,
         end_date: formatedInclusiveDateRange.to,
       },
-      timeUnit,
+      this.getTimeUnit(),
       ['UNIQ_USER_POINTS_COUNT', 'UNIQ_USER_IDENTIFIERS_COUNT'],
+      0,
+      250,
     );
 
     return this._feedsStatsService
       .getStats(organisationId, reportBody)
       .then(res => {
-        const normalized = normalizeReportView<{
-          hour: string;
-          date_yyyy_mm_dd: string;
-          sync_type: string;
-          uniq_user_points_count: number;
-          uniq_user_identifiers_count: number;
-        }>(res.data.report_view);
-
-        const upserts = normalized.filter(rv => rv.sync_type === 'UPSERT');
-        const deletes = normalized.filter(rv => rv.sync_type === 'DELETE');
-
-        let feedReports: FeedReport[] = allDates.map(day => {
-          const upsertedOnDay = upserts.find(
-            r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
-          );
-          const deletedOnDay = deletes.find(
-            r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
-          );
-
-          return {
-            day: timeUnit === 'HOUR' ? moment(day).format('HH:mm') : day,
-            upserted: upsertedOnDay
-              ? feedStatsUnit === 'USER_POINTS'
-                ? upsertedOnDay.uniq_user_points_count
-                : upsertedOnDay.uniq_user_identifiers_count
-              : 0,
-            deleted: deletedOnDay
-              ? feedStatsUnit === 'USER_POINTS'
-                ? deletedOnDay.uniq_user_points_count
-                : deletedOnDay.uniq_user_identifiers_count
-              : 0,
-            unit: feedStatsUnit,
-          };
-        });
-
-        feedReports = feedReports.sort((report1, report2) =>
-          report1.day.localeCompare(report2.day),
-        );
-
-        return this.setState({
-          dataSource: feedReports,
+        this.setState({
+          normalizedFeedStats: normalizeReportView<NormalizedFeedStats>(res.data.report_view),
           isLoading: false,
         });
       })
@@ -159,68 +133,191 @@ class FeedChart extends React.Component<Props, State> {
       });
   }
 
-  render() {
+  getSeries(feedStatsUnit: FeedStatsUnit): Highcharts.SeriesOptionsType[] {
+    const { normalizedFeedStats } = this.state;
     const {
-      colors,
-      title,
+      dateRange,
       intl: { formatMessage },
     } = this.props;
-    const { dataSource, isLoading } = this.state;
 
-    const metrics =
-      dataSource && dataSource[0]
-        ? Object.keys(dataSource[0]).filter(el => el !== 'day' && el !== 'unit')
-        : [];
+    if (!normalizedFeedStats) return [];
 
-    const optionsForChart = {
-      xKey: 'day',
-      yKeys: metrics.map(metric => {
-        if (dataSource[0].unit === 'USER_POINTS') {
-          if (metric === 'upserted') {
-            return {
-              key: metric,
-              message: formatMessage(messagesMap.upserted_user_points),
-            };
-          } else if (metric === 'deleted') {
-            return {
-              key: metric,
-              message: formatMessage(messagesMap.deleted_user_points),
-            };
-          } else {
-            throw new Error(`Unsupported metric: ${metric}`);
+    const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
+    const timeUnit = this.getTimeUnit();
+    const allDates = getAllDates(timeUnit, formatedNonInclusiveDateRange);
+
+    let seriesData: {
+      [key in SyncType]: { [key in SyncResult]?: Array<number | null> };
+    } =
+      feedStatsUnit === 'USER_IDENTIFIERS'
+        ? {
+            UPSERT: {
+              SUCCESS: [],
+              PROCESSED: [],
+              FAILURE: [],
+            },
+            DELETE: {
+              SUCCESS: [],
+              PROCESSED: [],
+              FAILURE: [],
+            },
           }
-        } else if (dataSource[0].unit === 'USER_IDENTIFIERS') {
-          if (metric === 'upserted') {
-            return {
-              key: metric,
-              message: formatMessage(messagesMap.upserted_identifiers),
-            };
-          } else if (metric === 'deleted') {
-            return {
-              key: metric,
-              message: formatMessage(messagesMap.deleted_identifiers),
-            };
-          } else {
-            throw new Error(`Unsupported metric: ${metric}`);
-          }
-        } else {
-          throw new Error(`Unsupported unit: ${dataSource[0].unit}`);
-        }
+        : {
+            UPSERT: {
+              SUCCESS: [],
+              PROCESSED: [],
+              NO_ELIGIBLE_IDENTIFIER: [],
+              REJECTED: [],
+              FAILURE: [],
+            },
+            DELETE: {
+              SUCCESS: [],
+              PROCESSED: [],
+              NO_ELIGIBLE_IDENTIFIER: [],
+              REJECTED: [],
+              FAILURE: [],
+            },
+          };
+
+    Object.keys(seriesData).map((syncType: SyncType) =>
+      Object.keys(seriesData[syncType]).map((syncResult: SyncResult) => {
+        const filtered = normalizedFeedStats.filter(
+          n => n.sync_type === syncType && n.sync_result === syncResult,
+        );
+        seriesData[syncType][syncResult] = allDates.map(day => {
+          const upsertedOnDay = filtered.find(
+            r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
+          );
+          const count =
+            feedStatsUnit === 'USER_IDENTIFIERS'
+              ? upsertedOnDay?.uniq_user_identifiers_count
+              : upsertedOnDay?.uniq_user_points_count;
+
+          if (!count) return null;
+          return syncType === 'DELETE' ? -count : count;
+        });
       }),
-      colors: [colors['mcs-chart-1'], colors['mcs-chart-5']],
-      showLegend: true,
-      format: 'count' as Format,
+    );
+
+    return Object.keys(seriesData).flatMap((syncType: SyncType) =>
+      Object.keys(seriesData[syncType]).map((syncResult: SyncResult) => {
+        const data = seriesData[syncType][syncResult];
+        let name = formatMessage(messages[syncType]) + ' ' + formatMessage(messages[syncResult]);
+
+        if (syncResult === 'NO_ELIGIBLE_IDENTIFIER') {
+          name = formatMessage(
+            syncType === 'UPSERT' ? messages.noEligibleUpsert : messages.noEligibleDelete,
+          );
+        }
+
+        return {
+          name: name,
+          data: data,
+          stack: syncType,
+          color: COLORS[syncType][syncResult],
+          showInLegend: data ? data.findIndex(v => v != null) >= 0 : false,
+        } as Highcharts.SeriesOptionsType;
+      }),
+    );
+  }
+
+  render() {
+    const {
+      title,
+      dateRange,
+      intl: { formatMessage },
+    } = this.props;
+    const { isLoading } = this.state;
+
+    const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
+    const timeUnit = this.getTimeUnit();
+
+    const chartOptions: Highcharts.Options = {
+      chart: {
+        type: 'column',
+      },
+      title: { text: '' },
+      plotOptions: {
+        column: {
+          stacking: 'normal',
+        },
+      },
+      tooltip: {
+        shared: true,
+        useHTML: false,
+        borderRadius: 2,
+        borderWidth: 1,
+        borderColor: '#e8e8e8',
+        padding: 15,
+        outside: false,
+        shadow: false,
+        hideDelay: 0,
+        formatter() {
+          const header = `<span style="font-size: 12px; font-weight: bold; margin-bottom: 13px;">${this.x}</span><br/><br/>`;
+          const points = !this.points
+            ? []
+            : this.points?.map(point => {
+                return `<span style="color:${
+                  point.color
+                }; font-size: 20px; margin-right: 20px;">\u25CF</span> ${
+                  point.series.name
+                }: <b>${Math.abs(point.y)}</b><br/>`;
+              });
+
+          return header.concat(...points);
+        },
+      },
+      xAxis: {
+        categories: getAllDates(timeUnit, formatedNonInclusiveDateRange),
+        crosshair: true,
+      },
+      yAxis: {
+        title: {
+          text: null,
+        },
+        labels: {
+          formatter: function () {
+            return Math.abs(this.value) + '';
+          },
+        },
+      },
     };
 
     return (
-      <div className='mcs-feed-chart'>
-        {isLoading ? (
-          <LoadingChart />
-        ) : (
-          <Card className='compact' title={title}>
-            <BarChart {...optionsForChart} dataset={dataSource as any} />
-          </Card>
-        )}
+      <div className='mcs-feedChart'>
+        <div className='mcs-feedChart_header'>{title}</div>
+        <div className='mcs-feedChart_chart'>
+          <div className='mcs-feedChart_chart_title'>
+            {formatMessage(messages.chartIdentifierTitle)}
+          </div>
+          <div className='mcs-feedChart_chart_subTitle'>
+            {formatMessage(messages.chartIdentifierSubTitle)}
+          </div>
+          {isLoading ? (
+            <LoadingChart />
+          ) : (
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={{ ...chartOptions, series: this.getSeries('USER_IDENTIFIERS') }}
+            />
+          )}
+        </div>
+        <div className='mcs-feedChart_chart'>
+          <div className='mcs-feedChart_chart_title'>
+            {formatMessage(messages.chartUserPointTitle)}
+          </div>
+          <div className='mcs-feedChart_chart_subTitle'>
+            {formatMessage(messages.chartUserPointSubTitle)}
+          </div>
+          {isLoading ? (
+            <LoadingChart />
+          ) : (
+            <HighchartsReact
+              highcharts={Highcharts}
+              options={{ ...chartOptions, series: this.getSeries('USER_POINTS') }}
+            />
+          )}
+        </div>
       </div>
     );
   }
@@ -228,23 +325,59 @@ class FeedChart extends React.Component<Props, State> {
 
 export default compose<Props, FeedChartProps>(injectThemeColors, injectIntl)(FeedChart);
 
-const messagesMap: {
+const messages: {
   [metric: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
-  upserted_user_points: {
-    id: 'feed.upserted_user_points',
-    defaultMessage: 'Upserted User Points',
+  chartIdentifierTitle: {
+    id: 'feed.chartIdentifier.title',
+    defaultMessage: 'Identifiers handled by the feed',
   },
-  deleted_user_points: {
-    id: 'feed.deleted_user_points',
-    defaultMessage: 'Deleted User Points',
+  chartIdentifierSubTitle: {
+    id: 'feed.chartIdentifier.subTitle',
+    defaultMessage: 'Number of identifiers the feed tried to send, with result.',
   },
-  upserted_identifiers: {
-    id: 'feed.upserted_identifiers',
-    defaultMessage: 'Upserted Identifiers',
+  chartUserPointTitle: {
+    id: 'feed.chartUserPoint.title',
+    defaultMessage: 'User points handled by the feed',
   },
-  deleted_identifiers: {
-    id: 'feed.deleted_identifiers',
-    defaultMessage: 'Deleted Identifiers',
+  chartUserPointSubTitle: {
+    id: 'feed.chartUserPoint.subTitle',
+    defaultMessage: 'Number of user point updates the feed tried to send, with result.',
+  },
+  UPSERT: {
+    id: 'feed.upsert',
+    defaultMessage: 'Push',
+  },
+  DELETE: {
+    id: 'feed.delete',
+    defaultMessage: 'Remove',
+  },
+  SUCCESS: {
+    id: 'feed.success',
+    defaultMessage: 'validated',
+  },
+  PROCESSED: {
+    id: 'feed.processed',
+    defaultMessage: 'processed',
+  },
+  NO_ELIGIBLE_IDENTIFIER: {
+    id: 'feed.noEligibleIdentifier',
+    defaultMessage: 'no eligible identifier',
+  },
+  noEligibleUpsert: {
+    id: 'feed.noEligibleIdentifier.upsert',
+    defaultMessage: 'No eligible identifier to push',
+  },
+  noEligibleDelete: {
+    id: 'feed.noEligibleIdentifier.delete',
+    defaultMessage: 'No eligible identifier to remove',
+  },
+  REJECTED: {
+    id: 'feed.rejected',
+    defaultMessage: 'rejected',
+  },
+  FAILURE: {
+    id: 'feed.failure',
+    defaultMessage: 'failed',
   },
 });
