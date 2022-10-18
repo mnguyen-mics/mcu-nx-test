@@ -90,6 +90,10 @@ export default defineMessages({
     id: 'audience.feeds.list.status.published',
     defaultMessage: 'Published',
   },
+  ERROR: {
+    id: 'audience.feeds.list.status.error',
+    defaultMessage: 'Error',
+  },
   activate: {
     id: 'audience.feeds.list.column.action.activate',
     defaultMessage: 'Activate',

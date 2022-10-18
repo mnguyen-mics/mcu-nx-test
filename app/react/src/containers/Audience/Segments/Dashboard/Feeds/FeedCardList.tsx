@@ -6,7 +6,7 @@ import {
 } from '../../Edit/domain';
 import { Row, Col } from 'antd';
 import FeedCard from './FeedCard';
-import FeedPlaceholder from './FeedPlaceholder';
+import FeedCardPlaceholder from './FeedCardPlaceholder';
 import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
@@ -194,13 +194,13 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
       return (
         <Row gutter={24}>
           <Col span={8}>
-            <FeedPlaceholder />
+            <FeedCardPlaceholder />
           </Col>
           <Col span={8}>
-            <FeedPlaceholder />
+            <FeedCardPlaceholder />
           </Col>
           <Col span={8}>
-            <FeedPlaceholder />
+            <FeedCardPlaceholder />
           </Col>
         </Row>
       );
@@ -209,7 +209,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
     return (
       <div ref={this.getRef}>
         {feeds.length >= 1 && <ContentHeader title={`Feeds`} size={`medium`} />}
-        <Row gutter={24}>
+        <Row gutter={20}>
           {feeds &&
             feeds.map(cf => {
               return (
