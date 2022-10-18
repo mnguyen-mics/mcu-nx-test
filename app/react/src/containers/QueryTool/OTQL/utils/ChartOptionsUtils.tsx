@@ -135,6 +135,7 @@ export function formatDate(str: string, format?: string, toUtc?: boolean) {
  */
 export function getBaseChartProps(
   chartType: ChartType,
+  hasLegend: boolean,
 ): BarChartOptions | RadarChartOptions | PieChartOptions | AreaChartOptions | undefined {
   switch (chartType) {
     case 'bars':
@@ -147,7 +148,7 @@ export function getBaseChartProps(
           },
         ],
         legend: {
-          enabled: true,
+          enabled: hasLegend,
         },
       } as BarChartOptions;
     case 'radar':
@@ -171,7 +172,7 @@ export function getBaseChartProps(
         height: BASE_CHART_HEIGHT,
         innerRadius: false,
         dataLabels: {
-          enabled: true,
+          enabled: hasLegend,
         },
       } as PieChartOptions;
     case 'area':
@@ -184,7 +185,7 @@ export function getBaseChartProps(
           },
         ],
         legend: {
-          enabled: true,
+          enabled: hasLegend,
         },
       } as AreaChartOptions;
     default:

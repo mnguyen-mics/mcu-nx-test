@@ -118,7 +118,8 @@ interface State {
   isSaveModalVisible: boolean;
   isDeleteModalVisible: boolean;
   chartToSaveName: string;
-  selectedQuickOptions?: { [key: string]: string | undefined };
+  selectedQuickOptions: { [key: string]: string | undefined };
+  selectedQuickOptionsCache: { [key: string]: string | undefined };
   queryHasChanged: boolean;
 }
 
@@ -153,6 +154,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
       numberItems: this.getNumberItems(),
       selectedChart: selectedChart,
       selectedQuickOptions: this.getQuickOptions(),
+      selectedQuickOptionsCache: this.getQuickOptions(),
       queryHasChanged: false,
     };
   }
@@ -290,7 +292,10 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
   private getChartProps = (chartType: ChartType) => {
     const chartPropsMap = this.getChartOptionsMap(chartType);
-    const baseProps: ChartOptions | undefined = getBaseChartProps(chartType);
+    const baseProps: ChartOptions | undefined = getBaseChartProps(
+      chartType,
+      !this.noLegendByDefault(),
+    );
     const newChartProps = chartPropsMap.reduce((acc, property) => {
       return { ...acc, ...property };
     }, baseProps);
@@ -369,13 +374,33 @@ class QueryResultRenderer extends React.Component<Props, State> {
     return audienceFeatureFormQueryHasDateHistogram || serieQueryHasDateHistogram;
   };
 
+  noLegendByDefault = () => {
+    const {
+      tab: { queryResult },
+    } = this.props;
+    return (
+      queryResult &&
+      isAggregateDataset(queryResult) &&
+      queryResult.metadata.seriesTitles.length === 1
+    );
+  };
+
   handleChartTypeChange = (value: ChartType) => {
     const { datasource } = this.props;
-    const { aggregationsPath } = this.state;
+    const { aggregationsPath, selectedQuickOptionsCache } = this.state;
     const hasDateHistogram = this.hasDateHistogram();
     const defaultSelectedOptions = getQuickOptionsForChartType(value, hasDateHistogram).reduce(
       (acc, option) => {
-        return { ...acc, [option.title]: option.options[0].value };
+        return {
+          ...acc,
+          [option.title]: selectedQuickOptionsCache[option.title]
+            ? selectedQuickOptionsCache[option.title]
+            : option.title === 'legend' && this.noLegendByDefault()
+            ? 'no_legend'
+            : option.title === 'bar' && this.hasDateHistogram()
+            ? 'column'
+            : option.options[0].value,
+        };
       },
       {},
     );
@@ -383,6 +408,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
       {
         selectedChart: value,
         selectedQuickOptions: defaultSelectedOptions,
+        selectedQuickOptionsCache: { ...defaultSelectedOptions, ...selectedQuickOptionsCache },
       },
       () => {
         // on chart type change we also want to keep buckets view path
@@ -907,10 +933,15 @@ class QueryResultRenderer extends React.Component<Props, State> {
       const handleOnSaveButtonClick = this.openSaveModal.bind(this);
       const handleOnDeleteButtonClick = this.openDeleteModal.bind(this);
 
-      const options = tab?.chartItem?.content.options as any;
+      let options = tab?.chartItem?.content.options as any;
       const dateOptions = (tab as any)?.chartItem?.content?.dataset?.date_options;
       if (dateOptions) {
         options.date_format = dateOptions.format;
+      }
+      if (!options) {
+        options = {};
+        if (this.noLegendByDefault()) options = { ...options, legend: { enabled: false } };
+        if (!options && this.hasDateHistogram()) options = { ...options, bar: 'column' };
       }
 
       const isMetricCase =
@@ -1029,10 +1060,14 @@ class QueryResultRenderer extends React.Component<Props, State> {
   };
 
   async onSelectQuickOption(title: string, value: string) {
-    const { selectedQuickOptions, selectedChart } = this.state;
+    const { selectedQuickOptions, selectedQuickOptionsCache, selectedChart } = this.state;
     const newState = {
       selectedQuickOptions: {
         ...selectedQuickOptions,
+        [title]: value,
+      },
+      selectedQuickOptionsCache: {
+        ...selectedQuickOptionsCache,
         [title]: value,
       },
     };
