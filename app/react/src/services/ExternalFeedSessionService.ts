@@ -5,8 +5,8 @@ import { injectable } from 'inversify';
 import { ExternalFeedSession } from '../models/ExternalFeedSession';
 
 export interface GetExternalFeedSessions extends PaginatedApiParam {
-  open?: Boolean;
-  published?: Boolean;
+  open?: boolean;
+  published?: boolean;
 }
 
 export interface IExternalFeedSessionService {
