@@ -85,8 +85,8 @@ type Props = FeedCardContentProps &
 
 interface State {
   currentFeedSession?: ExternalFeedSession;
-  isLoading: Boolean;
-  showActivatingState: Boolean;
+  isLoading: boolean;
+  showActivatingState: boolean;
 }
 
 class FeedCardContent extends React.Component<Props, State> {
