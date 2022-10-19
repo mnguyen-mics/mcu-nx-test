@@ -174,11 +174,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       });
     }
 
-    if (
-      hasFeature('datamart-object_tree_schema') &&
-      datamart &&
-      datamart.storage_model_version !== 'v201506'
-    ) {
+    if (datamart && datamart.storage_model_version !== 'v201506') {
       items.push({
         className: 'mcs-tabs_tab--object-view-configuration',
         title: intl.formatMessage(messages.objectViewConfiguration),
