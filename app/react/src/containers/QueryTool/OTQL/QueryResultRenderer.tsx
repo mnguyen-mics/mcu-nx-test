@@ -462,20 +462,6 @@ class QueryResultRenderer extends React.Component<Props, State> {
     }
   }
 
-  private cleanUnusedKeysForExport(chartConfig: ChartConfig) {
-    switch (chartConfig.type) {
-      case 'bars':
-        const barChartOptions = chartConfig.options as any;
-        delete barChartOptions.xKey;
-        delete barChartOptions.yKeys;
-        break;
-      case 'pie':
-        const pieChartOptions = chartConfig.options as any;
-        delete pieChartOptions.height;
-        break;
-    }
-  }
-
   async generateChartJson(title?: string): Promise<string | undefined> {
     const { query, datamartId, datasource, tab } = this.props;
     const { selectedChart } = this.state;
@@ -576,14 +562,29 @@ class QueryResultRenderer extends React.Component<Props, State> {
     const chartProps = { ...this.getChartProps(selectedChart) };
     const dataset = getChartDataset(_dataset, false, chartProps);
 
+    let filteredOptions = omit(chartProps, [
+      'date_options',
+      'xKey',
+      'yKeys',
+      'height',
+      'width',
+      'innerRadius',
+    ]);
+
+    if (selectedChart === 'pie') {
+      filteredOptions = {
+        ...filteredOptions,
+        innerRadius: false,
+      };
+    }
+
     const chart: ChartConfig = {
       title: title || '',
       type: selectedChart,
-      options: omit(chartProps, ['date_options']),
+      options: filteredOptions,
       dataset: dataset,
     };
     const chartConfigCopy: ChartConfig = JSON.parse(JSON.stringify(chart));
-    this.cleanUnusedKeysForExport(chartConfigCopy);
     const prettyJson = JSON.stringify(snakeCaseKeys(chartConfigCopy), undefined, 2);
     return prettyJson;
   }
