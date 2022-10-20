@@ -38,6 +38,7 @@ describe('Query tool - Query builder', () => {
 
   beforeEach(() => {
     cy.login();
+    window.localStorage.setItem('features', '["datastudio-query_tool-charts_loader"]');
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
     });
@@ -191,6 +192,23 @@ describe('Query tool - Query builder', () => {
           });
         });
       });
+    });
+  });
+
+  it('test table chart save and check we can edit it', () => {
+    const queryToolPage = new QueryToolPage();
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      queryToolPage.goToPage();
+      queryToolPage.typeQuery('SELECT { accounts { id @map } } FROM UserPoint');
+      queryToolPage.clickBtnRun();
+      cy.get('.mcs-otqlInputEditor_save_button').click();
+      const tableChartName = 'Test Table Chart';
+      cy.get('mcs-aggregationRenderer_chart_name').type(tableChartName);
+      cy.get('mcs-aggregationRenderer_charts_submit').click();
+      queryToolPage.tab.clickAdd();
+      cy.get('.ant-tabs-nav-list').contains('Charts').click({ force: true });
+      cy.get('.mcs-charts-list-item').contains(tableChartName).click({ force: true });
+      cy.get('.mcs-otqlInputEditor_save_button').should('contain', 'Update this chart');
     });
   });
 });
