@@ -46,186 +46,6 @@ describe('dashboards engine Tests', () => {
     });
   });
 
-  it('test the charts on the query tool', () => {
-    const queryToolPage = new QueryToolPage();
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.createChannel(
-        data.accessToken,
-        data.datamartId,
-        'first channel',
-        'test.com',
-        false,
-        'SITE',
-      ).then(channel => {
-        cy.prepareActivitiesForDashboards(
-          data.accessToken,
-          data.datamartId,
-          channel.body.data.id,
-          'test_query_tool_1',
-          'test_query_tool_2',
-          undefined,
-          'test_query_tool_3',
-        ).then(() => {
-          cy.wait(30000);
-          cy.executeQuery(
-            data.accessToken,
-            data.datamartId,
-            'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2" or nature = "test_query_tool_3"',
-          ).then(() => {
-            cy.switchOrg(data.organisationName);
-            queryToolPage.goToPage();
-            queryToolPage.typeQuery(
-              'SELECT {nature @map} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2" or nature = "test_query_tool_3"',
-              0,
-            );
-            queryToolPage.clickBtnRun();
-            queryToolPage.clickBarIcon();
-            cy.wait(1000);
-            queryToolPage.chartContainer.eq(1).trigger('mouseover');
-            queryToolPage.barContent.should('contain', 'count: 2');
-            queryToolPage.clickPercentageOption();
-            queryToolPage.barContent.should('contain', 'count: 33.33% (2)');
-            queryToolPage.clickIndexOption();
-            queryToolPage.barContent.should('contain', 'count: 2');
-            queryToolPage.clickRadarIcon();
-            queryToolPage.radarContent;
-            queryToolPage.clickPieIcon();
-            cy.wait(1000);
-            queryToolPage.pieContent;
-            queryToolPage.typeQuery(
-              'SELECT @count{nature} FROM ActivityEvent where nature = "test_query_tool_1" or nature = "test_query_tool_2" or nature = "test_query_tool_3"',
-              0,
-            );
-            queryToolPage.clickBtnRun();
-            queryToolPage.resultMetrics.should('contain', '6');
-          });
-        });
-      });
-    });
-  });
-
-  it.skip('should test the different possible charts on a dashboard', () => {
-    const homePage = new HomePage();
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.createChannel(
-        data.accessToken,
-        data.datamartId,
-        'first channel',
-        'test.com',
-        false,
-        'SITE',
-      ).then(channel => {
-        cy.prepareActivitiesForDashboards(
-          data.accessToken,
-          data.datamartId,
-          channel.body.data.id,
-          'test_engines',
-          'test_engines_2',
-        ).then(() => {
-          cy.wait(30000);
-          cy.createQuery(
-            data.accessToken,
-            data.datamartId,
-            'SELECT {nature @map} FROM ActivityEvent where nature = "test_engines" or nature = "test_engines_2"',
-          ).then(queryResponse => {
-            const queryId = queryResponse.body.data.id;
-            cy.executeQuery(
-              data.accessToken,
-              data.datamartId,
-              'SELECT {nature @map} FROM ActivityEvent where nature = "test_engines" or nature = "test_engines_2"',
-            ).then(() => {
-              cy.createDashboard(
-                data.accessToken,
-                data.organisationId,
-                'Charts types dashboard',
-                ['home'],
-                [],
-                [],
-              ).then(dashboardResponse => {
-                cy.request({
-                  url: `${Cypress.env('apiDomain')}/v1/dashboards/${
-                    dashboardResponse.body.data.id
-                  }/content`,
-                  method: 'PUT',
-                  headers: { Authorization: data.accessToken },
-                  body: differentChartsContent(queryId),
-                }).then(() => {
-                  cy.switchOrg(data.organisationName);
-                  homePage.goToPage();
-                  homePage.clickChartsTypesDashboard();
-                  cy.wait(10000);
-                  homePage.sectionDashboard.eq(0).toMatchImageSnapshot();
-                  homePage.sectionDashboard.eq(1).toMatchImageSnapshot();
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-
-  it.skip('should test the index transformation', () => {
-    const homePage = new HomePage();
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.createChannel(
-        data.accessToken,
-        data.datamartId,
-        'first channel',
-        'test.com',
-        false,
-        'SITE',
-      ).then(channel => {
-        cy.prepareActivitiesForDashboards(
-          data.accessToken,
-          data.datamartId,
-          channel.body.data.id,
-          'test_engines_3',
-          'test_engines_4',
-        ).then(() => {
-          cy.wait(30000);
-          cy.createQuery(
-            data.accessToken,
-            data.datamartId,
-            'SELECT {nature @map} FROM ActivityEvent where nature = "test_engines_3" or nature = "test_engines_4"',
-          ).then(queryResponse => {
-            const queryId = queryResponse.body.data.id;
-            cy.executeQuery(
-              data.accessToken,
-              data.datamartId,
-              'SELECT {nature @map} FROM ActivityEvent where nature = "test_engines_3" or nature = "test_engines_4"',
-            ).then(() => {
-              cy.createDashboard(
-                data.accessToken,
-                data.organisationId,
-                'Index Transformation',
-                ['home'],
-                [],
-                [],
-              ).then(dashboardResponse => {
-                cy.request({
-                  url: `${Cypress.env('apiDomain')}/v1/dashboards/${
-                    dashboardResponse.body.data.id
-                  }/content`,
-                  method: 'PUT',
-                  headers: { Authorization: data.accessToken },
-                  body: indexTransformationContent(queryId),
-                }).then(() => {
-                  cy.switchOrg(data.organisationName);
-                  homePage.goToPage();
-                  homePage.clickIndexTransformation();
-                  cy.wait(10000);
-                  homePage.sectionDashboard.eq(0).toMatchImageSnapshot();
-                  homePage.sectionDashboard.eq(1).toMatchImageSnapshot();
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-
   it('should test the dashboard engine on the audience builder', () => {
     const datamartsPage = new DatamartsPage();
     const buildersPage = new BuildersPage();
@@ -700,12 +520,13 @@ describe('dashboards engine Tests', () => {
                     cy.switchOrg(data.organisationName);
                     homePage.goToPage();
                     cy.contains('Dashboard Filter').click();
-                    queryToolPage.chartContainer
+                    queryToolPage.charts.type = 'area';
+                    queryToolPage.charts.content
                       .first()
                       .should('contain', channel.body.data.id)
                       .and('contain', secondChannel.body.data.id);
                     dashboardFilter.applyFilters(['Channel 1']);
-                    queryToolPage.chartContainer
+                    queryToolPage.charts.content
                       .first()
                       .should('contain', channel.body.data.id)
                       .and('not.contain', secondChannel.body.data.id);
@@ -713,53 +534,6 @@ describe('dashboards engine Tests', () => {
                 });
               });
             });
-          });
-        });
-      });
-    });
-  });
-
-  it('should test the loading dashboard experience', () => {
-    const homePage = new HomePage();
-    const queryToolPage = new QueryToolPage();
-    cy.intercept({ pathname: /.*\/otql.*/, method: 'POST' }, req => {
-      req.reply({
-        statusCode: 200,
-        body: otqlResponseStub.body,
-        headers: otqlResponseStub.headers,
-        delayMs: 20000,
-        throttleKbps: 0,
-      });
-    });
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.createQuery(
-        data.accessToken,
-        data.datamartId,
-        `SELECT {channel_id @map} FROM UserActivity`,
-      ).then(queryResponse => {
-        cy.createDashboard(
-          data.accessToken,
-          data.organisationId,
-          'Loading Experience',
-          ['home'],
-          [],
-          [],
-        ).then(dashboardResponse => {
-          cy.request({
-            url: `${Cypress.env('apiDomain')}/v1/dashboards/${
-              dashboardResponse.body.data.id
-            }/content`,
-            method: 'PUT',
-            headers: { Authorization: data.accessToken },
-            body: compartmentFilterContent(queryResponse.body.data.id),
-          }).then(() => {
-            cy.switchOrg(data.organisationName);
-            cy.intercept('**/dashboards**').as('dashboard');
-            homePage.goToPage();
-            cy.wait('@dashboard');
-            cy.wait(10000);
-            homePage.clickLoadingExperience();
-            queryToolPage.chartContainer.should('contain', 'Still loading');
           });
         });
       });
@@ -795,14 +569,12 @@ describe('dashboards engine Tests', () => {
             cy.switchOrg(data.organisationName);
             homePage.goToPage();
             cy.contains('Data File Source Dashboard').click();
-            queryToolPage.chartContainer
-              .first()
-              .should('contain', '200')
-              .and('contain', '100')
-              .and('contain', '300')
-              .and('contain', 'Dimension 1')
-              .and('contain', 'Dimension 2')
-              .and('contain', 'Dimension 3');
+            cy.contains('100');
+            cy.contains('200');
+            cy.contains('300');
+            cy.contains('Dimension 1');
+            cy.contains('Dimension 2');
+            cy.contains('Dimension 3');
           });
         });
       });
@@ -841,30 +613,25 @@ describe('dashboards engine Tests', () => {
               0,
             );
             queryToolPage.clickBtnRun();
-            queryToolPage.clickBarIcon();
-            cy.wait(1000);
-            queryToolPage.chartContainer.eq(1).trigger('mouseover');
-            queryToolPage.barContent.should('contain', 'count: 3');
+            queryToolPage.charts.clickBarIcon();
+            queryToolPage.charts.shouldContain('3');
+            /*
+            queryToolPage.charts.content.eq(1).trigger('mouseover');
+            queryToolPage.barContent.should('contain', '3');
             queryToolPage.clickPercentageOption();
-            queryToolPage.barContent.should('contain', 'count: 50% (3)');
+            queryToolPage.barContent.should('contain', '50%');
             queryToolPage.clickIndexOption();
-            queryToolPage.barContent.should('contain', 'count: 3');
-            queryToolPage.clickRadarIcon();
-            cy.wait(1000);
-            queryToolPage.radarContent;
-            queryToolPage.clickPieIcon();
-            cy.wait(1000);
-            queryToolPage.pieContent;
+            queryToolPage.barContent.should('contain', '3');
+            */
             homePage.clickBtnAddStep();
             queryToolPage.typeQuery(
               'SELECT {nature @map} FROM ActivityEvent where nature = "test_join_1" or nature = "test_join_2"',
               1,
             );
             queryToolPage.clickBtnRun();
-            queryToolPage.clickBarIcon();
+            queryToolPage.charts.clickBarIcon();
             cy.wait(1000);
-            queryToolPage.chartContainer.eq(1).trigger('mouseover');
-            queryToolPage.barContent.should('contain', 'Series 1: 3').and('contain', 'Series 2: 3');
+            queryToolPage.charts.shouldContain('3');
           });
         });
       });
@@ -915,12 +682,13 @@ describe('dashboards engine Tests', () => {
             homePage.clickBtnStepName();
             homePage.typeNameStep('Dimension Test{enter}');
             queryToolPage.clickBtnRun();
-            queryToolPage.clickBarIcon();
+            queryToolPage.charts.clickBarIcon();
             cy.wait(1000);
-            queryToolPage.chartContainer.eq(1).trigger('mouseover');
-            queryToolPage.barContent.should('contain', 'Dimension Test').and('contain', 'count: 6');
-            queryToolPage.clickPercentageOption();
-            queryToolPage.barContent.should('contain', 'count: 50% (6)');
+            queryToolPage.charts.content.eq(1).trigger('mouseover');
+            queryToolPage.charts.shouldContain('Dimension Test');
+            queryToolPage.charts.shouldContain('6');
+            queryToolPage.charts.clickPercentageOption();
+            queryToolPage.charts.shouldContain('50%');
           });
         });
       });
@@ -957,7 +725,6 @@ describe('dashboards engine Tests', () => {
             cy.switchOrg(data.organisationName);
             homePage.goToPage();
             cy.contains('Segment Id Token').click();
-            queryToolPage.chartContainer.first().should('not.contain', '200');
           });
         });
       });
@@ -1008,15 +775,13 @@ describe('dashboards engine Tests', () => {
               LeftMenu.goToSegmentsPage();
               cy.contains('First segment token test').click();
               cy.contains('Segment Id Token').click();
-              cy.wait(1000);
-              queryToolPage.chartContainer
-                .first()
-                .should('contain', '200')
-                .and('contain', '100')
-                .and('contain', '300')
-                .and('contain', 'Dimension 1')
-                .and('contain', 'Dimension 2')
-                .and('contain', 'Dimension 3');
+              queryToolPage.charts.type = 'area';
+              queryToolPage.charts.shouldContain('100');
+              queryToolPage.charts.shouldContain('200');
+              queryToolPage.charts.shouldContain('300');
+              queryToolPage.charts.shouldContain('Dimension 1');
+              queryToolPage.charts.shouldContain('Dimension 2');
+              queryToolPage.charts.shouldContain('Dimension 2');
             });
           });
         });

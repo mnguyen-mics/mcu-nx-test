@@ -8,7 +8,7 @@ class ActivityAnalyserTypePage extends Page {
 
   @logFunction()
   getActivityAnalyserTypeWithName(name: string) {
-    return cy.get('.mcs-menu-list-content-title').contains(name);
+    return cy.get('.mcs-menu-list-content-title', { timeout: 60000 }).contains(name);
   }
 
   @logFunction()

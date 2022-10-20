@@ -130,7 +130,7 @@ class RolesPage extends Page {
 
   @logGetter()
   get errorPopUp() {
-    return cy.get('.ant-notification-notice-error');
+    return cy.get('.ant-notification-notice-error', { timeout: 60000 });
   }
 
   @logGetter()

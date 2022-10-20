@@ -100,7 +100,7 @@ class UsersPage extends Page {
 
   @logGetter()
   get errorPopUp() {
-    return cy.get('.ant-notification-notice-error');
+    return cy.get('.ant-notification-notice-error', { timeout: 60000 });
   }
 
   @logFunction()
@@ -120,7 +120,7 @@ class UsersPage extends Page {
 
   @logFunction()
   clickCardToggle(id: string) {
-    this.cardWithId(id).find('.ant-collapse-arrow').click();
+    this.cardWithId(id).find('.mcs-userRoleList_cardSubtitle').click();
   }
 
   @logFunction()
