@@ -59,9 +59,9 @@ class Tab extends Page {
       .click();
   }
 
-  @logFunction()
-  getActiveTabPanel() {
-    return cy.get(`ant-tabs-tab-active`).eq(0);
+  @logGetter()
+  get activeTabPanel() {
+    return cy.get(`.ant-tabs-tabpane-active`).eq(0);
   }
 
   @logFunction()
@@ -103,6 +103,26 @@ class Tab extends Page {
   @logFunction()
   getTabPanel(tabIndex: number) {
     return cy.get(`div[id="rc-tabs-1-panel-${tabIndex + 1}"]`);
+  }
+
+  @logFunction()
+  getNewValueButtonByTab(tabIndex: number, pos: number) {
+    return this.getTabPanel(tabIndex).find('.mcs-otqlSeries_newValue').eq(pos);
+  }
+
+  @logFunction()
+  getNewSeriesButtonByTab(tabIndex: number, pos: number) {
+    return this.getTabPanel(tabIndex).find('.mcs-timelineStepBuilder_addStepBtn').eq(pos);
+  }
+
+  @logFunction()
+  getRemoveStepButtonByTab(tabIndex: number, pos: number) {
+    return this.getTabPanel(tabIndex).find('.mcs-otqlSeries_removeStepBtn').eq(pos);
+  }
+
+  @logFunction()
+  getQueryInputByTab(tabIndex: number, pos: number) {
+    return this.getTabPanel(tabIndex).find('.mcs-otqlInputEditor_otqlConsole').eq(pos);
   }
 }
 

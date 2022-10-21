@@ -20,6 +20,11 @@ class RightTab extends Page {
   clickChartsTitle() {
     cy.get('.mcs-OTQLConsoleContainer_right-tab').eq(1).contains('Charts').click();
   }
+
+  @logGetter()
+  get fieldNodeContent() {
+    return cy.get('.mcs-fieldNode_content');
+  }
 }
 
 export default RightTab;
