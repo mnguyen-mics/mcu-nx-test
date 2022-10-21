@@ -164,7 +164,10 @@ class DeviceIdRegistriesEditForm extends React.Component<Props, DeviceIdRegistri
       deviceIdRegistry,
     } = this.props;
 
-    const registryTypes: DeviceIdRegistryType[] = ['CUSTOM_DEVICE_ID', 'MOBILE_VENDOR_ID'];
+    const registryTypes: DeviceIdRegistryType[] = [
+      DeviceIdRegistryType.CUSTOM_DEVICE_ID,
+      DeviceIdRegistryType.MOBILE_VENDOR_ID,
+    ];
     const registryTypeOptions: DefaultOptionProps[] = registryTypes.map(t => ({
       title: t,
       value: t,

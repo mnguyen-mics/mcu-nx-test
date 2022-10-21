@@ -74,12 +74,12 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.firstParty.edit.title',
     defaultMessage: 'Edit Device Registry',
   },
-  newThirdPartyRegistryDrawerTitle: {
-    id: 'settings.organisation.device.registries.new.thirdParty.title',
-    defaultMessage: 'Device Registries > New Third-party Device Registry',
+  thirdPartyRegistrySubscriptionsDrawerTitle: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.drawer.title',
+    defaultMessage: 'Device Registries > New Third-Party Device Registry',
   },
   firstPartyDatamartSelectionsDrawerTitle: {
-    id: 'settings.organisation.device.registries.new.thirdParty.title',
+    id: 'settings.organisation.device.registries.datamarts.selections.title',
     defaultMessage: 'Edit linked datamarts for device registry: {registryName}',
   },
   generalInformation: {
@@ -139,29 +139,37 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.new.creation.success',
     defaultMessage: 'Linked datamarts list successfully updated.',
   },
-  deviceIdRegistryOffers: {
-    id: 'settings.organisation.device.registry.offers.list.title',
+  manageSubscriptions: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.manage',
+    defaultMessage: 'Manage subscriptions',
+  },
+  thirdPartyDeviceIdRegistries: {
+    id: 'settings.organisation.device.registries.thirdParty.list.title',
     defaultMessage: 'Third-party device registries',
   },
-  deviceIdRegistryOfferId: {
-    id: 'settings.organisation.device.registry.offers.list.id',
-    defaultMessage: 'id',
+  availableThirdPartyRegistries: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.availableRegistries.title',
+    defaultMessage: 'Third-party device registries available for subscription:',
   },
-  deviceIdRegistryOfferName: {
-    id: 'settings.organisation.device.registry.offers.list.name',
-    defaultMessage: 'Name',
+  subscribedThirdPartyRegistries: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.subscribedRegistries.title',
+    defaultMessage: 'Third-party device registries already subscribed:',
   },
-  deviceIdRegistryOfferSubscription: {
+  offerSubscription: {
     id: 'settings.organisation.device.registry.offers.list.subscription',
     defaultMessage: 'Subscription',
   },
-  subscribeToDeviceIdRegistryOffer: {
-    id: 'settings.organisation.device.registry.offers.list.subscribe',
+  subscribe: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.availableRegistries.subscribe',
     defaultMessage: 'Subscribe',
   },
-  unsubscribeFromDeviceIdRegistryOffer: {
-    id: 'settings.organisation.device.registry.offers.list.unsubscribe',
-    defaultMessage: 'Subscribe',
+  unsubscribe: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.subscribedRegistries.unsubscribe',
+    defaultMessage: 'Unsubscribe',
+  },
+  offerSubscriptionSuccess: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.subscribe.success',
+    defaultMessage: 'Successfully subscribed to offer.',
   },
 });
 

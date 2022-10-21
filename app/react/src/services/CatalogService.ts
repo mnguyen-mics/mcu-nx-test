@@ -3,6 +3,8 @@ import {
   ServiceOfferLocaleResource,
   ServiceProviderResource,
   ServiceItemConditionShape,
+  ServiceAgreementResource,
+  AgreementType,
 } from './../models/servicemanagement/PublicServiceItemResource';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import { injectable } from 'inversify';
@@ -173,6 +175,19 @@ export interface ICatalogService {
     organisationId: string,
     offerIds: number[],
   ) => Promise<DataListResponse<ServiceItemShape>>;
+
+  createServiceAgreement: (
+    signingOrganisationId: string,
+    agreementType: AgreementType,
+  ) => Promise<DataResponse<ServiceAgreementResource>>;
+
+  addOfferToAgreement: (
+    organisationId: string,
+    agreementId: string,
+    offerId: string,
+  ) => Promise<DataResponse<any>>;
+
+  signServiceAgreement: (organisationId: string, agreementId: string) => Promise<DataResponse<any>>;
 }
 
 @injectable()
@@ -415,5 +430,39 @@ export class CatalogService implements ICatalogService {
     const offerIdsStr = offerIds.join(',');
     const endpoint = `organisations/${organisationId}/available_service_items?offer_id=${offerIdsStr}`;
     return ApiService.getRequest(endpoint);
+  }
+
+  createServiceAgreement(
+    signingOrganisationId: string,
+    agreementType: AgreementType,
+  ): Promise<DataResponse<ServiceAgreementResource>> {
+    const endpoint = `organisations/${signingOrganisationId}/agreements`;
+    const body: Partial<ServiceAgreementResource> = {
+      signing_organisation_id: signingOrganisationId,
+      agreement_type: agreementType,
+      debited_account_id: signingOrganisationId,
+    };
+
+    return ApiService.postRequest(endpoint, body);
+  }
+
+  addOfferToAgreement(
+    organisationId: string,
+    agreementId: string,
+    offerId: string,
+  ): Promise<DataResponse<any>> {
+    const endpoint = `organisations/${organisationId}/agreements/${agreementId}/offers/${offerId}`;
+    return ApiService.putRequest(endpoint, {});
+  }
+
+  signServiceAgreement(organisationId: string, agreementId: string): Promise<DataResponse<any>> {
+    const endpoint = `organisations/${organisationId}/agreements/${agreementId}`;
+    const body: Partial<ServiceAgreementResource> = {
+      id: agreementId,
+      signing_organisation_id: organisationId,
+      signed: true,
+    };
+
+    return ApiService.putRequest(endpoint, body);
   }
 }
