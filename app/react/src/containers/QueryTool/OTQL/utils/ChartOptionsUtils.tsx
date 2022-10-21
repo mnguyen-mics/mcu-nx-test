@@ -172,8 +172,9 @@ export function getBaseChartProps(
         height: BASE_CHART_HEIGHT,
         innerRadius: false,
         dataLabels: {
-          enabled: hasLegend,
+          enabled: true,
         },
+        ledgend: hasLegend,
       } as PieChartOptions;
     case 'area':
       return {
