@@ -171,6 +171,14 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.thirdParty.subscriptions.subscribe.success',
     defaultMessage: 'Successfully subscribed to offer.',
   },
+  emptyEvailableThirdPartyRegistries: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.availableRegistries.empty',
+    defaultMessage: 'No device registries available.',
+  },
+  emptySubscribedThirdPartyRegistries: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.subscribedRegistries.empty',
+    defaultMessage: 'No subscribed device registries.',
+  },
 });
 
 export default messages;
