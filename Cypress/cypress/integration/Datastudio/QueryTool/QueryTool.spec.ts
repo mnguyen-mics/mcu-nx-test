@@ -316,8 +316,8 @@ describe('Query tool - Query builder', () => {
       queryToolPage.clickBtnRun();
       cy.get('.mcs-otqlInputEditor_save_button').click();
       const tableChartName = 'Test Table Chart';
-      cy.get('mcs-aggregationRenderer_chart_name').type(tableChartName);
-      cy.get('mcs-aggregationRenderer_charts_submit').click();
+      cy.get('.mcs-aggregationRenderer_chart_name').type(tableChartName);
+      cy.get('.mcs-aggregationRenderer_charts_submit').click();
       queryToolPage.tab.clickAdd();
       cy.get('.ant-tabs-nav-list').contains('Charts').click({ force: true });
       cy.get('.mcs-charts-list-item').contains(tableChartName).click({ force: true });
