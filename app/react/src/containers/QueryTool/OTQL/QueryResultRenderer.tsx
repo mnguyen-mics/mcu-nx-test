@@ -66,6 +66,7 @@ import {
   OTQLMetric,
 } from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
+import { AbstractSource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -465,7 +466,38 @@ class QueryResultRenderer extends React.Component<Props, State> {
   async generateChartJson(title?: string): Promise<string | undefined> {
     const { query, datamartId, datasource, tab } = this.props;
     const { selectedChart } = this.state;
-    let _dataset: any;
+
+    const buildJson = (_dataset: WrappedAbstractDataset | AbstractSource) => {
+      const chartProps = { ...this.getChartProps(selectedChart) };
+      const dataset = getChartDataset(_dataset, false, chartProps);
+
+      let filteredOptions = omit(chartProps, [
+        'date_options',
+        'xKey',
+        'yKeys',
+        'height',
+        'width',
+        'innerRadius',
+      ]);
+
+      if (selectedChart === 'pie') {
+        filteredOptions = {
+          ...filteredOptions,
+          innerRadius: false,
+        };
+      }
+
+      const chart: ChartConfig = {
+        title: title || '',
+        type: selectedChart,
+        options: filteredOptions,
+        dataset: dataset,
+      };
+      const chartConfigCopy: ChartConfig = JSON.parse(JSON.stringify(chart));
+      const prettyJson = JSON.stringify(snakeCaseKeys(chartConfigCopy), undefined, 2);
+      return prettyJson;
+    };
+
     if (isOTQLAggregations(datasource)) {
       const queryResponse = await this._queryService
         .createQuery(datamartId, {
@@ -482,11 +514,13 @@ class QueryResultRenderer extends React.Component<Props, State> {
       }
 
       const queryResource = queryResponse.data;
-      _dataset = {
+      const dataset = {
         query_id: queryResource?.id,
         type: 'OTQL' as SourceType,
       };
+      return buildJson(dataset);
     } else {
+      let _dataset: any;
       const createQueryPromise = (
         queryText: string,
         serieTitle: string,
@@ -506,87 +540,81 @@ class QueryResultRenderer extends React.Component<Props, State> {
             };
           });
       };
+
       const promises: Array<Promise<any>> = [];
       tab.serieQueries?.forEach(serieQuery => {
         if (typeof serieQuery.queryModel === 'string') {
           promises.push(createQueryPromise(serieQuery.queryModel, serieQuery.name, 'join'));
         } else {
+          const listPromises: Array<Promise<any>> = [];
           serieQuery.queryModel.forEach(model => {
-            promises.push(createQueryPromise(model.query, model.name, 'to-list'));
+            listPromises.push(createQueryPromise(model.query, model.name, 'to-list'));
           });
-        }
-      });
-      await Promise.all(promises).then(res => {
-        const getSources = (operationType: 'join' | 'to-list') => {
-          return res
-            .filter(r => r.operation_type === operationType)
-            .map(r => {
-              return {
-                type: 'OTQL',
-                query_id: r.query_id,
-                series_title: r.series_title,
-              };
+          const p = new Promise((resolve, reject) => {
+            return resolve({
+              promises: listPromises,
             });
-        };
-
-        const sources = getSources('join');
-        const listSources = getSources('to-list');
-
-        if (sources.length === 1 && listSources.length === 0) {
-          _dataset = {
-            ...getSources('join')[0],
-          };
-        } else if (sources.length === 0 && listSources.length > 0) {
-          _dataset = {
-            type: 'to-list',
-            sources: listSources,
-          };
-        } else if (sources.length >= 1) {
-          if (listSources.length === 0) {
-            _dataset = {
-              type: 'join',
-              sources: sources,
-            };
-          } else {
-            _dataset = {
-              type: 'join',
-              sources: sources.concat({
-                type: 'to-list',
-                sources: listSources,
-              } as any),
-            };
-          }
+          });
+          promises.push(p);
         }
       });
+      const sources: any[] = [];
+      const listSources: any[] = [];
+      return Promise.all(promises).then(responses => {
+        const forEachPromise = new Promise<void>(async (resolve, reject) => {
+          for (const [i, res] of responses.entries()) {
+            if (res.promises) {
+              await Promise.all(res.promises).then(r => {
+                listSources.push({
+                  list: r,
+                });
+                if (i === responses.length - 1) resolve();
+              });
+            } else {
+              sources.push(res);
+              if (i === responses.length - 1) resolve();
+            }
+          }
+        });
+
+        return forEachPromise.then(() => {
+          if (sources.length === 0 && listSources.length > 0) {
+            _dataset = {
+              type: 'join',
+              sources: listSources.map((s: any) => {
+                return {
+                  type: 'to-list',
+                  sources: s.list,
+                };
+              }),
+            };
+          } else if (sources.length === 1 && listSources.length === 0) {
+            _dataset = {
+              ...sources[0],
+            };
+          } else if (sources.length >= 1) {
+            if (listSources.length === 0) {
+              _dataset = {
+                type: 'join',
+                sources: sources,
+              };
+            } else {
+              const toListArray = listSources.map((s: any) => {
+                return {
+                  type: 'to-list',
+                  sources: s.list,
+                };
+              });
+              _dataset = {
+                type: 'join',
+                sources: sources.concat(toListArray),
+              };
+            }
+          }
+          return buildJson(_dataset);
+        });
+      });
     }
-    const chartProps = { ...this.getChartProps(selectedChart) };
-    const dataset = getChartDataset(_dataset, false, chartProps);
-
-    let filteredOptions = omit(chartProps, [
-      'date_options',
-      'xKey',
-      'yKeys',
-      'height',
-      'width',
-      'innerRadius',
-    ]);
-
-    if (selectedChart === 'pie') {
-      filteredOptions = {
-        ...filteredOptions,
-        innerRadius: false,
-      };
-    }
-
-    const chart: ChartConfig = {
-      title: title || '',
-      type: selectedChart,
-      options: filteredOptions,
-      dataset: dataset,
-    };
-    const chartConfigCopy: ChartConfig = JSON.parse(JSON.stringify(chart));
-    const prettyJson = JSON.stringify(snakeCaseKeys(chartConfigCopy), undefined, 2);
-    return prettyJson;
   }
 
   async handleCopyToClipboard() {

@@ -550,6 +550,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
           } else {
             return {
               type: 'to-list',
+              series_title: serieQuery.name,
               sources: serieQuery.queryModel.map(queryListModel => {
                 return getChartDataset(
                   {
@@ -857,7 +858,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       Promise.all(queryPromises)
         .then(async queryResponses => {
           const newSerieQueries: SerieQueryModel[] = [];
-          const promiseLoop = () => {
+          const promiseLoop = async () => {
             if (sourceType === 'to-list') {
               newSerieQueries.push({
                 id: cuid(),
@@ -866,7 +867,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                 queryModel: [],
               });
             }
-            queryResponses.forEach(async (res, i) => {
+            for (const [i, res] of queryResponses.entries()) {
               // If sources
               const sources = (res as AbstractParentSource).sources;
               if (sources) {
@@ -925,7 +926,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
               if (queryResponses.length - 1 === i) {
                 this.setNewSerieQueries(newSerieQueries, chartItem);
               }
-            });
+            }
           };
           promiseLoop();
         })
