@@ -65,6 +65,7 @@
     USE_GTAG: false,
     GTAG_ID: 'G-123',
     ENABLE_KEYCLOAK: false,
+    ADMIN_API_TOKEN: ''
   };
 
   window.MCS_CONSTANTS = MCS_CONSTANTS;

@@ -23,7 +23,11 @@ import { TYPES } from '../../constants/types';
 import { INavigatorService } from '../../services/NavigatorService';
 import { Notifications } from '../../containers/Notifications';
 import { Error, Loading } from '@mediarithmics-private/mcs-components-library';
-import { RenderOnAuthenticated, MicsReduxState } from '@mediarithmics-private/advanced-components';
+import {
+  RenderOnAuthenticated,
+  MicsReduxState,
+  RenderWhenHasAccess,
+} from '@mediarithmics-private/advanced-components';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -188,7 +192,18 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
           );
         };
 
-        return (
+        return (window as any)?.MCS_CONSTANTS?.ADMIN_API_TOKEN &&
+          process.env.NODE_ENV === 'developement' &&
+          process.env.API_ENV === 'prod' ? (
+          <RenderWhenHasAccess
+            requiredFeatures={route.requiredFeature}
+            requireDatamart={route.requireDatamart}
+            renderOnError={renderValue(compsForRenderWhenError)}
+            homePage={buildHomeUrl}
+          >
+            {renderValue(compsForRender)}
+          </RenderWhenHasAccess>
+        ) : (
           <RenderOnAuthenticated
             requiredFeatures={route.requiredFeature}
             requireDatamart={route.requireDatamart}
