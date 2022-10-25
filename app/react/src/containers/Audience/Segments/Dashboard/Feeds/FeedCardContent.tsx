@@ -15,13 +15,21 @@ import { TYPES } from '../../../../../constants/types';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { Status } from '../../../../../models/Plugins';
 import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  QuestionCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { IExternalFeedSessionService } from '../../../../../services/ExternalFeedSessionService';
 import { ExternalFeedSession } from '../../../../../models/ExternalFeedSession';
+import { FeedCardStats } from './FeedCardList';
+import { getFeedStatsUnit } from '../../../../../utils/FeedsStatsReportHelper';
+import { Tooltip } from 'antd';
+import { PluginLayout } from '@mediarithmics-private/advanced-components';
+import FeedCardModal from './FeedCardModal';
 
 const messages = defineMessages({
   pause: {
@@ -60,9 +68,14 @@ const messages = defineMessages({
     id: 'audienceFeed.card.state.liveSession',
     defaultMessage: 'Sending updates when users enter or leave',
   },
-  nbProcessingsLastWeek: {
+  nbProcessingsLast24H: {
     id: 'audienceFeed.card.stats.nbProcessings',
-    defaultMessage: '{count} lines processed last week',
+    defaultMessage:
+      'This is the number of {unit} successfully pushed or removed from the partner in the last 24 hours.',
+  },
+  viewFeedActivity: {
+    id: 'audienceFeed.card.stats.feedActivity',
+    defaultMessage: 'View feed activity',
   },
   errorDetails: {
     id: 'audienceFeed.card.stats.errorDetails',
@@ -73,8 +86,9 @@ const messages = defineMessages({
 export interface FeedCardContentProps {
   feed: AudienceFeedTyped;
   segmentId: string;
-  exportedUserPointsCount?: number;
-  exportedUserIdentifiersCount?: number;
+  feedCardStats?: FeedCardStats;
+  organisationId: string;
+  pluginLayout?: PluginLayout;
   onFeedUpdate: (newFeed: AudienceFeedTyped) => void;
 }
 
@@ -87,6 +101,7 @@ interface State {
   currentFeedSession?: ExternalFeedSession;
   isLoading: boolean;
   showActivatingState: boolean;
+  openStatsModal: boolean;
 }
 
 class FeedCardContent extends React.Component<Props, State> {
@@ -116,7 +131,7 @@ class FeedCardContent extends React.Component<Props, State> {
           : this._audienceTagFeedServiceFactory(this.props.segmentId);
     }
 
-    this.state = { isLoading: false, showActivatingState: false };
+    this.state = { isLoading: false, showActivatingState: false, openStatsModal: false };
   }
 
   componentDidMount() {
@@ -287,23 +302,63 @@ class FeedCardContent extends React.Component<Props, State> {
     }
   };
 
+  viewFeedStats = () => {
+    this.setState({ openStatsModal: true });
+  };
+
+  closeFeedStats = () => {
+    this.setState({ openStatsModal: false });
+  };
+
   getFeedCardStats = () => {
     const {
       feed,
       intl: { formatMessage },
-      exportedUserIdentifiersCount,
+      feedCardStats,
+      hasFeature,
+      pluginLayout,
     } = this.props;
 
     switch (feed.status) {
       case 'ACTIVE':
-        const nbProcessings = exportedUserIdentifiersCount
-          ? exportedUserIdentifiersCount.toLocaleString('en')
-          : '-';
+        const feedCardStatsUnit = getFeedStatsUnit(feed);
+        const upsertedStatOpt =
+          feedCardStatsUnit === 'USER_POINTS'
+            ? feedCardStats?.upsertStats.uniq_user_points_count
+            : feedCardStats?.upsertStats.uniq_user_identifiers_count;
+        const deletedStatOpt =
+          feedCardStatsUnit === 'USER_POINTS'
+            ? feedCardStats?.deleteStats.uniq_user_points_count
+            : feedCardStats?.deleteStats.uniq_user_identifiers_count;
+        const upsertedStat = upsertedStatOpt ? upsertedStatOpt.toLocaleString('en') : '-';
+        const deletedStat = deletedStatOpt ? deletedStatOpt.toLocaleString('en') : '-';
+
         return (
           <div className='mcs-feedCard_content_stats'>
-            {formatMessage(messages.nbProcessingsLastWeek, {
-              count: nbProcessings,
-            })}
+            <ArrowUpOutlined className='mcs-feedCard_content_stats_arrow mcs-feedCard_content_stats_arrow_up' />
+            {upsertedStat}
+            <ArrowDownOutlined className='mcs-feedCard_content_stats_arrow mcs-feedCard_content_stats_arrow_down' />
+            {deletedStat}
+            <Tooltip
+              placement='bottom'
+              title={
+                <div>
+                  {formatMessage(messages.nbProcessingsLast24H, {
+                    unit: feedCardStatsUnit === 'USER_POINTS' ? 'user points' : 'identifiers',
+                  })}
+                  {hasFeature('audience-feeds_stats') && pluginLayout ? (
+                    <Button
+                      onClick={this.viewFeedStats}
+                      className='mcs-feedCard_content_stats_question_button'
+                    >
+                      {formatMessage(messages.viewFeedActivity)}
+                    </Button>
+                  ) : null}
+                </div>
+              }
+            >
+              <QuestionCircleOutlined className='mcs-feedCard_content_stats_question' />
+            </Tooltip>
           </div>
         );
 
@@ -322,8 +377,12 @@ class FeedCardContent extends React.Component<Props, State> {
     const {
       feed,
       intl: { formatMessage },
+      pluginLayout,
+      segmentId,
+      organisationId,
+      onFeedUpdate,
     } = this.props;
-    const { isLoading, showActivatingState } = this.state;
+    const { isLoading, showActivatingState, openStatsModal } = this.state;
 
     if (showActivatingState) {
       return (
@@ -373,6 +432,16 @@ class FeedCardContent extends React.Component<Props, State> {
               </div>
             </div>
           </div>
+          <FeedCardModal
+            feed={feed}
+            pluginLayout={pluginLayout}
+            organisationId={organisationId}
+            segmentId={segmentId}
+            openedModal={openStatsModal}
+            modalTab={'stats'}
+            closeModal={this.closeFeedStats}
+            onFeedUpdate={onFeedUpdate}
+          />
         </div>
       );
   }

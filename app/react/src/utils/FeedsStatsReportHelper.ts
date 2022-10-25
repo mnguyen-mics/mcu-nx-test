@@ -41,7 +41,7 @@ export interface FeedStatsDimensionFilter extends DimensionFilter {
 }
 
 export function buildFeedCardStatsRequestBody(segmentId: string): ReportRequestBody {
-  const dimensionsList: FeedsStatsDimension[] = ['FEED_ID'];
+  const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', 'SYNC_RESULT', 'SYNC_TYPE'];
   const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_POINTS_COUNT', 'UNIQ_USER_IDENTIFIERS_COUNT'];
 
   // DIMENSION FILTERS
@@ -50,14 +50,19 @@ export function buildFeedCardStatsRequestBody(segmentId: string): ReportRequestB
     operator: 'EXACT',
     expressions: [segmentId],
   };
+  const dimensionFilterSyncResult: FeedStatsDimensionFilter = {
+    dimension_name: 'SYNC_RESULT',
+    operator: 'IN_LIST',
+    expressions: ['SUCCESS', 'PROCESSED'],
+  };
   const dimensionsFilterClauses: DimensionFilterClause = {
-    operator: 'OR',
-    filters: [dimensionFilter],
+    operator: 'AND',
+    filters: [dimensionFilter, dimensionFilterSyncResult],
   };
 
   const dateRange7daysAgo = formatMcsDate(
     {
-      from: new McsMoment('now-7d'),
+      from: new McsMoment('now-1d'),
       to: new McsMoment('now'),
     },
     true,

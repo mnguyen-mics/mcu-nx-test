@@ -17,6 +17,7 @@ import { TYPES } from '../../../../../constants/types';
 import FeedCardTitle from './FeedCardTitle';
 import FeedCardMenu from './FeedCardMenu';
 import FeedCardContent from './FeedCardContent';
+import { FeedCardStats } from './FeedCardList';
 
 export interface FeedCardProps {
   feed: AudienceFeedTyped;
@@ -24,8 +25,7 @@ export interface FeedCardProps {
   onFeedDelete: (feed: AudienceFeedTyped) => void;
   segmentId: string;
   organisationId: string;
-  exportedUserPointsCount?: number;
-  exportedUserIdentifiersCount?: number;
+  feedCardStats?: FeedCardStats;
 }
 
 export type FeedStatsDisplayStatus = 'LOADING' | 'READY' | 'READY-NO-DATA';
@@ -76,15 +76,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   };
 
   render() {
-    const {
-      feed,
-      onFeedUpdate,
-      onFeedDelete,
-      segmentId,
-      organisationId,
-      exportedUserPointsCount,
-      exportedUserIdentifiersCount,
-    } = this.props;
+    const { feed, onFeedUpdate, onFeedDelete, segmentId, organisationId, feedCardStats } =
+      this.props;
 
     const { pluginLayout, isLoadingCard } = this.state;
 
@@ -111,9 +104,10 @@ class FeedCard extends React.Component<Props, FeedCardState> {
           <FeedCardContent
             feed={feed}
             segmentId={segmentId}
-            exportedUserPointsCount={exportedUserPointsCount}
-            exportedUserIdentifiersCount={exportedUserIdentifiersCount}
+            feedCardStats={feedCardStats}
             onFeedUpdate={onFeedUpdate}
+            pluginLayout={pluginLayout}
+            organisationId={organisationId}
           />
         </div>
       </Card>

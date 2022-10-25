@@ -112,7 +112,24 @@
         display: flex;
         align-items: center;
         .mcs-feedCard_content_stats {
-          margin-right: 10px;
+          display: flex;
+          align-items: center;
+          .mcs-feedCard_content_stats_arrow {
+            font-size: 16px;
+            margin-right: 5px;
+          }
+          .mcs-feedCard_content_stats_arrow_up {
+            color: @success-color;
+          }
+          .mcs-feedCard_content_stats_arrow_down {
+            margin-left: 10px;
+            color: @error-color;
+          }
+          .mcs-feedCard_content_stats_question {
+            margin-left: 10px;
+            color: @text-color;
+          }
+          margin-right: 30px;
           font-family: @font-family;
           color: @text-color-secondary;
           font-size: 12px;
@@ -148,4 +165,9 @@
       }
     }
   }
+}
+
+.mcs-feedCard_content_stats_question_button {
+  color: @info-color;
+  margin-top: 10px;
 }
