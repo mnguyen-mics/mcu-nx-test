@@ -15,7 +15,6 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { IFeedsStatsService } from '../../../../../services/FeedsStatsService';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { Index } from '../../../../../utils';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
@@ -26,15 +25,22 @@ type Props = InjectedFeaturesProps &
     { scrollToFeed?: boolean }
   >;
 
+interface FeedCardStatsDimensions {
+  uniq_user_points_count?: number;
+  uniq_user_identifiers_count?: number;
+}
+
+export interface FeedCardStats {
+  feedId: string;
+  upsertStats: FeedCardStatsDimensions;
+  deleteStats: FeedCardStatsDimensions;
+}
+
 export interface FeedCardListState {
   isLoading: boolean;
   feeds: AudienceFeedTyped[];
   shouldScrollWhenLoaded: boolean;
-  feedsStatsByFeedId: Index<{
-    feed_id: string;
-    uniq_user_points_count: number;
-    uniq_user_identifiers_count: number;
-  }>;
+  feedsStatsByFeedId: Index<FeedCardStats>;
 }
 
 class FeedCardList extends React.Component<Props, FeedCardListState> {
@@ -158,25 +164,89 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
     return this._feedsStatsService.getSegmentStats(organisationId, segmentId).then(res => {
       const normalized = normalizeReportView<{
         feed_id: string;
+        sync_result: string;
+        sync_type: string;
         uniq_user_points_count: number;
         uniq_user_identifiers_count: number;
       }>(res.data.report_view);
 
-      const normalizedObjects = normalizeArrayOfObject(normalized, 'feed_id');
+      const modifiedResult = normalized.reduce(
+        (
+          acc: {
+            feed_id: string;
+            sync_type: string;
+            uniq_user_points_count: number;
+            uniq_user_identifiers_count: number;
+          }[],
+          currentValue: {
+            feed_id: string;
+            sync_result: string;
+            sync_type: string;
+            uniq_user_points_count: number;
+            uniq_user_identifiers_count: number;
+          },
+        ) => {
+          const isFeedAndTypeInAcc = acc.some(value => {
+            return (
+              value.feed_id === currentValue.feed_id && value.sync_type === currentValue.sync_type
+            );
+          });
 
-      // For each feed that doesn't have any stats in the response, we add it with '0' identifiers count.
-      this.state.feeds.forEach(feed => {
-        if (!normalizedObjects[feed.id]) {
-          normalizedObjects[feed.id] = {
-            feed_id: feed.id,
-            uniq_user_points_count: 0,
-            uniq_user_identifiers_count: 0,
+          if (isFeedAndTypeInAcc) {
+            return acc.map(value => {
+              if (
+                value.feed_id === currentValue.feed_id &&
+                value.sync_type === currentValue.sync_type
+              ) {
+                return {
+                  ...value,
+                  uniq_user_points_count:
+                    value.uniq_user_points_count + currentValue.uniq_user_points_count,
+                  uniq_user_identifiers_count:
+                    value.uniq_user_identifiers_count + currentValue.uniq_user_identifiers_count,
+                };
+              } else return value;
+            });
+          } else {
+            return acc.concat([
+              {
+                feed_id: currentValue.feed_id,
+                sync_type: currentValue.sync_type,
+                uniq_user_points_count: currentValue.uniq_user_points_count,
+                uniq_user_identifiers_count: currentValue.uniq_user_identifiers_count,
+              },
+            ]);
+          }
+        },
+        [],
+      );
+
+      const feedsStatsByFeedId: Index<FeedCardStats> = this.state.feeds.reduce(
+        (currentIndex, feed) => {
+          const findOrCreateStatBySyncType = (syncType: string): FeedCardStatsDimensions => {
+            const foundLine = modifiedResult.find(line => {
+              return line.feed_id === feed.id && line.sync_type === syncType;
+            });
+            return {
+              uniq_user_points_count: foundLine?.uniq_user_points_count,
+              uniq_user_identifiers_count: foundLine?.uniq_user_identifiers_count,
+            };
           };
-        }
-      });
+
+          return {
+            ...currentIndex,
+            [feed.id]: {
+              feedId: feed.id,
+              upsertStats: findOrCreateStatBySyncType('UPSERT'),
+              deleteStats: findOrCreateStatBySyncType('DELETE'),
+            },
+          };
+        },
+        {},
+      );
 
       return this.setState({
-        feedsStatsByFeedId: normalizedObjects,
+        feedsStatsByFeedId: feedsStatsByFeedId,
       });
     });
   };
@@ -220,16 +290,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
                     onFeedUpdate={this.onFeedUpdate}
                     segmentId={segmentId}
                     organisationId={organisationId}
-                    exportedUserPointsCount={
-                      feedsStatsByFeedId[cf.id]
-                        ? feedsStatsByFeedId[cf.id].uniq_user_points_count
-                        : undefined
-                    }
-                    exportedUserIdentifiersCount={
-                      feedsStatsByFeedId[cf.id]
-                        ? feedsStatsByFeedId[cf.id].uniq_user_identifiers_count
-                        : undefined
-                    }
+                    feedCardStats={feedsStatsByFeedId[cf.id]}
                   />
                 </Col>
               );
