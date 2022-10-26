@@ -146,7 +146,7 @@ class FeedChart extends React.Component<Props, State> {
     const timeUnit = this.getTimeUnit();
     const allDates = getAllDates(timeUnit, formatedNonInclusiveDateRange);
 
-    let seriesData: {
+    const seriesData: {
       [key in SyncType]: { [key in SyncResult]?: Array<number | null> };
     } =
       feedStatsUnit === 'USER_IDENTIFIERS'
