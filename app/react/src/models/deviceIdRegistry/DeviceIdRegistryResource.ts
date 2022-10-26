@@ -18,8 +18,9 @@ export interface DeviceIdRegistryResource {
 
 export interface DeviceIdRegistryOfferResource {
   id: string;
-  device_id_registries: DeviceIdRegistryResource[];
   name: string;
+  device_id_registries: DeviceIdRegistryResource[];
+  agreement_id?: string;
 }
 
 export interface DeviceIdRegistryDatamartSelectionResource {

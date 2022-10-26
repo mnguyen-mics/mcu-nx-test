@@ -52,6 +52,7 @@ type RowType = 'OFFER_HEADER' | 'REGISTRY';
 class ThirdPartyOfferHeaderRow {
   _row_type: RowType = 'OFFER_HEADER';
 
+  id: string;
   name: string;
 }
 
@@ -222,7 +223,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     this.setState({ isLoadingThirdPartyRegistries: true }, () => {
       const offersOptions = {
         subscriber_id: organisationId,
-        signed_agreement_filter: true,
+        signed_agreement: true,
         ...getPaginatedApiParam(1, 500),
       };
 
@@ -233,7 +234,11 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         .then(res => {
           const thirdPartyDataRows: ThirdPartyDataRow[] = res.data.flatMap(offer => {
             return [
-              { _row_type: 'OFFER_HEADER', name: offer.name } as ThirdPartyOfferHeaderRow,
+              {
+                _row_type: 'OFFER_HEADER',
+                id: offer.id,
+                name: offer.name,
+              } as ThirdPartyOfferHeaderRow,
             ].concat(
               offer.device_id_registries.map(
                 registry =>
@@ -260,7 +265,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         .then(thirdPartyDataRows => {
           return Promise.all(
             thirdPartyDataRows.map(row => {
-              if (!this.thirdPartyRowIsOffer(row)) {
+              if (this.thirdPartyRowIsRegistry(row)) {
                 return this._deviceIdRegistryService
                   .getDeviceIdRegistryDatamartSelections((row as ThirdPartyRegistryRow).id)
                   .then(selections => {
@@ -498,9 +503,15 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     } else {
       return Modal.confirm({
         title: formatMessage(messages.registryDeletionConfirmationTitle),
-        content: formatMessage(messages.registryDeletionConfirmationMessage, {
-          registryName: `${registry.name}`,
-        }),
+        content: (
+          <FormattedMessage
+            id={messages.registryDeletionConfirmationMessage.id}
+            defaultMessage={messages.registryDeletionConfirmationMessage.defaultMessage}
+            values={{
+              registryName: <b>{`${registry.name}`}</b>,
+            }}
+          />
+        ),
         icon: <ExclamationCircleOutlined />,
         okText: 'Yes',
         cancelText: formatMessage(messages.modalCancel),
@@ -520,6 +531,10 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
   editThirdPartyDatamartsSelectionAction = (registry: ThirdPartyRegistryRow) => {
     this.editDatamartsSelectionAction(registry);
+  };
+
+  unsubsribeFromOfferAction = (offer: ThirdPartyOfferHeaderRow) => {
+    this.unsubscribeFromOffer(offer.id);
   };
 
   datamartsSelectionDrawerOnClose = () => {
@@ -608,42 +623,137 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       notifyError,
     } = this.props;
 
-    return this._catalogueService
-      .createServiceAgreement(organisation_id, AgreementType.REGULAR)
-      .then(agreementRes => {
-        return this._catalogueService
-          .addOfferToAgreement(organisation_id, agreementRes.data.id, id)
-          .then(() => {
-            return this._catalogueService.signServiceAgreement(
-              organisation_id,
-              agreementRes.data.id,
-            );
-          })
-          .then(() => {
-            this.setState(
-              {
-                isSubscriptionsDrawerVisible: false,
-              },
-              () => {
-                this.refreshThirdPartyRegistries();
-                notifySuccess({
-                  message: formatMessage(messages.newRegistryCreationSuccess),
-                  description: '',
-                });
-              },
-            );
-          })
-          .catch(err => {
-            notifyError(err);
+    if (this.hasRightToSubscribeToOffer()) {
+      return this._catalogueService
+        .createServiceAgreement(organisation_id, AgreementType.REGULAR)
+        .then(agreementRes => {
+          return this._catalogueService
+            .addOfferToAgreement(organisation_id, agreementRes.data.id, id)
+            .then(() => agreementRes.data.id);
+        })
+        .then(agreement_id => {
+          this._catalogueService.updateServiceAgreement(organisation_id, agreement_id, {
+            signed: true,
           });
-      })
-      .catch(err => {
-        notifyError(err);
+        })
+        .then(() => {
+          this.setState(
+            {
+              isSubscriptionsDrawerVisible: false,
+            },
+            () => {
+              this.refreshThirdPartyRegistries();
+              notifySuccess({
+                message: formatMessage(messages.offerSubscriptionSuccess),
+                description: '',
+              });
+            },
+          );
+        })
+        .catch(err => {
+          notifyError(err);
+        });
+    } else {
+      return Modal.error({
+        className: 'mcs-modal--errorDialog',
+        icon: <ExclamationCircleOutlined />,
+        title: formatMessage(messages.subscriptionNotAllowedTitle),
+        content: formatMessage(messages.subscriptionNotAllowedMessage),
+        okText: 'OK',
+        onOk() {
+          // closing modal
+        },
       });
+    }
   };
 
   unsubscribeFromOffer = (id: string) => {
-    // TODO: not yet implemented
+    const {
+      workspace: { organisation_id },
+      intl: { formatMessage },
+      notifySuccess,
+      notifyError,
+    } = this.props;
+    const offer = this.state.subscribedRegistryOffers.find(offer => offer.id === id)!;
+    const offerSelections = offer.device_id_registries.flatMap(registry => {
+      const r = this.state.thirdPartyRegistries.find(
+        thirdPartyRow => thirdPartyRow.id === registry.id && thirdPartyRow._row_type === 'REGISTRY',
+      )!;
+      return (r as ThirdPartyRegistryRow).datamart_selections;
+    });
+
+    if (this.hasRightToUnsubscribeFromOffer()) {
+      if (offerSelections.length !== 0) {
+        return Modal.error({
+          className: 'mcs-modal--errorDialog',
+          icon: <ExclamationCircleOutlined />,
+          title: formatMessage(messages.thirdPartyDatamartSelectionsExistTitle),
+          content: formatMessage(messages.thirdPartyDatamartSelectionsExistMessage),
+          okText: 'OK',
+          onOk() {
+            // closing modal
+          },
+        });
+      } else {
+        return Modal.confirm({
+          title: formatMessage(messages.offerUnsubscriptionConfirmationTitle),
+          content: (
+            <FormattedMessage
+              id={messages.offerUnsubscriptionConfirmationMessage.id}
+              defaultMessage={messages.offerUnsubscriptionConfirmationMessage.defaultMessage}
+              values={{
+                offerName: <b>{`${offer.name}`}</b>,
+              }}
+            />
+          ),
+          icon: <ExclamationCircleOutlined />,
+          okText: 'Yes',
+          cancelText: formatMessage(messages.modalCancel),
+          onOk: () => {
+            if (!!offer.agreement_id) {
+              return this._catalogueService
+                .removeOfferFromAgreement(organisation_id, offer.agreement_id!, id)
+                .then(() => {
+                  this._catalogueService.deleteServiceAgreement(
+                    organisation_id,
+                    offer.agreement_id!,
+                  );
+                })
+                .then(() => {
+                  this.setState(
+                    {
+                      isSubscriptionsDrawerVisible: false,
+                    },
+                    () => {
+                      this.refreshThirdPartyRegistries();
+                      notifySuccess({
+                        message: formatMessage(messages.offerUnsubscriptionSuccess),
+                        description: '',
+                      });
+                    },
+                  );
+                })
+                .catch(err => {
+                  notifyError(err);
+                });
+            } else {
+              return Promise.reject(new Error("Can't unsubscribe from offer (missing agreement)"));
+            }
+          },
+        });
+      }
+    } else {
+      return Modal.error({
+        className: 'mcs-modal--errorDialog',
+        icon: <ExclamationCircleOutlined />,
+        title: formatMessage(messages.unsubscriptionNotAllowedTitle),
+        content: formatMessage(messages.unsubscriptionNotAllowedMessage),
+        okText: 'OK',
+        onOk() {
+          // closing modal
+        },
+      });
+    }
   };
 
   refreshFirstPartyRegistries = () => {
@@ -663,14 +773,6 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     this.fetchAvailableRegistryOffers(organisation_id);
   };
 
-  refreshSubscribedThirdPartyRegistries = () => {
-    const {
-      workspace: { organisation_id },
-    } = this.props;
-
-    this.fetchSubscribedThirdPartyRegistries(organisation_id);
-  };
-
   hasRightToCreateRegistry(): boolean {
     const {
       workspace: { role },
@@ -682,6 +784,18 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       role === 'CUSTOMER_ADMIN' ||
       role === 'SUPER_ADMIN'
     );
+  }
+
+  hasRightToSubscribeToOffer(): boolean {
+    const {
+      workspace: { role },
+    } = this.props;
+
+    return role === 'CUSTOMER_ADMIN' || role === 'SUPER_ADMIN';
+  }
+
+  hasRightToUnsubscribeFromOffer(): boolean {
+    return this.hasRightToSubscribeToOffer();
   }
 
   closeDatamartsSelectionModal = () => {
@@ -874,16 +988,19 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       {
         key: 'action',
         actions: (record: ThirdPartyDataRow) => {
-          return !this.thirdPartyRowIsOffer(record)
+          return this.thirdPartyRowIsOffer(record)
             ? [
+                {
+                  message: formatMessage(messages.unsubscribe),
+                  callback: this.unsubsribeFromOfferAction,
+                },
+              ]
+            : [
                 {
                   message: formatMessage(messages.editRegistryDatamartsSelection),
                   callback: this.editThirdPartyDatamartsSelectionAction,
-                  disabled:
-                    (record as ThirdPartyRegistryRow).type == DeviceIdRegistryType.INSTALLATION_ID,
                 },
-              ]
-            : [];
+              ];
         },
       },
     ];
@@ -897,7 +1014,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         selectedDatamartIds,
         this.isInstanceOfThirdPartyDataRow(this.state.currentRegistry) &&
           this.thirdPartyRowIsRegistry(this.state.currentRegistry as ThirdPartyDataRow)
-          ? this.refreshSubscribedThirdPartyRegistries
+          ? this.refreshThirdPartyRegistries
           : this.refreshFirstPartyRegistries,
       );
     };
