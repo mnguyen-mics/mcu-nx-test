@@ -31,6 +31,14 @@ type FeedsStatsMetric =
 
 export type FeedStatsUnit = 'USER_POINTS' | 'USER_IDENTIFIERS';
 
+export type SyncType = 'UPSERT' | 'DELETE';
+export type SyncResult =
+  | 'PROCESSED'
+  | 'FAILURE'
+  | 'SUCCESS'
+  | 'NO_ELIGIBLE_IDENTIFIER'
+  | 'REJECTED';
+
 export interface FeedStatsCounts {
   exportedUserPointsCount?: number;
   exportedUserIdentifiersCount?: number;
@@ -84,8 +92,15 @@ export function buildFeedStatsByFeedRequestBody(
   dateRange: DateRange,
   timeUnitDimension: 'DAY' | 'HOUR',
   metrics?: FeedsStatsMetric[],
+  firstResult?: number,
+  maxResult?: number,
 ): ReportRequestBody {
-  const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', timeUnitDimension, 'SYNC_TYPE'];
+  const dimensionsList: FeedsStatsDimension[] = [
+    'FEED_ID',
+    timeUnitDimension,
+    'SYNC_TYPE',
+    'SYNC_RESULT',
+  ];
   const metricsList: FeedsStatsMetric[] = metrics ? metrics : ['UNIQ_USER_POINTS_COUNT'];
 
   // DIMENSION FILTERS
@@ -99,7 +114,14 @@ export function buildFeedStatsByFeedRequestBody(
     filters: [dimensionFilter],
   };
 
-  return buildReport(dateRange, dimensionsList, dimensionsFilterClauses, metricsList);
+  return buildReport(
+    dateRange,
+    dimensionsList,
+    dimensionsFilterClauses,
+    metricsList,
+    firstResult,
+    maxResult,
+  );
 }
 
 function buildReport(
@@ -107,6 +129,8 @@ function buildReport(
   dimensionsList: FeedsStatsDimension[],
   dimensionFilterClauses: DimensionFilterClause,
   metricsList: FeedsStatsMetric[],
+  firstResult?: number,
+  maxResult?: number,
 ): ReportRequestBody {
   const dateRanges: DateRange[] = [dateRange];
 
@@ -125,6 +149,8 @@ function buildReport(
     dimensions: dimensions,
     dimension_filter_clauses: dimensionFilterClauses,
     metrics: metrics,
+    first_result: firstResult,
+    max_result: maxResult,
   };
   return report;
 }
