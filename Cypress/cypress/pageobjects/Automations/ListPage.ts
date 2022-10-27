@@ -31,7 +31,7 @@ class ListPage extends Page {
 
   @logGetter()
   get userCounter() {
-    return cy.get('.mcs-automation-userCounter');
+    return cy.get('.mcs-automation-userCounter', { timeout: 60000 });
   }
 
   @logGetter()

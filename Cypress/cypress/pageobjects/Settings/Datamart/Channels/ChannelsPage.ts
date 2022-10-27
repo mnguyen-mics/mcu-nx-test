@@ -62,7 +62,7 @@ class ChannelsPage extends Page {
 
   @logFunction()
   typeSearchChannels(token: string = this.token) {
-    this.searchChannelsField.clear().type(token);
+    this.searchChannelsField.type('{selectall}{backspace}{backspace}').type(token);
   }
 
   @logFunction()
