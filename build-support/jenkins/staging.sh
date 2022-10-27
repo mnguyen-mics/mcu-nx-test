@@ -19,7 +19,7 @@ mvn -q deploy:deploy-file \
   -DgeneratePom=true \
   -Dpackaging=zip \
   -DrepositoryId=nexus \
-  -Durl=https://sf-nexus.mediarithmics.com/content/repositories/${REPOSITORY} \
+  -Durl=https://sf-nexus.mediarithmics.com/repository/${REPOSITORY} \
   -Dfile=navigator.zip
 
 echo '================================================'
