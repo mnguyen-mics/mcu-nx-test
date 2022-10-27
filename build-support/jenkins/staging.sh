@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-set -eux
+source $HOME/.bashrc
+
 ./build-support/jenkins/common.sh
+
+set -u
 
 VERSION=$1
 
