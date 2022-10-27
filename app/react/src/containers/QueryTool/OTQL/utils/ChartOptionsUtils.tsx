@@ -105,6 +105,24 @@ export function getChartOption(chartType: ChartType, key: string, value?: string
             type: value,
           }
         : {};
+    case 'drilldown':
+      if (chartType === 'bars') {
+        if (value === 'drilldown')
+          return {
+            drilldown: true,
+            stacking: false,
+          };
+        else if (value === 'stacking')
+          return {
+            drilldown: false,
+            stacking: true,
+          };
+        else
+          return {
+            drilldown: false,
+            stacking: false,
+          };
+      } else return {};
   }
   return undefined;
 }
@@ -150,6 +168,7 @@ export function getBaseChartProps(
         legend: {
           enabled: hasLegend,
         },
+        drilldown: true,
       } as BarChartOptions;
     case 'radar':
       return {
@@ -304,6 +323,15 @@ export function getQuickOptionsForChartType(
     ],
   };
 
+  const drilldownOptions: QuickOptionsSelector = {
+    title: 'drilldown',
+    options: [
+      { key: 'drilldown', value: 'drilldown', label: 'Drilldown' },
+      { key: 'stacking', value: 'stacking', label: 'Stacking' },
+      { key: 'flat', value: 'flat', label: 'Flat' },
+    ],
+  };
+
   const result = [];
   if (hasDateHistogram) {
     result.push(formatDateOptions);
@@ -343,7 +371,7 @@ export function getQuickOptionsForChartType(
 
   switch (chartType) {
     case 'bars':
-      return result.concat([legendOptions, formatOptions, barOptions]);
+      return result.concat([legendOptions, formatOptions, barOptions, drilldownOptions]);
     case 'pie':
       return result.concat([legendOptions, pieOptions]);
     case 'radar':

@@ -862,7 +862,6 @@ class QueryResultRenderer extends React.Component<Props, State> {
                   title: '',
                   options: {
                     ...this.getChartProps('bars'),
-                    drilldown: true,
                   },
                   type: 'bars',
                 }}
