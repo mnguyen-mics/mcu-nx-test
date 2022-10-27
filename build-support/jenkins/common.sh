@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-set -eu
-source ~/.bashrc
+source $HOME/.bashrc
 
-nvm use v18
+nvm use 18
 
-npm ci
+set -u
+
+npm ci --legacy-peer-deps
 npm run lint
 npm run prettier-check
 npm run build

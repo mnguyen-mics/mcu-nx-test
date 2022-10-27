@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -eux
 ./build-support/jenkins/common.sh
 
 VERSION=$1
