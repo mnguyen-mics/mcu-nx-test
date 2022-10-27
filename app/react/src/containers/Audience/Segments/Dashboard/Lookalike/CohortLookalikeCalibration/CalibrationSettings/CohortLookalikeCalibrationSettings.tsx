@@ -145,7 +145,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
     const { includeSeedSegment, graphData, initialIndex } = this.state;
 
     const lookalikeSegmentMinOverlap = cohortLookalikeSegment.min_overlap
-      ? cohortLookalikeSegment.min_overlap * 100
+      ? Math.floor(cohortLookalikeSegment.min_overlap * 100)
       : undefined;
 
     const previousCurrentGraphData = graphData?.currentGraphPoint;
