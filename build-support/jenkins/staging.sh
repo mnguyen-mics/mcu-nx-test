@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-set -eu
+set -eux
 ./build-support/jenkins/common.sh
 
 VERSION=$1
 
-REPOSITORY="releases"
+REPOSITORY="staging"
 GROUP_ID="com.mediarithmics.web"
 ARTIFACT_ID="navigator"
 
