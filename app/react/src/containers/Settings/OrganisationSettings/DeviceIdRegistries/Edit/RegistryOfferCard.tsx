@@ -42,8 +42,12 @@ class RegistryOfferCard extends React.Component<Props, State> {
 
   renderRegistryOfferTypeTags = (offer: DeviceIdRegistryOfferResource, subscribed: boolean) => {
     const registryTypes = [...new Set(offer.device_id_registries.map(registry => registry.type))];
-    return registryTypes.map(type => {
-      return <Tag color={subscribed ? '' : this.getRegistryTypeTagColor(type)}>{type}</Tag>;
+    return registryTypes.map((type, index) => {
+      return (
+        <Tag key={index} color={subscribed ? '' : this.getRegistryTypeTagColor(type)}>
+          {type}
+        </Tag>
+      );
     });
   };
 

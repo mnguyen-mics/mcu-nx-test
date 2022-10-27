@@ -4,7 +4,7 @@ source $HOME/.bashrc
 
 ./build-support/jenkins/common.sh
 
-set -u
+set -eu
 
 VERSION=$1
 

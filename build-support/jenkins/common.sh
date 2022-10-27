@@ -4,7 +4,7 @@ source $HOME/.bashrc
 
 nvm use 18
 
-set -u
+set -eu
 
 npm ci --legacy-peer-deps
 npm run lint
