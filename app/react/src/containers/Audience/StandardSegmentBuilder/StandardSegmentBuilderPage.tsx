@@ -229,7 +229,7 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
           return response;
         })
         .then(res => {
-          this._tagService.sendEvent('create_segment', 'Segment Builder', 'Save Segment');
+          this._tagService.pushEvent('CreateSegment', 'Standard Segment Builder');
           history.push(`/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`);
         })
         .catch(err => {

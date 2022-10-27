@@ -155,10 +155,9 @@ class AdvancedSegmentBuilderPage extends React.Component<Props, AdvancedSegmentB
             });
           })
           .then(res => {
-            this._tagService.sendEvent(
-              'create_segment',
+            this._tagService.pushEvent(
+              'CreateSegment',
               'Advanced Segment Builder',
-              'Save Segment',
             );
             history.push(`/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`);
           });

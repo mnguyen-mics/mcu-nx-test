@@ -159,7 +159,7 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
             });
           })
           .then(res => {
-            this._tagService.sendEvent('create_segment', 'Query Tool', 'Save Segment');
+            this._tagService.pushEvent('CreateSegment', 'Query Tool');
             history.push(`/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`);
           });
       };
@@ -179,7 +179,7 @@ class QueryToolPage extends React.Component<Props, QueryToolPageState> {
                 type: 'QUERY',
               })
               .then(res => {
-                this._tagService.sendEvent('create_segment', 'Query Tool', 'Save Segment');
+                this._tagService.pushEvent('CreateExport', 'Query Tool');
                 history.push(
                   `/v2/o/${match.params.organisationId}/datastudio/exports/${res.data.id}`,
                 );
