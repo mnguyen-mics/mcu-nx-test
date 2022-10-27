@@ -16,7 +16,7 @@ import { DataListResponse } from '@mediarithmics-private/advanced-components/lib
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import {
   DeviceIdRegistryDatamartSelectionResource,
   DeviceIdRegistryOfferResource,
@@ -44,19 +44,49 @@ interface DeviceIdRegistryWithDatamartSelectionsResource extends DeviceIdRegistr
   datamart_selections: DeviceIdRegistryDatamartSelectionResource[];
 }
 
+type RowType = 'OFFER_HEADER' | 'REGISTRY';
+
+class ThirdPartyOfferHeaderRow {
+  _row_type: RowType = 'OFFER_HEADER';
+
+  name: string;
+}
+
+class ThirdPartyRegistryRow implements DeviceIdRegistryWithDatamartSelectionsResource {
+  _row_type: RowType = 'REGISTRY';
+
+  datamart_selections: DeviceIdRegistryDatamartSelectionResource[];
+  id: string;
+  name: string;
+  description?: string | undefined;
+  type: DeviceIdRegistryType;
+  organisation_id: string;
+}
+
+type ThirdPartyDataRow = ThirdPartyOfferHeaderRow | ThirdPartyRegistryRow;
+
 interface DeviceIdRegistriesListState {
-  isLoadingRegistries: boolean;
-  isLoadingRegistryOffers: boolean;
-  firstPartyDeviceIdRegistries: DeviceIdRegistryWithDatamartSelectionsResource[];
-  deviceIdRegistryOffers: DeviceIdRegistryOfferResource[];
-  registriesTotal: number;
-  offersTotal: number;
+  isLoadingFirstPartyRegistries: boolean;
+  isLoadingThirdPartyRegistries: boolean;
+  firstPartyRegistries: DeviceIdRegistryWithDatamartSelectionsResource[];
+  thirdPartyRegistries: ThirdPartyDataRow[];
+  firstPartyRegistriesTotal: number;
+  thirdPartyRegistriesTotal: number;
   isNewRegistryDrawerVisible: boolean;
   isDatamartSelectionsDrawerVisible: boolean;
   currentRegistry?: DeviceIdRegistryWithDatamartSelectionsResource;
   isDatamartsSelectionModalVisible: boolean;
   isEditRegistryDrawerVisible: boolean;
 }
+
+// Workaround till we pass to newer version of Node
+interface MyHTMLAttributes<T> extends React.HTMLAttributes<T> {
+  colSpan?: number | undefined;
+}
+declare type MyGetComponentProps<DataType> = (
+  data: DataType,
+  index?: number,
+) => MyHTMLAttributes<any>;
 
 class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesListState> {
   @lazyInject(TYPES.IDeviceIdRegistryService)
@@ -66,12 +96,12 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     super(props);
 
     this.state = {
-      isLoadingRegistries: false,
-      isLoadingRegistryOffers: false,
-      firstPartyDeviceIdRegistries: [],
-      deviceIdRegistryOffers: [],
-      registriesTotal: 0,
-      offersTotal: 0,
+      isLoadingFirstPartyRegistries: false,
+      isLoadingThirdPartyRegistries: false,
+      firstPartyRegistries: [],
+      thirdPartyRegistries: [],
+      firstPartyRegistriesTotal: 0,
+      thirdPartyRegistriesTotal: 0,
       isNewRegistryDrawerVisible: false,
       isDatamartSelectionsDrawerVisible: false,
       isEditRegistryDrawerVisible: false,
@@ -84,7 +114,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     const { notifyError } = this.props;
 
     this.setState({
-      isLoadingRegistries: true,
+      isLoadingFirstPartyRegistries: true,
     });
 
     return Promise.all([
@@ -121,67 +151,75 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         )
           .then(registries => {
             this.setState({
-              isLoadingRegistries: false,
-              firstPartyDeviceIdRegistries: registries,
-              registriesTotal: registries.length,
+              isLoadingFirstPartyRegistries: false,
+              firstPartyRegistries: registries,
+              firstPartyRegistriesTotal: registries.length,
             });
           })
           .catch(err => {
             this.setState({
-              isLoadingRegistries: false,
-              firstPartyDeviceIdRegistries: [],
-              registriesTotal: 0,
+              isLoadingFirstPartyRegistries: false,
+              firstPartyRegistries: [],
+              firstPartyRegistriesTotal: 0,
             });
             notifyError(err);
           });
       })
-
       .catch(err => {
         this.setState({
-          isLoadingRegistries: false,
-          firstPartyDeviceIdRegistries: [],
-          registriesTotal: 0,
+          isLoadingFirstPartyRegistries: false,
+          firstPartyRegistries: [],
+          firstPartyRegistriesTotal: 0,
         });
         notifyError(err);
       });
   };
 
-  fetchRegistryOffers = (organisationId: string) => {
+  fetchThirdPartyRegistries = (organisationId: string) => {
     const { notifyError } = this.props;
 
-    this.setState({ isLoadingRegistryOffers: true }, () => {
+    this.setState({ isLoadingThirdPartyRegistries: true }, () => {
       const offersOptions = {
+        subscriber_id: organisationId,
+        signed_agreement_filter: true,
         ...getPaginatedApiParam(1, 500),
       };
 
-      const offers = this._deviceIdRegistryService.getDeviceIdRegistryOffers(offersOptions);
+      const subscribedOffers =
+        this._deviceIdRegistryService.getDeviceIdRegistryOffers(offersOptions);
 
-      const subscribedOffers = this._deviceIdRegistryService.getSubscribedDeviceIdRegistryOffers(
-        organisationId,
-        offersOptions,
-      );
-
-      return Promise.all([offers, subscribedOffers])
+      return subscribedOffers
         .then(res => {
-          const offersWithSubscription = res[0].data.map(offer => {
-            const offerWithSubscription: DeviceIdRegistryOfferResource = {
-              ...offer,
-              subscribed: res[1].data.map(subscribedOffer => subscribedOffer.id).includes(offer.id),
-            };
-
-            return offerWithSubscription;
+          const thirdPartyRegistries: ThirdPartyDataRow[] = res.data.flatMap(offer => {
+            return [
+              { _row_type: 'OFFER_HEADER', name: offer.name } as ThirdPartyOfferHeaderRow,
+            ].concat(
+              offer.device_id_registries.map(
+                registry =>
+                  ({
+                    _row_type: 'REGISTRY',
+                    ...registry,
+                  } as ThirdPartyRegistryRow),
+              ),
+            );
           });
+          const nbOfRegistries = res.data.reduce(
+            (acc: number, offer: DeviceIdRegistryOfferResource) => {
+              return acc + offer.device_id_registries.length;
+            },
+            0,
+          );
           this.setState({
-            isLoadingRegistryOffers: false,
-            deviceIdRegistryOffers: offersWithSubscription,
-            offersTotal: res[0].total || res[0].count,
+            isLoadingThirdPartyRegistries: false,
+            thirdPartyRegistries: thirdPartyRegistries,
+            thirdPartyRegistriesTotal: nbOfRegistries,
           });
         })
         .catch(err => {
           this.setState({
-            isLoadingRegistryOffers: false,
-            deviceIdRegistryOffers: [],
-            offersTotal: 0,
+            isLoadingThirdPartyRegistries: false,
+            thirdPartyRegistries: [],
+            thirdPartyRegistriesTotal: 0,
           });
           notifyError(err);
         });
@@ -190,12 +228,12 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
   makeEmptyState = () => {
     this.setState({
-      isLoadingRegistries: false,
-      isLoadingRegistryOffers: false,
-      firstPartyDeviceIdRegistries: [],
-      deviceIdRegistryOffers: [],
-      registriesTotal: 0,
-      offersTotal: 0,
+      isLoadingFirstPartyRegistries: false,
+      isLoadingThirdPartyRegistries: false,
+      firstPartyRegistries: [],
+      thirdPartyRegistries: [],
+      firstPartyRegistriesTotal: 0,
+      thirdPartyRegistriesTotal: 0,
       isNewRegistryDrawerVisible: false,
       isDatamartSelectionsDrawerVisible: false,
       currentRegistry: undefined,
@@ -208,7 +246,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     } = this.props;
 
     this.fetchFirstPartyRegistries(organisation_id);
-    this.fetchRegistryOffers(organisation_id);
+    this.fetchThirdPartyRegistries(organisation_id);
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -227,7 +265,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
     if (previousOrganisationId !== organisationId) {
       this.fetchFirstPartyRegistries(organisation_id);
-      this.fetchRegistryOffers(organisation_id);
+      this.fetchThirdPartyRegistries(organisation_id);
     }
   }
 
@@ -503,6 +541,10 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     });
   };
 
+  thirdPartyRowIsOffer = (row: ThirdPartyDataRow) => {
+    return row._row_type === 'OFFER_HEADER';
+  };
+
   render() {
     const {
       intl: { formatMessage },
@@ -512,82 +554,83 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       isNewRegistryDrawerVisible,
       isDatamartSelectionsDrawerVisible,
       isEditRegistryDrawerVisible,
+      isLoadingFirstPartyRegistries,
+      isLoadingThirdPartyRegistries,
+      firstPartyRegistries,
+      thirdPartyRegistries,
     } = this.state;
 
-    const deviceIdRegistryColumnsDefinition: Array<DataColumnDefinition<DeviceIdRegistryResource>> =
-      [
-        {
-          title: formatMessage(messages.deviceIdRegistryId),
-          key: 'id',
-          sorter: (a: DeviceIdRegistryResource, b: DeviceIdRegistryResource) =>
-            a.id.localeCompare(b.id),
-          isHideable: false,
-        },
-        {
-          title: formatMessage(messages.deviceIdRegistryName),
-          key: 'name',
-          sorter: (a: DeviceIdRegistryResource, b: DeviceIdRegistryResource) =>
-            a.name.localeCompare(b.name),
-          isHideable: false,
-          render: (text: string, record: DeviceIdRegistryWithDatamartSelectionsResource) => {
-            return (
-              <span>
-                {text}{' '}
-                {record.datamart_selections.length === 0 && (
-                  <span className='field-type'>
-                    <Tooltip
-                      placement='bottom'
-                      title={formatMessage(messages.noDatamartsSelectionWarningTooltipText)}
-                    >
-                      <WarningOutlined style={{ color: 'orange' }} />
-                    </Tooltip>
-                  </span>
-                )}
-              </span>
-            );
-          },
-        },
-        {
-          title: formatMessage(messages.deviceIdRegistryType),
-          key: 'type',
-          sorter: (a: DeviceIdRegistryResource, b: DeviceIdRegistryResource) =>
-            a.type.toString().localeCompare(b.type.toString()),
-          isHideable: false,
-        },
-      ];
-
-    const deviceIdRegistryOfferColumnsDefinition: Array<
-      DataColumnDefinition<DeviceIdRegistryOfferResource>
-    > = [
+    const firstPartyRegistryColumns: Array<DataColumnDefinition<DeviceIdRegistryResource>> = [
       {
-        title: formatMessage(messages.deviceIdRegistryOfferId),
+        title: formatMessage(messages.deviceIdRegistryId),
         key: 'id',
-        sorter: (a: DeviceIdRegistryOfferResource, b: DeviceIdRegistryOfferResource) =>
+        sorter: (a: DeviceIdRegistryResource, b: DeviceIdRegistryResource) =>
           a.id.localeCompare(b.id),
         isHideable: false,
       },
       {
-        title: formatMessage(messages.deviceIdRegistryOfferName),
+        title: formatMessage(messages.deviceIdRegistryName),
         key: 'name',
-        sorter: (a: DeviceIdRegistryOfferResource, b: DeviceIdRegistryOfferResource) =>
+        sorter: (a: DeviceIdRegistryResource, b: DeviceIdRegistryResource) =>
           a.name.localeCompare(b.name),
         isHideable: false,
+        render: (text: string, record: DeviceIdRegistryWithDatamartSelectionsResource) => {
+          return (
+            <span>
+              {text}{' '}
+              {record.datamart_selections.length === 0 && (
+                <span className='field-type'>
+                  <Tooltip
+                    placement='bottom'
+                    title={formatMessage(messages.noDatamartsSelectionWarningTooltipText)}
+                  >
+                    <WarningOutlined style={{ color: 'orange' }} />
+                  </Tooltip>
+                </span>
+              )}
+            </span>
+          );
+        },
       },
       {
         title: formatMessage(messages.deviceIdRegistryType),
-        key: 'device_id_registry_type',
-        sorter: (a: DeviceIdRegistryOfferResource, b: DeviceIdRegistryOfferResource) =>
-          a.device_id_registry_type.toString().localeCompare(b.device_id_registry_type.toString()),
+        key: 'type',
+        sorter: (a: DeviceIdRegistryResource, b: DeviceIdRegistryResource) =>
+          a.type.toString().localeCompare(b.type.toString()),
         isHideable: false,
       },
+    ];
+
+    const myOnCell = (customSpan: number) =>
+      ((record: ThirdPartyDataRow, _: number) => ({
+        colSpan: this.thirdPartyRowIsOffer(record) ? customSpan : 1,
+      })) as MyGetComponentProps<ThirdPartyDataRow>;
+
+    const thirdPartyRegistriesColumns: Array<DataColumnDefinition<ThirdPartyDataRow>> = [
       {
-        title: formatMessage(messages.deviceIdRegistryOfferSubscription),
-        key: 'subscription',
-        sorter: (a: DeviceIdRegistryOfferResource, b: DeviceIdRegistryOfferResource) =>
-          a.subscribed.toString().localeCompare(b.subscribed.toString()),
-        render: (text: string, record: DeviceIdRegistryOfferResource) => {
-          return <span>{record.subscribed ? 'subscribed' : 'not subscribed'}</span>;
+        title: formatMessage(messages.deviceIdRegistryId),
+        key: 'id',
+        isHideable: false,
+        onCell: myOnCell(0),
+      },
+      {
+        title: formatMessage(messages.deviceIdRegistryName),
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: ThirdPartyDataRow) => {
+          return this.thirdPartyRowIsOffer(record) ? (
+            <span>{record.name}</span>
+          ) : (
+            <span>{text}</span>
+          );
         },
+        onCell: myOnCell(3),
+      },
+      {
+        title: formatMessage(messages.deviceIdRegistryType),
+        key: 'type',
+        isHideable: false,
+        onCell: myOnCell(0),
       },
     ];
 
@@ -709,24 +752,45 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
               messages.firstPartyDeviceIdRegistries,
               this.hasRightToCreateRegistry() ? newRegistryButton : undefined,
             )}
-            <TableViewFilters
-              pagination={false}
-              columns={deviceIdRegistryColumnsDefinition}
-              dataSource={this.state.firstPartyDeviceIdRegistries}
-              className='mcs-deviceIdRegistriesList_deviceIdRegistrytable'
-              loading={this.state.isLoadingRegistries}
-              actionsColumnsDefinition={firstPartyRegistryActions}
-            />
+            {!firstPartyRegistries.length && !isLoadingFirstPartyRegistries ? (
+              <EmptyTableView
+                className='mcs-table-view-empty mcs-empty-card'
+                iconType={'settings'}
+                message={formatMessage(messages.emptyDeviceIdRegistries)}
+              />
+            ) : (
+              <TableViewFilters
+                pagination={false}
+                columns={firstPartyRegistryColumns}
+                dataSource={firstPartyRegistries}
+                className='mcs-deviceIdRegistriesList_firstPartyRegistriestable'
+                loading={isLoadingFirstPartyRegistries}
+                actionsColumnsDefinition={firstPartyRegistryActions}
+              />
+            )}
           </Row>
           <Row className='mcs-table-container'>
             {simpleTableHeader(messages.deviceIdRegistryOffers)}
-            <TableViewFilters
-              pagination={false}
-              columns={deviceIdRegistryOfferColumnsDefinition}
-              dataSource={this.state.deviceIdRegistryOffers}
-              className='mcs-deviceIdRegistryOffersList_deviceIdRegistryOffertable'
-              loading={this.state.isLoadingRegistryOffers}
-            />
+            {!thirdPartyRegistries.length && !isLoadingThirdPartyRegistries ? (
+              <EmptyTableView
+                className='mcs-table-view-empty mcs-empty-card'
+                iconType={'settings'}
+                message={formatMessage(messages.emptyDeviceIdRegistries)}
+              />
+            ) : (
+              <TableViewFilters
+                pagination={false}
+                columns={thirdPartyRegistriesColumns}
+                dataSource={thirdPartyRegistries}
+                className='mcs-deviceIdRegistriesList_thirdPartyRegistriestable'
+                loading={isLoadingThirdPartyRegistries}
+                rowClassName={(record, _) =>
+                  this.thirdPartyRowIsOffer(record)
+                    ? 'mcs-deviceIdRegistriesList_registryOfferHeader'
+                    : ''
+                }
+              />
+            )}
           </Row>
         </Content>
       </div>

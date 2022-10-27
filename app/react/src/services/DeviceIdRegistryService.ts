@@ -47,11 +47,6 @@ export interface IDeviceIdRegistryService {
   getDeviceIdRegistryOffers: (
     options?: object,
   ) => Promise<DataListResponse<DeviceIdRegistryOfferResource>>;
-
-  getSubscribedDeviceIdRegistryOffers: (
-    organisationId: string,
-    options?: object,
-  ) => Promise<DataListResponse<DeviceIdRegistryOfferResource>>;
 }
 
 @injectable()
@@ -139,19 +134,6 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
   ): Promise<DataListResponse<DeviceIdRegistryOfferResource>> {
     const endpoint = 'device_technical_id_registry_service_offers';
     const params = {
-      ...options,
-    };
-    return ApiService.getRequest(endpoint, params);
-  }
-
-  getSubscribedDeviceIdRegistryOffers(
-    organisationId: string,
-    options: object = {},
-  ): Promise<DataListResponse<DeviceIdRegistryOfferResource>> {
-    const endpoint = 'device_technical_id_registry_service_offers';
-    const params = {
-      subscriber_id: organisationId,
-      signed_agreement_filter: true,
       ...options,
     };
     return ApiService.getRequest(endpoint, params);
