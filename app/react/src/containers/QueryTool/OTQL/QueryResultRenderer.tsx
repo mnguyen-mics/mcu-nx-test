@@ -561,10 +561,10 @@ class QueryResultRenderer extends React.Component<Props, State> {
       const sources: any[] = [];
       const listSources: any[] = [];
       return Promise.all(promises).then(responses => {
-        const forEachPromise = new Promise<void>(async (resolve, reject) => {
+        const forEachPromise = new Promise<void>((resolve, reject) => {
           for (const [i, res] of responses.entries()) {
             if (res.promises) {
-              await Promise.all(res.promises).then(r => {
+              Promise.all(res.promises).then(r => {
                 listSources.push({
                   list: r,
                 });
