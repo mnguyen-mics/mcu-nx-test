@@ -81,7 +81,7 @@ create `app/conf/react-configuration.js` using `app/conf/react-configuration.js.
 - Follow the first 3 steps of the [Adding and using the library in client project](https://github.com/MEDIARITHMICS/ux-components/tree/master/mcs-react-components#adding-and-using-the-library-in-client-project) section
 - `npm install`
 - `npm start` (set by default environment variables to local)
-- If you want to set environment variables to a specific environment, you can use `npm run start:local` or `npm run start:prod`
+- If you want to set environment variables to a specific environment, you can use `npm run start:local` or `npm run start:prod` (note that we strongly discourage you to use `npm run start:prod` however if you want to, you will have to add your ADMIN_API_TOKEN to `app/conf/react-configuration.js` file in MCS_CONSTANTS object)
 - If you want to change the environment without relaunching `npm start`, you can simply run `npm run local` or `npm run prod` in a new terminal tab.
 
 ## Useful tools
