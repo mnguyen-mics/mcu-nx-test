@@ -26,8 +26,11 @@ import {
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 import DeviceIdRegistriesEditForm from '../Edit/DeviceIdRegistriesEditForm';
 import DeviceIdRegistryDatamartSelectionsEditForm from '../Edit/DeviceIdRegistryDatamartSelectionsEditForm';
+import DeviceIdRegistrySubscriptionsEditForm from '../Edit/DeviceIdRegistrySubscriptionsEditForm';
 import { ExclamationCircleOutlined, WarningOutlined } from '@ant-design/icons/lib/icons';
 import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
+import { ICatalogService } from '../../../../../services/CatalogService';
+import { AgreementType } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 
 const { Content } = Layout;
 
@@ -70,13 +73,18 @@ interface DeviceIdRegistriesListState {
   isLoadingThirdPartyRegistries: boolean;
   firstPartyRegistries: DeviceIdRegistryWithDatamartSelectionsResource[];
   thirdPartyRegistries: ThirdPartyDataRow[];
+  subscribedRegistryOffers: DeviceIdRegistryOfferResource[];
+  availableRegistryOffers: DeviceIdRegistryOfferResource[];
   firstPartyRegistriesTotal: number;
   thirdPartyRegistriesTotal: number;
+  subscribedRegistryOffersTotal: number;
+  availableRegistryOffersTotal: number;
   isNewRegistryDrawerVisible: boolean;
   isDatamartSelectionsDrawerVisible: boolean;
   currentRegistry?: DeviceIdRegistryWithDatamartSelectionsResource;
   isDatamartsSelectionModalVisible: boolean;
   isEditRegistryDrawerVisible: boolean;
+  isSubscriptionsDrawerVisible: boolean;
 }
 
 // Workaround till we pass to newer version of Node
@@ -92,6 +100,9 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
   @lazyInject(TYPES.IDeviceIdRegistryService)
   private _deviceIdRegistryService: IDeviceIdRegistryService;
 
+  @lazyInject(TYPES.ICatalogService)
+  private _catalogueService: ICatalogService;
+
   constructor(props: Props) {
     super(props);
 
@@ -100,13 +111,18 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       isLoadingThirdPartyRegistries: false,
       firstPartyRegistries: [],
       thirdPartyRegistries: [],
+      subscribedRegistryOffers: [],
+      availableRegistryOffers: [],
       firstPartyRegistriesTotal: 0,
       thirdPartyRegistriesTotal: 0,
+      subscribedRegistryOffersTotal: 0,
+      availableRegistryOffersTotal: 0,
       isNewRegistryDrawerVisible: false,
       isDatamartSelectionsDrawerVisible: false,
       isEditRegistryDrawerVisible: false,
       currentRegistry: undefined,
       isDatamartsSelectionModalVisible: false,
+      isSubscriptionsDrawerVisible: false,
     };
   }
 
@@ -119,15 +135,15 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
     return Promise.all([
       this._deviceIdRegistryService.getDeviceIdRegistries(organisationId, {
-        type: 'CUSTOM_DEVICE_ID' as DeviceIdRegistryType,
+        type: DeviceIdRegistryType.CUSTOM_DEVICE_ID,
         ...getPaginatedApiParam(1, 500),
       }),
       this._deviceIdRegistryService.getDeviceIdRegistries(organisationId, {
-        type: 'MOBILE_VENDOR_ID' as DeviceIdRegistryType,
+        type: DeviceIdRegistryType.MOBILE_VENDOR_ID,
         ...getPaginatedApiParam(1, 500),
       }),
       this._deviceIdRegistryService.getDeviceIdRegistries(organisationId, {
-        type: 'INSTALLATION_ID' as DeviceIdRegistryType,
+        type: DeviceIdRegistryType.INSTALLATION_ID,
         ...getPaginatedApiParam(1, 500),
       }),
     ])
@@ -175,7 +191,32 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       });
   };
 
-  fetchThirdPartyRegistries = (organisationId: string) => {
+  fetchAvailableRegistryOffers = (organisationId: string) => {
+    const { notifyError } = this.props;
+
+    const offersOptions = {
+      ...getPaginatedApiParam(1, 500),
+    };
+
+    const availableOffers = this._deviceIdRegistryService.getDeviceIdRegistryOffers(offersOptions);
+
+    return availableOffers
+      .then(res => {
+        this.setState({
+          availableRegistryOffers: res.data,
+          availableRegistryOffersTotal: res.data.length,
+        });
+      })
+      .catch(err => {
+        this.setState({
+          availableRegistryOffers: [],
+          availableRegistryOffersTotal: 0,
+        });
+        notifyError(err);
+      });
+  };
+
+  fetchSubscribedThirdPartyRegistries = (organisationId: string) => {
     const { notifyError } = this.props;
 
     this.setState({ isLoadingThirdPartyRegistries: true }, () => {
@@ -213,6 +254,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             isLoadingThirdPartyRegistries: false,
             thirdPartyRegistries: thirdPartyRegistries,
             thirdPartyRegistriesTotal: nbOfRegistries,
+            subscribedRegistryOffers: res.data,
+            subscribedRegistryOffersTotal: res.data.length,
           });
         })
         .catch(err => {
@@ -220,6 +263,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             isLoadingThirdPartyRegistries: false,
             thirdPartyRegistries: [],
             thirdPartyRegistriesTotal: 0,
+            subscribedRegistryOffers: [],
+            subscribedRegistryOffersTotal: 0,
           });
           notifyError(err);
         });
@@ -237,6 +282,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       isNewRegistryDrawerVisible: false,
       isDatamartSelectionsDrawerVisible: false,
       currentRegistry: undefined,
+      isSubscriptionsDrawerVisible: false,
     });
   };
 
@@ -246,7 +292,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     } = this.props;
 
     this.fetchFirstPartyRegistries(organisation_id);
-    this.fetchThirdPartyRegistries(organisation_id);
+    this.fetchSubscribedThirdPartyRegistries(organisation_id);
+    this.fetchAvailableRegistryOffers(organisation_id);
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -265,7 +312,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
     if (previousOrganisationId !== organisationId) {
       this.fetchFirstPartyRegistries(organisation_id);
-      this.fetchThirdPartyRegistries(organisation_id);
+      this.fetchSubscribedThirdPartyRegistries(organisation_id);
+      this.fetchAvailableRegistryOffers(organisation_id);
     }
   }
 
@@ -509,12 +557,79 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       });
   };
 
+  manageSubscriptionsOnClick = () => {
+    this.setState({
+      isSubscriptionsDrawerVisible: true,
+    });
+  };
+
+  manageSubscriptionsOnClose = (isVisible: boolean) => () => {
+    this.setState({
+      isSubscriptionsDrawerVisible: isVisible,
+    });
+  };
+
+  subscribeToOffer = (id: string) => {
+    const {
+      workspace: { organisation_id },
+      intl: { formatMessage },
+      notifySuccess,
+      notifyError,
+    } = this.props;
+
+    return this._catalogueService
+      .createServiceAgreement(organisation_id, AgreementType.REGULAR)
+      .then(agreementRes => {
+        return this._catalogueService
+          .addOfferToAgreement(organisation_id, agreementRes.data.id, id)
+          .then(() => {
+            return this._catalogueService.signServiceAgreement(
+              organisation_id,
+              agreementRes.data.id,
+            );
+          })
+          .then(() => {
+            this.setState(
+              {
+                isSubscriptionsDrawerVisible: false,
+              },
+              () => {
+                this.refreshThirdPartyRegistries();
+                notifySuccess({
+                  message: formatMessage(messages.newRegistryCreationSuccess),
+                  description: '',
+                });
+              },
+            );
+          })
+          .catch(err => {
+            notifyError(err);
+          });
+      })
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
+  unsubscribeFromOffer = (id: string) => {
+    // TODO: not yet implemented
+  };
+
   refreshFirstPartyRegistries = () => {
     const {
       workspace: { organisation_id },
     } = this.props;
 
     this.fetchFirstPartyRegistries(organisation_id);
+  };
+
+  refreshThirdPartyRegistries = () => {
+    const {
+      workspace: { organisation_id },
+    } = this.props;
+
+    this.fetchSubscribedThirdPartyRegistries(organisation_id);
+    this.fetchAvailableRegistryOffers(organisation_id);
   };
 
   hasRightToCreateRegistry(): boolean {
@@ -554,11 +669,18 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       isNewRegistryDrawerVisible,
       isDatamartSelectionsDrawerVisible,
       isEditRegistryDrawerVisible,
+      isSubscriptionsDrawerVisible,
       isLoadingFirstPartyRegistries,
       isLoadingThirdPartyRegistries,
       firstPartyRegistries,
       thirdPartyRegistries,
+      subscribedRegistryOffers,
+      availableRegistryOffers,
     } = this.state;
+
+    const subscribableRegistryOffers = availableRegistryOffers.filter(
+      offer => !subscribedRegistryOffers.find(o => o.id === offer.id),
+    );
 
     const firstPartyRegistryColumns: Array<DataColumnDefinition<DeviceIdRegistryResource>> = [
       {
@@ -647,6 +769,20 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       </span>
     );
 
+    const manageSubscriptionsButton = (
+      <span className='mcs-card-button'>
+        <Button
+          key='manage'
+          type='primary'
+          className='mcs-primary'
+          onClick={this.manageSubscriptionsOnClick}
+          disabled={!subscribedRegistryOffers.length && !subscribableRegistryOffers.length}
+        >
+          {formatMessage(messages.manageSubscriptions)}
+        </Button>
+      </span>
+    );
+
     const simpleTableHeader = (
       message: FormattedMessage.MessageDescriptor,
       button?: JSX.Element,
@@ -669,27 +805,27 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           {
             message: formatMessage(messages.editDeviceIdRegistry),
             callback: this.editRegistryAction,
-            disabled: record.type == 'INSTALLATION_ID',
+            disabled: record.type == DeviceIdRegistryType.INSTALLATION_ID,
           },
           {
             message: formatMessage(messages.editRegistryDatamartsSelection),
             callback: this.editDatamartsSelectionAction,
-            disabled: record.type == 'INSTALLATION_ID',
+            disabled: record.type == DeviceIdRegistryType.INSTALLATION_ID,
           },
           {
             message: formatMessage(messages.deleteDeviceIdRegistry),
             callback: this.deleteRegistryAction,
-            disabled: record.type == 'INSTALLATION_ID',
+            disabled: record.type == DeviceIdRegistryType.INSTALLATION_ID,
           },
         ],
       },
     ];
 
     return (
-      <div className='ant-layout mcs-modal_container'>
+      <Layout className='ant-layout'>
         <Content className='mcs-content-container'>
           <Drawer
-            className='mcs-deviceRegistriesEdit_drawer'
+            className='mcs-deviceRegistriesList_drawer'
             width='800'
             bodyStyle={{ padding: '0' }}
             title={formatMessage(messages.newFirstPartyRegistryDrawerTitle)}
@@ -703,7 +839,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           </Drawer>
 
           <Drawer
-            className='mcs-deviceRegistriesEdit_drawer'
+            className='mcs-deviceRegistriesList_drawer'
             width='800'
             bodyStyle={{ padding: '0' }}
             title={
@@ -728,7 +864,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           </Drawer>
 
           <Drawer
-            className='mcs-deviceRegistriesEdit_drawer'
+            className='mcs-deviceRegistriesList_drawer'
             width='800'
             bodyStyle={{ padding: '0' }}
             title={formatMessage(messages.editFirstPartyRegistryDrawerTitle)}
@@ -770,7 +906,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             )}
           </Row>
           <Row className='mcs-table-container'>
-            {simpleTableHeader(messages.deviceIdRegistryOffers)}
+            {simpleTableHeader(messages.thirdPartyDeviceIdRegistries, manageSubscriptionsButton)}
             {!thirdPartyRegistries.length && !isLoadingThirdPartyRegistries ? (
               <EmptyTableView
                 className='mcs-table-view-empty mcs-empty-card'
@@ -792,8 +928,27 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
               />
             )}
           </Row>
+
+          <Drawer
+            className='mcs-deviceRegistriesList_drawer'
+            width='800'
+            bodyStyle={{ padding: '0' }}
+            title={formatMessage(messages.thirdPartyRegistrySubscriptionsDrawerTitle)}
+            placement={'right'}
+            closable={true}
+            onClose={this.manageSubscriptionsOnClose(false)}
+            visible={isSubscriptionsDrawerVisible}
+            destroyOnClose={true}
+          >
+            <DeviceIdRegistrySubscriptionsEditForm
+              subscribedOffers={subscribedRegistryOffers}
+              subscribableOffers={subscribableRegistryOffers}
+              subscribe={this.subscribeToOffer}
+              unsubscribe={this.unsubscribeFromOffer}
+            />
+          </Drawer>
         </Content>
-      </div>
+      </Layout>
     );
   }
 }

@@ -141,6 +141,11 @@ export type ServiceItemConditionShape =
   | PluginServiceItemConditionResource
   | ProvidedServiceItemConditionResource;
 
+export enum AgreementType {
+  REGULAR = 'REGULAR',
+  RESELLER = 'RESELLER',
+}
+
 interface ServiceItemConditionsResource {
   id: string;
   service_item_id: string;
@@ -159,10 +164,12 @@ export interface PluginServiceItemConditionResource extends ServiceItemCondition
 
 export interface ProvidedServiceItemConditionResource extends ServiceItemConditionsResource {}
 
-export interface ServiceAgreement {
+export interface ServiceAgreementResource {
   id: string;
-  version: string;
-  offers: ServiceItemOfferResource[];
+  signing_organisation_id: string;
+  signed: boolean;
+  agreement_type: AgreementType;
+  debited_account_id: string;
 }
 
 export function isLinearServiceItemConditionsResource(
