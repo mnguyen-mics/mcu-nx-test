@@ -31,6 +31,7 @@ import { ExclamationCircleOutlined, WarningOutlined } from '@ant-design/icons/li
 import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
 import { ICatalogService } from '../../../../../services/CatalogService';
 import { AgreementType } from '../../../../../models/servicemanagement/PublicServiceItemResource';
+import { IDatamartService } from '@mediarithmics-private/advanced-components';
 
 const { Content } = Layout;
 
@@ -104,6 +105,9 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
   @lazyInject(TYPES.ICatalogService)
   private _catalogueService: ICatalogService;
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
 
@@ -154,7 +158,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         }, []);
       })
       .then(registries => {
-        Promise.all(
+        return Promise.all(
           registries.map(registry =>
             this._deviceIdRegistryService
               .getDeviceIdRegistryDatamartSelections(registry.id)
@@ -165,22 +169,14 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
                 } as DeviceIdRegistryWithDatamartSelectionsResource;
               }),
           ),
-        )
-          .then(registries => {
-            this.setState({
-              isLoadingFirstPartyRegistries: false,
-              firstPartyRegistries: registries,
-              firstPartyRegistriesTotal: registries.length,
-            });
-          })
-          .catch(err => {
-            this.setState({
-              isLoadingFirstPartyRegistries: false,
-              firstPartyRegistries: [],
-              firstPartyRegistriesTotal: 0,
-            });
-            notifyError(err);
-          });
+        );
+      })
+      .then(registries => {
+        this.setState({
+          isLoadingFirstPartyRegistries: false,
+          firstPartyRegistries: registries,
+          firstPartyRegistriesTotal: registries.length,
+        });
       })
       .catch(err => {
         this.setState({
@@ -345,6 +341,30 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     }
   }
 
+  selectAllDatamarts = (deviceIdRegistryId: string) => {
+    const {
+      notifyError,
+      workspace: { organisation_id },
+    } = this.props;
+
+    const datamartsOptions = {
+      archived: false,
+      ...getPaginatedApiParam(1, 1000),
+    };
+
+    return this._datamartService
+      .getDatamarts(organisation_id, datamartsOptions)
+      .then(res => {
+        return this._deviceIdRegistryService.updateDeviceIdRegistryDatamartSelections(
+          deviceIdRegistryId,
+          res.data.map(datamart => datamart.id),
+        );
+      })
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
   newRegistryOnClick = () => {
     this.setState({
       isNewRegistryDrawerVisible: true,
@@ -367,40 +387,21 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     return this._deviceIdRegistryService
       .createDeviceIdRegistry(registry)
       .then(res => {
-        this.setState(
-          {
-            isNewRegistryDrawerVisible: false,
-          },
-          () => {
-            this.refreshFirstPartyRegistries();
-            notifySuccess({
-              message: formatMessage(messages.newRegistryCreationSuccess),
-              description: '',
-            });
-          },
-        );
+        this.setState({
+          isNewRegistryDrawerVisible: false,
+        });
         return res.data;
       })
       .then(createdRegistry => {
-        this.setState({
-          isDatamartsSelectionModalVisible: true,
-          currentRegistry: {
-            datamart_selections: [],
-            ...createdRegistry,
-          },
-        });
-        Modal.confirm({
-          title: formatMessage(messages.datamartsSelectionModalTitle),
-          content: formatMessage(messages.datamartsSelectionModalMessage),
-          icon: <ExclamationCircleOutlined />,
-          okText: 'OK',
-          cancelText: formatMessage(messages.modalCancel),
-          onOk: () => {
-            this.datamartsSelectionModalOnOk();
-          },
-          onCancel: () => {
-            this.datamartsSelectionDrawerOnClose();
-          },
+        return this.selectAllDatamarts(createdRegistry.id);
+      })
+      .then(() => {
+        return this.refreshFirstPartyRegistries();
+      })
+      .then(() => {
+        notifySuccess({
+          message: formatMessage(messages.newRegistryCreationSuccess),
+          description: '',
         });
       })
       .catch(err => {
@@ -622,6 +623,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       notifySuccess,
       notifyError,
     } = this.props;
+    const offer = this.state.availableRegistryOffers.find(offer => offer.id === id)!;
 
     if (this.hasRightToSubscribeToOffer()) {
       return this._catalogueService
@@ -632,9 +634,16 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             .then(() => agreementRes.data.id);
         })
         .then(agreement_id => {
-          this._catalogueService.updateServiceAgreement(organisation_id, agreement_id, {
+          return this._catalogueService.updateServiceAgreement(organisation_id, agreement_id, {
             signed: true,
           });
+        })
+        .then(() => {
+          const selectionsTasks: Task[] = [];
+          offer.device_id_registries.forEach(registry => {
+            selectionsTasks.push(() => this.selectAllDatamarts(registry.id));
+          });
+          return executeTasksInSequence(selectionsTasks);
         })
         .then(() => {
           this.setState(
@@ -654,15 +663,19 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           notifyError(err);
         });
     } else {
-      return Modal.error({
-        className: 'mcs-modal--errorDialog',
-        icon: <ExclamationCircleOutlined />,
-        title: formatMessage(messages.subscriptionNotAllowedTitle),
-        content: formatMessage(messages.subscriptionNotAllowedMessage),
-        okText: 'OK',
-        onOk() {
-          // closing modal
-        },
+      return Promise.resolve(
+        Modal.error({
+          className: 'mcs-modal--errorDialog',
+          icon: <ExclamationCircleOutlined />,
+          title: formatMessage(messages.subscriptionNotAllowedTitle),
+          content: formatMessage(messages.subscriptionNotAllowedMessage),
+          okText: 'OK',
+          onOk() {
+            // closing modal
+          },
+        }),
+      ).then(() => {
+        return;
       });
     }
   };
@@ -674,10 +687,11 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       notifySuccess,
       notifyError,
     } = this.props;
-    const offer = this.state.subscribedRegistryOffers.find(offer => offer.id === id)!;
+    const offer = this.state.availableRegistryOffers.find(offer => offer.id === id)!;
     const offerSelections = offer.device_id_registries.flatMap(registry => {
       const r = this.state.thirdPartyRegistries.find(
-        thirdPartyRow => thirdPartyRow.id === registry.id && thirdPartyRow._row_type === 'REGISTRY',
+        thirdPartyRow =>
+          this.thirdPartyRowIsRegistry(thirdPartyRow) && thirdPartyRow.id === registry.id,
       )!;
       return (r as ThirdPartyRegistryRow).datamart_selections;
     });
@@ -821,6 +835,28 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     return '_row_type' in object;
   }
 
+  renderRegistryName = (record: DeviceIdRegistryWithDatamartSelectionsResource) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
+    return (
+      <span>
+        {record.name}{' '}
+        {record.datamart_selections.length === 0 && (
+          <span className='field-type'>
+            <Tooltip
+              placement='bottom'
+              title={formatMessage(messages.noDatamartsSelectionWarningTooltipText)}
+            >
+              <WarningOutlined style={{ color: 'orange' }} />
+            </Tooltip>
+          </span>
+        )}
+      </span>
+    );
+  };
+
   render() {
     const {
       intl: { formatMessage },
@@ -857,23 +893,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         sorter: (a: DeviceIdRegistryResource, b: DeviceIdRegistryResource) =>
           a.name.localeCompare(b.name),
         isHideable: false,
-        render: (text: string, record: DeviceIdRegistryWithDatamartSelectionsResource) => {
-          return (
-            <span>
-              {text}{' '}
-              {record.datamart_selections.length === 0 && (
-                <span className='field-type'>
-                  <Tooltip
-                    placement='bottom'
-                    title={formatMessage(messages.noDatamartsSelectionWarningTooltipText)}
-                  >
-                    <WarningOutlined style={{ color: 'orange' }} />
-                  </Tooltip>
-                </span>
-              )}
-            </span>
-          );
-        },
+        render: (_, record: DeviceIdRegistryWithDatamartSelectionsResource) =>
+          this.renderRegistryName(record),
       },
       {
         title: formatMessage(messages.deviceIdRegistryType),
@@ -904,7 +925,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           return this.thirdPartyRowIsOffer(record) ? (
             <span>{record.name}</span>
           ) : (
-            <span>{text}</span>
+            this.renderRegistryName(record as ThirdPartyRegistryRow)
           );
         },
         onCell: myOnCell(3),
