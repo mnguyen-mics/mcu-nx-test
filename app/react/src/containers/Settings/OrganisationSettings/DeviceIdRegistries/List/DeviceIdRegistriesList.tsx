@@ -231,7 +231,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
       return subscribedOffers
         .then(res => {
-          const thirdPartyRegistries: ThirdPartyDataRow[] = res.data.flatMap(offer => {
+          const thirdPartyDataRows: ThirdPartyDataRow[] = res.data.flatMap(offer => {
             return [
               { _row_type: 'OFFER_HEADER', name: offer.name } as ThirdPartyOfferHeaderRow,
             ].concat(
@@ -251,11 +251,34 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             0,
           );
           this.setState({
-            isLoadingThirdPartyRegistries: false,
-            thirdPartyRegistries: thirdPartyRegistries,
             thirdPartyRegistriesTotal: nbOfRegistries,
             subscribedRegistryOffers: res.data,
             subscribedRegistryOffersTotal: res.data.length,
+          });
+          return thirdPartyDataRows;
+        })
+        .then(thirdPartyDataRows => {
+          return Promise.all(
+            thirdPartyDataRows.map(row => {
+              if (!this.thirdPartyRowIsOffer(row)) {
+                return this._deviceIdRegistryService
+                  .getDeviceIdRegistryDatamartSelections((row as ThirdPartyRegistryRow).id)
+                  .then(selections => {
+                    return {
+                      ...row,
+                      datamart_selections: selections.data,
+                    } as ThirdPartyRegistryRow;
+                  });
+              } else {
+                return row;
+              }
+            }),
+          );
+        })
+        .then(thirdPartyDataRowsWithSelections => {
+          this.setState({
+            isLoadingThirdPartyRegistries: false,
+            thirdPartyRegistries: thirdPartyDataRowsWithSelections,
           });
         })
         .catch(err => {
@@ -495,6 +518,10 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     });
   };
 
+  editThirdPartyDatamartsSelectionAction = (registry: ThirdPartyRegistryRow) => {
+    this.editDatamartsSelectionAction(registry);
+  };
+
   datamartsSelectionDrawerOnClose = () => {
     this.setState({
       currentRegistry: undefined,
@@ -502,7 +529,11 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     });
   };
 
-  handleDatamartSelectionsUpdate = (deviceIdRegistryId: string, selectedDatamartIds: string[]) => {
+  handleDatamartSelectionsUpdate = (
+    deviceIdRegistryId: string,
+    selectedDatamartIds: string[],
+    refresh: () => void,
+  ) => {
     const {
       notifyError,
       notifySuccess,
@@ -541,7 +572,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             isDatamartSelectionsDrawerVisible: false,
           },
           () => {
-            this.refreshFirstPartyRegistries();
+            refresh();
             notifySuccess({
               message: formatMessage(messages.datamartSelectionsEditionSuccess),
               description: '',
@@ -632,6 +663,14 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     this.fetchAvailableRegistryOffers(organisation_id);
   };
 
+  refreshSubscribedThirdPartyRegistries = () => {
+    const {
+      workspace: { organisation_id },
+    } = this.props;
+
+    this.fetchSubscribedThirdPartyRegistries(organisation_id);
+  };
+
   hasRightToCreateRegistry(): boolean {
     const {
       workspace: { role },
@@ -659,6 +698,14 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
   thirdPartyRowIsOffer = (row: ThirdPartyDataRow) => {
     return row._row_type === 'OFFER_HEADER';
   };
+
+  thirdPartyRowIsRegistry = (row: ThirdPartyDataRow) => {
+    return row._row_type === 'REGISTRY';
+  };
+
+  isInstanceOfThirdPartyDataRow(object: any): object is ThirdPartyDataRow {
+    return '_row_type' in object;
+  }
 
   render() {
     const {
@@ -798,7 +845,9 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       </div>
     );
 
-    const firstPartyRegistryActions: Array<ActionsColumnDefinition<DeviceIdRegistryResource>> = [
+    const firstPartyRegistryActions: Array<
+      ActionsColumnDefinition<DeviceIdRegistryWithDatamartSelectionsResource>
+    > = [
       {
         key: 'action',
         actions: (record: DeviceIdRegistryResource) => [
@@ -820,6 +869,38 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         ],
       },
     ];
+
+    const thirdPartyRegistryActions: Array<ActionsColumnDefinition<ThirdPartyDataRow>> = [
+      {
+        key: 'action',
+        actions: (record: ThirdPartyDataRow) => {
+          return !this.thirdPartyRowIsOffer(record)
+            ? [
+                {
+                  message: formatMessage(messages.editRegistryDatamartsSelection),
+                  callback: this.editThirdPartyDatamartsSelectionAction,
+                  disabled:
+                    (record as ThirdPartyRegistryRow).type == DeviceIdRegistryType.INSTALLATION_ID,
+                },
+              ]
+            : [];
+        },
+      },
+    ];
+
+    const handleDatamartSelectionsSave = (
+      deviceIdRegistryId: string,
+      selectedDatamartIds: string[],
+    ) => {
+      this.handleDatamartSelectionsUpdate(
+        deviceIdRegistryId,
+        selectedDatamartIds,
+        this.isInstanceOfThirdPartyDataRow(this.state.currentRegistry) &&
+          this.thirdPartyRowIsRegistry(this.state.currentRegistry as ThirdPartyDataRow)
+          ? this.refreshSubscribedThirdPartyRegistries
+          : this.refreshFirstPartyRegistries,
+      );
+    };
 
     return (
       <Layout className='ant-layout'>
@@ -858,7 +939,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
               <DeviceIdRegistryDatamartSelectionsEditForm
                 initialSelections={this.state.currentRegistry!.datamart_selections}
                 deviceIdRegistry={this.state.currentRegistry!}
-                handleSave={this.handleDatamartSelectionsUpdate}
+                handleSave={handleDatamartSelectionsSave}
               />
             )}
           </Drawer>
@@ -925,6 +1006,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
                     ? 'mcs-deviceIdRegistriesList_registryOfferHeader'
                     : ''
                 }
+                actionsColumnsDefinition={thirdPartyRegistryActions}
               />
             )}
           </Row>
