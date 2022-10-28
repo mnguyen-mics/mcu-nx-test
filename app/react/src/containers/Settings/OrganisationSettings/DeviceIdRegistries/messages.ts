@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
   registryDeletionConfirmationTitle: {
     id: 'settings.organisation.device.registries.delete.confirm.title',
-    defaultMessage: 'Are you sure you want to continue?',
+    defaultMessage: 'Are you sure you want to delete this device registry?',
   },
   registryDeletionConfirmationMessage: {
     id: 'settings.organisation.device.registries.delete.confirm.message',
@@ -60,7 +60,8 @@ const messages = defineMessages({
   },
   datamartSelectionsExistMessage: {
     id: 'settings.organisation.device.registries.delete.selections.exist.message',
-    defaultMessage: 'Cannot delete this device registry since it is enabled on some datamarts.',
+    defaultMessage:
+      'You cannot delete this device registry since it is still enabled on some datamarts.',
   },
   deleteDeviceIdRegistry: {
     id: 'settings.organisation.device.registries.list.delete',
@@ -167,13 +168,52 @@ const messages = defineMessages({
     id: 'settings.organisation.device.registries.thirdParty.subscriptions.subscribedRegistries.unsubscribe',
     defaultMessage: 'Unsubscribe',
   },
+  subscriptionNotAllowedTitle: {
+    id: 'settings.organisation.device.registries.thirdPary.subscribe.notAllowed.title',
+    defaultMessage: 'Permission denied to subscribe to an offer',
+  },
+  subscriptionNotAllowedMessage: {
+    id: 'settings.organisation.device.registries.thirdPary.subscribe.notAllowed.message',
+    defaultMessage: 'Please contact your account manager to subscribe to this offer.',
+  },
+  thirdPartyDatamartSelectionsExistTitle: {
+    id: 'settings.organisation.device.registries.thirdPary.unsubscribe.selections.exist.title',
+    defaultMessage: 'Offer has device registries enabled on datamarts',
+  },
+  thirdPartyDatamartSelectionsExistMessage: {
+    id: 'settings.organisation.device.registries.thirdPary.unsubscribe.selections.exist.message',
+    defaultMessage:
+      'You cannot unsubscribe from this offer since it has device registries which are still enabled on some datamarts.',
+  },
+  unsubscriptionNotAllowedTitle: {
+    id: 'settings.organisation.device.registries.thirdPary.unsubscribe.notAllowed.title',
+    defaultMessage: 'Permission denied to unsubscribe from an offer',
+  },
+  unsubscriptionNotAllowedMessage: {
+    id: 'settings.organisation.device.registries.thirdPary.unsubscribe.notAllowed.message',
+    defaultMessage: 'Please contact your account manager to unsubscribe from this offer.',
+  },
   offerSubscriptionSuccess: {
     id: 'settings.organisation.device.registries.thirdParty.subscriptions.subscribe.success',
     defaultMessage: 'Successfully subscribed to offer.',
   },
+  offerUnsubscriptionSuccess: {
+    id: 'settings.organisation.device.registries.thirdParty.subscriptions.unsubscribe.success',
+    defaultMessage: 'Successfully unsubscribed from offer.',
+  },
+  offerUnsubscriptionConfirmationTitle: {
+    id: 'settings.organisation.device.registries.delete.confirm.title',
+    defaultMessage: 'Are you sure you want to unsubscribe from this offer?',
+  },
+  offerUnsubscriptionConfirmationMessage: {
+    id: 'settings.organisation.device.registries.delete.confirm.message',
+    defaultMessage:
+      'You are about to unsubscribe from the offer {offerName}. Are you sure you want to continue?',
+  },
   emptyEvailableThirdPartyRegistries: {
     id: 'settings.organisation.device.registries.thirdParty.subscriptions.availableRegistries.empty',
-    defaultMessage: 'No device registries available.',
+    defaultMessage:
+      'You have already subscribed to all available third-party device registries. Stay tuned for new integrations!',
   },
   emptySubscribedThirdPartyRegistries: {
     id: 'settings.organisation.device.registries.thirdParty.subscriptions.subscribedRegistries.empty',

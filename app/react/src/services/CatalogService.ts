@@ -187,7 +187,22 @@ export interface ICatalogService {
     offerId: string,
   ) => Promise<DataResponse<any>>;
 
-  signServiceAgreement: (organisationId: string, agreementId: string) => Promise<DataResponse<any>>;
+  removeOfferFromAgreement: (
+    organisationId: string,
+    agreementId: string,
+    offerId: string,
+  ) => Promise<DataResponse<any>>;
+
+  updateServiceAgreement: (
+    organisationId: string,
+    agreementId: string,
+    body: Partial<ServiceAgreementResource>,
+  ) => Promise<DataResponse<any>>;
+
+  deleteServiceAgreement: (
+    organisationId: string,
+    agreementId: string,
+  ) => Promise<DataResponse<any>>;
 }
 
 @injectable()
@@ -455,14 +470,32 @@ export class CatalogService implements ICatalogService {
     return ApiService.putRequest(endpoint, {});
   }
 
-  signServiceAgreement(organisationId: string, agreementId: string): Promise<DataResponse<any>> {
+  removeOfferFromAgreement(
+    organisationId: string,
+    agreementId: string,
+    offerId: string,
+  ): Promise<DataResponse<any>> {
+    const endpoint = `organisations/${organisationId}/agreements/${agreementId}/offers/${offerId}`;
+    return ApiService.deleteRequest(endpoint);
+  }
+
+  updateServiceAgreement(
+    organisationId: string,
+    agreementId: string,
+    body: Partial<ServiceAgreementResource>,
+  ): Promise<DataResponse<any>> {
     const endpoint = `organisations/${organisationId}/agreements/${agreementId}`;
-    const body: Partial<ServiceAgreementResource> = {
+    const updateBody: Partial<ServiceAgreementResource> = {
       id: agreementId,
       signing_organisation_id: organisationId,
-      signed: true,
+      ...body,
     };
 
-    return ApiService.putRequest(endpoint, body);
+    return ApiService.putRequest(endpoint, updateBody);
+  }
+
+  deleteServiceAgreement(organisationId: string, agreementId: string): Promise<DataResponse<any>> {
+    const endpoint = `organisations/${organisationId}/agreements/${agreementId}`;
+    return ApiService.deleteRequest(endpoint);
   }
 }
