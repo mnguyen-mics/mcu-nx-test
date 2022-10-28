@@ -14,7 +14,6 @@ import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../../../Datamart';
-import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -30,7 +29,7 @@ export const FORM_ID = 'newRegistryForm';
 
 interface DeviceIdRegistryDatamartSelectionsEditFormState {
   isLoadingDatamarts: boolean;
-  datamarts: DatamartWithOrgInfoResource[];
+  datamarts: DatamartResource[];
   selectedRowKeys: string[];
   allRowsAreSelected: boolean;
   datamartsTotal: number;
@@ -55,19 +54,12 @@ type Props = DeviceIdRegistryDatamartSelectionsEditFormProps &
   ValidatorProps &
   InjectedWorkspaceProps;
 
-interface DatamartWithOrgInfoResource extends DatamartResource {
-  organisation_name: string;
-}
-
 class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
   Props,
   DeviceIdRegistryDatamartSelectionsEditFormState
 > {
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
-
-  @lazyInject(TYPES.IOrganisationService)
-  private _organisationService: IOrganisationService;
 
   constructor(props: Props) {
     super(props);
@@ -121,30 +113,14 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
     };
 
     this.setState({ isLoadingDatamarts: true }, () => {
-      return this._organisationService
-        .getOrganisation(organisationId)
-        .then(org => {
-          this._datamartService
-            .getDatamarts(organisationId, datamartsOptions)
-            .then(datamarts =>
-              datamarts.data.map(datamart => {
-                return {
-                  organisation_name: org.data.name,
-                  ...datamart,
-                } as DatamartWithOrgInfoResource;
-              }),
-            )
-            .then(datamartsWithOrg => {
-              this.setState({
-                isLoadingDatamarts: false,
-                datamarts: datamartsWithOrg,
-                datamartsTotal: datamartsWithOrg.length,
-              });
-            })
-            .catch(err => {
-              this.setState({ isLoadingDatamarts: false });
-              notifyError(err);
-            });
+      return this._datamartService
+        .getDatamarts(organisationId, datamartsOptions)
+        .then(res => {
+          this.setState({
+            isLoadingDatamarts: false,
+            datamarts: res.data,
+            datamartsTotal: res.data.length,
+          });
         })
         .catch(err => {
           this.setState({ isLoadingDatamarts: false });
@@ -183,19 +159,11 @@ class DeviceIdRegistryDatamartSelectionsEditForm extends React.Component<
 
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
-    const dataColumns: Array<DataColumnDefinition<DatamartWithOrgInfoResource>> = [
-      {
-        title: formatMessage(messages.organisationName),
-        key: 'organisation_name',
-        sorter: (a: DatamartWithOrgInfoResource, b: DatamartWithOrgInfoResource) =>
-          a.organisation_name.localeCompare(b.organisation_name),
-        isHideable: false,
-      },
+    const dataColumns: Array<DataColumnDefinition<DatamartResource>> = [
       {
         title: formatMessage(messages.datamartName),
         key: 'name',
-        sorter: (a: DatamartWithOrgInfoResource, b: DatamartWithOrgInfoResource) =>
-          a.name.localeCompare(b.name),
+        sorter: (a: DatamartResource, b: DatamartResource) => a.name.localeCompare(b.name),
         isHideable: false,
       },
     ];
