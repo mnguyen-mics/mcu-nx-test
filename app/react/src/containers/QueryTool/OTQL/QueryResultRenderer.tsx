@@ -68,6 +68,7 @@ import {
 } from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 import { AbstractSource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
+import log from '../../../utils/Logger';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -274,7 +275,11 @@ class QueryResultRenderer extends React.Component<Props, State> {
         true,
         chartProps,
       );
-      data = await this.applyTransformations(selectedChart, abstractDataset);
+      try {
+        data = await this.applyTransformations(selectedChart, abstractDataset);
+      } catch (error) {
+        log.error(error);
+      }
     } else if (isAggregateDataset(datasource) || isCountDataset(datasource)) {
       abstractDataset = getChartDataset(
         {
@@ -283,7 +288,11 @@ class QueryResultRenderer extends React.Component<Props, State> {
         true,
         chartProps,
       );
-      data = await this.applyTransformations(selectedChart, abstractDataset);
+      try {
+        data = await this.applyTransformations(selectedChart, abstractDataset);
+      } catch (error) {
+        log.error(error);
+      }
     }
 
     this.setState({
@@ -461,14 +470,17 @@ class QueryResultRenderer extends React.Component<Props, State> {
   };
 
   noLegendByDefault = () => {
+    return this.getNumberOfSeries() === 1;
+  };
+
+  getNumberOfSeries = (): number => {
     const {
       tab: { queryResult },
     } = this.props;
-    return (
-      queryResult &&
-      isAggregateDataset(queryResult) &&
-      queryResult.metadata.seriesTitles.length === 1
-    );
+
+    if (queryResult && isAggregateDataset(queryResult)) {
+      return queryResult.metadata.seriesTitles.length;
+    } else return -1;
   };
 
   handleChartTypeChange = (value: ChartType) => {
@@ -1212,6 +1224,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
     this.setState({
       ...newState,
     });
+
     await this.updateDataset(chartProps);
   }
 

@@ -13,6 +13,11 @@ import {
 export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie' | 'area';
 import { WrappedAbstractDataset } from '../QueryResultRenderer';
 import { ChartType } from '@mediarithmics-private/advanced-components';
+import {
+  AggregateDataset,
+  IndexDataset,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
+import omitDeep from 'omit-deep-lodash';
 
 export interface QuickOption {
   key: string;
@@ -259,6 +264,24 @@ export function getQuickOptionsByChartTypeAndDatasourceType(
         label: 'Percentage',
         className: 'mcs-chartOptions_percentage',
       },
+    ],
+  };
+
+  const formatOptionsForBarChartsWithTwoSeries: QuickOptionsSelector = {
+    title: 'format',
+    options: [
+      {
+        key: 'count',
+        value: 'count',
+        label: 'Count',
+        className: 'mcs-chartOptions_count',
+      },
+      {
+        key: 'percentage',
+        value: 'percentage',
+        label: 'Percentage',
+        className: 'mcs-chartOptions_percentage',
+      },
       {
         key: 'index',
         value: 'index',
@@ -372,6 +395,7 @@ export function getQuickOptionsByChartTypeAndDatasourceType(
     legendOptions.selectedValue = legendValue;
   }
   if (selectedValues?.format) {
+    formatOptionsForBarChartsWithTwoSeries.selectedValue = selectedValues.format;
     formatOptions.selectedValue = selectedValues.format;
   }
   if (selectedValues?.date_format) {
@@ -389,7 +413,9 @@ export function getQuickOptionsByChartTypeAndDatasourceType(
 
   switch (chartType) {
     case 'bars':
-      return result.concat([legendOptions, formatOptions, barOptions, drilldownOptions]);
+      const barFormatOptions =
+        numberOfSeries === 2 ? formatOptionsForBarChartsWithTwoSeries : formatOptions;
+      return result.concat([legendOptions, barFormatOptions, barOptions, drilldownOptions]);
     case 'pie':
       return result.concat([legendOptions, pieOptions]);
     case 'radar':
@@ -447,6 +473,7 @@ export const renderQuickOptions = (
     numberOfSeries,
     selectedValues,
   );
+
   return (
     <div>
       {quickOptions.map(quickOptionSelector => {
@@ -461,8 +488,34 @@ const hasPercentageTransformation = (quickOptions: any) => {
   return quickOptions.format === 'percentage';
 };
 
+const hasIndexTransformation = (quickOptions: any) => {
+  return quickOptions.format === 'index';
+};
+
 const hasDateFormatTransformation = (quickOptions: any) => {
   return quickOptions.date_options && quickOptions.date_options.format !== undefined;
+};
+
+const splitMultipleSeriesDataset = (aggregateDataset: AggregateDataset): AggregateDataset[] => {
+  const seriesTitles: string[] = aggregateDataset.metadata.seriesTitles;
+  return seriesTitles.map(title => {
+    const otherSeriesTitles = seriesTitles.filter(value => value !== title);
+    const cloneOfInitialDataset: AggregateDataset = JSON.parse(
+      JSON.stringify(aggregateDataset),
+    ) as AggregateDataset;
+
+    const datasetWithRemovedOtherSeries: AggregateDataset = omitDeep(
+      cloneOfInitialDataset,
+      otherSeriesTitles,
+    ) as any;
+
+    return {
+      ...datasetWithRemovedOtherSeries,
+      metadata: {
+        seriesTitles: [title],
+      },
+    };
+  });
 };
 
 export const getChartDataset = (
@@ -481,6 +534,30 @@ export const getChartDataset = (
       type: 'to-percentages',
       [childProperty]: [source],
     };
+  }
+
+  // IndexSource
+  if (hasIndexTransformation(chartProps)) {
+    let childrenValue;
+    if (isDataset) {
+      childrenValue = splitMultipleSeriesDataset(source.dataset).map(ds => {
+        return {
+          dataset: ds,
+          type: source.type,
+        };
+      });
+    } else if (source.sources) {
+      childrenValue = source.sources;
+    }
+
+    source = {
+      type: 'index',
+      [childProperty]: childrenValue,
+      options: {
+        minimum_percentage: 0,
+        sort: 'descending',
+      },
+    } as IndexDataset;
   }
 
   if (hasDateFormatTransformation(chartProps)) {
