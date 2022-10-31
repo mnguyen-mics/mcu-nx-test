@@ -5,7 +5,7 @@ import { BasicProps } from 'antd/lib/layout/layout';
 import { ConfigProps, InjectedFormProps, reduxForm } from 'redux-form';
 import { CleaningRuleFormData } from './domain';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { CleaningRuleType } from '../../../../../models/cleaningRules/CleaningRules';
 import FormLayoutActionbar, {

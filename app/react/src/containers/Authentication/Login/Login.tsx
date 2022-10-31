@@ -11,7 +11,6 @@ import { logIn } from '../../../redux/Login/actions';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import LocalStorage from '../../../services/LocalStorage';
-import { StaticContext } from 'react-router';
 import { LocationDescriptorObject } from 'history';
 import { Credentials } from '@mediarithmics-private/advanced-components/lib/services/AuthService';
 
@@ -79,7 +78,7 @@ type Props = MapStateToProps &
   MapDispatchToProps &
   InjectedIntlProps &
   FormComponentProps &
-  RouteComponentProps<{}, StaticContext, { from?: string }>;
+  RouteComponentProps<{}, {}, { from?: string }>;
 
 const Login = (props: Props) => {
   const getRememberMe = () => {

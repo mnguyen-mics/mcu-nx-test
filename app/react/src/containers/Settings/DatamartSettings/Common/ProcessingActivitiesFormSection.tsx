@@ -4,7 +4,7 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { ProcessingActivityFieldModel } from './domain';
 import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FormSection } from '../../../../components/Form';
 import messages from './messages';
@@ -16,7 +16,6 @@ import ProcessingActivitiesSelector, {
 import { ProcessingResource, ProcessingSelectionResource } from '../../../../models/processing';
 import { Alert, Select } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { Link } from 'react-router-dom';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IOrganisationService } from '../../../../services/OrganisationService';

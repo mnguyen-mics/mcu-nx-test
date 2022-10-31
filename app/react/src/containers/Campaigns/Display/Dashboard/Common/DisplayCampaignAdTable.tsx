@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Switch, Modal } from 'antd';
 import { compose } from 'recompose';
-import { RouteComponentProps } from 'react-router';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import { Button, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';

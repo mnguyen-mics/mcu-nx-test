@@ -8,7 +8,7 @@ import {
   reduxForm,
   InjectedFormProps,
 } from 'redux-form';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';

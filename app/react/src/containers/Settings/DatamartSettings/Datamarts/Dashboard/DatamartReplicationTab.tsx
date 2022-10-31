@@ -6,7 +6,7 @@ import {
   DatamartReplicationResourceShape,
   DatamartReplicationJobExecutionResource,
 } from '../../../../../models/settings/settings';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { DatamartReplicationRouteMatchParam } from '../../DatamartReplication/Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,

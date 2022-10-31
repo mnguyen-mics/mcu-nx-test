@@ -16,7 +16,7 @@ import {
   injectThemeColors,
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { McsTabsItem } from './QueryToolTabsContainer';
 import { QueryToolJsonResultRenderer } from './QueryToolJsonResultRenderer';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';

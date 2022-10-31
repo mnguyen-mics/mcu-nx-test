@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { message } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import EmailBlastForm from './EmailBlastForm';
 import {
@@ -19,7 +19,6 @@ import { TYPES } from '../../../../../constants/types';
 import { IEmailCampaignService } from '../../../../../services/EmailCampaignService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IEmailCampaignFormService } from '../EmailCampaignFormService';
-import { Link } from 'react-router-dom';
 
 interface State {
   campaign?: EmailCampaignResource;

@@ -10,7 +10,7 @@ import AutomationBuilder from './AutomationBuilder';
 import { StorylineNodeModel, storylineNodeData } from './domain';
 import AutomationActionBar from './ActionBar/AutomationActionBar';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 import { Loading } from '../../../components';
 import { ScenarioExitConditionFormResource } from '../../../models/automations/automations';

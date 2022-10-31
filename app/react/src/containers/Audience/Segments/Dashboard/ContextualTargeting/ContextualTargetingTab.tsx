@@ -12,7 +12,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import Papa from 'papaparse';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import ContextualTargetingChart, { ChartDataResource } from './ContextualTargetingChart';
 import ContextualTargetingStatsCard from './ContextualTargetingStatsCard';
 import ContextualTargetingSubTabs from './ContextualTargetingSubTabs';

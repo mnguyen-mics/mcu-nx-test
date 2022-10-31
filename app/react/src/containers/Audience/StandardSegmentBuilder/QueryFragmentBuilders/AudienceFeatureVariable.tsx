@@ -39,7 +39,7 @@ import { IReferenceTableService } from '../../../../services/ReferenceTableServi
 import { IDatamartService } from '../../../../services/DatamartService';
 import { IComparmentService } from '../../../../services/CompartmentService';
 import { IChannelService } from '../../../../services/ChannelService';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';

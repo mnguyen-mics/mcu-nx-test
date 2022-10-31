@@ -6,7 +6,7 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Activity, UserScenarioActivityCardProps } from '../../../../models/timeline/timeline';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { TimelinePageParams } from '../TimelinePage';
 
 type Props = UserScenarioActivityCardProps &

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { GetServiceItemsOptions, ICatalogService } from '../../../../../services/CatalogService';
 import { ServiceItemShape } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import messages from './messages';
 import { compose } from 'recompose';
 import { TableSelector } from '@mediarithmics-private/mcs-components-library';

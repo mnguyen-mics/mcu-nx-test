@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GoalResource } from '../../../models/goal';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';

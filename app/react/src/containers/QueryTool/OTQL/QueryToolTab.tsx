@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, Button, Modal, Select, Switch } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';

@@ -11,7 +11,7 @@ import { withValidators, FormSection } from '../../../../../../components/Form';
 import { FormSearchObjectField } from '../../../../../Audience/AdvancedSegmentBuilder/Edit/Sections/Field/FieldNodeForm';
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
 import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';

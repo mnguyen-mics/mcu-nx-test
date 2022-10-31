@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { EditAudienceSegmentParam } from '../Edit/domain';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import messages from './messages';

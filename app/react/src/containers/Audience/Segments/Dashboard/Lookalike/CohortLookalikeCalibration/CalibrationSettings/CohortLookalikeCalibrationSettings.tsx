@@ -4,9 +4,8 @@ import {
   UserLookalikeByCohortsSegment,
 } from '@mediarithmics-private/advanced-components/lib/models/audienceSegment/AudienceSegmentResource';
 import { Button, Tag, Switch, Tooltip } from 'antd';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { AreaChartSlider } from '@mediarithmics-private/mcs-components-library';
 import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';

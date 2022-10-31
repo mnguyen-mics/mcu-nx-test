@@ -5,7 +5,7 @@ import { Checkbox } from 'antd';
 import { FormSection, FormInputField, FormAddonSelectField } from '../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import FormInput from '../../../../../components/Form/FormInput';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { GoalFormData } from '../domain';
 import AddonSelect from '../../../../../components/Form/FormSelect/AddonSelect';

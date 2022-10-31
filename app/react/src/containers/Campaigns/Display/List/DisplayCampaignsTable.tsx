@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Tooltip, message } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
@@ -10,7 +10,6 @@ import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 import { messages } from '../messages';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
-import { RouteComponentProps } from 'react-router';
 import {
   DisplayCampaignResource,
   DisplayCampaignResourceWithStats,
@@ -32,6 +31,7 @@ import {
 } from '../../../../IntlMessages';
 import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({

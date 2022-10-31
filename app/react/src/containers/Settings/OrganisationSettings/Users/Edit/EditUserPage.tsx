@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { message } from 'antd';
@@ -11,7 +11,6 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IUsersService } from '../../../../../services/UsersService';
 import { ErrorResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
-import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   newUser: {

@@ -14,7 +14,7 @@ import {
 import messages from '../../messages';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { EditProcessingRouteMatchParams } from '../ProcessingEditPage';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 type Props = InjectedIntlProps &
   ValidatorProps &

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {
   GenericPluginContent,
   PluginContentOuterProps,
@@ -18,7 +18,6 @@ import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 import { TYPES } from '../../../../../constants/types';
-import { Link } from 'react-router-dom';
 import { FormInputProps } from '../../../../../components/Form/FormInput';
 import { DefaultSelect, FormSelectField, withValidators } from '../../../../../components/Form';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';

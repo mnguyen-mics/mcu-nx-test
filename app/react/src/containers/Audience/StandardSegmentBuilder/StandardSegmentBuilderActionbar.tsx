@@ -8,8 +8,7 @@ import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderResource } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 
 interface StandardSegmentBuilderActionbarProps {

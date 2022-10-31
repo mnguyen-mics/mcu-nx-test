@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout, Button, message, Modal, Spin, Input } from 'antd';
 import { Form } from '@ant-design/compatible';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'redux';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -18,7 +18,6 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import moment from 'moment';
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-import { Link } from 'react-router-dom';
 import MlAlgorithmVariableResource from '../../../../../models/mlAlgorithmVariable/MlAlgorithmVariableResource';
 import { IMlAlgorithmModelService } from '../../../../../services/MlAlgorithmModelService';
 import { IMlAlgorithmVariableService } from '../../../../../services/MlAlgorithmVariableService';

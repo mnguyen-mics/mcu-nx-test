@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout } from 'antd';
 import OfferCatalogTable from './OfferCatalogTable';
 import OfferCatalogActionBar from './OfferCatalogActionBar';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { compose } from 'recompose';
 

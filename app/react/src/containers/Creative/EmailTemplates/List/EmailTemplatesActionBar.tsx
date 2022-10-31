@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
-import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 
 const messages = defineMessages({

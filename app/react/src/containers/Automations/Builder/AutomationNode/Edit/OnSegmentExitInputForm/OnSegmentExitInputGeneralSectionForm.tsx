@@ -10,7 +10,7 @@ import withNormalizer, { NormalizerProps } from '../../../../../../components/Fo
 import { withValidators, FormSection } from '../../../../../../components/Form';
 import { FormInfiniteSearchObjectField } from '../../../../../Audience/AdvancedSegmentBuilder/Edit/Sections/Field/FieldNodeForm';
 import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';

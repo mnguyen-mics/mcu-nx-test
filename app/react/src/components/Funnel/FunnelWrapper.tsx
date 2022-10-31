@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import FunnelQueryBuilder from './FunnelQueryBuilder';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
 import { FunnelFilter, GroupedByFunnel, Step } from '../../models/datamart/UserActivitiesFunnel';

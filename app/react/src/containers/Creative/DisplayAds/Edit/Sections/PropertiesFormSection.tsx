@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Modal } from 'antd';
 import { connect } from 'react-redux';
 import { getFormInitialValues } from 'redux-form';

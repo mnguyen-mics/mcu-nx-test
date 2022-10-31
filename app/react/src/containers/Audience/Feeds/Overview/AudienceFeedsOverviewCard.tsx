@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Card } from '@mediarithmics-private/mcs-components-library';

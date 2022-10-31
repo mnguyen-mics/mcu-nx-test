@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import _ from 'lodash';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { EditAudienceSegmentParam } from '../../Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,

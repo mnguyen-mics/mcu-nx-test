@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import injectNotifications from '../../../../Notifications/injectNotifications';
 import DatamartActionBar from './DatamartActionBar';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
@@ -68,10 +68,14 @@ const messages = defineMessages({
   },
 });
 
-type Props = RouteComponentProps<{
-  organisationId: string;
-  datamartId: string;
-}> &
+type Props = RouteComponentProps<
+  {
+    organisationId: string;
+    datamartId: string;
+  },
+  {},
+  { activeTab?: string }
+> &
   InjectedIntlProps &
   InjectedFeaturesProps;
 

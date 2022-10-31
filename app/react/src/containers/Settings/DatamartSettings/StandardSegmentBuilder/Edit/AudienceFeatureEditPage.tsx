@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import AudienceFeatureForm from './AudienceFeatureForm';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IAudienceFeatureService } from '../../../../../services/AudienceFeatureService';
@@ -19,7 +19,6 @@ import {
 } from '../../../../Audience/AdvancedSegmentBuilder/domain';
 import { message, Modal } from 'antd';
 import { Loading } from '../../../../../components';
-import { Link } from 'react-router-dom';
 import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
 import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 

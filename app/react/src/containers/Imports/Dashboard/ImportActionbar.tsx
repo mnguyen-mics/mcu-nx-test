@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message, Upload, Spin } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Import } from '../../../models/imports/imports';
@@ -16,7 +16,6 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { Link } from 'react-router-dom';
 
 const Dragger = Upload.Dragger;
 const { Dropdown } = PopupContainer;

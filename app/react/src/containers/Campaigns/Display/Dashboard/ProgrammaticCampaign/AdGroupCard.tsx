@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Button, Modal, message, Menu } from 'antd';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import messages from '../messages';
 import {

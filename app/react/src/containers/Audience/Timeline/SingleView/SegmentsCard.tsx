@@ -4,7 +4,7 @@ import { Card } from '@mediarithmics-private/mcs-components-library';
 import SegmentsTag from './SegmentsTag';
 import messages from '../messages';
 import { UserSegmentResource } from '../../../../models/timeline/timeline';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,

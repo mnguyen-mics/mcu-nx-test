@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { Layout } from 'antd';
 import { FormLayoutActionbar, ScrollspySider } from '../../../../../components/Layout';
 import { STANDARD_SEGMENT_BUILDER_FORM_ID, StandardSegmentBuilderFormData } from './domain';

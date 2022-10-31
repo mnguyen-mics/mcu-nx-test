@@ -1,7 +1,7 @@
 import { Select } from 'antd';
 import { Option } from 'antd/lib/mentions';
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FunnelTemplate } from './Constants';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { injectDrawer } from '../../../../../components/Drawer/index';
@@ -20,7 +20,6 @@ import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 import { IAdGroupFormService } from './AdGroupFormService';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import { Link } from 'react-router-dom';
 
 interface State {
   campaign?: DisplayCampaignResource;
@@ -31,7 +30,7 @@ interface State {
 type Props = InjectedIntlProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditAdGroupRouteMatchParam, StaticContext, { adGroupId?: string }>;
+  RouteComponentProps<EditAdGroupRouteMatchParam, {}, { adGroupId?: string }>;
 
 class EditAdGroupPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDisplayCampaignService)

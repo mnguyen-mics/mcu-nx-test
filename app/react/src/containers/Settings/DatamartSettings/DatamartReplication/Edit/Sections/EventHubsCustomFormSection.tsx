@@ -6,7 +6,7 @@ import { FormInput, FormSection, FormInputField } from '../../../../../../compon
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { FormDataFileField, FormDataFile } from '@mediarithmics-private/advanced-components';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DatamartReplicationRouteMatchParam } from '../domain';
 
 type Props = InjectedIntlProps &

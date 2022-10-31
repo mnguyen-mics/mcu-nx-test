@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Layout, Row, Breadcrumb } from 'antd';
-import { Link } from 'react-router-dom';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { ICatalogService } from '../../../../../services/CatalogService';

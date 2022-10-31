@@ -12,7 +12,7 @@ import {
   FormSelectField,
 } from '../../../../../../components/Form';
 import DefaultSelect from '../../../../../../components/Form/FormSelect/DefaultSelect';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { AudiencePartitionFormData } from '../domain';
 
 const messages = defineMessages({

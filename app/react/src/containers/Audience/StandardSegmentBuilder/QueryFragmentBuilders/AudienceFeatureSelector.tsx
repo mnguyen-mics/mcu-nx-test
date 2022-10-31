@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Input, Row, Col, Breadcrumb, AutoComplete, Spin, Button as AntButton } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router-dom';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import {

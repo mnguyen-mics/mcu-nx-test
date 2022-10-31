@@ -14,7 +14,7 @@ import Topics from './Topics';
 import messages from '../messages';
 import log from '../../../../utils/Logger';
 import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { TimelinePageParams } from '../TimelinePage';
 import UserScenarioActivityCard from './UserScenarioActivityCard';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';

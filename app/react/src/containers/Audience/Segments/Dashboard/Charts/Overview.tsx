@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
-import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';

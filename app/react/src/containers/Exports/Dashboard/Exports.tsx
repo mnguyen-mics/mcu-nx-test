@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Button, Layout, message, Spin } from 'antd';
 import { compose } from 'recompose';
 import moment from 'moment';

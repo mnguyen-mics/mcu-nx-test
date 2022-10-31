@@ -7,7 +7,6 @@ import {
   GenericFieldArray,
   Field,
 } from 'redux-form';
-import { Omit } from 'react-router';
 import { Form } from '@ant-design/compatible';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {

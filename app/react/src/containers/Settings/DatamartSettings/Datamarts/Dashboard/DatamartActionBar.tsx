@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';
 import messages from './messages';
-import { Link } from 'react-router-dom';
 
 type Props = RouteComponentProps<{ organisationId: string; datamartId: string }> &
   InjectedIntlProps;

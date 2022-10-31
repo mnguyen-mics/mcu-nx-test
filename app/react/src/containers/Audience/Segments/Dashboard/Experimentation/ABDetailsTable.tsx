@@ -5,7 +5,7 @@ import {
   McsDateRangePicker,
   TableViewFilters,
 } from '@mediarithmics-private/mcs-components-library';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Button } from 'antd';
 import injectNotifications, {
   InjectedNotificationProps,

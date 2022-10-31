@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { message } from 'antd';
@@ -12,7 +12,6 @@ import EditApiTokenForm from './EditApiTokenForm';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IApiTokenService } from '../../../../../services/ApiTokenService';
-import { Link } from 'react-router-dom';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 const messages = defineMessages({

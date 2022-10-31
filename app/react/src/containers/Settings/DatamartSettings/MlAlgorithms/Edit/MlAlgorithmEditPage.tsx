@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -14,7 +14,6 @@ import MlAlgorithmForm from './MlAlgorithmForm';
 import { IMlAlgorithmVariableService } from '../../../../../services/MlAlgorithmVariableService';
 import MlAlgorithmVariableResource from '../../../../../models/mlAlgorithmVariable/MlAlgorithmVariableResource';
 import { FormLinkedTextInputModel } from '../../../../../components/Form/FormProperties';
-import { Link } from 'react-router-dom';
 
 interface MlAlgorithmCreateEditState {
   loading: boolean;
@@ -27,7 +26,7 @@ type Props = InjectedDrawerProps &
       organisationId: string;
       mlAlgorithmId: string;
     },
-    StaticContext,
+    {},
     { from?: string }
   > &
   InjectedIntlProps;

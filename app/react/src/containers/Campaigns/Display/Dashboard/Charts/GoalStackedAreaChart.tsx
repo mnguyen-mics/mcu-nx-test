@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Row, Col, Menu, Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';

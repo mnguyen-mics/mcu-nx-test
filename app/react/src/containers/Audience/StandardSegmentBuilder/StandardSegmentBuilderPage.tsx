@@ -24,7 +24,7 @@ import { INITIAL_STANDARD_SEGMENT_BUILDER_FORM_DATA } from './constants';
 import { IQueryService } from '../../../services/QueryService';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import StandardSegmentBuilderActionbar from './StandardSegmentBuilderActionbar';
 import { AudienceSegmentFormData, calculateDefaultTtl } from '../Segments/Edit/domain';

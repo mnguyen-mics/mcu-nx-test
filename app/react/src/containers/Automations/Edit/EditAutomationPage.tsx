@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import * as NotificationActions from '../../../redux/Notifications/actions';
@@ -35,7 +35,7 @@ interface MapStateProps {
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
   MapStateProps &
-  RouteComponentProps<EditAutomationParam, StaticContext, { from?: string }>;
+  RouteComponentProps<EditAutomationParam, {}, { from?: string }>;
 
 class EditAutomationPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAutomationFormService)

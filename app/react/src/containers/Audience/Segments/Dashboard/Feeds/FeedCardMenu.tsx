@@ -3,7 +3,7 @@ import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Dropdown, Menu, Modal } from 'antd';
 import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 import injectNotifications, {

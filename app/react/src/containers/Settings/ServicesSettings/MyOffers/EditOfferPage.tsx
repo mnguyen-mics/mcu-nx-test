@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -13,7 +13,6 @@ import { IServiceOfferPageService } from '../ServiceOfferPageService';
 import { Loading } from '../../../../components';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
-import { Link } from 'react-router-dom';
 
 export enum OfferType {
   Automatic,

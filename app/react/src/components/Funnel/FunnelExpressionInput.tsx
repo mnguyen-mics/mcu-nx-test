@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
 import cuid from 'cuid';
 import React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { AdGroupByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/AdGroupByNameSelector';
 import { CampaignByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/CampaignByNameSelector';

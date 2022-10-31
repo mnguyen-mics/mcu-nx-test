@@ -7,8 +7,7 @@ import {
 import { Col, Layout, Row } from 'antd';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
-import { Link } from 'react-router-dom';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { ConfigProps } from 'redux-form';
 import { FormTitle } from '../../../components/Form';

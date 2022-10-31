@@ -10,7 +10,7 @@ import { compose } from 'recompose';
 import { IPluginService } from '../../../../../services/PluginService';
 import { PluginCardModalTab } from '@mediarithmics-private/advanced-components';
 import { PluginLayout } from '../../../../../models/plugin/PluginLayout';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

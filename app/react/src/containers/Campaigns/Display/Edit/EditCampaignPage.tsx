@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -25,7 +25,6 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import { Link } from 'react-router-dom';
 
 interface State {
   displayCampaignFormData: DisplayCampaignFormData;
@@ -37,7 +36,7 @@ type Props = InjectedIntlProps &
   InjectedDatamartProps &
   RouteComponentProps<
     EditDisplayCampaignRouteMatchParam,
-    StaticContext,
+    {},
     { from?: string; campaignId?: string }
   >;
 

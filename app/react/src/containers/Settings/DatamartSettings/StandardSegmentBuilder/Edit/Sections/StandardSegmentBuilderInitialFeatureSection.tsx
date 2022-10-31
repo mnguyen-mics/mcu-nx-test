@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { messages } from '../../messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import cuid from 'cuid';
 import { FormSection } from '../../../../../../components/Form';
 import injectDrawer, {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import log from '../../../../utils/Logger';
 import { DisplayCreativeForm } from './index';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { DisplayCreativeFormProps } from './DisplayCreativeForm';
 import { DisplayCreativeFormData } from './domain';
 import { Loading } from '../../../../components/index';

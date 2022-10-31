@@ -5,7 +5,7 @@ import { Form } from '@ant-design/compatible';
 import { ConfigProps, reduxForm, InjectedFormProps } from 'redux-form';
 import { FieldNodeFormDataValues } from '../../domain';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import FieldNodeForm from './FieldNodeForm';
 import { FieldProposalLookup } from '../../../domain';

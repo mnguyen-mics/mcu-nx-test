@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { message, Modal } from 'antd';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import queryString from 'query-string';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -30,8 +30,6 @@ import { TYPES } from '../../../../../constants/types';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
-import { Link } from 'react-router-dom';
-
 interface State {
   compartmentFormData: CompartmentFormData;
   loading: boolean;
@@ -42,7 +40,7 @@ type Props = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<
     EditCompartmentRouteMatchParam,
-    StaticContext,
+    {},
     { from?: string; compartmentId?: string }
   > &
   InjectedDatamartProps;

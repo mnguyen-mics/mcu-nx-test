@@ -4,7 +4,7 @@ import { Labels } from '../../../../Labels';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
 import AdServingActionBar from './AdServingActionBar';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import AdCard from './AdCard';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';

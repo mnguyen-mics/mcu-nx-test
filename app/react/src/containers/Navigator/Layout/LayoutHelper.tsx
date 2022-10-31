@@ -19,15 +19,9 @@ export const buildAccountsMenu = (organisationId: string) => {
     >
       <FormattedMessage {...messages.account} />
     </Link>,
-    KeycloakService.isKeycloakEnabled() ? (
-      <div onClick={logOutFunction} key={1}>
-        {logoutMessage}
-      </div>
-    ) : (
-      <Link to='/logout' key={1}>
-        {logoutMessage}
-      </Link>
-    ),
+    <div onClick={logOutFunction} key={1}>
+      {logoutMessage}
+    </div>,
   ];
 };
 

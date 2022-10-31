@@ -12,7 +12,7 @@ import {
 } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { EditDisplayCampaignRouteMatchParam } from '../../domain';
 import { formatDisplayCampaignProperty } from '../../../../Display/messages';
 

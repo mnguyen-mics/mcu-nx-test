@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { FormattedMessage } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { getDefaultDatamart } from '../../../../redux/Session/selectors';
 import { EditEmailBlastRouteMatchParam } from './domain';
 import { formatMetric } from '../../../../utils/MetricHelper';

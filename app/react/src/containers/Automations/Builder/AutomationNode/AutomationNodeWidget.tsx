@@ -25,7 +25,7 @@ import {
 } from './Edit/domain';
 
 import { ScenarioNodeType } from '../../../../models/automations/automations';
-import { withRouter, RouterProps, RouteComponentProps } from 'react-router';
+import { withRouter, RouterProps, RouteComponentProps } from 'react-router-dom';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';

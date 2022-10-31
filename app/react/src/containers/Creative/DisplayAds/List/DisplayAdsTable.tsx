@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Link, withRouter } from 'react-router-dom';
-import { RouteComponentProps } from 'react-router';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch } from '../../../../utils/LocationSearchHelper';

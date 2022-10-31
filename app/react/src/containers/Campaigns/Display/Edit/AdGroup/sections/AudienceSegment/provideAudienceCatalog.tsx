@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { ICatalogService } from '../../../../../../../services/CatalogService';
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment';
 import {

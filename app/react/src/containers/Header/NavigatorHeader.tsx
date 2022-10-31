@@ -49,12 +49,10 @@ class NavigatorHeader extends React.Component<Props> {
 
     const logOutFunction = () => KeycloakService.doLogout();
 
-    const logOut = KeycloakService.isKeycloakEnabled() ? (
+    const logOut = (
       <div onClick={logOutFunction} key={1}>
         {logoutMessage}
       </div>
-    ) : (
-      <Link to='/logout'>{logoutMessage}</Link>
     );
 
     const accountMenu = (

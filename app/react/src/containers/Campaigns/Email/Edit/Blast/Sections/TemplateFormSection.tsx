@@ -3,7 +3,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import cuid from 'cuid';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { FormSection } from '../../../../../../components/Form';
 import CreativeCardSelector, {

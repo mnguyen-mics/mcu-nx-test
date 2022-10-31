@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import queryString from 'query-string';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { DatamartSelector } from '../Datamart';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, Layout, Row, Tabs } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { CancelablePromise } from '../../../utils/ApiHelper';

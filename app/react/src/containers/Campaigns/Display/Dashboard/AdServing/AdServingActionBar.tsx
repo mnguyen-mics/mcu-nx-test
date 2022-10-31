@@ -8,7 +8,7 @@ import { Button, Dropdown, message, Menu, Modal } from 'antd';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../messages';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import log from '../../../../../utils/Logger';
 import modalMessages from '../../../../../common/messages/modalMessages';
@@ -29,7 +29,7 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import ExportService from '../../../../../services/ExportService';
-import { Link } from 'react-router-dom';
+
 export interface AdServingActionBarProps {
   campaign: DisplayCampaignInfoResource;
   archiveCampaign: (campaignId: string) => void;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect, DispatchProp } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { ConfigProps, getFormValues, InjectedFormProps, reduxForm, change } from 'redux-form';
 import { FormSection } from '../../../../../../components/Form';

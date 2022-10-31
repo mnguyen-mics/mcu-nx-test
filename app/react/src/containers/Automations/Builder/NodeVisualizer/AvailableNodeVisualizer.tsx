@@ -15,7 +15,7 @@ import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/c
 import { IPluginService } from '../../../../services/PluginService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   PluginPresetProperty,
   PluginPresetResource,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
 import { INITIAL_EXPORTS_FORM_DATA, ExportFormData } from './domain';
@@ -19,7 +19,6 @@ import { DataResponse } from '@mediarithmics-private/advanced-components/lib/ser
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
-import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   newExports: {

@@ -10,7 +10,7 @@ import {
   FieldArray,
 } from 'redux-form';
 import { Omit } from '../../../../utils/Types';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Layout } from 'antd';

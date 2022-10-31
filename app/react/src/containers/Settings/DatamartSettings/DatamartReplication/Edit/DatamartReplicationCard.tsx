@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import { DatamartReplicationRouteMatchParam } from './domain';
 import { Card, Button } from '@mediarithmics-private/mcs-components-library';

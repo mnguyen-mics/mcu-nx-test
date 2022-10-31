@@ -7,7 +7,7 @@ import {
   PAGINATION_SEARCH_SETTINGS,
 } from '../../../../../utils/LocationSearchHelper';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { DISPLAY_SEARCH_SETTINGS } from './ServiceUsageReportListPage';
 import ItemList from '../../../../../components/ItemList';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';

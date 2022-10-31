@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { submit as rxfSubmit, getFormValues } from 'redux-form';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { messages, AutomationBuilderPageRouteParams } from '../AutomationBuilderPage';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';

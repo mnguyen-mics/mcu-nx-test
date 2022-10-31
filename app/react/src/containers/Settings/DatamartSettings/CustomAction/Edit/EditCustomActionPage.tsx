@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {
   GenericPluginContent,
   PluginContentOuterProps,
@@ -17,7 +17,6 @@ import messages from './messages';
 import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { Link } from 'react-router-dom';
 import { withValidators } from '../../../../../components/Form';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { ICustomActionService } from '../../../../../services/CustomActionService';

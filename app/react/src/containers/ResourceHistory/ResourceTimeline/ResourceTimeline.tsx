@@ -12,7 +12,7 @@ import {
 } from '../../../models/resourceHistory/ResourceHistory';
 import messages from './messages';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import HistoryEventCard from './HistoryEventCard';
 import { FormatProperty } from './domain';
 import injectNotifications, {

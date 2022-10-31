@@ -7,7 +7,7 @@ import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Button, Layout } from 'antd';
 import * as React from 'react';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import {
   FunnelTemplate,

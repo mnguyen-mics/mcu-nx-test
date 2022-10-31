@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { Input, Select } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldProps } from 'redux-form';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import FormFieldWrapper from '../../../../components/Form/FormFieldWrapper';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import messages from '../Edit/messages';

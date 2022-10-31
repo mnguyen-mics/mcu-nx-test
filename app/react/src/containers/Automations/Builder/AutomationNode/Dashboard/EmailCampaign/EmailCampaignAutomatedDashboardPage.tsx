@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout } from 'antd';
 import CampaignDashboardHeader from '../../../../../Campaigns/Common/CampaignDashboardHeader';
 import { Card, Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';

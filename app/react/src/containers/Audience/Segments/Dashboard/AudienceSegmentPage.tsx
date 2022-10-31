@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Layout } from 'antd';
 import { compose } from 'recompose';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { PluginEditForm } from '@mediarithmics-private/advanced-components';
 import { EditContentLayout } from '../../../../components/Layout';
 import { PluginVersionResource } from '../../../../models/Plugins';

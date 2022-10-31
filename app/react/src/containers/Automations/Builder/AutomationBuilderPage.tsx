@@ -3,7 +3,7 @@ import * as React from 'react';
 import { message, Layout } from 'antd';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import injectNotifications, {

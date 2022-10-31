@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { CopyToClipboard } from 'react-copy-to-clipboard';

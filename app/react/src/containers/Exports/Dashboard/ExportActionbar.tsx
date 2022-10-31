@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Export } from '../../../models/exports/exports';
@@ -17,7 +17,6 @@ import ResourceTimelinePage, {
 } from '../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import resourceHistoryMessages from '../../ResourceHistory/ResourceTimeline/messages';
 import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
-import { Link } from 'react-router-dom';
 
 const { Dropdown } = PopupContainer;
 

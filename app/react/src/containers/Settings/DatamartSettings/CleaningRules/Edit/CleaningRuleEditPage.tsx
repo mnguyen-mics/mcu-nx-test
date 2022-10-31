@@ -3,7 +3,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { InjectedDatamartProps, injectDatamart, DatamartSelector } from '../../../../Datamart';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
@@ -49,7 +49,6 @@ import { message } from 'antd';
 import moment from 'moment';
 import CleaningRuleEditForm, { FORM_ID } from './CleaningRuleEditForm';
 import { DefaultOptionProps } from '../../../../../components/Form/FormSelect/DefaultSelect';
-import { Link } from 'react-router-dom';
 
 interface State {
   cleaningRuleFormData: CleaningRuleFormData;
@@ -66,7 +65,7 @@ interface MapStateToProps {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditCleaningRuleRouteMatchParam, StaticContext, { from?: string }> &
+  RouteComponentProps<EditCleaningRuleRouteMatchParam, {}, { from?: string }> &
   MapStateToProps &
   InjectedDatamartProps;
 

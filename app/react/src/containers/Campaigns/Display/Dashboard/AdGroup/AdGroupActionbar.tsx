@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal } from 'antd';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
-import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display/index';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
