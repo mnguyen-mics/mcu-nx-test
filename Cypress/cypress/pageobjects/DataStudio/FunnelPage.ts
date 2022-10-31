@@ -75,7 +75,7 @@ class FunnelPage extends Page {
 
   @logGetter()
   get deltaInfo() {
-    return cy.get('.mcs-funnel_deltaInfo');
+    return cy.get('.mcs-funnel_deltaInfo', { timeout: 60000 });
   }
 
   @logGetter()
@@ -125,7 +125,7 @@ class FunnelPage extends Page {
 
   @logGetter()
   get conversioInfo() {
-    return cy.get('.mcs-funnel_conversionInfo');
+    return cy.get('.mcs-funnel_conversionInfo', { timeout: 60000 });
   }
 
   @logGetter()

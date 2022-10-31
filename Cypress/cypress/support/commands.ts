@@ -162,7 +162,8 @@ Cypress.Commands.add(
   },
 );
 Cypress.Commands.add('switchOrg', organisationName => {
-  cy.get('.mcs-organisationListSwitcher_component').click();
+  cy.reload();
+  cy.get('.mcs-organisationListSwitcher_component', { timeout: 60000 }).click();
   cy.get('.mcs-organisationListSwitcher_searchInput').eq(0).find('input').type(organisationName);
   cy.wait(500);
   cy.get('.mcs-organisationListSwitcher_orgId_searchView').click({ force: true });

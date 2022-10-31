@@ -4,7 +4,8 @@ describe('This test should test the switch application button in the new topBar'
     cy.visit(`${Cypress.config().baseUrl}`);
     cy.login();
     cy.fixture('init_infos').then(data => {
-      cy.get('.mcs-organisationListSwitcher_component').click();
+      cy.reload();
+      cy.get('.mcs-organisationListSwitcher_component', { timeout: 60000 }).click();
       cy.get('.mcs-organisationListSwitcher_searchInput').first().type(data.organisationName);
       cy.get('.mcs-organisationListSwitcher_orgId_searchView').click({ force: true });
     });
