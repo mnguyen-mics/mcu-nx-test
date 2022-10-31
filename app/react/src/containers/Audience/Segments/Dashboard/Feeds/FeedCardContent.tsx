@@ -155,7 +155,7 @@ class FeedCardContent extends React.Component<Props, State> {
       this.setState({ isLoading: true }, () => {
         this._externalFeedSessionService
           .getExternalFeedSessions(segmentId, feed.id, {
-            open: true,
+            published: true,
           })
           .then(feedSessionsRes => {
             const sortedFeedSessions = feedSessionsRes.data.sort(
@@ -249,29 +249,35 @@ class FeedCardContent extends React.Component<Props, State> {
     const { feed } = this.props;
     const { currentFeedSession } = this.state;
 
+    const publishedStatusIcon = (
+      <div className='mcs-feedCard_stateIcons'>
+        <CheckCircleOutlined />
+        <ClockCircleOutlined className='mcs-feedCard_stateRightIcon' />
+      </div>
+    );
+
     switch (feed.status) {
       case 'PUBLISHED':
-        return (
-          <div className='mcs-feedCard_stateIcons'>
-            <CheckCircleOutlined />
-            <ClockCircleOutlined className='mcs-feedCard_stateRightIcon' />
-          </div>
-        );
+        return publishedStatusIcon;
       case 'ERROR':
         return (
           <CloseCircleOutlined className='mcs-feedCard_stateIcon mcs-feedCard_stateIcon_error' />
         );
       case 'ACTIVE':
-        return (
-          <div className='mcs-feedCard_stateIcons'>
-            <CheckCircleOutlined />
-            {currentFeedSession?.status === 'INITIAL_LOADING' ? (
-              <SyncOutlined className='mcs-feedCard_stateRightIcon' />
-            ) : (
-              <CheckCircleOutlined className='mcs-feedCard_stateRightIcon' />
-            )}
-          </div>
-        );
+        if (currentFeedSession?.status === 'BOOTING') {
+          return publishedStatusIcon;
+        } else {
+          return (
+            <div className='mcs-feedCard_stateIcons'>
+              <CheckCircleOutlined />
+              {currentFeedSession?.status === 'INITIAL_LOADING' ? (
+                <SyncOutlined className='mcs-feedCard_stateRightIcon' />
+              ) : (
+                <CheckCircleOutlined className='mcs-feedCard_stateRightIcon' />
+              )}
+            </div>
+          );
+        }
       case 'INITIAL':
       case 'PAUSED':
         return null;
@@ -285,6 +291,14 @@ class FeedCardContent extends React.Component<Props, State> {
     } = this.props;
     const { currentFeedSession } = this.state;
 
+    const getMessageForActiveFeedSession = () => {
+      if (currentFeedSession?.status === 'BOOTING') {
+        return messages.willStartSendingData;
+      } else if (currentFeedSession?.status === 'INITIAL_LOADING') {
+        return messages.initialLoadingSession;
+      } else return messages.liveSession;
+    };
+
     switch (feed.status) {
       case 'INITIAL':
       case 'PAUSED':
@@ -294,11 +308,7 @@ class FeedCardContent extends React.Component<Props, State> {
       case 'ERROR':
         return formatMessage(messages.errorDestinationSegment);
       case 'ACTIVE':
-        return formatMessage(
-          currentFeedSession?.status === 'INITIAL_LOADING'
-            ? messages.initialLoadingSession
-            : messages.liveSession,
-        );
+        return formatMessage(getMessageForActiveFeedSession());
     }
   };
 
@@ -318,9 +328,13 @@ class FeedCardContent extends React.Component<Props, State> {
       hasFeature,
       pluginLayout,
     } = this.props;
+    const { currentFeedSession } = this.state;
 
     switch (feed.status) {
       case 'ACTIVE':
+        if (currentFeedSession?.status === 'BOOTING') {
+          return null;
+        }
         const feedCardStatsUnit = getFeedStatsUnit(feed);
         const upsertedStatOpt =
           feedCardStatsUnit === 'USER_POINTS'

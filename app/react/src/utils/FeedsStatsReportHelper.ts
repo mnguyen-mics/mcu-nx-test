@@ -7,7 +7,7 @@ import {
   Metric,
   DimensionFilter,
 } from '../models/ReportRequestBody';
-import McsMoment, { formatMcsDate } from './McsMoment';
+import moment from 'moment';
 
 export type FeedsStatsDimension =
   | 'ORGANISATION_ID'
@@ -68,18 +68,10 @@ export function buildFeedCardStatsRequestBody(segmentId: string): ReportRequestB
     filters: [dimensionFilter, dimensionFilterSyncResult],
   };
 
-  const dateRange7daysAgo = formatMcsDate(
-    {
-      from: new McsMoment('now-1d'),
-      to: new McsMoment('now'),
-    },
-    true,
-  );
-
   return buildReport(
     {
-      start_date: dateRange7daysAgo.from,
-      end_date: dateRange7daysAgo.to,
+      start_date: moment().subtract(1, 'days').format(),
+      end_date: moment().format(),
     },
     dimensionsList,
     dimensionsFilterClauses,
