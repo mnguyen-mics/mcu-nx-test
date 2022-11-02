@@ -96,12 +96,7 @@ class FeedNodeAutomationDashboardStats extends React.Component<Props, State> {
             />
           </div>
           <Card>
-            <FeedChart
-              organisationId={organisationId}
-              feedId={feedId}
-              feedStatsUnit='USER_POINTS'
-              dateRange={dateRange}
-            />
+            <FeedChart organisationId={organisationId} feedId={feedId} dateRange={dateRange} />
           </Card>
         </div>
       </div>

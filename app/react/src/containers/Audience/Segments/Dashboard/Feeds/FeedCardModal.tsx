@@ -9,9 +9,7 @@ import { PropertyResourceShape } from '@mediarithmics-private/advanced-component
 import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { getFeedStatsUnit } from '../../../../../utils/FeedsStatsReportHelper';
 import { AudienceFeedTyped } from '../../Edit/domain';
-import FeedChart from './Charts/FeedChart';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IPluginService } from '../../../../../services/PluginService';
@@ -23,6 +21,7 @@ import {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import FeedChartsContainer from './Charts/FeedChartsContainer';
 import McsMoment from '../../../../../utils/McsMoment';
 
 const messages = defineMessages({
@@ -224,8 +223,6 @@ class FeedCardModal extends React.Component<Props, State> {
 
     const { isLoading, initialValue, pluginProperties } = this.state;
 
-    const feedStatsUnit = getFeedStatsUnit(feed);
-
     return openedModal && pluginLayout && pluginProperties ? (
       <Modal
         editionMode={true}
@@ -248,10 +245,8 @@ class FeedCardModal extends React.Component<Props, State> {
         save={this.saveOrCreatePluginInstance}
         selectedTab={modalTab}
         pluginChart={
-          <FeedChart
-            organisationId={organisationId}
-            feedId={feed.id}
-            feedStatsUnit={feedStatsUnit}
+          <FeedChartsContainer
+            feed={feed}
             dateRange={{
               from: new McsMoment('now-7d'),
               to: new McsMoment('now'),
