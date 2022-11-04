@@ -27,6 +27,7 @@ module.exports = merge(common, {
       react: path.resolve('./node_modules/react'),
       'react-dom': path.resolve('./node_modules/react-dom'),
       '@ant-design/icons': path.resolve('./node_modules/@ant-design/icons'),
+      'react-router-dom': path.resolve('./node_modules/react-router-dom'),
     },
   },
 

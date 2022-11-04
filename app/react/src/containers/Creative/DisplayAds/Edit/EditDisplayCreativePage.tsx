@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
@@ -15,18 +15,13 @@ import { TYPES } from '../../../../constants/types';
 import { ICreativeService } from '../../../../services/CreativeService';
 import { IDisplayCreativeFormService } from './DisplayCreativeFormService';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import { Link } from 'react-router-dom';
 
 interface State {
   loading: boolean;
   creativeName: string;
 }
 
-type Props = RouteComponentProps<
-  EditDisplayCreativeRouteMatchParams,
-  StaticContext,
-  { from?: string }
-> &
+type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams, {}, { from?: string }> &
   InjectedNotificationProps &
   InjectedIntlProps;
 

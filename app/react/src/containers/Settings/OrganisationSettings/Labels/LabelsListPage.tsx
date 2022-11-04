@@ -11,7 +11,7 @@ import LabelsTable, { Filters } from './LabelsTable';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { lazyInject } from '../../../../config/inversify.config';
 import { ILabelService } from '../../../../services/LabelsService';
 import { TYPES } from '../../../../constants/types';

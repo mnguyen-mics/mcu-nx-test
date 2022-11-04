@@ -9,7 +9,7 @@ import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { TYPES } from '../../../../../constants/types';
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { compose } from 'recompose';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Modal } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';

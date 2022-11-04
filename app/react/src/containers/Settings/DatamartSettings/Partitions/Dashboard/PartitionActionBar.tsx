@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 
 const messages = defineMessages({

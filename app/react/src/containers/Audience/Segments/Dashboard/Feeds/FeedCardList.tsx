@@ -7,7 +7,7 @@ import {
 import { Row, Col } from 'antd';
 import FeedCard from './FeedCard';
 import FeedCardPlaceholder from './FeedCardPlaceholder';
-import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
@@ -21,7 +21,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 type Props = InjectedFeaturesProps &
   RouteComponentProps<
     { organisationId: string; segmentId: string },
-    StaticContext,
+    {},
     { scrollToFeed?: boolean }
   >;
 

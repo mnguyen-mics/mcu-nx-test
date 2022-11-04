@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataLayerDefinition } from '../../routes/domain';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';

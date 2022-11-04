@@ -3,7 +3,7 @@ import { Layout } from 'react-grid-layout';
 import DatamartUsersAnalyticsContent from './DatamartUsersAnalyticsContent';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   parseSearch,
   updateSearch,

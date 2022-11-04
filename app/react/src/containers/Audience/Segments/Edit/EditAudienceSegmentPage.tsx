@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message } from 'antd';
 import moment from 'moment';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
@@ -32,7 +32,6 @@ import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
-import { Link } from 'react-router-dom';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -70,7 +69,7 @@ type Props = InjectedIntlProps &
   MapStateToProps &
   InjectedFeaturesProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditAudienceSegmentParam, StaticContext, { from?: string }>;
+  RouteComponentProps<EditAudienceSegmentParam, {}, { from?: string }>;
 
 class EditAudienceSegmentPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentFormService)

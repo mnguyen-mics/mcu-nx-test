@@ -3,7 +3,7 @@ import cuid from 'cuid';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { split } from 'lodash';
 import { injectDrawer } from '../../../../../../components/Drawer';
 import { FormSection } from '../../../../../../components/Form';

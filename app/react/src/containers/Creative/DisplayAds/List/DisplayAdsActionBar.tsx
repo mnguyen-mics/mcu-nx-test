@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Modal, Menu } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
@@ -9,7 +9,6 @@ import {
   Slide,
   PopupContainer,
 } from '@mediarithmics-private/mcs-components-library';
-import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { CreativeAuditAction } from '../../../../models/creative/CreativeResource';
 

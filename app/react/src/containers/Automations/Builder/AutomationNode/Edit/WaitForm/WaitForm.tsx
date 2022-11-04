@@ -8,7 +8,7 @@ import FormLayoutActionbar, {
 } from '../../../../../../components/Layout/FormLayoutActionbar';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { DefaultFormData, FORM_ID } from '../domain';
 import GeneralInformationFormSection from './Sections/GeneralInformationFormSection';

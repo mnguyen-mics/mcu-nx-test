@@ -15,7 +15,7 @@ import {
   HistoryCreateLinkEventResource,
 } from '../../../models/resourceHistory/ResourceHistory';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Row } from 'antd';
 import { Card, Button } from '@mediarithmics-private/mcs-components-library';

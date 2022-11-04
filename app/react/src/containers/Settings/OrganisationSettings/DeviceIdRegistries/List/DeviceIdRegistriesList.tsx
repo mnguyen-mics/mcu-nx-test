@@ -2,7 +2,7 @@ import * as React from 'react';
 import messages from '../messages';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { Button, Drawer, Layout, Modal, Row, Tooltip } from 'antd';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import {
   ActionsColumnDefinition,

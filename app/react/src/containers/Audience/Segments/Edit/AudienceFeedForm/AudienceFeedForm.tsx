@@ -3,7 +3,7 @@ import { compose, Omit } from 'recompose';
 import { connect } from 'react-redux';
 import { Alert } from 'antd';
 import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as actions from '../../../../../redux/Notifications/actions';
 import {
   PluginProperty,

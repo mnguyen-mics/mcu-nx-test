@@ -9,7 +9,7 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { Activity, isUserAgentIdentifier } from '../../../models/timeline/timeline';
 import { Identifier } from './Monitoring';
 import messages from './messages';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import ActivityCard from './SingleView/ActivityCard';
 import injectNotifications, {
   InjectedNotificationProps,

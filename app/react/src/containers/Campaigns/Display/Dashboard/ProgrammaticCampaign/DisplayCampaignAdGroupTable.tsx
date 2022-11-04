@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Switch } from 'antd';
 import { compose } from 'recompose';
 import messages from '../messages';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';

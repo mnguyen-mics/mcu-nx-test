@@ -1,9 +1,8 @@
 import * as React from 'react';
+import { RouteComponentProps, withRouter, Switch, Route } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Switch, Route } from 'react-router-dom';
 import { addLocaleData, injectIntl, InjectedIntlProps } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 import Datalayer from './Datalayer';
@@ -23,11 +22,7 @@ import { TYPES } from '../../constants/types';
 import { INavigatorService } from '../../services/NavigatorService';
 import { Notifications } from '../../containers/Notifications';
 import { Error, Loading } from '@mediarithmics-private/mcs-components-library';
-import {
-  RenderOnAuthenticated,
-  MicsReduxState,
-  RenderWhenHasAccess,
-} from '@mediarithmics-private/advanced-components';
+import { RenderOnAuthenticated, MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -192,18 +187,7 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
           );
         };
 
-        return (window as any)?.MCS_CONSTANTS?.ADMIN_API_TOKEN &&
-          process.env.NODE_ENV === 'developement' &&
-          process.env.API_ENV === 'prod' ? (
-          <RenderWhenHasAccess
-            requiredFeatures={route.requiredFeature}
-            requireDatamart={route.requireDatamart}
-            renderOnError={renderValue(compsForRenderWhenError)}
-            homePage={buildHomeUrl}
-          >
-            {renderValue(compsForRender)}
-          </RenderWhenHasAccess>
-        ) : (
+        return (
           <RenderOnAuthenticated
             requiredFeatures={route.requiredFeature}
             requireDatamart={route.requireDatamart}
@@ -223,7 +207,6 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
     return (
       <Switch>
         <Route exact={true} path='/' render={renderSlashRoute} />
-        <Route exact={true} path='/login' render={renderSlashRoute} />
         {routeMapping}
         <Route render={errorRouteRender} />
       </Switch>

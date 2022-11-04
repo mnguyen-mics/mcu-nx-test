@@ -16,7 +16,7 @@ import { Field, GenericField } from 'redux-form';
 import { FormSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormSearchObject';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { AudienceFeatureFolderResource } from '../../../../../../models/audienceFeature';
 
 export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;

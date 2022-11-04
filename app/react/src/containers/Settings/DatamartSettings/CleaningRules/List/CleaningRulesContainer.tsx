@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import {
   Button as McsButton,
@@ -31,7 +31,6 @@ import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDatamartService } from '../../../../../services/DatamartService';
-import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { Loading } from '../../../../../components';
 import {

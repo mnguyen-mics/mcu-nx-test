@@ -6,7 +6,7 @@ import {
 import { ChannelFilter } from './domain';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { TablePaginationConfig } from 'antd/lib/table';
 import messages from './messages';

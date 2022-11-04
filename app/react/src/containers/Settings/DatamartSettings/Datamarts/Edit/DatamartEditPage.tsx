@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -24,7 +24,6 @@ import { DatamartResource } from '../../../../../models/datamart/DatamartResourc
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import { Link } from 'react-router-dom';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface State {
@@ -34,11 +33,7 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<
-    EditDatamartRouteMatchParam,
-    StaticContext,
-    { from?: string; datamartId?: string }
-  > &
+  RouteComponentProps<EditDatamartRouteMatchParam, {}, { from?: string; datamartId?: string }> &
   InjectedDatamartProps;
 
 class DatamartEditPage extends React.Component<Props, State> {

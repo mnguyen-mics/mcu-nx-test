@@ -4,7 +4,7 @@ import { message } from 'antd';
 
 import AudiencePartitionForm from './AudiencePartitionForm';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { Loading } from '../../../../../components/index';
 import { AudiencePartitionFormData, INITIAL_AUDIENCE_PARTITION_FORM_DATA } from './domain';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart/index';
@@ -16,7 +16,6 @@ import { DatamartResource } from '../../../../../models/datamart/DatamartResourc
 import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   editPartition: {
@@ -50,11 +49,7 @@ interface AudiencePartitionPageState {
 type JoinedProps = InjectedWorkspaceProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<
-    { organisationId: string; partitionId: string },
-    StaticContext,
-    { from?: string }
-  >;
+  RouteComponentProps<{ organisationId: string; partitionId: string }, {}, { from?: string }>;
 
 class AudiencePartitionPage extends React.Component<JoinedProps, AudiencePartitionPageState> {
   @lazyInject(TYPES.IAudiencePartitionsService)

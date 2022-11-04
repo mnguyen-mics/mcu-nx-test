@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import { connect } from 'react-redux';
 import {
@@ -16,7 +15,7 @@ import {
 import { compose } from 'recompose';
 import { Layout, Row, Button, Col } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle, withValidators } from '../../../components/Form';

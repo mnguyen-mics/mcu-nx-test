@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AreaChartOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { updateSearch } from '../../utils/LocationSearchHelper';
 import { InjectedIntlProps, injectIntl } from 'react-intl';

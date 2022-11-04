@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Spin } from 'antd';
 import cuid from 'cuid';
 import { WrappedFieldArrayProps, getFormValues } from 'redux-form';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { EmailBlastFormData, SegmentFieldModel, ConsentFieldModel } from '../../domain';
 import { FormSection } from '../../../../../../components/Form';
 import SegmentReach from '../../SegmentReach';

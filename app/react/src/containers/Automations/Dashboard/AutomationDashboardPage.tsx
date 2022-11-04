@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -29,7 +29,6 @@ import {
   updateSearch,
 } from '../../../utils/LocationSearchHelper';
 import McsMoment from '../../../utils/McsMoment';
-import { Link } from 'react-router-dom';
 import { IScenarioAnalyticsService } from '../../../services/ScenarioAnalyticsService';
 import { ScenarioCountersData } from '../../../utils/ScenarioAnalyticsReportHelper';
 import {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, Link } from 'react-router-dom';
 import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -8,7 +8,6 @@ import injectNotifications, {
 import { compose } from 'recompose';
 import { Button } from 'antd';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import { Link } from 'react-router-dom';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Button, Layout } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';

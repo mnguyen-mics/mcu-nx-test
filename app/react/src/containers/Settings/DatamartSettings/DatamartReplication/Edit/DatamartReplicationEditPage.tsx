@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   DatamartReplicationRouteMatchParam,
@@ -29,7 +29,6 @@ import { DatamartResource } from '../../../../../models/datamart/DatamartResourc
 import { isEmpty } from 'lodash';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
-import { Link } from 'react-router-dom';
 
 interface State {
   datamartReplicationData: DatamartReplicationFormData;
@@ -42,7 +41,11 @@ interface State {
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
   InjectedFeaturesProps &
-  RouteComponentProps<DatamartReplicationRouteMatchParam>;
+  RouteComponentProps<
+    DatamartReplicationRouteMatchParam,
+    {},
+    { datamartId?: string; activeTab?: string }
+  >;
 
 class EditDatamartReplicationPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDatamartReplicationService)
@@ -131,7 +134,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     const datamartId =
       datamartReplicationFormData.datamart_id ||
       (state && state.datamartId) ||
-      this.state.datamartId;
+      this.state.datamartId!;
     const newFormDataPromise = datamartId
       ? Promise.resolve({
           ...formDataWithoutCredentialsUri,

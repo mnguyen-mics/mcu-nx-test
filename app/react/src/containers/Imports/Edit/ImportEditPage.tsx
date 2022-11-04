@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
 import { INITIAL_IMPORTS_FORM_DATA } from './domain';
@@ -14,7 +14,6 @@ import { Import } from '../../../models/imports/imports';
 import { lazyInject } from '../../../config/inversify.config';
 import { IImportService } from '../../../services/ImportService';
 import { TYPES } from '../../../constants/types';
-import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   newImports: {
@@ -57,7 +56,7 @@ type Props = InjectedDrawerProps &
       datamartId: string;
       importId: string;
     },
-    StaticContext,
+    {},
     { from?: string }
   > &
   InjectedIntlProps;

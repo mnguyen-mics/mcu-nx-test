@@ -2,7 +2,7 @@ import queryString from 'query-string';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import {

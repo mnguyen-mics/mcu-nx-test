@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { Loading } from '../../../../../components';
 import { Layout } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
@@ -17,7 +17,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { LegalBasis, ProcessingResource } from '../../../../../models/processing';
-import { Link } from 'react-router-dom';
 
 export interface EditProcessingRouteMatchParams {
   organisationId: string;
@@ -26,7 +25,7 @@ export interface EditProcessingRouteMatchParams {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditProcessingRouteMatchParams, StaticContext, { from?: string }>;
+  RouteComponentProps<EditProcessingRouteMatchParams, {}, { from?: string }>;
 
 interface State {
   loading: boolean;

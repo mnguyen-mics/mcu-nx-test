@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';

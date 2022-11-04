@@ -10,7 +10,7 @@ import {
 } from 'redux-form';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import FormLayoutActionbar, {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { message } from 'antd';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import EmailCampaignForm from './EmailCampaignForm';
 import {
@@ -17,7 +17,6 @@ import injectNotifications, {
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IEmailCampaignFormService } from '../EmailCampaignFormService';
-import { Link } from 'react-router-dom';
 
 interface State {
   campaignFormData: EmailCampaignFormData;
@@ -26,7 +25,7 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditEmailCampaignRouteMatchParam, StaticContext, { from?: string }>;
+  RouteComponentProps<EditEmailCampaignRouteMatchParam, {}, { from?: string }>;
 
 class EditCampaignPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IEmailCampaignFormService)

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Layout, Alert } from 'antd';
 import { compose } from 'recompose';
 import CampaignDashboardHeader from '../../../Common/CampaignDashboardHeader';
@@ -15,7 +15,6 @@ import {
 } from '../../../../../models/campaign/display/index';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
-import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import { Items, ItemsById } from '../ProgrammaticCampaign/domain';
 import { OverallStat } from '../Charts/DisplayStackedAreaChart';

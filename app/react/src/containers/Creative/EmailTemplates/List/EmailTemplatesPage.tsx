@@ -5,7 +5,7 @@ import EmailTemplatesActionBar from './EmailTemplatesActionBar';
 import EmailTemplatesTable from './EmailTemplatesTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { CreativesOptions, ICreativeService } from '../../../../services/CreativeService';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
@@ -46,7 +46,7 @@ interface State {
 type JoinedProps = InjectedIntlProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
-  RouteComponentProps<CampaignRouteParams, StaticContext, { reloadDataSource?: boolean }>;
+  RouteComponentProps<CampaignRouteParams, {}, { reloadDataSource?: boolean }>;
 
 class EmailTemplatesPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)

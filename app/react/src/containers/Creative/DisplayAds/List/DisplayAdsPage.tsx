@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout, message, Modal } from 'antd';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayAdsActionBar from './DisplayAdsActionBar';
 import DisplayAdsTable from './DisplayAdsTable';
@@ -50,7 +50,7 @@ interface State {
 type JoinedProps = InjectedIntlProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
-  RouteComponentProps<CampaignRouteParams, StaticContext, { reloadDataSource?: boolean }>;
+  RouteComponentProps<CampaignRouteParams, {}, { reloadDataSource?: boolean }>;
 
 class DisplayAdsPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)

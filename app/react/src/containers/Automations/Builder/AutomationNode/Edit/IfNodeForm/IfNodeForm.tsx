@@ -3,7 +3,7 @@ import { Layout, Row, Button, Alert } from 'antd';
 import { Form } from '@ant-design/compatible';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { FORM_ID, QueryInputAutomationFormData } from '../domain';
 import { QueryLanguage } from '../../../../../../models/datamart/DatamartResource';
 import {

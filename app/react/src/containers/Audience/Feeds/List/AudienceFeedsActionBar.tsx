@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, Link } from 'react-router-dom';
 import {
   InjectedDatamartProps,
   injectDatamart,
@@ -28,7 +28,6 @@ import { IAudienceTagFeedService } from '../../../../services/AudienceTagFeedSer
 import { IAudienceExternalFeedService } from '../../../../services/AudienceExternalFeedService';
 import { AudienceTagFeed } from '../../../../models/Plugins';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { Link } from 'react-router-dom';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &

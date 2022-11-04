@@ -1,11 +1,10 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col, Button, Modal } from 'antd';
 import moment from 'moment';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { RouteComponentProps } from 'react-router';
 import messages from '../messages';
 import {
   injectThemeColors,

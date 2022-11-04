@@ -10,7 +10,7 @@ import { PluginResource, LayoutablePlugin } from '../../../../../models/Plugins'
 import { PluginCard, PluginCardModal } from '@mediarithmics-private/advanced-components';
 import { Loading } from '../../../../../components';
 import { PropertyResourceShape } from '../../../../../models/plugin';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

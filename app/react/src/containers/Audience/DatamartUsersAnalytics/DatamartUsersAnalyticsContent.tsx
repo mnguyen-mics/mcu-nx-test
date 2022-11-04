@@ -5,7 +5,7 @@ import CardFlex from '../Dashboard/Components/CardFlex';
 import { Chart } from '../../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { parseSearch } from '../../../utils/LocationSearchHelper';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import chroma from 'chroma-js';
 import {

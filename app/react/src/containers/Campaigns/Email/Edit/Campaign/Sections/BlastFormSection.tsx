@@ -4,7 +4,7 @@ import cuid from 'cuid';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { FormSection } from '../../../../../../components/Form';
 import { RelatedRecords, RecordElement } from '../../../../../../components/RelatedRecord';

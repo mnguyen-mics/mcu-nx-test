@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 
 export interface DatamartHeaderProps {

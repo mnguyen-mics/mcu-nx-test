@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, message, Modal, Menu } from 'antd';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -25,7 +25,6 @@ import {
   PaginationSearchSettings,
   KeywordSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
-import { RouteComponentProps } from 'react-router';
 import messages from './messages';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';

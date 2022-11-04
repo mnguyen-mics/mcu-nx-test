@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { AutoComplete, Button, Col, Form, Input, message, Row } from 'antd';
 import { FormSection } from '../../../../../components/Form';

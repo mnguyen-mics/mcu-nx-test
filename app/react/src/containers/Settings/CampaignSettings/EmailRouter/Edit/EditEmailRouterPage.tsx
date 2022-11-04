@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {
   PluginProperty,
   EmailRouter,
@@ -17,7 +17,6 @@ import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import PluginInstanceService from '../../../../../services/PluginInstanceService';
-import { Link } from 'react-router-dom';
 
 const EmailRouterPluginContent = GenericPluginContent as React.ComponentClass<
   PluginContentOuterProps<EmailRouter>

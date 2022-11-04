@@ -11,7 +11,7 @@ import {
 import messages from '../messages';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { EditDisplayCreativeRouteMatchParams } from '../domain';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router-dom';
 
 export interface GeneralFormSectionProps {
   small?: boolean;

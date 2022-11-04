@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import StandardSegmentBuilderForm from './StandardSegmentBuilderForm';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IStandardSegmentBuilderService } from '../../../../../services/StandardSegmentBuilderService';
@@ -16,7 +16,6 @@ import {
 } from './domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
-import { Link } from 'react-router-dom';
 
 type Props = InjectedNotificationProps &
   InjectedIntlProps &

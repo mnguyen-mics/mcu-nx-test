@@ -7,7 +7,7 @@ import { IDatamartService } from '../../../../services/DatamartService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DatamartResource, QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Omit } from '../../../../utils/Types';
 import { EditContentLayout } from '../../../../components/Layout';

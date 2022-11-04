@@ -42,7 +42,6 @@ import {
   McsIcon,
   TableViewFilters,
 } from '@mediarithmics-private/mcs-components-library';
-import { StaticContext } from 'react-router';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,
@@ -80,7 +79,7 @@ interface MapStateToProps {
 type Props = MapStateToProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }, StaticContext, { reloadDataSource?: boolean }>;
+  RouteComponentProps<{ organisationId: string }, {}, { reloadDataSource?: boolean }>;
 
 class GoalsTable extends React.Component<Props, State> {
   @lazyInject(TYPES.IGoalService)

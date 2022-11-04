@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ConfigProps, reduxForm, InjectedFormProps, Form } from 'redux-form';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../messages';

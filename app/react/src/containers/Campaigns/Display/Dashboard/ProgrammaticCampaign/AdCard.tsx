@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Modal, Button, message, Menu } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { AdInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import { AdResource } from '../../../../../models/campaign/display/AdResource';

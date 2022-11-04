@@ -15,7 +15,7 @@ import * as SessionHelper from '../../../redux/Session/selectors';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   computeFinalSchemaItem,
   computeSchemaPathFromQueryPath,

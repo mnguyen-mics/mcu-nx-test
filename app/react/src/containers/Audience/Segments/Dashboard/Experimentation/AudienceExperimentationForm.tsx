@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout, Tag } from 'antd';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Form, InjectedFormProps, reduxForm, getFormValues, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';

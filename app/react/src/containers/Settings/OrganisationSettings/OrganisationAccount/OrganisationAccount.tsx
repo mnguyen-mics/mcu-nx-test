@@ -12,7 +12,7 @@ import {
   IIdentityProviderService,
   IOrganisationService,
 } from '@mediarithmics-private/advanced-components';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Loading, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { OrganisationResource } from '@mediarithmics-private/advanced-components/lib/models/organisation/organisation';
 import { getLogo, putLogo } from '../../../../redux/Session/actions';

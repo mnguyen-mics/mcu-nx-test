@@ -9,7 +9,7 @@ import { injectIntl, FormattedMessage, defineMessages, InjectedIntlProps } from 
 import * as SessionActions from '../../../../redux/Session/actions';
 
 import { FormInput } from '../../../../components/Form';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';

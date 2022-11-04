@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Layout } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
@@ -16,7 +16,6 @@ import settingsMessages from '../../../messages';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { Link } from 'react-router-dom';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';

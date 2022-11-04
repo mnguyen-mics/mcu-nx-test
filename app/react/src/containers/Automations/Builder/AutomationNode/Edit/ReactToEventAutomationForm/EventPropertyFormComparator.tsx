@@ -39,7 +39,7 @@ import { IChannelService } from '../../../../../../services/ChannelService';
 import { IDatamartService } from '../../../../../../services/DatamartService';
 import { IReferenceTableService } from '../../../../../../services/ReferenceTableService';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../../../../Datamart';
 import { FieldNode } from '../../../../../../models/datamart/graphdb/QueryDocument';
 

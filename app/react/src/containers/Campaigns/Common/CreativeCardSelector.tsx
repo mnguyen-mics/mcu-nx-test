@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import Button, { ButtonProps } from 'antd/lib/button/button';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { CreativesOptions, ICreativeService } from '../../../services/CreativeService';

@@ -17,7 +17,7 @@ import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 import { MetricCounterLoader } from '../MetricCounterLoader';
 import McsMoment from '../../../../../utils/McsMoment';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../../../Segments/Dashboard/constants';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { orderBy, intersection, isEqual } from 'lodash';

@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import messages from '../messages';
 import { AdGroupFormData, EditAdGroupRouteMatchParam } from './domain';

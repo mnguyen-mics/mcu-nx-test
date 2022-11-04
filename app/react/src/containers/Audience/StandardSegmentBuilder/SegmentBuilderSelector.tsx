@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Layout, { Content } from 'antd/lib/layout/layout';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,

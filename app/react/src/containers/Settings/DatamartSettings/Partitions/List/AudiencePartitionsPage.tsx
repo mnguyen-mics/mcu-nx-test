@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   GetPartitionOption,

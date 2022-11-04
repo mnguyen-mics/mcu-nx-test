@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { connect } from 'react-redux';

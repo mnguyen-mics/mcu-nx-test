@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DisplayCampaignInfoResource } from '../../../../models/campaign/display';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,

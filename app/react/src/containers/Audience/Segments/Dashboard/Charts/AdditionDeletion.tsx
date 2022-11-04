@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import messages from '../messages';
@@ -9,7 +9,6 @@ import {
   injectThemeColors,
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
-import { RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   EmptyChart,

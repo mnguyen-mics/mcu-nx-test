@@ -18,7 +18,7 @@ import FormLayoutActionbar, {
 } from '../../../../components/Layout/FormLayoutActionbar';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { McsFormSection } from '../../../../utils/FormHelper';
 import messages from './messages';
 import ObjectNodeSection from './Sections/ObjectNodeSection';

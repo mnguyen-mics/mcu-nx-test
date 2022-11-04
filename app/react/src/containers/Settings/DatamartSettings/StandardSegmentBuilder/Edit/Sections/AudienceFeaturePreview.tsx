@@ -7,7 +7,7 @@ import { FormSection } from '../../../../../../components/Form';
 import { SchemaItem } from '../../../../../Audience/AdvancedSegmentBuilder/domain';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import AudienceFeatureLayout from '../../../../../Audience/StandardSegmentBuilder/QueryFragmentBuilders/AudienceFeatureLayout';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { AudienceFeatureFormData } from '../domain';
 import { AudienceFeatureResource } from '../../../../../../models/audienceFeature';
 

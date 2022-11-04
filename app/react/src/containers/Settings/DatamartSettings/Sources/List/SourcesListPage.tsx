@@ -6,7 +6,7 @@ import {
   parseSearch,
   compareSearches,
 } from '../../../../../utils/LocationSearchHelper';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { IDatamartService } from '../../../../../services/DatamartService';
@@ -14,7 +14,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { Index } from '../../../../../utils';
-import { Link } from 'react-router-dom';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';

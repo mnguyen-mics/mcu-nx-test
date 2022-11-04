@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
 import { defineMessages } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { FormTitle } from '../../components/Form';
 import { MenuList, Actionbar } from '@mediarithmics-private/mcs-components-library';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Alert } from 'antd';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { AudienceSegmentResource } from '../../../../../models/audiencesegment';
 import { UserLookalikeSegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 

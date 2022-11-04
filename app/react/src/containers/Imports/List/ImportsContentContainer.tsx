@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import messages from './messages';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal, Row } from 'antd';
 import { Import } from '../../../models/imports/imports';
-import { Link } from 'react-router-dom';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IImportService, GetImportsOptions } from '../../../services/ImportService';

@@ -3,7 +3,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Spin } from 'antd';
 import cuid from 'cuid';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 
 import { SegmentFieldModel, EditAdGroupRouteMatchParam } from '../../domain';

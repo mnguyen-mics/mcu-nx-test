@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Modal, Layout } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import ItemList, { Filters } from '../../../../components/ItemList';

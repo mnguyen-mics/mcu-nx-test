@@ -2,7 +2,7 @@ import * as React from 'react';
 import lodash from 'lodash';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { GoalResource } from '../../../../models/goal/index';
@@ -31,7 +31,6 @@ import { IDisplayCampaignService } from '../../../../services/DisplayCampaignSer
 import { TYPES } from '../../../../constants/types';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 import { IGoalService } from '../../../../services/GoalService';
-import { Link } from 'react-router-dom';
 
 const { Dropdown } = PopupContainer;
 

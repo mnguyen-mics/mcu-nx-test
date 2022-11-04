@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Modal, Upload, message, Spin } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
@@ -19,7 +19,6 @@ import injectNotifications, {
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAssetFileService } from '../../../../services/Library/AssetFileService';
-import { Link } from 'react-router-dom';
 
 const maxFileSize = 200 * 1024;
 

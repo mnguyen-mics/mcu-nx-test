@@ -4,9 +4,7 @@ import enUS from 'antd/lib/locale-provider/en_US';
 import { ConfigProvider } from 'antd';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
-import Navigator from './containers/Navigator';
 import { HashRouter as Router } from 'react-router-dom';
-import { KeycloakService } from '@mediarithmics-private/advanced-components';
 import NavigatorWithKeycloak from './containers/Navigator/NavigatorWithKeycloak';
 
 // const messagesEn = require('../src/translations/en.json');
@@ -45,7 +43,7 @@ class IntlApp extends React.Component<{}> {
       >
         <ConfigProvider locale={enUS}>
           <Router>
-            {KeycloakService.isKeycloakEnabled() ? <NavigatorWithKeycloak /> : <Navigator />}
+            <NavigatorWithKeycloak />
           </Router>
         </ConfigProvider>
       </IntlProvider>

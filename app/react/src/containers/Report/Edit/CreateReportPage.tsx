@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps } from 'react-intl';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import ReportCreationEditor from './ReportCreationEditor';
-import { RouteComponentProps } from 'react-router';
 
 interface MapStateProps {
   notifyError: (err: any) => void;

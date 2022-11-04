@@ -2,7 +2,7 @@ import { debounce } from 'lodash';
 import React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import injectNotifications, {

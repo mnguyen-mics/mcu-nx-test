@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, Link } from 'react-router-dom';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from './messages';
-import { Link } from 'react-router-dom';
 
 interface OfferCatalogActionbarProps {
   organisationId: string;

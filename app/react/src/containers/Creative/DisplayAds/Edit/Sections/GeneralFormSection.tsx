@@ -22,7 +22,7 @@ import {
   EditDisplayCreativeRouteMatchParams,
 } from '../domain';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router-dom';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 
 interface MapStateProps {

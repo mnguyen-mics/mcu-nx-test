@@ -2,7 +2,7 @@ import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
 import cuid from 'cuid';
 import { split } from 'lodash';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Row, Col, Spin } from 'antd';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';

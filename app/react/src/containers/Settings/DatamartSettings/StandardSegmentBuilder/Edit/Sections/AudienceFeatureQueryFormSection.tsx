@@ -8,7 +8,7 @@ import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectD
 import QueryToolTabsContainer, {
   QueryToolTabsContainerProps,
 } from '../../../../../QueryTool/OTQL/QueryToolTabsContainer';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { FormSection } from '../../../../../../components/Form';
 import { messages } from '../../messages';
 import AceEditor from 'react-ace';

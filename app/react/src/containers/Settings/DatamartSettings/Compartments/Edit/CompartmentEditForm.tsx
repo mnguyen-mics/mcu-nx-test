@@ -11,7 +11,7 @@ import {
 } from 'redux-form';
 import { Omit } from '../../../../../utils/Types';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { FormLayoutActionbar, ScrollspySider } from '../../../../../components/Layout';

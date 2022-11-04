@@ -6,7 +6,7 @@ import {
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

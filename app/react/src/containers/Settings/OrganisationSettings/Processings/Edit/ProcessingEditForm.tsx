@@ -7,7 +7,7 @@ import messages from '../messages';
 import { ProcessingFormData } from '../domain';
 import { InjectedFormProps, ConfigProps, reduxForm } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { McsFormSection } from '../../../../../utils/FormHelper';

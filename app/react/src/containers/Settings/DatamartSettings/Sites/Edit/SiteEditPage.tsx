@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message, Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -28,7 +28,6 @@ import queryString from 'query-string';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import { Link } from 'react-router-dom';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { executeTasksInSequence } from '../../../../../utils/PromiseHelper';
 
@@ -44,7 +43,7 @@ interface MapStateToProps {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditSiteRouteMatchParam, StaticContext, { from?: string; siteId: string }> &
+  RouteComponentProps<EditSiteRouteMatchParam, {}, { from?: string; siteId: string }> &
   MapStateToProps &
   InjectedDatamartProps;
 
