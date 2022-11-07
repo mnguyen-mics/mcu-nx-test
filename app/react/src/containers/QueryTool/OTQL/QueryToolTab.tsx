@@ -15,6 +15,9 @@ import { McsTabsItem } from './QueryToolTabsContainer';
 import { SettingOutlined } from '@ant-design/icons';
 import OTQLSeries from './OTQLSeries';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { ITagService } from '@mediarithmics-private/advanced-components';
 
 export interface QueryToolTabProps {
   datamartId: string;
@@ -61,6 +64,9 @@ type Props = QueryToolTabProps &
   InjectedFeaturesProps;
 
 class QueryToolTab extends React.Component<Props, State> {
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -77,6 +83,7 @@ class QueryToolTab extends React.Component<Props, State> {
 
     const handleOnRunButtonClick = () => {
       const { noLiveSchemaFound } = this.props;
+      this._tagService.pushEvent('RunQuery', 'Query tool');
       if (!noLiveSchemaFound) runQuery();
     };
 

@@ -50,6 +50,7 @@ import snakeCaseKeys from 'snakecase-keys';
 import {
   DatasetDateFormatter,
   IChartService,
+  ITagService,
   ManagedChart,
   TransformationProcessor,
 } from '@mediarithmics-private/advanced-components';
@@ -130,6 +131,9 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IChartService)
   private _chartService: IChartService;
+
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
 
   private transactionProcessor = new TransformationProcessor();
 
@@ -624,7 +628,13 @@ class QueryResultRenderer extends React.Component<Props, State> {
     return this.handleAfterChartConfigCopy();
   }
 
-  openSaveModal() {
+  openSaveModal(saveType: 'update' | 'save') {
+    if (saveType === 'save') {
+      this._tagService.pushEvent('SaveChart', 'Query tool');
+    } else {
+      this._tagService.pushEvent('UpdateChart', 'Query tool');
+    }
+
     this.setState({
       isSaveModalVisible: true,
     });
@@ -952,7 +962,8 @@ class QueryResultRenderer extends React.Component<Props, State> {
       ];
       const onChangeQuickOption = this.onSelectQuickOption.bind(this);
       const handleCopyToClipboard = this.handleCopyToClipboard.bind(this);
-      const handleOnSaveButtonClick = this.openSaveModal.bind(this);
+      const handleOnSaveButtonClick = (saveType: 'update' | 'save') =>
+        this.openSaveModal.bind(this, saveType);
       const handleOnDeleteButtonClick = this.openDeleteModal.bind(this);
 
       let options = tab?.chartItem?.content.options as any;
@@ -1023,7 +1034,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
                 <AntButton
                   type='primary'
                   className='mcs-otqlInputEditor_save_button'
-                  onClick={handleOnSaveButtonClick}
+                  onClick={handleOnSaveButtonClick(!!tab.chartItem?.type ? 'update' : 'save')}
                   hidden={!hasFeature('datastudio-query_tool-charts_loader')}
                   disabled={queryHasChanged}
                 >

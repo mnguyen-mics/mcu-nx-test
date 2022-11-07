@@ -31,8 +31,8 @@ import {
   QueryExecutionSource,
   QueryExecutionSubSource,
   ChartsSearchPanel,
+  ITagService,
 } from '@mediarithmics-private/advanced-components';
-import _ from 'lodash';
 import cuid from 'cuid';
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
@@ -140,6 +140,9 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IChartDatasetService)
   private _chartDatasetService: IChartDatasetService;
+
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
 
   constructor(props: Props) {
     super(props);
@@ -990,6 +993,12 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     });
   };
 
+  pushEventTabs = (tabKey: string) => {
+    if (tabKey === 'charts') {
+      this._tagService.pushEvent('ChartsListLoading', 'Query tool');
+    }
+  };
+
   render() {
     const {
       match: {
@@ -1134,11 +1143,16 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                         />
 
                         {hasFeature('datastudio-query_tool-charts_loader') && (
-                          <Tabs key={0} type='line' className='mcs-OTQLConsoleContainer_right-tab'>
-                            <Tabs.TabPane tab='Schema' key={1}>
+                          <Tabs
+                            key={0}
+                            type='line'
+                            className='mcs-OTQLConsoleContainer_right-tab'
+                            onTabClick={this.pushEventTabs}
+                          >
+                            <Tabs.TabPane tab='Schema' key='schema'>
                               {this.renderSchemaVisualizer(startType)}
                             </Tabs.TabPane>
-                            <Tabs.TabPane tab='Charts' key={2} style={{ paddingLeft: '10px' }}>
+                            <Tabs.TabPane tab='Charts' key='charts' style={{ paddingLeft: '10px' }}>
                               <ChartsSearchPanel
                                 key={chartsSearchPanelKey}
                                 organisationId={organisationId}
