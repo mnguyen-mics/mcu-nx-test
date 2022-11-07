@@ -207,6 +207,7 @@ class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState>
     return (
       <Switch>
         <Route exact={true} path='/' render={renderSlashRoute} />
+        <Route exact={true} path='/login' render={renderSlashRoute} />
         {routeMapping}
         <Route render={errorRouteRender} />
       </Switch>
