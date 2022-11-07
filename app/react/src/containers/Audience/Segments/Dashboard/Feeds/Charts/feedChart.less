@@ -23,3 +23,40 @@
     font-size: 12px;
   }
 }
+
+.mcs-feedLineChart_tooltip {
+  .mcs-feedLineChart_tooltip_delta {
+    color: @dark-text-color;
+    margin-bottom: 5px;
+    font-weight: 800;
+  }
+  .mcs-feedLineChart_tooltip_upsert {
+    display: flex;
+    align-items: center;
+    color: @text-color-secondary;
+    .mcs-feedLineChart_tooltip_upsert_logo {
+      font-size: 16px;
+      margin-right: 5px;
+      color: @success-color;
+    }
+  }
+  .mcs-feedLineChart_tooltip_delete {
+    display: flex;
+    align-items: center;
+    color: @text-color-secondary;
+    .mcs-feedLineChart_tooltip_delete_logo {
+      font-size: 16px;
+      margin-right: 5px;
+      color: @error-color;
+    }
+  }
+}
+
+.mcs-feedLineChart {
+  margin-bottom: 10px;
+}
+
+.mcs-feedChart_noStats {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}

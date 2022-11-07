@@ -18,8 +18,7 @@ import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { getFeedStatsUnit } from '../../../../utils/FeedsStatsReportHelper';
-import FeedChart from '../../Segments/Dashboard/Feeds/Charts/FeedChart';
+import FeedChartsContainer from '../../Segments/Dashboard/Feeds/Charts/FeedChartsContainer';
 import McsMoment from '../../../../utils/McsMoment';
 
 export interface EditPluginModalProps {
@@ -224,16 +223,11 @@ class EditPluginModal extends React.Component<Props, State> {
     const {
       feed,
       modalTab,
-      match: {
-        params: { organisationId },
-      },
       onClose,
       intl: { formatMessage },
       fieldValidators: { isRequired },
     } = this.props;
     const { isLoading, layout, pluginProperties, initialValues } = this.state;
-
-    const feedStatsUnit = getFeedStatsUnit(feed);
 
     return (
       <PluginCardModal
@@ -254,10 +248,8 @@ class EditPluginModal extends React.Component<Props, State> {
               : 'AUDIENCE_SEGMENT_TAG_FEED',
         }}
         pluginChart={
-          <FeedChart
-            organisationId={organisationId}
-            feedId={feed.id}
-            feedStatsUnit={feedStatsUnit}
+          <FeedChartsContainer
+            feed={feed}
             dateRange={{
               from: new McsMoment('now-7d'),
               to: new McsMoment('now'),

@@ -13,7 +13,7 @@ export interface IExternalFeedSessionService {
   getExternalFeedSessions: (
     audienceSegmentId: string,
     feedId: string,
-    options: GetExternalFeedSessions,
+    options?: GetExternalFeedSessions,
   ) => Promise<DataListResponse<ExternalFeedSession>>;
 }
 
@@ -22,7 +22,7 @@ export class ExternalFeedSessionService implements IExternalFeedSessionService {
   getExternalFeedSessions(
     audienceSegmentId: string,
     feedId: string,
-    options: GetExternalFeedSessions = {},
+    options?: GetExternalFeedSessions,
   ): Promise<DataListResponse<ExternalFeedSession>> {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${feedId}/feed_sessions`;
 

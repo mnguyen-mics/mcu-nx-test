@@ -24,15 +24,14 @@ import Highcharts from 'highcharts';
 
 interface FeedChartProps {
   title?: React.ReactNode;
-  organisationId: string;
   feedId: string;
-  feedStatsUnit?: FeedStatsUnit;
+  organisationId: string;
   dateRange: McsDateRangeValue;
 }
 
 type Props = FeedChartProps & InjectedThemeColorsProps & InjectedIntlProps;
 
-interface NormalizedFeedStats {
+export interface NormalizedFeedStats {
   hour: string;
   date_yyyy_mm_dd: string;
   sync_type: SyncType;
