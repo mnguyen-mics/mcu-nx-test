@@ -1,7 +1,7 @@
 import ImportsPage from '../../../pageobjects/DataStudio/ImportsPage';
 import QueryToolPage from '../../../pageobjects/DataStudio/QueryTool/QueryToolPage';
 
-describe('Query tool - Query builder', () => {
+describe('Query tool - Charts', () => {
   Cypress.Cookies.defaults({
     preserve: 'authentication',
   });

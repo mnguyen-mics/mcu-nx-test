@@ -36,7 +36,8 @@ class HeaderMenu extends Page {
 
   @logGetter()
   get orgSwitchComponent() {
-    return cy.get('.mcs-organisationListSwitcher_component');
+    cy.reload();
+    return cy.get('.mcs-organisationListSwitcher_component', { timeout: 60000 });
   }
 
   @logGetter()
