@@ -39,7 +39,6 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
 
   componentDidMount() {
     defineAce();
-    this.setInputSize();
     if (this.aceEditor && this.aceEditor.editor) {
       this.aceEditor.editor.completers = [this.buildCustomCompleters()];
       this.aceEditor.editor.getSession().setUseWrapMode(true);
@@ -48,6 +47,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
       const customMode = new CustomOtqlMode();
       this.aceEditor.editor.getSession().setMode(customMode);
     }
+    this.setInputSize();
   }
 
   findCompleters = (query: string, row: number, col: number) => {
