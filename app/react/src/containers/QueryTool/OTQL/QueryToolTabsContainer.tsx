@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Layout, Row, Tabs } from 'antd';
+import { Alert, Button, Layout, message, Row, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
@@ -24,6 +24,7 @@ import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/Run
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import QueryToolTab, { QueryListModel, SerieQueryModel } from './QueryToolTab';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { DEFAULT_OTQL_QUERY, getNewSerieQuery } from './utils/QueryUtils';
 import { getChartDataset } from './utils/ChartOptionsUtils';
 import {
@@ -31,28 +32,18 @@ import {
   QueryExecutionSource,
   QueryExecutionSubSource,
   ChartsSearchPanel,
+  IChartService,
   ITagService,
 } from '@mediarithmics-private/advanced-components';
 import cuid from 'cuid';
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
-import { SerieDatasetSources } from '../../../models/chart/Chart';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 import {
   AbstractParentSource,
   AbstractSource,
   OTQLSource,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
-
-interface SerieDatasetSourcesModel {
-  sources: SerieDatasetSources;
-}
-
-export function isSerieDatasetSources(
-  object: Partial<QueryListModel> | SerieDatasetSourcesModel,
-): object is SerieDatasetSourcesModel {
-  return !!(object as SerieDatasetSourcesModel).sources;
-}
 
 const messages = defineMessages({
   queryToSave: {
@@ -66,6 +57,14 @@ const messages = defineMessages({
   chartDeleted: {
     id: 'queryTool.OtqlConsole.tab.chartDeleted',
     defaultMessage: 'Chart is deleted',
+  },
+  shareButton: {
+    id: 'queryTool.OtqlConsole.tab.shareButton',
+    defaultMessage: 'Share',
+  },
+  chartShared: {
+    id: 'queryTool.OtqlConsole.tab.chartShared',
+    defaultMessage: 'Chart url is copied into clipboard',
   },
 });
 
@@ -144,6 +143,9 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.ITagService)
   private _tagService: ITagService;
 
+  @lazyInject(TYPES.IChartService)
+  private _chartService: IChartService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -157,29 +159,30 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { datamartId, editionMode, intl } = this.props;
-    this.fetchObjectTypes(datamartId).then(() => {
-      editionMode
-        ? this.setState({
-            tabs: [
-              {
-                title: intl.formatMessage(messages.queryToSave),
-                key: '1',
-                closable: false,
-                serieQueries: this.getDefaultSerieQuery(),
-                precision: 'FULL_PRECISION',
-                evaluateGraphQl: true,
-                useCache: false,
-                runningQuery: false,
-                queryResult: null,
-                queryAborted: false,
-                error: undefined,
-              },
-            ],
-          })
-        : this.tryLoadTabStateFromLocalStorage(datamartId);
-    });
+    await this.fetchObjectTypes(datamartId);
+    if (editionMode) {
+      this.setState({
+        tabs: [
+          {
+            title: intl.formatMessage(messages.queryToSave),
+            key: '1',
+            closable: false,
+            serieQueries: this.getDefaultSerieQuery(),
+            precision: 'FULL_PRECISION',
+            evaluateGraphQl: true,
+            useCache: false,
+            runningQuery: false,
+            queryResult: null,
+            queryAborted: false,
+            error: undefined,
+          },
+        ],
+      });
+    } else {
+      this.initTabState();
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -193,7 +196,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
           loaded: false,
         },
         () => {
-          this.tryLoadTabStateFromLocalStorage(datamartId);
+          this.initTabState();
         },
       );
       this.fetchObjectTypes(datamartId);
@@ -244,51 +247,73 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     localStorage.setItem('savedQueries', JSON.stringify(newSavedQueries));
   };
 
-  tryLoadTabStateFromLocalStorage = (datamartId: string): void => {
+  initTabState = async (): Promise<void> => {
+    const { datamartId, location, match } = this.props;
+    const { organisationId } = match.params;
+
+    // Load tab state from LocalStorage
     const savedQueries: SavedQuery | undefined = JSON.parse(
       localStorage.getItem('savedQueries') ?? '{}',
     )[datamartId];
-    if (savedQueries) {
-      const tabs = savedQueries.queries.map(tabQueries => {
-        return {
-          ...tabQueries,
-          runningQuery: false,
-          queryAborted: false,
-          queryResult: null,
-        };
-      });
 
-      this.setState({
-        tabs,
-        activeKey: this.getValidActiveKey(savedQueries),
-        loaded: true,
+    // Get McsTabsItem from local storage
+    const tabs: McsTabsItem[] =
+      savedQueries?.queries.map(tabQueries => ({
+        ...tabQueries,
+        runningQuery: false,
+        queryAborted: false,
+        queryResult: null,
+      })) || [];
+
+    // Set activeKey from localStorage
+    let activeKey = this.getValidActiveKey(tabs, savedQueries?.activeKey);
+
+    // If we have data in local storage, init them in state
+    // or add the default query tab
+    if (tabs.length > 0) {
+      this.setState({ tabs, activeKey, loaded: true });
+    } else {
+      this.setState({ loaded: true }, () => {
+        this.addNewTab(true);
       });
-      return;
     }
-    this.setState(
-      {
-        loaded: true,
-      },
-      () => {
-        this.add(true);
-      },
-    );
+
+    // Search for chartId in tabs from local storage
+    const chartId = new URLSearchParams(location.search).get('chartId') || '';
+    const chartTab = tabs.find(tab => tab.chartItem?.id === chartId);
+
+    // Set activeKey matching chartId in localStorage
+    // and launch query in current tab
+    if (chartTab) {
+      activeKey = chartTab.key;
+      if (chartTab.chartItem) {
+        this.setState({ activeKey });
+        await this.launchQuery(chartTab.chartItem);
+      }
+    }
+
+    // if chartId parameter is specified, but not in localStorage state,
+    // and launch query in a new tab
+    if (chartId && !chartTab) {
+      const chart = await this._chartService.getChart(chartId, organisationId);
+      this.addNewTab();
+      await this.launchQuery(chart.data);
+    }
   };
 
-  getValidActiveKey = (savedQueries: SavedQuery): string => {
-    // First get all the available tab ids from the saved data
-    const availableActiveKeys = savedQueries.queries.map(q => q.key);
+  getValidActiveKey = (tabs: McsTabsItem[], activeKey = '1'): string => {
+    const tabKeys = tabs.map(tab => tab.key);
     // If the saved active key is in the available ones, great don't change it
-    if (availableActiveKeys.includes(savedQueries.activeKey)) {
-      return savedQueries.activeKey;
+    if (tabKeys.includes(activeKey)) {
+      return activeKey;
     }
     // If there are no available queries saved (I don't know how it could happen, but...)
     // Return the '1' key which should correspond to the first tab
-    if (availableActiveKeys.length === 0) {
+    if (tabKeys.length === 0) {
       return '1';
     }
     // Otherwise, return the last element of the available keys. (key corresponding to the last tab)
-    return availableActiveKeys[-1];
+    return tabKeys[-1];
   };
 
   getDefaultSerieQuery = () => {
@@ -683,7 +708,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
   onEdit = (targetKey: string, action: string) => {
     if (action === 'add') {
-      this.add(false);
+      this.addNewTab();
     } else {
       // @ts-expect-error
       this[action](targetKey);
@@ -719,7 +744,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     });
   };
 
-  add = (force_clear?: boolean) => {
+  addNewTab = (force_clear = false, mcsTabsItemOverride: Partial<McsTabsItem> = {}) => {
     const { tabs } = this.state;
 
     if (tabs.length === 1) {
@@ -733,7 +758,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     newTabs.push({
       title: `Query ${newKey}`,
       key: activeKey,
-      closable: !!(this.state.tabs.length > 0),
+      closable: this.state.tabs.length > 0,
       serieQueries: this.getDefaultSerieQuery(),
       runningQuery: false,
       queryAborted: false,
@@ -741,7 +766,9 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       evaluateGraphQl: true,
       useCache: false,
       queryResult: null,
+      ...mcsTabsItemOverride,
     });
+
     this.setState({
       tabs: newTabs,
       activeKey,
@@ -839,7 +866,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     );
   };
 
-  onChartItemClick = async (chartItem: ChartResource) => {
+  launchQuery = async (chartItem: ChartResource) => {
     const { datamartId, notifyError } = this.props;
 
     const dataset = chartItem.content.dataset;
@@ -999,6 +1026,19 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     }
   };
 
+  handleShareButtonClick = () => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
+    message.info(formatMessage(messages.chartShared));
+  };
+
+  getCurrentChartUrl = (chartId: string) => {
+    const { location } = this.props;
+    return `${window.location.host}/#${location.pathname}?chartId=${chartId}`;
+  };
+
   render() {
     const {
       match: {
@@ -1035,8 +1075,17 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
     const saveExtraOptions = (
       <Row>
-        {currentTab &&
-          currentTab.serieQueries.length === 1 &&
+        {currentTab?.chartItem && (
+          <CopyToClipboard
+            onCopy={this.handleShareButtonClick}
+            text={this.getCurrentChartUrl(currentTab.chartItem.id)}
+          >
+            <Button className='mcs-otqlInputEditor_save_as_button'>
+              {intl.formatMessage(messages.shareButton)}
+            </Button>
+          </CopyToClipboard>
+        )}
+        {currentTab?.serieQueries.length === 1 &&
           typeof queryToUse === 'string' &&
           renderSaveAsButton &&
           renderSaveAsButton(queryToUse, datamartId)}
@@ -1156,7 +1205,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                               <ChartsSearchPanel
                                 key={chartsSearchPanelKey}
                                 organisationId={organisationId}
-                                onItemClick={this.onChartItemClick}
+                                onItemClick={this.launchQuery}
                                 chartItem={tab.chartItem}
                               />
                             </Tabs.TabPane>
