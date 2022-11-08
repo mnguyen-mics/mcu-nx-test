@@ -229,8 +229,8 @@ class FeedCumulativeChart extends React.Component<Props, State> {
                   deleted: 0,
                   y: 0,
                 },
-                lastFeedSessionMoment,
-                now,
+                timeUnit === 'DAY' ? lastFeedSessionMoment : yesterday.startOf('hour'),
+                timeUnit === 'DAY' ? now : now.startOf('hour'),
                 timeUnit,
               );
               this.setState({ graphData, isLoadingStats: false });
