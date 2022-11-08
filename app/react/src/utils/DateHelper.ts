@@ -38,7 +38,10 @@ export function getAllDates(
 
   const to = timeUnit === 'HOUR' ? moment(dateRange.to).add(23, 'hours') : moment(dateRange.to);
 
-  while (allDates[allDates.length - 1] !== to.format(format)) {
+  while (
+    allDates[allDates.length - 1] !== to.format(format) &&
+    to.isSameOrAfter(moment(allDates[allDates.length - 1]))
+  ) {
     allDates.push(
       moment(allDates[allDates.length - 1])
         .add(1, timeUnit === 'HOUR' ? 'hours' : 'days')
