@@ -9,18 +9,344 @@ import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 
 import { compose } from 'recompose';
 import { AreaChartSlider } from '@mediarithmics-private/mcs-components-library';
 import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';
-import { InfoCircleFilled } from '@ant-design/icons';
+import { InfoCircleFilled, LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import { IAudienceSegmentService } from '../../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../../constants/types';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../../Notifications/injectNotifications';
+interface CohortLookalikeCalibrationSettingsProps {
+  cohortLookalikeSegment: UserLookalikeByCohortsSegment;
+  seedSegment: AudienceSegmentShape;
+  cohorts: CohortCalibrationGraphPoint[];
+}
+
+interface GraphPointsAccumulator {
+  lastGraphPoint?: DataPoint;
+  currentGraphData: DataPoint[];
+}
+
+type Props = CohortLookalikeCalibrationSettingsProps &
+  InjectedIntlProps &
+  InjectedNotificationProps &
+  RouteComponentProps<{ organisationId: string; segmentId: string }>;
+
+export interface CohortCalibrationGraphPoint {
+  cohortNumber: number;
+  nbUserpoints: number;
+  overlap: number;
+}
+
+interface CohortLookalikeCalibrationSettingsState {
+  includeSeedSegment: boolean;
+  previousIncludeSeedSegment: boolean;
+  graphData?: DataPoint[];
+  selectedIndex?: number;
+  previousSelectedIndex?: number;
+  editMode: boolean;
+}
+
+class CohortLookalikeCalibrationSettings extends React.Component<
+  Props,
+  CohortLookalikeCalibrationSettingsState
+> {
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
+
+  constructor(props: Props) {
+    super(props);
+    const {
+      cohortLookalikeSegment: { include_seed_segment },
+    } = props;
+    this.state = {
+      editMode: false,
+      includeSeedSegment: include_seed_segment,
+      previousIncludeSeedSegment: include_seed_segment,
+    };
+  }
+
+  componentDidMount() {
+    this.createGraphData();
+  }
+
+  createGraphData = () => {
+    const { cohorts, seedSegment, cohortLookalikeSegment } = this.props;
+    const { includeSeedSegment, selectedIndex, previousSelectedIndex } = this.state;
+
+    const lookalikeSegmentMinOverlap =
+      cohortLookalikeSegment.min_overlap !== undefined
+        ? Math.floor(cohortLookalikeSegment.min_overlap * 100)
+        : undefined;
+
+    const firstPercentageNbUserpoints = includeSeedSegment ? seedSegment.user_points_count || 0 : 0;
+
+    const newGraphData = [...Array(101).keys()].reverse().reduce(
+      (acc: GraphPointsAccumulator, currentPercentage: number): GraphPointsAccumulator => {
+        const { lastGraphPoint, currentGraphData } = acc;
+
+        const offsetNbUserPoints = lastGraphPoint
+          ? lastGraphPoint.nbUserpoints
+          : firstPercentageNbUserpoints;
+
+        const addedCohorts = cohorts.filter((cohort: CohortCalibrationGraphPoint) => {
+          return cohort.overlap >= currentPercentage && cohort.overlap < currentPercentage + 1;
+        });
+
+        const newNbUserpoints =
+          offsetNbUserPoints +
+          addedCohorts.reduce((accNb, cohort) => {
+            return accNb + Math.floor(cohort.nbUserpoints * (1 - cohort.overlap / 100));
+          }, 0);
+
+        const offsetNbCohorts = lastGraphPoint ? lastGraphPoint.nbCohorts : 0;
+
+        const nbCohorts = offsetNbCohorts + addedCohorts.length;
+
+        const newGraphPoint: DataPoint = {
+          nbCohorts: nbCohorts,
+          nbUserpoints: newNbUserpoints,
+          overlap: currentPercentage,
+        };
+
+        return {
+          lastGraphPoint: newGraphPoint,
+          currentGraphData: currentGraphData.concat([newGraphPoint]),
+        };
+      },
+      { currentGraphData: [] },
+    ).currentGraphData;
+
+    const newSelectedIndex =
+      selectedIndex === undefined
+        ? newGraphData.findIndex(graphPoint => {
+            return graphPoint.overlap === lookalikeSegmentMinOverlap;
+          })
+        : selectedIndex;
+
+    this.setState({
+      selectedIndex: newSelectedIndex,
+      previousSelectedIndex:
+        previousSelectedIndex === undefined ? newSelectedIndex : previousSelectedIndex,
+      graphData: newGraphData,
+    });
+  };
+
+  saveLookalikeSettings = () => {
+    const {
+      cohortLookalikeSegment,
+      notifySuccess,
+      notifyError,
+      intl: { formatMessage },
+    } = this.props;
+    const { graphData, includeSeedSegment, selectedIndex } = this.state;
+
+    if (graphData && selectedIndex !== undefined) {
+      const selectedDataPoint = graphData[selectedIndex];
+
+      this._audienceSegmentService
+        .updateAudienceSegment(cohortLookalikeSegment.id, {
+          include_seed_segment: includeSeedSegment,
+          user_points_target: selectedDataPoint.nbUserpoints,
+          min_overlap: selectedDataPoint.overlap / 100,
+          type: cohortLookalikeSegment.type,
+        })
+        .then(() => {
+          notifySuccess({
+            message: formatMessage(messages.notifSuccess),
+            description: formatMessage(messages.notifSuccessMessage),
+          });
+          this.setState({
+            editMode: false,
+            previousSelectedIndex: selectedIndex,
+            previousIncludeSeedSegment: includeSeedSegment,
+          });
+        })
+        .catch(err => {
+          notifyError(err);
+        });
+    }
+  };
+
+  changeIncludeSegmentSeed = (checked: boolean) => {
+    this.setState({ includeSeedSegment: checked }, () => {
+      this.createGraphData();
+    });
+  };
+
+  areaChartSliderOnChange = (index: number) => {
+    this.setState({
+      selectedIndex: index,
+    });
+  };
+
+  tipFormatter = (selected: DataPoint) => {
+    return <FormattedMessage {...messages.overlapTip} values={{ percentage: selected.overlap }} />;
+  };
+
+  cancelEdit = () => {
+    const { previousSelectedIndex, previousIncludeSeedSegment } = this.state;
+
+    this.setState(
+      {
+        selectedIndex: previousSelectedIndex,
+        includeSeedSegment: previousIncludeSeedSegment,
+        editMode: false,
+      },
+      this.createGraphData,
+    );
+  };
+
+  render() {
+    const {
+      seedSegment,
+      match: {
+        params: { organisationId },
+      },
+      cohorts,
+      intl: { formatMessage },
+    } = this.props;
+
+    const { includeSeedSegment, graphData, selectedIndex, editMode } = this.state;
+
+    const switchEditMode = (editMode: boolean) => this.setState({ editMode });
+
+    const dataPointSelected = selectedIndex !== undefined && graphData?.[selectedIndex];
+
+    return (
+      <div className='mcs-cohortLookalikeCalibrationSettings'>
+        <div className='mcs-cohortLookalikeCalibrationSettings_header'>
+          <div className='mcs-cohortLookalikeCalibrationSettings_header_content'>
+            <div className='seedSegmentAndSwitch'>
+              <div className='seedSegmentMessage'>
+                <FormattedMessage
+                  {...messages.seedSegmentGeneral}
+                  values={{
+                    seedSegment: <b>{formatMessage(messages.seedSegment)}</b>,
+                    seedSegmentName: seedSegment.name,
+                    linkToSeedSegment: (
+                      <Link
+                        to={`/v2/o/${organisationId}/audience/segments/${seedSegment.id}`}
+                        target='_blank'
+                      >
+                        #{seedSegment.id}
+                      </Link>
+                    ),
+                    nbUserPoints: <b>{(seedSegment.user_points_count || 0).toLocaleString()}</b>,
+                  }}
+                />
+              </div>
+              <Switch
+                checkedChildren={formatMessage(messages.include)}
+                unCheckedChildren={formatMessage(messages.exclude)}
+                checked={includeSeedSegment}
+                onChange={this.changeIncludeSegmentSeed}
+                disabled={!editMode}
+              />
+            </div>
+            <div className='reach'>
+              <FormattedMessage
+                {...messages.reach}
+                values={{
+                  userPointsMention: (
+                    <Tag className={`cohortTag ${editMode && 'green'}`}>
+                      <b>
+                        {dataPointSelected
+                          ? dataPointSelected.nbUserpoints.toLocaleString()
+                          : '...'}{' '}
+                        {formatMessage(messages.userpoints)}
+                      </b>
+                    </Tag>
+                  ),
+                  overlapMention: (
+                    <Tag className={`cohortTag ${editMode && 'green'}`}>
+                      <b>
+                        {dataPointSelected ? dataPointSelected.overlap : '...'}%{' '}
+                        {formatMessage(messages.overlap)}
+                      </b>
+                    </Tag>
+                  ),
+                }}
+              />
+              <Tooltip
+                className='reachTooltip'
+                title={
+                  dataPointSelected
+                    ? `${dataPointSelected.nbCohorts}/${cohorts.length} ${formatMessage(
+                        messages.cohortsSelectedTip,
+                      )}`
+                    : '...'
+                }
+                placement='bottom'
+              >
+                <InfoCircleFilled />
+              </Tooltip>
+            </div>
+          </div>
+          <div>
+            {editMode && (
+              <Button key='cancel' className='mcs-primary' type='link' onClick={this.cancelEdit}>
+                <FormattedMessage {...messages.cancelEditSettings} />
+              </Button>
+            )}
+            <Button
+              className='mcs-primary'
+              type='primary'
+              onClick={editMode ? this.saveLookalikeSettings : () => switchEditMode(true)}
+            >
+              {editMode ? <UnlockOutlined /> : <LockOutlined />}
+              {editMode ? (
+                <FormattedMessage {...messages.saveSettings} />
+              ) : (
+                <FormattedMessage {...messages.editSettings} />
+              )}
+            </Button>
+          </div>
+        </div>
+        <AreaChartSlider
+          data={graphData || []}
+          isLoading={!graphData}
+          xAxis={{
+            key: 'overlap',
+            labelFormat: '{value}%',
+            title: formatMessage(messages.areaChartSliderXAxisTitle),
+            subtitle: formatMessage(messages.areaChartSliderXAxisSubtitle),
+            reversed: true,
+          }}
+          yAxis={{
+            key: 'nbUserpoints',
+            title: formatMessage(messages.areaChartSliderYAxisTitle),
+            subtitle: formatMessage(messages.areaChartSliderYAxisSubtitle),
+          }}
+          color={'#00a1df'}
+          value={selectedIndex || 0}
+          onChange={this.areaChartSliderOnChange}
+          tipFormatter={this.tipFormatter}
+          disabled={!editMode}
+        />
+      </div>
+    );
+  }
+}
+
+export default compose<Props, CohortLookalikeCalibrationSettingsProps>(
+  injectIntl,
+  injectNotifications,
+  withRouter,
+)(CohortLookalikeCalibrationSettings);
 
 const messages = defineMessages({
   saveSettings: {
     id: 'audience.segments.lookalike.type.cohort.settings.save',
     defaultMessage: 'Save those settings',
+  },
+  editSettings: {
+    id: 'audience.segments.lookalike.type.cohort.settings.edit',
+    defaultMessage: 'Edit those settings',
+  },
+  cancelEditSettings: {
+    id: 'audience.segments.lookalike.type.cohort.settings.edit.cancel',
+    defaultMessage: 'Cancel',
   },
   seedSegmentGeneral: {
     id: 'audience.segments.lookalike.type.cohort.settings.seedSegment.general',
@@ -85,312 +411,3 @@ const messages = defineMessages({
     defaultMessage: '# of userpoints expected in this segment',
   },
 });
-
-interface CohortLookalikeCalibrationSettingsProps {
-  cohortLookalikeSegment: UserLookalikeByCohortsSegment;
-  seedSegment: AudienceSegmentShape;
-  cohorts: CohortCalibrationGraphPoint[];
-}
-
-interface GraphPointsAccumulator {
-  lastGraphPoint?: DataPoint;
-  currentGraphData: DataPoint[];
-}
-
-type Props = CohortLookalikeCalibrationSettingsProps &
-  InjectedIntlProps &
-  InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string; segmentId: string }>;
-
-export interface CohortCalibrationGraphPoint {
-  cohortNumber: number;
-  nbUserpoints: number;
-  overlap: number;
-}
-
-interface CohortLookalikeCalibrationSettingsState {
-  includeSeedSegment: boolean;
-  previousSavedValue?: DataPoint;
-  graphData?: {
-    currentGraphPoint: DataPoint;
-    data: DataPoint[];
-  };
-  initialIndex?: number;
-}
-
-class CohortLookalikeCalibrationSettings extends React.Component<
-  Props,
-  CohortLookalikeCalibrationSettingsState
-> {
-  @lazyInject(TYPES.IAudienceSegmentService)
-  private _audienceSegmentService: IAudienceSegmentService;
-
-  constructor(props: Props) {
-    super(props);
-    const {
-      cohortLookalikeSegment: { include_seed_segment },
-    } = props;
-    this.state = {
-      includeSeedSegment: include_seed_segment,
-    };
-  }
-
-  componentDidMount() {
-    this.createGraphData();
-  }
-
-  createGraphData = () => {
-    const { cohorts, seedSegment, cohortLookalikeSegment } = this.props;
-    const { includeSeedSegment, graphData, initialIndex } = this.state;
-
-    const lookalikeSegmentMinOverlap = cohortLookalikeSegment.min_overlap
-      ? Math.floor(cohortLookalikeSegment.min_overlap * 100)
-      : undefined;
-
-    const previousCurrentGraphData = graphData?.currentGraphPoint;
-
-    const firstPercentageNbUserpoints = includeSeedSegment ? seedSegment.user_points_count || 0 : 0;
-
-    const newGraphData = [...Array(101).keys()].reverse().reduce(
-      (acc: GraphPointsAccumulator, currentPercentage: number): GraphPointsAccumulator => {
-        const { lastGraphPoint, currentGraphData } = acc;
-
-        const offsetNbUserPoints = lastGraphPoint
-          ? lastGraphPoint.nbUserpoints
-          : firstPercentageNbUserpoints;
-
-        const addedCohorts = cohorts.filter((cohort: CohortCalibrationGraphPoint) => {
-          return cohort.overlap >= currentPercentage && cohort.overlap < currentPercentage + 1;
-        });
-
-        const newNbUserpoints =
-          offsetNbUserPoints +
-          addedCohorts.reduce((accNb, cohort) => {
-            return accNb + Math.floor(cohort.nbUserpoints * (1 - cohort.overlap / 100));
-          }, 0);
-
-        const offsetNbCohorts = lastGraphPoint ? lastGraphPoint.nbCohorts : 0;
-
-        const nbCohorts = offsetNbCohorts + addedCohorts.length;
-
-        const newGraphPoint: DataPoint = {
-          nbCohorts: nbCohorts,
-          nbUserpoints: newNbUserpoints,
-          overlap: currentPercentage,
-        };
-
-        return {
-          lastGraphPoint: newGraphPoint,
-          currentGraphData: currentGraphData.concat([newGraphPoint]),
-        };
-      },
-      { currentGraphData: [] },
-    ).currentGraphData;
-
-    const researchedOverlap =
-      previousCurrentGraphData?.overlap !== undefined
-        ? previousCurrentGraphData?.overlap
-        : lookalikeSegmentMinOverlap;
-
-    const newInitialIndex =
-      initialIndex ||
-      newGraphData.findIndex(graphPoint => {
-        return graphPoint.overlap === researchedOverlap;
-      }) + 1 ||
-      0;
-
-    const newCurrentGraphPoint =
-      newGraphData.find(graphPoint => {
-        return graphPoint.overlap === researchedOverlap;
-      }) || newGraphData[0];
-
-    this.setState({
-      graphData: {
-        currentGraphPoint: newCurrentGraphPoint,
-        data: newGraphData,
-      },
-      initialIndex: newInitialIndex,
-    });
-  };
-
-  saveLookalikeSettings = () => {
-    const {
-      cohortLookalikeSegment,
-      notifySuccess,
-      notifyError,
-      intl: { formatMessage },
-    } = this.props;
-    const { graphData, includeSeedSegment } = this.state;
-
-    if (graphData) {
-      const { currentGraphPoint } = graphData;
-      this.setState({ previousSavedValue: currentGraphPoint }, () => {
-        this._audienceSegmentService
-          .updateAudienceSegment(cohortLookalikeSegment.id, {
-            include_seed_segment: includeSeedSegment,
-            user_points_target: graphData.currentGraphPoint.nbUserpoints,
-            min_overlap: graphData.currentGraphPoint.overlap / 100,
-            type: cohortLookalikeSegment.type,
-          })
-          .then(() => {
-            notifySuccess({
-              message: formatMessage(messages.notifSuccess),
-              description: formatMessage(messages.notifSuccessMessage),
-            });
-          })
-          .catch(err => {
-            notifyError(err);
-          });
-      });
-    }
-  };
-
-  changeIncludeSegmentSeed = (checked: boolean) => {
-    this.setState({ includeSeedSegment: checked }, () => {
-      this.createGraphData();
-    });
-  };
-
-  areaChartSliderOnChange = (selected: DataPoint) => {
-    const { graphData } = this.state;
-    if (graphData)
-      this.setState({
-        graphData: {
-          ...graphData,
-          currentGraphPoint: selected,
-        },
-      });
-  };
-
-  tipFormatter = (selected: DataPoint) => {
-    return <FormattedMessage {...messages.overlapTip} values={{ percentage: selected.overlap }} />;
-  };
-
-  shouldDisableButton = () => {
-    const { graphData, previousSavedValue } = this.state;
-    if (graphData) {
-      const { currentGraphPoint } = graphData;
-
-      if (previousSavedValue) {
-        return previousSavedValue === currentGraphPoint;
-      }
-      return false;
-    } else return true;
-  };
-
-  render() {
-    const {
-      seedSegment,
-      match: {
-        params: { organisationId },
-      },
-      cohorts,
-      intl: { formatMessage },
-    } = this.props;
-    const { includeSeedSegment, graphData, initialIndex } = this.state;
-
-    return (
-      <div className='cohortLookalikeCalibrationSettings'>
-        <div className='seedSegmentAndSwitch'>
-          <span className='seedSegmentMessage'>
-            <FormattedMessage
-              {...messages.seedSegmentGeneral}
-              values={{
-                seedSegment: (
-                  <span className='boldText'>{formatMessage(messages.seedSegment)}</span>
-                ),
-                seedSegmentName: seedSegment.name,
-                linkToSeedSegment: (
-                  <Link
-                    to={`/v2/o/${organisationId}/audience/segments/${seedSegment.id}`}
-                    target='_blank'
-                  >
-                    #{seedSegment.id}
-                  </Link>
-                ),
-                nbUserPoints: (
-                  <span className='boldText'>
-                    {(seedSegment.user_points_count || 0).toLocaleString()}
-                  </span>
-                ),
-              }}
-            />
-          </span>
-          <Switch
-            checkedChildren={formatMessage(messages.include)}
-            unCheckedChildren={formatMessage(messages.exclude)}
-            checked={includeSeedSegment}
-            onChange={this.changeIncludeSegmentSeed}
-          />
-        </div>
-        <div className='reachAndButton'>
-          <div className='reach'>
-            <FormattedMessage
-              {...messages.reach}
-              values={{
-                userPointsMention: (
-                  <Tag className='cohortGreenTag boldText'>
-                    {graphData ? graphData.currentGraphPoint.nbUserpoints.toLocaleString() : '...'}{' '}
-                    {formatMessage(messages.userpoints)}
-                  </Tag>
-                ),
-                overlapMention: (
-                  <Tag className='cohortGreenTag boldText'>
-                    {graphData ? graphData?.currentGraphPoint.overlap : '...'}%{' '}
-                    {formatMessage(messages.overlap)}
-                  </Tag>
-                ),
-              }}
-            />
-            <Tooltip
-              className='reachTooltip'
-              title={
-                graphData
-                  ? `${graphData?.currentGraphPoint?.nbCohorts}/${cohorts.length} ${formatMessage(
-                      messages.cohortsSelectedTip,
-                    )}`
-                  : '...'
-              }
-              placement='bottom'
-            >
-              <InfoCircleFilled />
-            </Tooltip>
-          </div>
-          <Button
-            className='mcs-primary'
-            type='primary'
-            disabled={this.shouldDisableButton()}
-            onClick={this.saveLookalikeSettings}
-          >
-            <FormattedMessage {...messages.saveSettings} />
-          </Button>
-        </div>
-        <AreaChartSlider
-          data={graphData?.data || []}
-          xAxis={{
-            key: 'overlap',
-            labelFormat: '{value}%',
-            title: formatMessage(messages.areaChartSliderXAxisTitle),
-            subtitle: formatMessage(messages.areaChartSliderXAxisSubtitle),
-            reversed: true,
-          }}
-          yAxis={{
-            key: 'nbUserpoints',
-            title: formatMessage(messages.areaChartSliderYAxisTitle),
-            subtitle: formatMessage(messages.areaChartSliderYAxisSubtitle),
-          }}
-          color='#00a1df'
-          initialValue={initialIndex || 0}
-          onChange={this.areaChartSliderOnChange}
-          tipFormatter={this.tipFormatter}
-        />
-      </div>
-    );
-  }
-}
-
-export default compose<Props, CohortLookalikeCalibrationSettingsProps>(
-  injectIntl,
-  injectNotifications,
-  withRouter,
-)(CohortLookalikeCalibrationSettings);

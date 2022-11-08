@@ -34,7 +34,7 @@ type Props = ContextualTargetingChartProps & InjectedIntlProps;
 interface State {
   isLoading: boolean;
   chartData?: ChartDataResource[];
-  initialSliderIndex?: number;
+  sliderIndex?: number;
 }
 
 class ContextualTargetingChart extends React.Component<Props, State> {
@@ -105,7 +105,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
     }
     onSliderChange(chartData[initialSliderIndex]);
     this.setState({
-      initialSliderIndex: initialSliderIndex,
+      sliderIndex: initialSliderIndex,
       chartData: chartData,
       isLoading: false,
     });
@@ -143,16 +143,24 @@ class ContextualTargetingChart extends React.Component<Props, State> {
     return <div>{selected.lift.toFixed(2)}</div>;
   };
 
-  renderDraftStepChart = () => {
-    const { intl, onSliderChange, contextualTargeting, sortedContextualKeys, isEditing } =
-      this.props;
-    const { chartData, initialSliderIndex } = this.state;
+  areaChartSliderOnChange = (index: number) => {
+    const { chartData } = this.state;
+    const { onSliderChange } = this.props;
+    this.setState({
+      sliderIndex: index,
+    });
+    if (chartData) onSliderChange(chartData[index]);
+  };
 
-    return chartData && initialSliderIndex ? (
+  renderDraftStepChart = () => {
+    const { intl, contextualTargeting, sortedContextualKeys, isEditing } = this.props;
+    const { chartData, sliderIndex } = this.state;
+
+    return chartData && sliderIndex !== undefined ? (
       <Card className='mcs-contextualTargetingDashboard_graph'>
         <AreaChartSlider
           data={chartData}
-          initialValue={initialSliderIndex}
+          value={sliderIndex}
           xAxis={{
             key: 'lift',
             labelFormat: '{value}',
@@ -166,7 +174,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
             subtitle: 'Page views over the past 30 days',
           }}
           color={'#00a1df'}
-          onChange={onSliderChange}
+          onChange={this.areaChartSliderOnChange}
           tipFormatter={this.tipFormater}
           disabled={
             (contextualTargeting?.status === 'LIVE' && !isEditing) ||
