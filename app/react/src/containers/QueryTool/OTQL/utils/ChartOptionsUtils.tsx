@@ -216,9 +216,11 @@ export function getBaseChartProps(
   }
 }
 
-export function getQuickOptionsForChartType(
+export function getQuickOptionsByChartTypeAndDatasourceType(
   chartType: ChartType,
   hasDateHistogram: boolean,
+  isDrilldownable: boolean,
+  numberOfSeries: number,
   selectedValues?: { [key: string]: any },
 ) {
   const legendOptions: QuickOptionsSelector = {
@@ -325,12 +327,25 @@ export function getQuickOptionsForChartType(
 
   const drilldownOptions: QuickOptionsSelector = {
     title: 'drilldown',
-    options: [
+    options: [],
+  };
+
+  if (isDrilldownable) {
+    drilldownOptions.options = [
       { key: 'drilldown', value: 'drilldown', label: 'Drilldown' },
       { key: 'stacking', value: 'stacking', label: 'Stacking' },
       { key: 'flat', value: 'flat', label: 'Flat' },
-    ],
-  };
+    ];
+  } else {
+    if (numberOfSeries > 1) {
+      drilldownOptions.options = [
+        { key: 'stacking', value: 'stacking', label: 'Stacking' },
+        { key: 'flat', value: 'flat', label: 'Flat' },
+      ];
+    } else {
+      drilldownOptions.options = [{ key: 'flat', value: 'flat', label: 'Flat' }];
+    }
+  }
 
   const result = [];
   if (hasDateHistogram) {
@@ -367,6 +382,9 @@ export function getQuickOptionsForChartType(
   }
   if (selectedValues?.pie) {
     pieOptions.selectedValue = selectedValues.pie;
+  }
+  if (selectedValues?.drilldown) {
+    drilldownOptions.selectedValue = selectedValues.drilldown;
   }
 
   switch (chartType) {
@@ -419,8 +437,16 @@ export const renderQuickOptions = (
   onChangeQuickOption: (title: string, value: string) => void,
   hasDateHistogram: boolean,
   selectedValues: { [key: string]: string },
+  isDrilldownable: boolean,
+  numberOfSeries: number,
 ) => {
-  const quickOptions = getQuickOptionsForChartType(selectedChart, hasDateHistogram, selectedValues);
+  const quickOptions = getQuickOptionsByChartTypeAndDatasourceType(
+    selectedChart,
+    hasDateHistogram,
+    isDrilldownable,
+    numberOfSeries,
+    selectedValues,
+  );
   return (
     <div>
       {quickOptions.map(quickOptionSelector => {
