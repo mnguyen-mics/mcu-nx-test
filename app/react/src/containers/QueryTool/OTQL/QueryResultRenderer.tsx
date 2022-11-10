@@ -172,19 +172,15 @@ class QueryResultRenderer extends React.Component<Props, State> {
   }
 
   isDatasourceDrilldownable = (datasource: OTQLAggregations | AggregateDataset | CountDataset) => {
-    let isDrilldownable: boolean;
+    let isDrilldownable: boolean = false;
 
     if (!isOTQLAggregations(datasource)) {
       if (isAggregateDataset(datasource)) {
-        isDrilldownable = false;
         datasource.dataset.forEach(datapoint => {
           if (datapoint.buckets && datapoint.buckets.length > 0) isDrilldownable = true;
         });
-      } else {
-        isDrilldownable = false;
       }
     } else {
-      isDrilldownable = false;
       datasource.buckets.forEach(bucket => {
         bucket.buckets.forEach(subbucket => {
           if (subbucket.aggregations != null) isDrilldownable = true;
@@ -383,14 +379,10 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
     const propsMap = new Map(Object.entries(loadedChartProps));
 
-    let takenChartProps = {};
+    const takenChartProps: any = {};
 
     ['drilldown', 'stacking'].forEach(property => {
-      if (propsMap.has(property))
-        takenChartProps = {
-          ...takenChartProps,
-          [property]: propsMap.get(property),
-        };
+      if (propsMap.has(property)) takenChartProps[property] = propsMap.get(property);
     });
 
     return takenChartProps;
@@ -1090,13 +1082,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
         }
       }
 
-      const removeUndefinedOptions = (qOptions: { [key: string]: string | undefined }) =>
-        omit(
-          qOptions,
-          Object.keys(qOptions).filter(key => qOptions[key] === undefined),
-        ) as { [key: string]: string };
-
-      const quickOptions = removeUndefinedOptions(selectedQuickOptions);
+      const quickOptions = _.omitBy(selectedQuickOptions, _.isUndefined);
 
       return (
         <div>
