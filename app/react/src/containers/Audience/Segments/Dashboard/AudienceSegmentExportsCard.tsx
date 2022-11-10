@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { Button, Progress, message, Modal, Input, Select } from 'antd';
+import { Button, Progress, message, Modal, Input, Select, Spin } from 'antd';
 import {
   IAudienceSegmentService,
   AudienceSegmentExportJobExecutionResource,
@@ -29,6 +29,7 @@ import {
   TableViewProps,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableViewWithSelectionNotifyerMessages } from '../../../../components/TableView';
+import FileSaver from 'file-saver';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -58,6 +59,7 @@ interface State {
   selectedCompartmentId?: string;
   identifierType: AudienceSegmentExportJobIdentifierType;
   filter: Filters;
+  dataExportState: Record<string, number>;
 }
 
 const AudienceSegmentExportJobTableView =
@@ -158,6 +160,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         items: [],
         total: 0,
       },
+      dataExportState: {},
       identifierType: 'USER_AGENT',
       filter: {
         currentPage: 1,
@@ -249,6 +252,34 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     };
   };
 
+  private startDownload = (recordId: string) => {
+    const { dataExportState } = this.state;
+
+    this.props.notifyInfo({
+      message:
+        'Your download request is processing. Do not refresh your page to avoid canceling it.',
+    });
+    if (!dataExportState.hasOwnProperty(recordId)) {
+      this.setState(prevState => {
+        const newState = prevState;
+        newState.dataExportState[recordId] = 0;
+        return newState;
+      });
+    }
+  };
+
+  private finaliseDownload = (recordId: string) => {
+    const { dataExportState } = this.state;
+
+    if (dataExportState.hasOwnProperty(recordId)) {
+      this.setState(prevState => {
+        const newState = prevState;
+        delete newState.dataExportState[recordId];
+        return newState;
+      });
+    }
+  };
+
   downloadFile = (execution: AudienceSegmentExportJobExecutionResource) => (e: any) => {
     const {
       intl: { formatMessage },
@@ -259,11 +290,48 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     } else if (execution.status === 'FAILED') {
       message.error(formatMessage(messages.exportFailed));
     } else if (execution.status === 'SUCCEEDED') {
-      (window as any).location = `${
-        (window as any).MCS_CONSTANTS.API_URL
-      }/v1/data_file/data?access_token=${encodeURIComponent(getApiToken())}&uri=${
+      this.startDownload(execution.id);
+      const url = `${(window as any).MCS_CONSTANTS.API_URL}/v1/data_file/data?uri=${
         execution.result ? execution.result.export_file_uri : ''
       }`;
+
+      const transferFailed = () => {
+        this.props.notifyInfo({ message: 'Your download has failed.' });
+        this.finaliseDownload(execution.id);
+      };
+      const transferCanceled = () => {
+        this.props.notifyInfo({ message: 'Your download as been canceled.' });
+        this.finaliseDownload(execution.id);
+      };
+      const oReq = new XMLHttpRequest();
+      oReq.responseType = 'blob';
+      oReq.onload = () => {
+        if (oReq.status >= 200 && oReq.status < 400) {
+          if (execution.result && execution.result.export_file_uri) {
+            FileSaver.saveAs(oReq.response, execution.result.export_file_uri.split('/').pop());
+          } else {
+            FileSaver.saveAs(oReq.response);
+          }
+        } else {
+          const responsePromise: Promise<any> = oReq.response.text();
+          responsePromise.then(responseAsText => {
+            const response = JSON.parse(responseAsText);
+            const notification = { message: `${response.error} (error id: ${response.error_id})` };
+            if (oReq.status < 500) {
+              this.props.notifyWarning(notification);
+            } else {
+              this.props.notifyError(notification);
+            }
+          });
+        }
+        this.finaliseDownload(execution.id);
+      };
+      oReq.open('get', url, true);
+      oReq.addEventListener('error', transferFailed, false);
+      oReq.addEventListener('abort', transferCanceled, false);
+
+      oReq.setRequestHeader('Authorization', getApiToken());
+      oReq.send();
     }
   };
 
@@ -329,8 +397,13 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
     } = this.props;
-    const { isLoadingExecutions, isLoadingCompartments, compartments, selectedCompartmentId } =
-      this.state;
+    const {
+      isLoadingExecutions,
+      isLoadingCompartments,
+      compartments,
+      selectedCompartmentId,
+      dataExportState,
+    } = this.state;
 
     const pagination = {
       current: this.state.filter.currentPage,
@@ -435,13 +508,15 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         key: 'action',
         render: (text, record) => {
           return (
-            record.status === 'SUCCEEDED' &&
-            record.result &&
-            record.result.export_file_uri && (
-              <Button type='primary' onClick={this.downloadFile(record)}>
-                <McsIcon type='download' /> {this.props.intl.formatMessage(messages.download)}
-              </Button>
-            )
+            (record.status === 'SUCCEEDED' &&
+              record.result &&
+              record.result.export_file_uri &&
+              !dataExportState.hasOwnProperty(record.id) && (
+                <Button type='primary' onClick={this.downloadFile(record)}>
+                  <McsIcon type='download' /> {this.props.intl.formatMessage(messages.download)}
+                </Button>
+              )) ||
+            (dataExportState.hasOwnProperty(record.id) && <Spin size='small' />)
           );
         },
       },
