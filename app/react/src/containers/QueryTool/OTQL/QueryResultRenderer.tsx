@@ -36,7 +36,7 @@ import {
   getBaseChartProps,
   getChartDataset,
   getChartOption,
-  getQuickOptionsForChartType,
+  getQuickOptionsByChartTypeAndDatasourceType,
   getSelectLegend,
   renderQuickOptions,
 } from './utils/ChartOptionsUtils';
@@ -123,6 +123,8 @@ interface State {
   selectedQuickOptions: { [key: string]: string | undefined };
   selectedQuickOptionsCache: { [key: string]: string | undefined };
   queryHasChanged: boolean;
+  isDatasourceDrilldownable: boolean;
+  datasourceSeriesNumber: number;
 }
 
 class QueryResultRenderer extends React.Component<Props, State> {
@@ -143,6 +145,9 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+
+    const { datasource } = this.props;
+
     const selectedChart = isCountDataset(props.datasource)
       ? 'metric'
       : props.tab.chartItem?.type
@@ -161,8 +166,45 @@ class QueryResultRenderer extends React.Component<Props, State> {
       selectedQuickOptions: this.getQuickOptions(),
       selectedQuickOptionsCache: this.getQuickOptions(),
       queryHasChanged: false,
+      isDatasourceDrilldownable: this.isDatasourceDrilldownable(datasource),
+      datasourceSeriesNumber: this.getDatasourceSeriesNumber(datasource),
     };
   }
+
+  isDatasourceDrilldownable = (datasource: OTQLAggregations | AggregateDataset | CountDataset) => {
+    let isDrilldownable: boolean = false;
+
+    if (!isOTQLAggregations(datasource)) {
+      if (isAggregateDataset(datasource)) {
+        datasource.dataset.forEach(datapoint => {
+          if (datapoint.buckets && datapoint.buckets.length > 0) isDrilldownable = true;
+        });
+      }
+    } else {
+      datasource.buckets.forEach(bucket => {
+        bucket.buckets.forEach(subbucket => {
+          if (subbucket.aggregations != null) isDrilldownable = true;
+        });
+      });
+    }
+
+    return isDrilldownable;
+  };
+
+  getDatasourceSeriesNumber = (datasource: OTQLAggregations | AggregateDataset | CountDataset) => {
+    let numberOfSeries: number;
+
+    if (!isOTQLAggregations(datasource)) {
+      if (isAggregateDataset(datasource)) {
+        numberOfSeries = datasource.metadata.seriesTitles.length;
+      } else {
+        numberOfSeries = 0;
+      }
+    } else {
+      numberOfSeries = datasource.metrics.length;
+    }
+    return numberOfSeries;
+  };
 
   async componentDidMount() {
     if (this.hasDateHistogram()) this.setNbrOfShowedItems();
@@ -277,6 +319,26 @@ class QueryResultRenderer extends React.Component<Props, State> {
     if (dateOptions) {
       quickOptions.date_format = dateOptions.format;
     }
+
+    const defineDrilldownOptions = (drilldown: boolean, stacking: boolean) => {
+      const options = {} as any;
+
+      if (drilldown && !stacking) options.drilldown = 'drilldown';
+      else if (!drilldown && stacking) options.drilldown = 'stacking';
+      else options.drilldown = 'flat';
+
+      return options;
+    };
+
+    if (!!options && options.drilldown !== undefined && options.stacking !== undefined) {
+      quickOptions = {
+        ...quickOptions,
+        ...defineDrilldownOptions(options.drilldown, options.stacking),
+      };
+    }
+
+    if (this.noLegendByDefault()) quickOptions = { ...quickOptions, legend: { enabled: false } };
+
     return quickOptions;
   };
 
@@ -304,7 +366,26 @@ class QueryResultRenderer extends React.Component<Props, State> {
     const newChartProps = chartPropsMap.reduce((acc, property) => {
       return { ...acc, ...property };
     }, baseProps);
+
     return newChartProps;
+  };
+
+  private getLoadedChartProps = (chart?: ChartResource) => {
+    if (!chart) return undefined;
+
+    const loadedChartProps = {
+      ...chart.content.options,
+    };
+
+    const propsMap = new Map(Object.entries(loadedChartProps));
+
+    const takenChartProps: any = {};
+
+    ['drilldown', 'stacking'].forEach(property => {
+      if (propsMap.has(property)) takenChartProps[property] = propsMap.get(property);
+    });
+
+    return takenChartProps;
   };
 
   getMetrics = (metrics: OTQLMetric[] = []) => {
@@ -392,23 +473,30 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
   handleChartTypeChange = (value: ChartType) => {
     const { datasource } = this.props;
-    const { aggregationsPath, selectedQuickOptionsCache } = this.state;
+    const {
+      aggregationsPath,
+      selectedQuickOptionsCache,
+      isDatasourceDrilldownable,
+      datasourceSeriesNumber,
+    } = this.state;
     const hasDateHistogram = this.hasDateHistogram();
-    const defaultSelectedOptions = getQuickOptionsForChartType(value, hasDateHistogram).reduce(
-      (acc, option) => {
-        return {
-          ...acc,
-          [option.title]: selectedQuickOptionsCache[option.title]
-            ? selectedQuickOptionsCache[option.title]
-            : option.title === 'legend' && this.noLegendByDefault()
-            ? 'no_legend'
-            : option.title === 'bar' && this.hasDateHistogram()
-            ? 'column'
-            : option.options[0].value,
-        };
-      },
-      {},
-    );
+    const defaultSelectedOptions = getQuickOptionsByChartTypeAndDatasourceType(
+      value,
+      hasDateHistogram,
+      isDatasourceDrilldownable,
+      datasourceSeriesNumber,
+    ).reduce((acc, option) => {
+      return {
+        ...acc,
+        [option.title]: selectedQuickOptionsCache[option.title]
+          ? selectedQuickOptionsCache[option.title]
+          : option.title === 'legend' && this.noLegendByDefault()
+          ? 'no_legend'
+          : option.title === 'bar' && this.hasDateHistogram()
+          ? 'column'
+          : option.options[0].value,
+      };
+    }, {});
     this.setState(
       {
         selectedChart: value,
@@ -701,7 +789,16 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
   getBuckets = () => {
     const { hasFeature, intl, datasource, tab, onSaveChart } = this.props;
-    const { selectedChart, dataset, aggregationsPath, selectedView, queryHasChanged } = this.state;
+    const {
+      selectedChart,
+      dataset,
+      aggregationsPath,
+      selectedView,
+      queryHasChanged,
+      selectedQuickOptions,
+      isDatasourceDrilldownable,
+      datasourceSeriesNumber,
+    } = this.state;
     const datasetOptions = this.getChartOptionsMap(selectedChart);
     const viewBuckets = isOTQLAggregations(datasource)
       ? this.findAggregations(datasource, aggregationsPath)?.buckets[parseInt(selectedView, 0)]
@@ -930,6 +1027,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
                   title: '',
                   options: {
                     ...(omit(this.getChartProps('pie'), ['date_options']) as PieChartOptions),
+                    ...this.getLoadedChartProps(tab.chartItem),
                   },
                   type: 'pie',
                 }}
@@ -968,17 +1066,6 @@ class QueryResultRenderer extends React.Component<Props, State> {
         this.openSaveModal.bind(this, saveType);
       const handleOnDeleteButtonClick = this.openDeleteModal.bind(this);
 
-      let options = tab?.chartItem?.content.options as any;
-      const dateOptions = (tab as any)?.chartItem?.content?.dataset?.date_options;
-      if (dateOptions) {
-        options.date_format = dateOptions.format;
-      }
-      if (!options) {
-        options = {};
-        if (this.noLegendByDefault()) options = { ...options, legend: { enabled: false } };
-        if (!options && this.hasDateHistogram()) options = { ...options, bar: 'column' };
-      }
-
       const isMetricCase =
         isCountDataset(datasource) ||
         ((datasource as any)?.dataset &&
@@ -995,6 +1082,8 @@ class QueryResultRenderer extends React.Component<Props, State> {
         }
       }
 
+      const quickOptions = _.omitBy(selectedQuickOptions, _.isUndefined);
+
       return (
         <div>
           <McsTabs
@@ -1010,7 +1099,9 @@ class QueryResultRenderer extends React.Component<Props, State> {
                 selectedChart,
                 onChangeQuickOption,
                 this.hasDateHistogram(),
-                options,
+                quickOptions,
+                isDatasourceDrilldownable,
+                datasourceSeriesNumber,
               )}
           </div>
           {onSaveChart ? (
