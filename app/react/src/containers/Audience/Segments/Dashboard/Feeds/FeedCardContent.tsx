@@ -203,7 +203,7 @@ class FeedCardContent extends React.Component<Props, State> {
             .updateAudienceFeed(feed.id, newFormattedFeed)
             .then(res => {
               this.setState({ isLoading: false, showActivatingState: false }, () => {
-                onFeedUpdate({ ...res.data, type: 'EXTERNAL_FEED' });
+                onFeedUpdate({ ...res.data, type: feed.type });
               });
             })
             .catch(err => {
