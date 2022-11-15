@@ -50,7 +50,7 @@ const messages = defineMessages({
   },
   willStartSendingData: {
     id: 'audienceFeed.card.state.willStartSendingData',
-    defaultMessage: 'Target created, will start sending data soon',
+    defaultMessage: 'Segment created, waiting for initial loading',
   },
   errorDestinationSegment: {
     id: 'audienceFeed.card.state.errorDestinationSegment',
@@ -62,7 +62,7 @@ const messages = defineMessages({
   },
   initialLoadingSession: {
     id: 'audienceFeed.card.state.initialLoadingSession',
-    defaultMessage: 'Sending data for all users in the segment',
+    defaultMessage: 'Initial loading, sending all users',
   },
   liveSession: {
     id: 'audienceFeed.card.state.liveSession',
