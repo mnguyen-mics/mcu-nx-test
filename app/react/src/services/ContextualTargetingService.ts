@@ -6,6 +6,8 @@ import {
 import { injectable } from 'inversify';
 import { ContextualTargetingResource } from '../models/contextualtargeting/ContextualTargeting';
 
+export type ActivationPlatform = 'XANDR';
+
 export interface IContextualTargetingService {
   getContextualTargetings: (
     segmentId: string,
@@ -20,6 +22,7 @@ export interface IContextualTargetingService {
     segmentId: string,
     contextualTargetingId: string,
     volumeRatio: number,
+    activationPlatforms: ActivationPlatform[],
   ) => Promise<DataResponse<ContextualTargetingResource>>;
   archiveContextualTargeting: (
     segmentId: string,
@@ -54,10 +57,12 @@ export class ContextualTargetingService implements IContextualTargetingService {
     segmentId: string,
     contextualTargetingId: string,
     volumeRatio: number,
+    activationPlatforms: ActivationPlatform[],
   ): Promise<DataResponse<ContextualTargetingResource>> {
     const body = {
       type: 'PUBLISH',
       volume_ratio: volumeRatio,
+      activation_platforms: activationPlatforms,
     };
     return ApiService.postRequest(
       `audience_segments/${segmentId}/contextual_targetings/${contextualTargetingId}/actions`,
