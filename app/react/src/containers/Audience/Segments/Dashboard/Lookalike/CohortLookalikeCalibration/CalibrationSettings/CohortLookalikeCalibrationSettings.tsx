@@ -39,6 +39,7 @@ export interface CohortCalibrationGraphPoint {
 }
 
 interface CohortLookalikeCalibrationSettingsState {
+  cohortLookalikeSegment: UserLookalikeByCohortsSegment;
   includeSeedSegment: boolean;
   previousIncludeSeedSegment: boolean;
   graphData?: DataPoint[];
@@ -60,6 +61,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
       cohortLookalikeSegment: { include_seed_segment },
     } = props;
     this.state = {
+      cohortLookalikeSegment: props.cohortLookalikeSegment,
       editMode: false,
       includeSeedSegment: include_seed_segment,
       previousIncludeSeedSegment: include_seed_segment,
@@ -151,12 +153,13 @@ class CohortLookalikeCalibrationSettings extends React.Component<
           min_overlap: selectedDataPoint.overlap / 100,
           type: cohortLookalikeSegment.type,
         })
-        .then(() => {
+        .then(({ data: segmentUpdated }) => {
           notifySuccess({
             message: formatMessage(messages.notifSuccess),
             description: formatMessage(messages.notifSuccessMessage),
           });
           this.setState({
+            cohortLookalikeSegment: segmentUpdated as UserLookalikeByCohortsSegment,
             editMode: false,
             previousSelectedIndex: selectedIndex,
             previousIncludeSeedSegment: includeSeedSegment,
@@ -207,11 +210,32 @@ class CohortLookalikeCalibrationSettings extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const { includeSeedSegment, graphData, selectedIndex, editMode } = this.state;
+    const { includeSeedSegment, graphData, selectedIndex, editMode, cohortLookalikeSegment } =
+      this.state;
 
     const switchEditMode = (editMode: boolean) => this.setState({ editMode });
 
+    /**
+     * If user_points_target is set :
+     * - Information in tags are sourced from user_points_target & min_overlap
+     * If user_points_target is not set or if click on Edit those settings :
+     * - Information in tags are sourced from the overlap calculation (using the 2 OTQL queries)
+     */
+
     const dataPointSelected = selectedIndex !== undefined && graphData?.[selectedIndex];
+
+    let userPointsTarget: number | undefined = dataPointSelected
+      ? dataPointSelected.nbUserpoints
+      : 0;
+
+    let minOverlap: number | undefined = dataPointSelected ? dataPointSelected.overlap : 0;
+
+    if (cohortLookalikeSegment.user_points_target && !editMode) {
+      userPointsTarget = cohortLookalikeSegment.user_points_target;
+      minOverlap = cohortLookalikeSegment.min_overlap
+        ? cohortLookalikeSegment.min_overlap * 100
+        : undefined;
+    }
 
     return (
       <div className='mcs-cohortLookalikeCalibrationSettings'>
@@ -251,9 +275,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
                   userPointsMention: (
                     <Tag className={`cohortTag ${editMode && 'green'}`}>
                       <b>
-                        {dataPointSelected
-                          ? dataPointSelected.nbUserpoints.toLocaleString()
-                          : '...'}{' '}
+                        {userPointsTarget !== undefined ? userPointsTarget.toLocaleString() : '...'}{' '}
                         {formatMessage(messages.userpoints)}
                       </b>
                     </Tag>
@@ -261,7 +283,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
                   overlapMention: (
                     <Tag className={`cohortTag ${editMode && 'green'}`}>
                       <b>
-                        {dataPointSelected ? dataPointSelected.overlap : '...'}%{' '}
+                        {minOverlap !== undefined ? minOverlap : '...'}%{' '}
                         {formatMessage(messages.overlap)}
                       </b>
                     </Tag>
