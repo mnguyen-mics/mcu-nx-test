@@ -275,7 +275,12 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     const { segmentId } = this.props;
     const { contextualTargeting } = this.state;
     this._contextualTargetingService
-      .publishContextualTargeting(segmentId, contextualTargeting!.id, this.getTargetedVolumeRatio())
+      .publishContextualTargeting(
+        segmentId,
+        contextualTargeting!.id,
+        this.getTargetedVolumeRatio(),
+        ['XANDR'],
+      )
       .then(res =>
         this.setState({
           contextualTargeting: res.data,
