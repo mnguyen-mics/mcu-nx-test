@@ -23,6 +23,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import FeedChartsContainer from './Charts/FeedChartsContainer';
 import McsMoment from '../../../../../utils/McsMoment';
+import FeedTroublehshooting from './Troubleshooting/FeedTroubleshooting';
 
 const messages = defineMessages({
   feedModalNameFieldLabel: {
@@ -244,9 +245,11 @@ class FeedCardModal extends React.Component<Props, State> {
         pluginVersionId={feed.version_id}
         save={this.saveOrCreatePluginInstance}
         selectedTab={modalTab}
-        pluginChart={
-          <FeedChartsContainer
-            feed={feed}
+        pluginChart={<FeedChartsContainer feed={feed} />}
+        troubleshootingTab={
+          <FeedTroublehshooting
+            feedId={feed.id}
+            organisationId={feed.organisation_id}
             dateRange={{
               from: new McsMoment('now-7d'),
               to: new McsMoment('now'),

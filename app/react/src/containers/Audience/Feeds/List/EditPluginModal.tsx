@@ -20,6 +20,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import FeedChartsContainer from '../../Segments/Dashboard/Feeds/Charts/FeedChartsContainer';
 import McsMoment from '../../../../utils/McsMoment';
+import FeedTroublehshooting from '../../Segments/Dashboard/Feeds/Troubleshooting/FeedTroubleshooting';
 
 export interface EditPluginModalProps {
   feed: AudienceFeedTyped;
@@ -247,9 +248,11 @@ class EditPluginModal extends React.Component<Props, State> {
               ? 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
               : 'AUDIENCE_SEGMENT_TAG_FEED',
         }}
-        pluginChart={
-          <FeedChartsContainer
-            feed={feed}
+        pluginChart={<FeedChartsContainer feed={feed} />}
+        troubleshootingTab={
+          <FeedTroublehshooting
+            feedId={feed.id}
+            organisationId={feed.organisation_id}
             dateRange={{
               from: new McsMoment('now-7d'),
               to: new McsMoment('now'),
