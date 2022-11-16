@@ -6,15 +6,13 @@ export interface FeedCardPlaceholderProps {}
 export default class FeedCardPlaceholder extends React.Component<FeedCardPlaceholderProps> {
   render() {
     return (
-      <Card className='mcs-feed-card'>
+      <Card className='mcs-feedCard'>
         <div>
           <div className='mcs-feedCard_header'>
-            <div className='mcs-feedCard_titleAndIcon'>
-              <div className='mcs-feedCard_icon mcs-feedCard_icon_placeholder' />
-              <div className='mcs-feedCard_title'>
-                <div className='mcs-feed-name mcs-feed-name_placeholder' />
-                <div className='mcs-plugin-name mcs-plugin-name_placeholder' />
-              </div>
+            <div className='mcs-feedCard_icon mcs-feedCard_icon_placeholder' />
+            <div className='mcs-feedCard_title'>
+              <div className='mcs-feedCardTitle_title mcs-feedCardTitle_title_placeholder' />
+              <div className='mcs-feedCardTitle_subtitle mcs-feedCardTitle_subtitle_placeholder' />
             </div>
             <div className='mcs-feedCard_topMenu'>
               <a>
