@@ -64,7 +64,7 @@ const messages = defineMessages({
   },
   chartShared: {
     id: 'queryTool.OtqlConsole.tab.chartShared',
-    defaultMessage: 'Chart url is copied into clipboard',
+    defaultMessage: 'The chart URL is copied to the clipboard',
   },
 });
 
