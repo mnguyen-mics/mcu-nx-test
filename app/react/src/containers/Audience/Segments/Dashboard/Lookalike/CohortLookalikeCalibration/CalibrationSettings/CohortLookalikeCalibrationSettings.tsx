@@ -16,15 +16,32 @@ import { lazyInject } from '../../../../../../../config/inversify.config';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../../Notifications/injectNotifications';
+import { SimilarityIndexInfos } from '../CohortLookalikeCalibration';
+import _ from 'lodash';
+
+export interface CohortCalibrationGraphPoint {
+  cohortNumber: number;
+  nbUserPoints: number;
+  nbUserPointsInSegment: number;
+  overlap: number;
+  similarityIndex: number;
+}
+
 interface CohortLookalikeCalibrationSettingsProps {
   cohortLookalikeSegment: UserLookalikeByCohortsSegment;
   seedSegment: AudienceSegmentShape;
   cohorts: CohortCalibrationGraphPoint[];
+  similarityIndexInfos: SimilarityIndexInfos;
 }
 
-interface GraphPointsAccumulator {
-  lastGraphPoint?: DataPoint;
-  currentGraphData: DataPoint[];
+interface ComputedGraphPoint {
+  aggregatedCohortsForGraphPoint: CohortCalibrationGraphPoint[];
+  nbUserPointsInCohorts: number;
+  nbUserPointsInCohortsAndSegment: number;
+  minSimilarityIndex: number;
+  cumulativeNbUbserPointsInCohorts: number;
+  cumulativeNbUbserPointsInCohortsAndSegment: number;
+  cumulativeNbOfCohorts: number;
 }
 
 type Props = CohortLookalikeCalibrationSettingsProps &
@@ -32,20 +49,24 @@ type Props = CohortLookalikeCalibrationSettingsProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }>;
 
-export interface CohortCalibrationGraphPoint {
-  cohortNumber: number;
-  nbUserpoints: number;
-  overlap: number;
+interface CustomDataPoint extends DataPoint {
+  nbCohorts: number;
+  nbUserPoints: number;
+  similarityIndex: number;
 }
 
 interface CohortLookalikeCalibrationSettingsState {
   cohortLookalikeSegment: UserLookalikeByCohortsSegment;
   includeSeedSegment: boolean;
   previousIncludeSeedSegment: boolean;
-  graphData?: DataPoint[];
   selectedIndex?: number;
   previousSelectedIndex?: number;
   editMode: boolean;
+  graphData?: {
+    generalGraphData: ComputedGraphPoint[];
+    includedSegmentGraph: CustomDataPoint[];
+    notIncludedSegmentGraph: CustomDataPoint[];
+  };
 }
 
 class CohortLookalikeCalibrationSettings extends React.Component<
@@ -73,64 +94,151 @@ class CohortLookalikeCalibrationSettings extends React.Component<
   }
 
   createGraphData = () => {
-    const { cohorts, seedSegment, cohortLookalikeSegment } = this.props;
-    const { includeSeedSegment, selectedIndex, previousSelectedIndex } = this.state;
+    const { cohorts, similarityIndexInfos, cohortLookalikeSegment } = this.props;
+    const { selectedIndex, includeSeedSegment } = this.state;
 
-    const lookalikeSegmentMinOverlap =
-      cohortLookalikeSegment.min_overlap !== undefined
-        ? Math.floor(cohortLookalikeSegment.min_overlap * 100)
-        : undefined;
+    const lookalikeSegmentMinSimilarityIndex =
+      cohortLookalikeSegment.similarity_index ||
+      (cohortLookalikeSegment.min_overlap &&
+        +(
+          Math.ceil(
+            (cohortLookalikeSegment.min_overlap / similarityIndexInfos.segmentRatioInDatamart) * 10,
+          ) / 10
+        ).toFixed(1)) ||
+      1.0;
 
-    const firstPercentageNbUserpoints = includeSeedSegment ? seedSegment.user_points_count || 0 : 0;
+    interface GraphAccData {
+      graphPoints: ComputedGraphPoint[];
+      cumulativeNbUbserPointsInCohorts: number;
+      cumulativeNbUbserPointsInCohortsAndSegment: number;
+      cumulativeNbOfCohorts: number;
+    }
 
-    const newGraphData = [...Array(101).keys()].reverse().reduce(
-      (acc: GraphPointsAccumulator, currentPercentage: number): GraphPointsAccumulator => {
-        const { lastGraphPoint, currentGraphData } = acc;
+    const sortedCohorts = cohorts.sort((a, b) => {
+      return b.similarityIndex - a.similarityIndex;
+    });
 
-        const offsetNbUserPoints = lastGraphPoint
-          ? lastGraphPoint.nbUserpoints
-          : firstPercentageNbUserpoints;
+    const minSimilarityIndex = sortedCohorts.reduce(
+      (
+        acc: { nbUserPointsInCohortsAndNotSegment: number; minSimilarityIndex: number },
+        cohort: CohortCalibrationGraphPoint,
+      ) => {
+        if (
+          acc.nbUserPointsInCohortsAndNotSegment / similarityIndexInfos.nbUserPointsInSegment >
+          0.1
+        ) {
+          return acc;
+        } else {
+          return {
+            nbUserPointsInCohortsAndNotSegment:
+              acc.nbUserPointsInCohortsAndNotSegment +
+              cohort.nbUserPoints -
+              cohort.nbUserPointsInSegment,
+            minSimilarityIndex: cohort.similarityIndex,
+          };
+        }
+      },
+      {
+        nbUserPointsInCohortsAndNotSegment: 0,
+        minSimilarityIndex: 1 / similarityIndexInfos.segmentRatioInDatamart,
+      },
+    ).minSimilarityIndex;
 
-        const addedCohorts = cohorts.filter((cohort: CohortCalibrationGraphPoint) => {
-          return cohort.overlap >= currentPercentage && cohort.overlap < currentPercentage + 1;
+    const firstXForGraph = +(Math.ceil(minSimilarityIndex * 10) / 10).toFixed(1);
+
+    const computedGraphData = _.range(firstXForGraph, 0.9, -0.1)
+      .map(x => {
+        return +(Math.round(x * 10) / 10).toFixed(1);
+      })
+      .map((x, index) => {
+        const cohortsInRange = sortedCohorts.filter(cohort => {
+          return index === 0
+            ? cohort.similarityIndex >= x
+            : cohort.similarityIndex >= x && cohort.similarityIndex < x + 0.1;
         });
-
-        const newNbUserpoints =
-          offsetNbUserPoints +
-          addedCohorts.reduce((accNb, cohort) => {
-            return accNb + Math.floor(cohort.nbUserpoints * (1 - cohort.overlap / 100));
+        return {
+          similarityIndex: x,
+          cohortsForGraphPoint: cohortsInRange,
+        };
+      })
+      .reduce(
+        (acc: GraphAccData, similarityAndCohorts) => {
+          const { similarityIndex, cohortsForGraphPoint } = similarityAndCohorts;
+          const nbUserPointsInGraphPoint = cohortsForGraphPoint.reduce((acc, cohort) => {
+            return acc + cohort.nbUserPoints;
+          }, 0);
+          const nbUserPointsInSegmentInGraphPoint = cohortsForGraphPoint.reduce((acc, cohort) => {
+            return acc + cohort.nbUserPointsInSegment;
           }, 0);
 
-        const offsetNbCohorts = lastGraphPoint ? lastGraphPoint.nbCohorts : 0;
+          const cumulativeNbUbserPointsInCohorts =
+            acc.cumulativeNbUbserPointsInCohorts + nbUserPointsInGraphPoint;
+          const cumulativeNbUbserPointsInCohortsAndSegment =
+            acc.cumulativeNbUbserPointsInCohortsAndSegment + nbUserPointsInSegmentInGraphPoint;
+          const cumulativeNbOfCohorts = acc.cumulativeNbOfCohorts + cohortsForGraphPoint.length;
+          return {
+            graphPoints: acc.graphPoints.concat([
+              {
+                aggregatedCohortsForGraphPoint: cohortsForGraphPoint,
+                nbUserPointsInCohorts: nbUserPointsInGraphPoint,
+                nbUserPointsInCohortsAndSegment: nbUserPointsInSegmentInGraphPoint,
+                minSimilarityIndex: similarityIndex,
+                cumulativeNbUbserPointsInCohorts,
+                cumulativeNbUbserPointsInCohortsAndSegment,
+                cumulativeNbOfCohorts,
+              },
+            ]),
+            cumulativeNbUbserPointsInCohorts,
+            cumulativeNbUbserPointsInCohortsAndSegment,
+            cumulativeNbOfCohorts,
+          };
+        },
+        {
+          graphPoints: [],
+          cumulativeNbUbserPointsInCohorts: 0,
+          cumulativeNbUbserPointsInCohortsAndSegment: 0,
+          cumulativeNbOfCohorts: 0,
+        },
+      ).graphPoints;
 
-        const nbCohorts = offsetNbCohorts + addedCohorts.length;
+    // Creating graph data
 
-        const newGraphPoint: DataPoint = {
-          nbCohorts: nbCohorts,
-          nbUserpoints: newNbUserpoints,
-          overlap: currentPercentage,
-        };
+    const includedSegmentGraph: CustomDataPoint[] = computedGraphData.map(point => {
+      return {
+        nbCohorts: point.cumulativeNbOfCohorts,
+        nbUserPoints:
+          point.cumulativeNbUbserPointsInCohorts +
+          similarityIndexInfos.nbUserPointsInSegment -
+          point.cumulativeNbUbserPointsInCohortsAndSegment,
+        similarityIndex: point.minSimilarityIndex,
+      };
+    });
 
-        return {
-          lastGraphPoint: newGraphPoint,
-          currentGraphData: currentGraphData.concat([newGraphPoint]),
-        };
-      },
-      { currentGraphData: [] },
-    ).currentGraphData;
+    const notIncludedSegmentGraph: CustomDataPoint[] = computedGraphData.map(point => {
+      return {
+        nbCohorts: point.cumulativeNbOfCohorts,
+        nbUserPoints:
+          point.cumulativeNbUbserPointsInCohorts - point.cumulativeNbUbserPointsInCohortsAndSegment,
+        similarityIndex: point.minSimilarityIndex,
+      };
+    });
+
+    const newGraphData = includeSeedSegment ? includedSegmentGraph : notIncludedSegmentGraph;
+
+    const tmpIndex = newGraphData.findIndex(graphPoint => {
+      return graphPoint.similarityIndex === lookalikeSegmentMinSimilarityIndex;
+    });
 
     const newSelectedIndex =
-      selectedIndex === undefined
-        ? newGraphData.findIndex(graphPoint => {
-            return graphPoint.overlap === lookalikeSegmentMinOverlap;
-          })
-        : selectedIndex;
+      selectedIndex === undefined ? (tmpIndex >= 0 ? tmpIndex : 0) : selectedIndex;
 
     this.setState({
       selectedIndex: newSelectedIndex,
-      previousSelectedIndex:
-        previousSelectedIndex === undefined ? newSelectedIndex : previousSelectedIndex,
-      graphData: newGraphData,
+      graphData: {
+        generalGraphData: computedGraphData,
+        includedSegmentGraph: includedSegmentGraph,
+        notIncludedSegmentGraph: notIncludedSegmentGraph,
+      },
     });
   };
 
@@ -144,13 +252,16 @@ class CohortLookalikeCalibrationSettings extends React.Component<
     const { graphData, includeSeedSegment, selectedIndex } = this.state;
 
     if (graphData && selectedIndex !== undefined) {
-      const selectedDataPoint = graphData[selectedIndex];
+      const researchedGraph = includeSeedSegment
+        ? graphData.includedSegmentGraph
+        : graphData.notIncludedSegmentGraph;
+      const selectedDataPoint = researchedGraph[selectedIndex];
 
       this._audienceSegmentService
         .updateAudienceSegment(cohortLookalikeSegment.id, {
           include_seed_segment: includeSeedSegment,
-          user_points_target: selectedDataPoint.nbUserpoints,
-          min_overlap: selectedDataPoint.overlap / 100,
+          user_points_target: selectedDataPoint.nbUserPoints,
+          similarity_index: selectedDataPoint.similarityIndex,
           type: cohortLookalikeSegment.type,
         })
         .then(({ data: segmentUpdated }) => {
@@ -172,9 +283,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
   };
 
   changeIncludeSegmentSeed = (checked: boolean) => {
-    this.setState({ includeSeedSegment: checked }, () => {
-      this.createGraphData();
-    });
+    this.setState({ includeSeedSegment: checked });
   };
 
   areaChartSliderOnChange = (index: number) => {
@@ -183,8 +292,13 @@ class CohortLookalikeCalibrationSettings extends React.Component<
     });
   };
 
-  tipFormatter = (selected: DataPoint) => {
-    return <FormattedMessage {...messages.overlapTip} values={{ percentage: selected.overlap }} />;
+  tipFormatter = (selected: CustomDataPoint) => {
+    return (
+      <FormattedMessage
+        {...messages.similarityIndexTooltip}
+        values={{ similarityIndex: selected.similarityIndex }}
+      />
+    );
   };
 
   cancelEdit = () => {
@@ -207,6 +321,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
         params: { organisationId },
       },
       cohorts,
+      similarityIndexInfos,
       intl: { formatMessage },
     } = this.props;
 
@@ -217,24 +332,32 @@ class CohortLookalikeCalibrationSettings extends React.Component<
 
     /**
      * If user_points_target is set :
-     * - Information in tags are sourced from user_points_target & min_overlap
+     * - Information in tags are sourced from user_points_target & similarity_index
      * If user_points_target is not set or if click on Edit those settings :
      * - Information in tags are sourced from the overlap calculation (using the 2 OTQL queries)
      */
 
-    const dataPointSelected = selectedIndex !== undefined && graphData?.[selectedIndex];
+    const researchedGraph = includeSeedSegment
+      ? graphData?.includedSegmentGraph
+      : graphData?.notIncludedSegmentGraph;
+    const dataPointSelected =
+      selectedIndex !== undefined ? researchedGraph?.[selectedIndex] : undefined;
 
-    let userPointsTarget: number | undefined = dataPointSelected
-      ? dataPointSelected.nbUserpoints
-      : 0;
+    let userPointsTarget: number | undefined = dataPointSelected?.nbUserPoints;
 
-    let minOverlap: number | undefined = dataPointSelected ? dataPointSelected.overlap : 0;
+    let similarityIndex: number | undefined = dataPointSelected?.similarityIndex;
 
     if (cohortLookalikeSegment.user_points_target && !editMode) {
       userPointsTarget = cohortLookalikeSegment.user_points_target;
-      minOverlap = cohortLookalikeSegment.min_overlap
-        ? cohortLookalikeSegment.min_overlap * 100
-        : undefined;
+      similarityIndex =
+        cohortLookalikeSegment.similarity_index ||
+        (cohortLookalikeSegment.min_overlap &&
+          +(
+            Math.ceil(
+              (cohortLookalikeSegment.min_overlap / similarityIndexInfos.segmentRatioInDatamart) *
+                10,
+            ) / 10
+          ).toFixed(1));
     }
 
     return (
@@ -256,7 +379,9 @@ class CohortLookalikeCalibrationSettings extends React.Component<
                         #{seedSegment.id}
                       </Link>
                     ),
-                    nbUserPoints: <b>{(seedSegment.user_points_count || 0).toLocaleString()}</b>,
+                    nbUserPoints: (
+                      <b>{(seedSegment.user_points_count || 0).toLocaleString('en')}</b>
+                    ),
                   }}
                 />
               </div>
@@ -275,7 +400,9 @@ class CohortLookalikeCalibrationSettings extends React.Component<
                   userPointsMention: (
                     <Tag className={`cohortTag ${editMode && 'green'}`}>
                       <b>
-                        {userPointsTarget !== undefined ? userPointsTarget.toLocaleString() : '...'}{' '}
+                        {userPointsTarget !== undefined
+                          ? userPointsTarget.toLocaleString('en')
+                          : '...'}{' '}
                         {formatMessage(messages.userpoints)}
                       </b>
                     </Tag>
@@ -283,8 +410,8 @@ class CohortLookalikeCalibrationSettings extends React.Component<
                   overlapMention: (
                     <Tag className={`cohortTag ${editMode && 'green'}`}>
                       <b>
-                        {minOverlap !== undefined ? minOverlap : '...'}%{' '}
-                        {formatMessage(messages.overlap)}
+                        {similarityIndex !== undefined ? similarityIndex : '...'}{' '}
+                        {formatMessage(messages.similarityIndex)}
                       </b>
                     </Tag>
                   ),
@@ -326,17 +453,17 @@ class CohortLookalikeCalibrationSettings extends React.Component<
           </div>
         </div>
         <AreaChartSlider
-          data={graphData || []}
+          data={researchedGraph || []}
           isLoading={!graphData}
           xAxis={{
-            key: 'overlap',
-            labelFormat: '{value}%',
+            key: 'similarityIndex',
+            labelFormat: '{value}',
             title: formatMessage(messages.areaChartSliderXAxisTitle),
             subtitle: formatMessage(messages.areaChartSliderXAxisSubtitle),
             reversed: true,
           }}
           yAxis={{
-            key: 'nbUserpoints',
+            key: 'nbUserPoints',
             title: formatMessage(messages.areaChartSliderYAxisTitle),
             subtitle: formatMessage(messages.areaChartSliderYAxisSubtitle),
           }}
@@ -373,7 +500,7 @@ const messages = defineMessages({
   seedSegmentGeneral: {
     id: 'audience.segments.lookalike.type.cohort.settings.seedSegment.general',
     defaultMessage:
-      '{seedSegment} : {seedSegmentName} ({linkToSeedSegment}) - {nbUserPoints} Userpoints',
+      '{seedSegment} : {seedSegmentName} ({linkToSeedSegment}) - {nbUserPoints} userpoints',
   },
   reach: {
     id: 'audience.segments.lookalike.type.cohort.settings.reach',
@@ -386,11 +513,11 @@ const messages = defineMessages({
   },
   userpoints: {
     id: 'audience.segments.lookalike.type.cohort.settings.userpoints',
-    defaultMessage: 'Userpoints',
+    defaultMessage: 'user points',
   },
-  overlap: {
-    id: 'audience.segments.lookalike.type.cohort.settings.overlap',
-    defaultMessage: 'overlap',
+  similarityIndex: {
+    id: 'audience.segments.lookalike.type.cohort.settings.similarityIndex',
+    defaultMessage: 'similarity index',
   },
   include: {
     id: 'audience.segments.lookalike.type.cohort.settings.seedSegment.include',
@@ -400,9 +527,9 @@ const messages = defineMessages({
     id: 'audience.segments.lookalike.type.cohort.settings.seedSegment.exclude',
     defaultMessage: 'Exclude',
   },
-  overlapTip: {
-    id: 'audience.segments.lookalike.type.cohort.settings.slider.tip.overlap',
-    defaultMessage: '{percentage}% overlap',
+  similarityIndexTooltip: {
+    id: 'audience.segments.lookalike.type.cohort.settings.slider.tooltip.similarityIndex',
+    defaultMessage: '{similarityIndex} similarity index',
   },
   cohortsSelectedTip: {
     id: 'audience.segments.lookalike.type.cohort.settings.reach.tip.cohortsSelected',
@@ -418,11 +545,11 @@ const messages = defineMessages({
   },
   areaChartSliderXAxisTitle: {
     id: 'audience.segments.lookalike.type.cohort.settings.chart.xaxis.title',
-    defaultMessage: 'Overlap',
+    defaultMessage: 'Similarity index',
   },
   areaChartSliderXAxisSubtitle: {
     id: 'audience.segments.lookalike.type.cohort.settings.chart.xaxis.subtitle',
-    defaultMessage: 'Minimum overlap between seed segment and selected cohorts',
+    defaultMessage: 'Minimum similarity index between seed segment and selected cohorts',
   },
   areaChartSliderYAxisTitle: {
     id: 'audience.segments.lookalike.type.cohort.settings.chart.yaxis.title',

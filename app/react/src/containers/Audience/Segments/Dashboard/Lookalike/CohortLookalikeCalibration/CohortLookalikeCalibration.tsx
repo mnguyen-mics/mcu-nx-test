@@ -11,7 +11,6 @@ import { lazyInject } from '../../../../../../config/inversify.config';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
-import { InjectedFeaturesProps, injectFeatures } from '../../../../../Features';
 import {
   AudienceSegmentShape,
   UserLookalikeByCohortsSegment,
@@ -24,7 +23,7 @@ interface CohortLookalikeCalibrationProps {
   cohortLookalikeSegment: UserLookalikeByCohortsSegment;
 }
 
-type Props = CohortLookalikeCalibrationProps & InjectedNotificationProps & InjectedFeaturesProps;
+type Props = CohortLookalikeCalibrationProps & InjectedNotificationProps;
 
 interface CohortLookalikeCalibrationState {
   isCalibrating: boolean;
@@ -33,7 +32,14 @@ interface CohortLookalikeCalibrationState {
     cohortLookalikeSegment: UserLookalikeByCohortsSegment;
     sourceSegment: AudienceSegmentShape;
     cohorts: CohortCalibrationGraphPoint[];
+    similarityIndexInfos: SimilarityIndexInfos;
   };
+}
+
+export interface SimilarityIndexInfos {
+  nbUserPointsInSegment: number;
+  nbUserPointsInDatamart: number;
+  segmentRatioInDatamart: number;
 }
 
 class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeCalibrationState> {
@@ -52,14 +58,6 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
   }
 
   fetchInfos = () => {
-    const { hasFeature } = this.props;
-
-    hasFeature('audience-segments-cohort-lookalike-mocked-data')
-      ? this.fetchMockedInfos()
-      : this.fetchRealInfos();
-  };
-
-  fetchRealInfos = () => {
     const { cohortLookalikeSegment, notifyError } = this.props;
     this.setState({ isCalibrating: true }, () => {
       const cohortSegmentPromise = this._audienceSegmentService.getSegment(
@@ -103,6 +101,23 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
                 resVolPerCohortAndSegmentQuery.rows as OTQLAggregationResult[]
               )[0].aggregations.buckets[0].buckets;
 
+              const nbUserPointsInDatamart = perCohortBuckets.reduce((acc, b) => {
+                return acc + b.count;
+              }, 0);
+              const nbUserPointsInSegment = perCohortAndSegmentBuckets.reduce((acc, b) => {
+                return acc + b.count;
+              }, 0);
+              const segmentRatioInDatamart =
+                nbUserPointsInSegment !== 0 && nbUserPointsInDatamart !== 0
+                  ? nbUserPointsInSegment / nbUserPointsInDatamart
+                  : 1;
+
+              const similarityIndexInfos: SimilarityIndexInfos = {
+                nbUserPointsInSegment: nbUserPointsInSegment,
+                nbUserPointsInDatamart: nbUserPointsInDatamart,
+                segmentRatioInDatamart: segmentRatioInDatamart,
+              };
+
               const cohorts: CohortCalibrationGraphPoint[] = [];
 
               perCohortBuckets.forEach(b => {
@@ -116,11 +131,15 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
 
                 const nbInCohortAndSegment = associatedAndSegmentB?.count || 0;
 
+                const overlap = nbInCohortAndSegment / nbUserpoints;
+
                 if (nbUserpoints !== 0) {
                   const cohort: CohortCalibrationGraphPoint = {
                     cohortNumber: +cohortId,
-                    nbUserpoints: nbUserpoints,
-                    overlap: (nbInCohortAndSegment / nbUserpoints) * 100,
+                    nbUserPoints: nbUserpoints,
+                    nbUserPointsInSegment: nbInCohortAndSegment,
+                    overlap: overlap,
+                    similarityIndex: overlap / similarityIndexInfos.segmentRatioInDatamart,
                   };
                   cohorts.push(cohort);
                 }
@@ -133,6 +152,7 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
                   sourceSegment: sourceSegment,
                   cohorts,
                   cohortLookalikeSegment: cohortSegment,
+                  similarityIndexInfos: similarityIndexInfos,
                 },
               });
             })
@@ -146,76 +166,6 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
           this.setState({ isCalibrating: false, calibrationFailed: true });
         });
     });
-  };
-
-  fetchMockedInfos = () => {
-    const { cohortLookalikeSegment, notifyError } = this.props;
-    this.setState({ isCalibrating: true }, () => {
-      const cohortSegmentPromise = this._audienceSegmentService.getSegment(
-        cohortLookalikeSegment.id,
-      );
-      const sourceSegmentPromise = this._audienceSegmentService.getSegment(
-        cohortLookalikeSegment.source_segment_id,
-      );
-
-      Promise.all([sourceSegmentPromise, cohortSegmentPromise])
-        .then(res => {
-          const cohortSegment = res[1].data as UserLookalikeByCohortsSegment;
-          const sourceSegment = res[0].data;
-          const totalPop = 15000000;
-          const cohorts = this.generateOrderedData(totalPop, 500);
-
-          const meanSeedSegmentPop = totalPop / 30;
-          const chosenSeedSegmentPop = Math.floor(meanSeedSegmentPop * (0.5 + Math.random()));
-
-          const modifiedSourceSegment: AudienceSegmentShape = {
-            ...sourceSegment,
-            user_points_count: chosenSeedSegmentPop,
-          };
-
-          this.setState({
-            isCalibrating: false,
-            fetchedData: {
-              cohortLookalikeSegment: cohortSegment,
-              sourceSegment: modifiedSourceSegment,
-              cohorts,
-            },
-          });
-        })
-        .catch(err => {
-          notifyError(err);
-          this.setState({ isCalibrating: true });
-        });
-    });
-  };
-
-  generateData = (
-    totalPop: number,
-    i: number,
-    accu: CohortCalibrationGraphPoint[] = [],
-  ): CohortCalibrationGraphPoint[] => {
-    if (accu.length === i) return accu;
-    {
-      const overlap = Math.random() * 100;
-      const meanNbPerCohort = totalPop / i;
-      const graphPoint: CohortCalibrationGraphPoint = {
-        cohortNumber: accu.length,
-        nbUserpoints: Math.floor(meanNbPerCohort * (0.5 + Math.random())),
-        overlap: overlap,
-      };
-      return this.generateData(totalPop, i, accu.concat(graphPoint));
-    }
-  };
-
-  generateOrderedData = (
-    totalPop: number,
-    numberOfCohorts: number,
-  ): CohortCalibrationGraphPoint[] => {
-    return this.generateData(totalPop, numberOfCohorts).sort(
-      (a: CohortCalibrationGraphPoint, b: CohortCalibrationGraphPoint) => {
-        return b.overlap - a.overlap;
-      },
-    );
   };
 
   render() {
@@ -232,6 +182,7 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
               cohortLookalikeSegment={fetchedData.cohortLookalikeSegment}
               seedSegment={fetchedData.sourceSegment}
               cohorts={fetchedData.cohorts}
+              similarityIndexInfos={fetchedData.similarityIndexInfos}
             />
           )}
         </Card>
@@ -240,7 +191,6 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
   }
 }
 
-export default compose<Props, CohortLookalikeCalibrationProps>(
-  injectNotifications,
-  injectFeatures,
-)(CohortLookalikeCalibration);
+export default compose<Props, CohortLookalikeCalibrationProps>(injectNotifications)(
+  CohortLookalikeCalibration,
+);
