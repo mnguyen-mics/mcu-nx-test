@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TYPES } from '../../../constants/types';
 import { QueryDocument as GraphdbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Button, Alert } from 'antd';
 import { injectDrawer } from '../../../components/Drawer';
@@ -34,7 +34,7 @@ export interface SegmentBuilderPreviewProps {
   segmentEditor?: UserQuerySegmentEditor;
 }
 
-type Props = SegmentBuilderPreviewProps & InjectedIntlProps & InjectedDrawerProps;
+type Props = SegmentBuilderPreviewProps & WrappedComponentProps & InjectedDrawerProps;
 
 interface State {
   conversionModalVisible: boolean;

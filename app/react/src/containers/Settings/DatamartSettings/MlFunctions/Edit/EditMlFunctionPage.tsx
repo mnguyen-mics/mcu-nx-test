@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   GenericPluginContent,
@@ -39,7 +39,7 @@ interface IState {
 }
 
 type JoinedProps = RouteComponentProps<MlFunctionRouteParam> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class EditMlFunctionPage extends React.Component<JoinedProps, IState> {

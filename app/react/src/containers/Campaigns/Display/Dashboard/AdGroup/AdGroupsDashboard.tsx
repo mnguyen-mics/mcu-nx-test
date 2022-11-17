@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
 import messages from '../messages';
@@ -17,7 +17,7 @@ interface AdGroupDashboardProps {
   overallStat: OverallStat[];
 }
 
-type JoinedProps = AdGroupDashboardProps & InjectedIntlProps;
+type JoinedProps = AdGroupDashboardProps & WrappedComponentProps;
 
 class AdGroupDashboard extends React.Component<JoinedProps> {
   render() {

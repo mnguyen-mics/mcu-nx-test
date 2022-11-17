@@ -8,7 +8,7 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -57,7 +57,7 @@ type Props = RouteComponentProps<{
   organisationId: string;
   datamartId: string;
 }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class SourcesListPage extends React.Component<Props, State> {

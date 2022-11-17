@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Layout, Row, Breadcrumb } from 'antd';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from '../../messages';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -31,7 +31,7 @@ interface State {
   total: number;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> & WrappedComponentProps & InjectedNotificationProps;
 
 class MyOffersPage extends React.Component<Props, State> {
   @lazyInject(TYPES.ICatalogService)

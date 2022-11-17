@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Row, Col, Tooltip, Modal, Tag } from 'antd';
@@ -33,7 +33,7 @@ interface ProcessingUserChoice {
 interface State {}
 
 type Props = UserChoicesCardProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFeaturesProps &
   InjectedThemeColorsProps;
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { AreaChartOutlined } from '@ant-design/icons';
 
@@ -10,7 +10,7 @@ const messages = defineMessages({
   },
 });
 
-type Props = InjectedIntlProps;
+type Props = WrappedComponentProps;
 
 class CohortCalculationFailed extends React.Component<Props> {
   render() {

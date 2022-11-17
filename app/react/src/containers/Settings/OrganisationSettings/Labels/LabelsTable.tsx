@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import moment from 'moment';
 import { Label } from '../../../Labels/Labels';
 import messages from './messages';
@@ -26,7 +26,7 @@ interface LabelsTableProps {
   filter: Filters;
 }
 
-function LabelsTable(props: LabelsTableProps & InjectedIntlProps) {
+function LabelsTable(props: LabelsTableProps & WrappedComponentProps) {
   const {
     isFetchingLabels,
     dataSource,

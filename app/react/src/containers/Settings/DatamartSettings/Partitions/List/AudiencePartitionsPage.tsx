@@ -3,7 +3,7 @@ import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl';
 import {
   GetPartitionOption,
   IAudiencePartitionsService,
@@ -53,7 +53,7 @@ interface State {
 
 type Props = MapStateToProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export interface PartitionFilterParams

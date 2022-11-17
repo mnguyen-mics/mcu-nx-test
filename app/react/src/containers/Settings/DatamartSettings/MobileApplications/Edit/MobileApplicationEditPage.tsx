@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message, Modal } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import * as FeatureSelectors from '../../../../../redux/Features/selectors';
 import {
   MobileApplicationFormData,
@@ -43,7 +43,7 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<
     EditMobileAppRouteMatchParam,

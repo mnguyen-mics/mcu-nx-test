@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -40,7 +40,7 @@ interface MapStateProps {
 }
 
 type Props = ProcessingActivitiesSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;

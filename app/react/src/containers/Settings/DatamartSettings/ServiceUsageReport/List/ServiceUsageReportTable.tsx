@@ -6,7 +6,7 @@ import {
   parseSearch,
   PAGINATION_SEARCH_SETTINGS,
 } from '../../../../../utils/LocationSearchHelper';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { DISPLAY_SEARCH_SETTINGS } from './ServiceUsageReportListPage';
 import ItemList from '../../../../../components/ItemList';
@@ -72,7 +72,7 @@ interface ServiceUsageReportTableProps {
 interface State {}
 
 type Props = ServiceUsageReportTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class ServiceUsageReportTable extends React.Component<Props, State> {

@@ -13,14 +13,14 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import AceEditor from 'react-ace';
 import 'brace/mode/graphqlschema';
-import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IRuntimeSchemaService } from '../../../../../services/RuntimeSchemaService';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
-type Props = IDatamartObjectViewTabProps & InjectedNotificationProps & InjectedIntlProps;
+type Props = IDatamartObjectViewTabProps & InjectedNotificationProps & WrappedComponentProps;
 
 export interface IDatamartObjectViewTabProps {
   datamartId: string;

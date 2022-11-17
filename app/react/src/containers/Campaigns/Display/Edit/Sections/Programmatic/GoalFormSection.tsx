@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -34,7 +34,7 @@ export interface GoalFormSectionProps extends ReduxFormChangeProps {
 }
 
 type Props = GoalFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDatamartProps &
   InjectedDrawerProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam> &

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from '../messages';
 import { FormInputField, FormInput } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
@@ -14,7 +14,7 @@ const PropertyFieldArray = FieldArray as new () => GenericFieldArray<
   FormLinkedTextInputProps
 >;
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 class UriMatch extends React.Component<Props> {
   render() {

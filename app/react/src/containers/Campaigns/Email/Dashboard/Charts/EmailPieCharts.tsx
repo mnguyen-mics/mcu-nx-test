@@ -5,7 +5,7 @@ import {
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { PieChart, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { PieChartFormat } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
@@ -22,7 +22,7 @@ export interface EmailPieChartsProps {
   isLoading: boolean;
 }
 
-type Props = EmailPieChartsProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = EmailPieChartsProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 class EmailPieCharts extends React.Component<Props> {
   renderPieCharts = (deliveryReport: EmailDeliveryReport) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { SaveAsExportModal, SaveAsUserQuerySegmentModal } from '.';
 import { NewExportSimpleFormData } from './NewExportSimpleForm';
 import { NewUserQuerySimpleFormData } from './NewUserQuerySegmentSimpleForm';
@@ -29,7 +29,7 @@ interface State {
 }
 
 type Props = SaveQueryAsButtonProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedFeaturesProps;
 

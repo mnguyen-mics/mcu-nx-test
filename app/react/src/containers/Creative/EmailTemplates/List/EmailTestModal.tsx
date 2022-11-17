@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Modal, Input, Alert } from 'antd';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { ICreativeService } from '../../../../services/CreativeService';
 import injectNotifications, {
@@ -54,7 +54,7 @@ interface EmailTestModalState {
   error: boolean;
 }
 
-type JoinedProps = EmailTestModalProps & InjectedNotificationProps & InjectedIntlProps;
+type JoinedProps = EmailTestModalProps & InjectedNotificationProps & WrappedComponentProps;
 
 class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
   @lazyInject(TYPES.ICreativeService)

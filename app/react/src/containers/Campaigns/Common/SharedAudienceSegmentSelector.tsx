@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
@@ -72,7 +72,7 @@ interface MapStateProps {
 }
 
 type Props = SharedAudienceSegmentSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateProps &
   InjectedDatamartProps &
   RouteComponentProps<{ organisationId: string }>;

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { AudienceSegmentShape, UserListSegment } from '../../../../models/audiencesegment';
-import { InjectedIntlProps, FormattedMessage, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, FormattedMessage, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 import { isUserQuerySegment } from '../Edit/domain';
@@ -30,7 +30,7 @@ export interface AudienceSegmentHeaderProps {
   isLoading: boolean;
 }
 
-type Props = AudienceSegmentHeaderProps & InjectedIntlProps;
+type Props = AudienceSegmentHeaderProps & WrappedComponentProps;
 
 class AudienceSegmentHeader extends React.Component<Props> {
   render() {

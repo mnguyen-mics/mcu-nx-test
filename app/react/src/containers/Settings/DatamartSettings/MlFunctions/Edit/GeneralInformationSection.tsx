@@ -7,7 +7,7 @@ import {
 } from '../../../../../components/Form';
 import { compose } from 'recompose';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from './messages';
 
 export interface IGeneralInformationProps {
@@ -16,7 +16,7 @@ export interface IGeneralInformationProps {
   objects: string[];
 }
 
-type Props = IGeneralInformationProps & ValidatorProps & InjectedIntlProps;
+type Props = IGeneralInformationProps & ValidatorProps & WrappedComponentProps;
 
 class GeneralInformation extends React.Component<Props, {}> {
   public render() {

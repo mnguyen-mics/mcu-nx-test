@@ -45,7 +45,7 @@ import { isAggregateResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { reducePromises } from '../../../utils/PromiseHelper';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import {
   BranchesOutlined,
@@ -679,7 +679,7 @@ export const edge12: ScenarioEdgeResource = {
 export const storylineEdgeData: ScenarioEdgeResource[] = [edge12];
 
 type FormatMessageHandler = (
-  messageDescriptor: FormattedMessage.MessageDescriptor,
+  messageDescriptor: MessageDescriptor,
   values?: { [key: string]: string | number | boolean | Date },
 ) => string;
 

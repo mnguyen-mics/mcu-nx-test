@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
+import { WrappedComponentProps, defineMessages, injectIntl } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../components/Layout/FormLayoutActionbar';
@@ -46,7 +46,7 @@ type Props = InjectedFormProps<Partial<Import>, ImportEditFormProps> &
     datamartId: string;
     exportId: string;
   }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class ImportEditForm extends React.Component<Props> {
   buildFormSections = () => {

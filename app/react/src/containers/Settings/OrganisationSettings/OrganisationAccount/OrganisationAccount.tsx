@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout, Descriptions, Upload, Spin, Image, Tag, Tooltip } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { reduxForm, InjectedFormProps } from 'redux-form';
@@ -108,7 +108,7 @@ export interface EditableLogoStoreProps {
 type Props = OrganisationAccountProps &
   EditableLogoStoreProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFormProps<{ organisation_name: string }> &
   RouteComponentProps<{ organisationId: string }>;
 

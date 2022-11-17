@@ -5,7 +5,7 @@ import moment from 'moment';
 import { compose } from 'recompose';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { Activity } from '../../../../models/timeline/timeline';
 import { Card, Button, Device, Origin } from '@mediarithmics-private/mcs-components-library';
 import EventActivity from './EventActivity';
@@ -47,7 +47,7 @@ export interface ActivityCardProps {
 }
 
 type Props = ActivityCardProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedWorkspaceProps &
   RouteComponentProps<TimelinePageParams>;
 

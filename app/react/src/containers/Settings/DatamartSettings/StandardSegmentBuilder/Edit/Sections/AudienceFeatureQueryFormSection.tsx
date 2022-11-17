@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { injectDrawer } from '../../../../../../components/Drawer';
@@ -27,7 +27,7 @@ interface AudienceFeatureQueryFormSectionProps {
 
 type Props = AudienceFeatureQueryFormSectionProps &
   InjectedDrawerProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ datamartId: string }>;
 

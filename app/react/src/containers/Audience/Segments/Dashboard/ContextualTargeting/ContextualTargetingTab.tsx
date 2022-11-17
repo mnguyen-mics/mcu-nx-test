@@ -2,7 +2,7 @@ import { LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { Col, Row } from 'antd';
 import { ContextualTargetingResource } from '../../../../../models/contextualtargeting/ContextualTargeting';
 import { IContextualTargetingService } from '../../../../../services/ContextualTargetingService';
@@ -34,7 +34,7 @@ interface ContextualTargetingTabProps {
 
 type Props = ContextualTargetingTabProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {

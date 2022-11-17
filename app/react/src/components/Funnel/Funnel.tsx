@@ -18,7 +18,7 @@ import injectNotifications, {
 import { compose } from 'recompose';
 import { uniqBy } from 'lodash';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { funnelMessages } from './Constants';
 import numeral from 'numeral';
 import FunnelStepHover, { DimensionMetrics, GlobalMetrics } from './FunnelStepHover';
@@ -57,7 +57,7 @@ type FunnelProps = {
 };
 
 type Props = FunnelProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<void>;
 

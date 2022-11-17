@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage, defineMessages } from 'react-intl';
 import * as NotificationActions from '../../../redux/Notifications/actions';
 import * as FeatureSelectors from '../../../redux/Features/selectors';
 import { EditAutomationParam, AutomationFormData } from './domain';
@@ -32,7 +32,7 @@ interface MapStateProps {
   notifyError: (err: any) => void;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   MapStateProps &
   RouteComponentProps<EditAutomationParam, {}, { from?: string }>;

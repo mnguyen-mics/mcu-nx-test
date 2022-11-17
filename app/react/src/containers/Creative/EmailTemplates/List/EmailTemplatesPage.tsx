@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import EmailTemplatesActionBar from './EmailTemplatesActionBar';
 import EmailTemplatesTable from './EmailTemplatesTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { CreativesOptions, ICreativeService } from '../../../../services/CreativeService';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
@@ -43,7 +43,7 @@ interface State {
   hasEmailTemplates: boolean;
 }
 
-type JoinedProps = InjectedIntlProps &
+type JoinedProps = WrappedComponentProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
   RouteComponentProps<CampaignRouteParams, {}, { reloadDataSource?: boolean }>;

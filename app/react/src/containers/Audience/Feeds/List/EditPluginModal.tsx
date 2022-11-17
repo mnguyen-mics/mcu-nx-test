@@ -13,7 +13,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { PluginCardModalTab, PluginCardModal } from '@mediarithmics-private/advanced-components';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
-import { injectIntl, defineMessages, InjectedIntlProps } from 'react-intl';
+import { injectIntl, defineMessages, WrappedComponentProps } from 'react-intl';
 import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -31,7 +31,7 @@ export interface EditPluginModalProps {
 
 type Props = EditPluginModalProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   InjectedNotificationProps;
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Modal, Layout } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import { AssetFileResource } from '../../../../models/assets/assets';
 import {
@@ -42,7 +42,7 @@ interface RouterProps {
 }
 
 class AssetListContent extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  RouteComponentProps<RouterProps> & WrappedComponentProps,
   AssetListContentState
 > {
   state = initialState;

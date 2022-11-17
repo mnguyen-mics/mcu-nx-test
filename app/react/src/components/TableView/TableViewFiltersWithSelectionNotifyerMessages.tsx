@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import messages from './messages';
 import { ViewComponentWithFiltersProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-view-filters/TableViewFilters';
@@ -10,7 +10,7 @@ export type TableViewFiltersWithSelectionNotifyerMessagesProps<T> = Omit<
   'selectionNotifyerMessages'
 >;
 
-type Props<T> = TableViewFiltersWithSelectionNotifyerMessagesProps<T> & InjectedIntlProps;
+type Props<T> = TableViewFiltersWithSelectionNotifyerMessagesProps<T> & WrappedComponentProps;
 
 class TableViewFiltersWithSelectionNotifyerMessages<T> extends React.Component<Props<T>> {
   render() {

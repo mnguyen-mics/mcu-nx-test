@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { getPaginatedApiParam, PaginatedApiParam } from '../../../../utils/ApiHelper';
 import { AttributionModel } from '../../../../models/Plugins';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -64,7 +64,7 @@ interface MapStateProps {
 }
 
 type Props = AttributionModelSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateProps &
   RouteComponentProps<{ organisationId: string }>;
 

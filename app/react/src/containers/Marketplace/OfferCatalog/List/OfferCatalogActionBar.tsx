@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps, Link } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from './messages';
 
 interface OfferCatalogActionbarProps {
@@ -10,7 +10,7 @@ interface OfferCatalogActionbarProps {
 }
 
 type JoinedProps = OfferCatalogActionbarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class OfferCatalogActionBar extends React.Component<JoinedProps> {

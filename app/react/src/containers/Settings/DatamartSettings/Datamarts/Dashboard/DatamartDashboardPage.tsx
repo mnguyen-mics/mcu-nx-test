@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import injectNotifications from '../../../../Notifications/injectNotifications';
 import DatamartActionBar from './DatamartActionBar';
@@ -76,7 +76,7 @@ type Props = RouteComponentProps<
   {},
   { activeTab?: string }
 > &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFeaturesProps;
 
 interface State {

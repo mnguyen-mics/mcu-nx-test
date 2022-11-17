@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
@@ -22,7 +22,7 @@ const messages = defineMessages({
   },
 });
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 class RoleFormSection extends React.Component<Props> {
   constructor(props: Props) {

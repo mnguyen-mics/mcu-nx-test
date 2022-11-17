@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout, Progress, Tooltip } from 'antd';
 import { compose } from 'recompose';
@@ -63,7 +63,7 @@ interface ImportRouteParams {
 }
 
 type JoinedProps = RouteComponentProps<ImportRouteParams> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedThemeColorsProps &
   InjectedNotificationProps;
 

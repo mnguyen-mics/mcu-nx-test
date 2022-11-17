@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import { Form } from '@ant-design/compatible';
 import { ConfigProps, reduxForm, InjectedFormProps } from 'redux-form';
 import { FieldNodeFormDataValues } from '../../domain';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import FieldNodeForm from './FieldNodeForm';
@@ -24,7 +24,7 @@ export interface FieldNodeFormWrapperProps extends ConfigProps<FieldNodeFormData
 
 type Props = InjectedFormProps<FieldNodeFormDataValues, FieldNodeFormWrapperProps> &
   FieldNodeFormWrapperProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class FieldNodeFormWrapper extends React.Component<Props, any> {

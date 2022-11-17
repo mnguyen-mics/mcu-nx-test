@@ -2,7 +2,7 @@ import * as React from 'react';
 import { WrappedFieldArrayProps, Validator } from 'redux-form';
 import { Button, Row, Col } from 'antd';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, MessageDescriptor } from 'react-intl';
 
 import { AdGroupsInfosFieldModel } from '../domain';
 import {
@@ -26,7 +26,7 @@ const editableAdGroupProperties: Array<keyof AdGroupResource> = [
 ];
 
 type JoinedProps = WrappedFieldArrayProps<AdGroupsInfosFieldModel> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps;
 
 class AdGroupsInfos extends React.Component<JoinedProps> {
@@ -199,7 +199,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
 export default compose(injectIntl, withValidators)(AdGroupsInfos);
 
 const adGroupPropertiesMessageMap: {
-  [propertyName in keyof Partial<AdGroupResource>]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof Partial<AdGroupResource>]: MessageDescriptor;
 } = defineMessages({
   max_bid_price: {
     id: 'display.campaigns.edit.adgroup.multiEdit.option.maxBidPrice',
@@ -224,7 +224,7 @@ const adGroupPropertiesMessageMap: {
 });
 
 const campaignsActionsMessageMap: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor;
+  [propertyName: string]: MessageDescriptor;
 } = defineMessages({
   equals: {
     id: 'display.campaigns.edit.adgroup.multiEdit.option.equals',

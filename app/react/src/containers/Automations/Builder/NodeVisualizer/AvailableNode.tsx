@@ -5,7 +5,7 @@ import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { generateNodeProperties, NodeProperties } from '../domain';
 import { isAbnNode } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
-import { InjectedIntlProps } from 'react-intl';
+import { WrappedComponentProps } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
@@ -16,7 +16,7 @@ interface AvailableNodeObjectProps {
   isDropped?: boolean;
 }
 
-type AvailableNodeProps = AvailableNodeObjectProps & InjectedIntlProps;
+type AvailableNodeProps = AvailableNodeObjectProps & WrappedComponentProps;
 
 const fieldSource = {
   beginDrag(props: AvailableNodeProps) {

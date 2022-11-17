@@ -1,8 +1,8 @@
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import { FrequencyMode } from './Edit/domain';
 
 export const frequencyModeMessageMap: {
-  [key in FrequencyMode]: FormattedMessage.MessageDescriptor;
+  [key in FrequencyMode]: MessageDescriptor;
 } = defineMessages({
   AT_LEAST: {
     id: 'objectNode.frequency.mode.at-least',

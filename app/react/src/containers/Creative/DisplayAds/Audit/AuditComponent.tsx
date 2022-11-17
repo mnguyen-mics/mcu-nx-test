@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { Button, Modal, Row, Col } from 'antd';
 import moment from 'moment';
-import { FormattedMessage, defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  injectIntl,
+  WrappedComponentProps,
+  MessageDescriptor,
+} from 'react-intl';
 import {
   AuditStatusResource,
   CreativeAuditAction,
@@ -21,7 +27,7 @@ interface State {
   modalVisible: boolean;
 }
 
-type Props = AuditComponentProps & InjectedIntlProps;
+type Props = AuditComponentProps & WrappedComponentProps;
 
 class AuditComponent extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -96,7 +102,7 @@ class AuditComponent extends React.Component<Props, State> {
 export default injectIntl(AuditComponent);
 
 export const auditStatusMessageMap: {
-  [key in AuditStatus]: FormattedMessage.MessageDescriptor;
+  [key in AuditStatus]: MessageDescriptor;
 } = defineMessages({
   AUDIT_PENDING: {
     id: 'creatives.display.audit.status.pending',

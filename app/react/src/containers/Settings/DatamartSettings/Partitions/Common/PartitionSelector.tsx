@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
-import { defineMessages, injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { defineMessages, injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { FormTitle } from '../../../../../components/Form';
 import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import FormLayoutActionbar, {
@@ -31,7 +31,7 @@ export interface PartitionSelectorProps {
   actionbarProps: FormLayoutActionbarProps;
 }
 
-type Props = PartitionSelectorProps & InjectedIntlProps;
+type Props = PartitionSelectorProps & WrappedComponentProps;
 
 class PartitionSelector extends React.Component<Props> {
   render() {

@@ -8,7 +8,7 @@ import { IStandardSegmentBuilderService } from '../../../../../services/Standard
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { messages } from '../messages';
 import {
   StandardSegmentBuilderFormData,
@@ -18,7 +18,7 @@ import { message } from 'antd';
 import { Loading } from '../../../../../components';
 
 type Props = InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{
     datamartId: string;
     organisationId: string;

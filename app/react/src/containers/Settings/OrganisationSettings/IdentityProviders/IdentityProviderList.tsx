@@ -6,7 +6,7 @@ import {
   IIdentityProviderService,
   injectWorkspace,
 } from '@mediarithmics-private/advanced-components';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -29,7 +29,7 @@ interface IdentityProviderSettingsProps {
 
 type Props = IdentityProviderSettingsProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedWorkspaceProps;
 
 // We don't store in the back the mics identity provider but for more comprehensibility we display a fake one on the front

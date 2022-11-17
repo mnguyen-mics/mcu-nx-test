@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import EmailCampaignsTable from './EmailCampaignsTable';
 import {
   updateSearch,
@@ -66,7 +66,7 @@ type Props = RouteComponentProps<{
   organisationId: string;
 }> &
   MapDispatchToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class EmailCampaignListPage extends React.Component<Props, State> {

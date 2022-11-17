@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import {
   HistoryKeys,
   formatToFormattingFunction,
@@ -8,7 +8,7 @@ import {
 import { GoalResource, GoalStatus } from '../../../models/goal/GoalResource';
 
 const goalStatusMessages: {
-  [key in GoalStatus]: FormattedMessage.MessageDescriptor;
+  [key in GoalStatus]: MessageDescriptor;
 } = defineMessages({
   PAUSED: {
     id: 'goal.fields.status.paused',
@@ -21,7 +21,7 @@ const goalStatusMessages: {
 });
 
 const goalPropertiesMessageMap: {
-  [propertyName in keyof GoalResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof GoalResource | HistoryKeys]: MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'goal.fields.id',
@@ -81,7 +81,7 @@ const goalPropertiesMessageMap: {
 const goalPropertiesFormatMap: {
   [propertyName in keyof GoalResource | HistoryKeys]: {
     format: ValueFormat;
-    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+    messageMap?: { [key: string]: MessageDescriptor };
   };
 } = {
   id: { format: 'STRING' },
@@ -110,7 +110,7 @@ export const formatGoalProperty = (
   property: keyof GoalResource | HistoryKeys,
   value?: string,
 ): {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 } => {
   return {

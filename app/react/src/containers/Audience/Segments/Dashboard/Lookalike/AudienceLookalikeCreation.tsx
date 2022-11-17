@@ -17,13 +17,7 @@ import {
 } from '../../../../../components/Form';
 import { injectDatamart } from '../../../../Datamart';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  Messages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -55,10 +49,7 @@ type LookalikeType =
   | 'COHORT_BASED_LOOKALIKE'
   | 'SCORE_BASED_LOOKALIKE';
 
-const messagesMap: {
-  titles: Messages;
-  subtitles: Messages;
-} = {
+const messagesMap = {
   titles: defineMessages({
     PARTITION_BASED_LOOKALIKE: {
       id: 'audience.segments.lookaliketypeSelector.type.partitionBased.title',
@@ -113,7 +104,7 @@ type LookAlikeFormData = Partial<UserLookalikeSegment>;
 
 type Props = AudienceLookalikeCreationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps &
   InjectedFormProps<any, AudienceLookalikeCreationProps> &
   InjectedNotificationProps &
@@ -586,16 +577,17 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
       // see comment above
       authorizedLookalikeTypes.push('SCORE_BASED_LOOKALIKE');
 
-      const subtitleMessage: FormattedMessage.Props = {
-        values: { nbOfTypes: authorizedLookalikeTypes.length },
-        ...messages.lookalikeTypeSelectorsubTitle,
-      };
-
       return (
         <Layout className='edit-layout'>
           <FormLayoutActionbar {...restActionBarProps} />
           <Layout.Content className='mcs-content-container mcs-form-container text-center'>
-            <FormTitle title={messages.lookalikeTypeSelectorTitle} subtitle={subtitleMessage} />
+            <FormTitle
+              title={messages.lookalikeTypeSelectorTitle}
+              subtitle={{
+                values: { nbOfTypes: authorizedLookalikeTypes.length },
+                ...messages.lookalikeTypeSelectorsubTitle,
+              }}
+            />
             <Row className='mcs-selector_container'>
               <Row className='menu'>
                 {authorizedLookalikeTypes.map(type => {

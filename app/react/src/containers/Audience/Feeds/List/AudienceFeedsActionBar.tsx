@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import {
   InjectedDatamartProps,
@@ -30,7 +30,7 @@ import { AudienceTagFeed } from '../../../../models/Plugins';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDatamartProps &
   InjectedNotificationProps &
   InjectedWorkspaceProps;

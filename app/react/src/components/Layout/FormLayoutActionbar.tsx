@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, DispatchProp } from 'react-redux';
 import { FormAction, isSubmitting, submit } from 'redux-form';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, MessageDescriptor } from 'react-intl';
 import { Button } from 'antd';
 import { ButtonProps } from 'antd/lib/button/button';
 import { compose } from 'recompose';
@@ -14,7 +14,7 @@ import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/li
 
 export interface FormLayoutActionbarProps extends Omit<ActionbarProps, 'edition'> {
   formId?: string;
-  message?: FormattedMessage.MessageDescriptor;
+  message?: MessageDescriptor;
   onClose?: React.MouseEventHandler<HTMLSpanElement>;
   disabled?: boolean;
   convert2Otql?: () => Promise<DataResponse<QueryTranslationResource>>;

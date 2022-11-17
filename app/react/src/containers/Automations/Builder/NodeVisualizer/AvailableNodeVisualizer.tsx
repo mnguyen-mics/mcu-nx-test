@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Collapse } from 'antd';
 import AvailableNode from './AvailableNode';
 import { ScenarioNodeShape, IfNodeResource } from '../../../../models/automations/automations';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
@@ -139,7 +139,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps;
+type Props = RouteComponentProps<RouterProps> & WrappedComponentProps;
 
 class AvailableNodeVisualizer extends React.Component<Props, State> {
   @lazyInject(TYPES.IPluginService)

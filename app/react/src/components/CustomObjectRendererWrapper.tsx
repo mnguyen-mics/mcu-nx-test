@@ -1,6 +1,6 @@
 import * as React from 'react';
 import CustomObjectRenderer from './CustomObjectRenderer';
-import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { Row } from 'antd';
 import { AnyJson } from '../models/datamart/UserActivityResource';
 
@@ -33,7 +33,7 @@ interface CustomObjectRendererWrapperProps {
   customRenderingTemplates: RenderingTemplates;
 }
 
-type Props = CustomObjectRendererWrapperProps & InjectedIntlProps;
+type Props = CustomObjectRendererWrapperProps & WrappedComponentProps;
 
 export type ExpandAllStatus = 'INIT_OR_NOT_NEEDED' | 'EXPAND_ALL' | 'COLLAPSE_ALL';
 

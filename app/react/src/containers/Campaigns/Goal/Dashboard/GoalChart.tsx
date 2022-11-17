@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from './messages';
 import {
   DATE_SEARCH_SETTINGS,
@@ -64,7 +64,7 @@ interface RouterProps {
   goalId: string;
 }
 
-type JoinedProps = InjectedIntlProps &
+type JoinedProps = WrappedComponentProps &
   InjectedThemeColorsProps &
   InjectedNotificationProps &
   RouteComponentProps<RouterProps>;

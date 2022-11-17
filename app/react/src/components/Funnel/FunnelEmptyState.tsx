@@ -5,9 +5,9 @@ import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { updateSearch } from '../../utils/LocationSearchHelper';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 
-type Props = InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
+type Props = WrappedComponentProps & RouteComponentProps<{ organisationId: string }>;
 class FunnelEmptyState extends React.Component<Props> {
   constructor(props: Props) {
     super(props);

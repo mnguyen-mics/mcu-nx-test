@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import {
+  WrappedComponentProps,
+  injectIntl,
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import {
   FormInput,
   FormSection,
@@ -27,7 +33,7 @@ import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { getFormValues, change } from 'redux-form';
 
 export const messages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   sectionGeneralTitle: {
     id: 'automation.builder.node.waitNodeForm.general.title',
@@ -155,7 +161,7 @@ interface MapStateToProps {
 }
 
 type Props = GeneralInformationFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   MapStateToProps &
   DispatchProp<any> &

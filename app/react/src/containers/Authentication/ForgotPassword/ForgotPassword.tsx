@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { Input, Button, Alert, Col, Row, Form } from 'antd';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import messages from './messages';
@@ -10,7 +10,7 @@ import { IAuthService } from '@mediarithmics-private/advanced-components';
 
 const FormItem = Form.Item;
 
-type Props = InjectedIntlProps & FormComponentProps;
+type Props = WrappedComponentProps & FormComponentProps;
 
 const ForgotPassword = (props: Props) => {
   const [form] = Form.useForm();

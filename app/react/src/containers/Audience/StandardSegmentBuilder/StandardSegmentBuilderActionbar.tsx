@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
+import { WrappedComponentProps, FormattedMessage, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { messages } from './constants';
 import menuMessages from '../../Menu/messages';
@@ -21,7 +21,7 @@ interface State {
   segmentModalLoading: boolean;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   StandardSegmentBuilderActionbarProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
   InjectedFeaturesProps;

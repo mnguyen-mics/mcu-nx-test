@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'antd';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import Menu from 'antd/lib/menu';
@@ -29,7 +29,7 @@ export interface FilterParams extends PaginationSearchSettings, KeywordSearchSet
 }
 
 type JoinedProps = AutomationActionbarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, message, Modal, Menu } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import {
@@ -82,7 +82,7 @@ export interface FilterParams
 }
 
 type JoinedProps = DisplayCampaignsActionbarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 

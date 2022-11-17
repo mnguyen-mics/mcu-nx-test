@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -28,7 +28,7 @@ export interface DatamartReplicationEditFormProps
 
 type Props = InjectedFormProps<DatamartReplicationFormData, DatamartReplicationEditFormProps> &
   DatamartReplicationEditFormProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 export const FORM_ID = 'datamartReplicationForm';
 

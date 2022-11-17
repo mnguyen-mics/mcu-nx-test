@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import moment from 'moment';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -36,7 +36,7 @@ interface DatamartReplicationJobTableProps {
 }
 
 type Props = DatamartReplicationJobTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedThemeColorsProps &
   InjectedNotificationProps &
   RouteComponentProps<{

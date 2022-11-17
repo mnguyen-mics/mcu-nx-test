@@ -5,7 +5,7 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps, UploadFile, UploadChangeParam } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { FormFieldWrapper } from './index';
 
 export interface FormUploadProps {
@@ -22,7 +22,7 @@ interface State {
   file?: UploadFile;
 }
 
-type JoinedProps = FormUploadProps & WrappedFieldProps & InjectedIntlProps;
+type JoinedProps = FormUploadProps & WrappedFieldProps & WrappedComponentProps;
 
 /**
  * TODO generalize this component as it is too coupled to plugin property type ASSET_FILE

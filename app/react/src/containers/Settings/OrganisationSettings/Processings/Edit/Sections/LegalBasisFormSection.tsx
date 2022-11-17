@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from '../../messages';
 import { FormSection, FormInputField, FormInput } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 
-type Props = InjectedIntlProps & ValidatorProps;
+type Props = WrappedComponentProps & ValidatorProps;
 
 class LegalBasisFormSection extends React.Component<Props> {
   render() {

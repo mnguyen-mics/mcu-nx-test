@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 
 import * as FeatureSelectors from '../../../../../redux/Features/selectors';
 import {
@@ -31,7 +31,7 @@ interface State {
   loading: boolean;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<EditDatamartRouteMatchParam, {}, { from?: string; datamartId?: string }> &
   InjectedDatamartProps;

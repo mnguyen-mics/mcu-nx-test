@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import messages from './messages';
 import { TableViewProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableView } from '@mediarithmics-private/mcs-components-library';
 
-type Props<T> = TableViewProps<T> & InjectedIntlProps;
+type Props<T> = TableViewProps<T> & WrappedComponentProps;
 
 class TableViewWithSelectionNotifyerMessages<T> extends React.Component<Props<T>> {
   render() {

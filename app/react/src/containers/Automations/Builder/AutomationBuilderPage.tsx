@@ -1,7 +1,7 @@
 import queryString from 'query-string';
 import * as React from 'react';
 import { message, Layout } from 'antd';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -60,7 +60,7 @@ interface State {
 type Props = RouteComponentProps<AutomationBuilderPageRouteParams> &
   MapStateToProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFeaturesProps;
 
 class AutomationBuilderPage extends React.Component<Props, State> {

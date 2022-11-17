@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Row, Layout, Modal, Tooltip } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { Index } from '../../../../../utils';
 import messages from './messages';
 import {
@@ -46,7 +46,7 @@ interface DatamartReplicationJobListContainerProps {
 type Props = DatamartReplicationJobListContainerProps &
   RouteComponentProps<DatamartReplicationRouteMatchParam> &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps;
 
 class DatamartReplicationJobListContainer extends React.Component<Props> {

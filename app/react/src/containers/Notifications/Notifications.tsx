@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { notification as antNotification, Button } from 'antd';
-import { injectIntl, defineMessages, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, defineMessages, WrappedComponentProps, MessageDescriptor } from 'react-intl';
 import * as notificationsActions from '../../redux/Notifications/actions';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
 import { ArgsProps } from 'antd/lib/notification';
@@ -54,8 +54,8 @@ export interface Notification {
   };
   newVersion: boolean;
   onClose: () => void;
-  intlMessage: FormattedMessage.MessageDescriptor;
-  intlDescription: FormattedMessage.MessageDescriptor;
+  intlMessage: MessageDescriptor;
+  intlDescription: MessageDescriptor;
 }
 
 interface NotificationsProps {
@@ -66,7 +66,7 @@ interface MapStateToProps {
   removeNotification: (uid: string) => void;
 }
 
-type Props = NotificationsProps & MapStateToProps & InjectedIntlProps;
+type Props = NotificationsProps & MapStateToProps & WrappedComponentProps;
 
 class Notifications extends React.Component<Props> {
   componentDidUpdate(previousProps: Props) {

@@ -5,7 +5,7 @@ import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage, defineMessages } from 'react-intl';
 import { Layout, Button, Modal, message, Input, Alert } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
@@ -153,7 +153,7 @@ interface RouterProps {
 }
 
 type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps &
   InjectedNotificationProps;
 

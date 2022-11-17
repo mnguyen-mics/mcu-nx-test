@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Layout, Row, Breadcrumb } from 'antd';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage, defineMessages } from 'react-intl';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { ICatalogService } from '../../../../../services/CatalogService';
 import ItemList, { Filters } from '../../../../../components/ItemList';
@@ -105,7 +105,7 @@ interface State {
   total: number;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> & WrappedComponentProps & InjectedNotificationProps;
 
 class SubscribedOffersListPage extends React.Component<Props, State> {
   @lazyInject(TYPES.ICatalogService)

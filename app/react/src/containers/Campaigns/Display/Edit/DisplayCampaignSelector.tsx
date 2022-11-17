@@ -3,7 +3,7 @@ import { Layout, Row } from 'antd';
 import { FormLayoutActionbar } from '../../../../components/Layout';
 import { FormTitle } from '../../../../components/Form';
 import { MenuPresentational } from '@mediarithmics-private/mcs-components-library';
-import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayoutActionbar';
 import { DisplayCampaignSubType } from '../../../../models/campaign/constants';
@@ -15,7 +15,7 @@ export interface DisplayCampaignSelectorProps {
   close: () => void;
 }
 
-type Props = DisplayCampaignSelectorProps & InjectedIntlProps;
+type Props = DisplayCampaignSelectorProps & WrappedComponentProps;
 
 const messages = defineMessages({
   displayCampaignTypePickerTitle: {

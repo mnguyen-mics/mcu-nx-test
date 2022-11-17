@@ -12,7 +12,7 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { getFormattedQuery } from '../domain';
 import messages from './messages';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
@@ -37,7 +37,7 @@ interface State {
   loading: boolean;
 }
 
-type Props = TopInfoProps & InjectedIntlProps;
+type Props = TopInfoProps & WrappedComponentProps;
 
 class TopInfo extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)

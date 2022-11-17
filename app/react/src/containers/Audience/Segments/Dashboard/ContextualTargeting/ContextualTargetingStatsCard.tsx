@@ -2,7 +2,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import { Button, Dropdown, Menu, Statistic, Steps } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
   ContextualTargetingResource,
@@ -23,7 +23,7 @@ interface ContextualTargetingStatsCardProps {
   onEdit: () => void;
 }
 
-type Props = ContextualTargetingStatsCardProps & InjectedIntlProps;
+type Props = ContextualTargetingStatsCardProps & WrappedComponentProps;
 
 class ContextualTargetingStatsCard extends React.Component<Props> {
   getStepIndex = (status?: ContextualTargetingStatus) => {

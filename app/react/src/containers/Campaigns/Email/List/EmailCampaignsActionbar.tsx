@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, message } from 'antd';
 import { compose } from 'recompose';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../services/ExportService';
 import ReportService from '../../../../services/ReportService';
@@ -21,7 +21,7 @@ interface State {
   exportIsRunning: boolean;
 }
 
-type Props = InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
+type Props = WrappedComponentProps & RouteComponentProps<{ organisationId: string }>;
 
 class EmailCampaignsActionbar extends React.Component<Props, State> {
   @lazyInject(TYPES.IEmailCampaignService)

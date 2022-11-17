@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 
@@ -33,7 +33,7 @@ interface PartitionActionBarProps {
 interface PartitionActionBarState {}
 
 type JoinedProps = PartitionActionBarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string; datamart: string }>;
 
 class PartitionActionBar extends React.Component<JoinedProps, PartitionActionBarState> {

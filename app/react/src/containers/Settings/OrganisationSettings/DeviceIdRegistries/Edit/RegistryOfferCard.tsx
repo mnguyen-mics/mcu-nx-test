@@ -2,7 +2,7 @@ import { FileOutlined } from '@ant-design/icons/lib/icons';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import { Button, Tag } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
   DeviceIdRegistryOfferResource,
@@ -16,7 +16,7 @@ export interface RegistryOfferCardProps {
   action: (id: string) => void;
 }
 
-export type Props = RegistryOfferCardProps & InjectedIntlProps;
+export type Props = RegistryOfferCardProps & WrappedComponentProps;
 
 interface State {}
 

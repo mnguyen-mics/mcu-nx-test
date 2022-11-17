@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { FormSection } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
@@ -16,7 +16,7 @@ interface PluginInstanceFormSectionProps {
   disabled?: boolean;
 }
 
-type Props = PluginInstanceFormSectionProps & InjectedIntlProps & ValidatorProps;
+type Props = PluginInstanceFormSectionProps & WrappedComponentProps & ValidatorProps;
 
 class PluginInstanceFormSection extends React.Component<Props> {
   render() {

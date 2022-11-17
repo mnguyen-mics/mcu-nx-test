@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import cuid from 'cuid';
 import { WrappedFieldArrayProps } from 'redux-form';
@@ -21,7 +21,7 @@ export interface TemplateFormSectionProps extends ReduxFormChangeProps {
   disabled?: boolean;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   WrappedFieldArrayProps<TemplateFieldModel> &
   TemplateFormSectionProps &
   InjectedDrawerProps &

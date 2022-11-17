@@ -19,7 +19,7 @@ import {
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { compose } from 'recompose';
 import { McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
-import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import {
@@ -110,7 +110,7 @@ export interface QueryResultRendererProps {
 type Props = QueryResultRendererProps &
   InjectedFeaturesProps &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 interface State {
   aggregationsPath: BucketPath[];

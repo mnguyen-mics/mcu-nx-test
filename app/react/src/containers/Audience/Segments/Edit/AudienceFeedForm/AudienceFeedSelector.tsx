@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { MenuList, MenuPresentational } from '@mediarithmics-private/mcs-components-library';
 import { FeedAction } from './domain';
 import { compose } from 'recompose';
@@ -15,7 +15,7 @@ export interface AudienceFeedSelectorProps {
 }
 
 type Props = AudienceFeedSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFeaturesProps &
   InjectedWorkspaceProps;
 

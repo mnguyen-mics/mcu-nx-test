@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { Row, Col, Layout } from 'antd';
 import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
@@ -50,7 +50,7 @@ interface MonitoringProps {
 
 type Props = MonitoringProps &
   MapStateToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<TimelinePageParams>;
 
 class Monitoring extends React.Component<Props, State> {

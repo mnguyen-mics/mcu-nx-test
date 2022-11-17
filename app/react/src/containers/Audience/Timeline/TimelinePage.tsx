@@ -3,7 +3,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { getWorkspace } from '../../../redux/Session/selectors';
 import Monitoring from './Monitoring';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
@@ -40,7 +40,7 @@ interface MapStateToProps {
 }
 
 type JoinedProps = MapStateToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<TimelinePageParams>;
 

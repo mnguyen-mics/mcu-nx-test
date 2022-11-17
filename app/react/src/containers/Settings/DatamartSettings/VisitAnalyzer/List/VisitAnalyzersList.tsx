@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { Modal, Button, Layout } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { IPluginService } from '../../../../../services/PluginService';
@@ -62,7 +62,7 @@ interface RouterProps {
 }
 
 class VisitAnalyzersList extends Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  RouteComponentProps<RouterProps> & WrappedComponentProps,
   VisitAnalyzerContentState
 > {
   state = initialState;

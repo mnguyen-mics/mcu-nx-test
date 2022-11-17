@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
 import withValidators, { ValidatorProps } from '../../../../components/Form/withValidators';
@@ -71,7 +71,7 @@ interface MapStateToProps {
   formValues: Partial<Import>;
 }
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps & MapStateToProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps & MapStateToProps;
 
 interface State {
   displayAdvancedSection: boolean;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { Alert } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { AudienceSegmentResource } from '../../../../../models/audiencesegment';
@@ -35,7 +35,7 @@ const messages = defineMessages({
 });
 
 type Props = LookalikeStatusWarningProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }>;
 
 class LookalikeStatusWarning extends React.Component<Props, any> {

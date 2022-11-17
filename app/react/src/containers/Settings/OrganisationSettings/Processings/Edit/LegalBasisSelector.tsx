@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
 import messages from '../messages';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { MessageDescriptor, WrappedComponentProps, injectIntl } from 'react-intl';
 import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { LegalBasis } from '../../../../../models/processing';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
@@ -23,7 +23,7 @@ interface MapStateToProps {
 }
 
 type Props = LegalBasisSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -42,7 +42,7 @@ class LegalBasisSelector extends React.Component<Props> {
     } = this.props;
     const legalBasisValues: Array<{
       value: LegalBasis;
-      subtitle: FormattedMessage.MessageDescriptor;
+      subtitle: MessageDescriptor;
     }> = [
       {
         value: 'CONSENT',
@@ -68,7 +68,7 @@ class LegalBasisSelector extends React.Component<Props> {
 
     const returnMenuList = (item: {
       value: LegalBasis;
-      subtitle: FormattedMessage.MessageDescriptor;
+      subtitle: MessageDescriptor;
     }): JSX.Element => {
       const { value, subtitle } = item;
 

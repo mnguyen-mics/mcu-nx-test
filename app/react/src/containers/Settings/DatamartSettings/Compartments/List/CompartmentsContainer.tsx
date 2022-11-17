@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import messages from './messages';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IDatamartService } from '../../../../../services/DatamartService';
@@ -31,7 +31,7 @@ export interface CompartmentsContainerProps {
 
 type Props = CompartmentsContainerProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class CompartmentsContainer extends React.Component<Props, CompartmentsContainerState> {

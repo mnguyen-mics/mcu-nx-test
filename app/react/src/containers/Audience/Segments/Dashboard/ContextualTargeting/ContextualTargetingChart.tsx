@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import {
   AreaChartSlider,
   Card,
@@ -29,7 +29,7 @@ interface ContextualTargetingChartProps {
   createContextualTargeting: () => void;
 }
 
-type Props = ContextualTargetingChartProps & InjectedIntlProps;
+type Props = ContextualTargetingChartProps & WrappedComponentProps;
 
 interface State {
   isLoading: boolean;

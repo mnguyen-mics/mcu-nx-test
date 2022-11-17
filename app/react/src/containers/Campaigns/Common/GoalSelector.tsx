@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GoalResource } from '../../../models/goal';
@@ -60,7 +60,7 @@ export interface GoalSelectorProps {
 }
 
 type Props = GoalSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 

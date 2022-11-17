@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Row, Menu, Col } from 'antd';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, MessageDescriptor } from 'react-intl';
 import FormTitle, { FormTitleProps } from './FormTitle';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import { McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
@@ -9,7 +9,7 @@ const { Dropdown } = PopupContainer;
 
 interface DropdownButtonItemProps {
   id: string;
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   onClick: () => void;
   disabled?: boolean;
 }

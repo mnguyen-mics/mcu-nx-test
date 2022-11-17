@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { FormInput, FormSection, FormInputField } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
@@ -31,7 +31,7 @@ interface GeneralInformationFormSectionProps {
 }
 
 type Props = GeneralInformationFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   NormalizerProps;
 

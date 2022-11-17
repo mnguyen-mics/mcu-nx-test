@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ActionFunctionAny, ActionMeta } from 'redux-actions';
 import { compose } from 'recompose';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl, WrappedComponentProps } from 'react-intl';
 import { Input, Button, Form, Alert, Switch, Divider } from 'antd';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import log from '../../../utils/Logger';
@@ -76,7 +76,7 @@ interface MapDispatchToProps {
 
 type Props = MapStateToProps &
   MapDispatchToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   FormComponentProps &
   RouteComponentProps<{}, {}, { from?: string }>;
 

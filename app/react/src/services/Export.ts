@@ -1,4 +1,4 @@
-import { FormattedMessage, MessageValue } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 import { funnelMessages } from '../components/Funnel/Constants';
 import { FunnelSheetDescription } from '../containers/Audience/Funnel/FunnelPage';
 import {
@@ -33,8 +33,8 @@ const exportMultipleGroupByDimensions = (
 };
 
 type FormatMessage = (
-  messageDescriptor: FormattedMessage.MessageDescriptor,
-  values?: { [key: string]: MessageValue },
+  messageDescriptor: MessageDescriptor,
+  values?: Record<string, string | number | boolean | null | undefined | Date>,
 ) => string;
 
 const exportSimpleGroupByDimension = (
@@ -136,10 +136,7 @@ export const exportFunnel = (
   funnelResources: FunnelSheetDescription[],
   datamartId: string,
   organisationId: string,
-  formatMessage: (
-    messageDescriptor: FormattedMessage.MessageDescriptor,
-    values?: { [key: string]: MessageValue },
-  ) => string,
+  formatMessage: FormatMessage,
 ) => {
   const sheets = funnelResources.map(funnelResource => {
     const titleLine = funnelResource.title;

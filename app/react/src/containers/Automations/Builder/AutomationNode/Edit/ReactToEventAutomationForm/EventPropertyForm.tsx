@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { connect, DispatchProp } from 'react-redux';
 import { compose } from 'recompose';
 import { change, formValueSelector, InjectedFormProps } from 'redux-form';
@@ -43,7 +43,7 @@ interface MapStateToProps {
 }
 
 type Props = EventPropertyFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   MapStateToProps &
   DispatchProp<any> &

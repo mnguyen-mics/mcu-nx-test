@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Input, Button, Alert, Row, Col } from 'antd';
 import { Form } from '@ant-design/compatible';
 import FormItem from 'antd/lib/form/FormItem';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
@@ -13,7 +13,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IAuthService } from '@mediarithmics-private/advanced-components';
 
-type Props = InjectedIntlProps & FormComponentProps & RouteComponentProps<{}>;
+type Props = WrappedComponentProps & FormComponentProps & RouteComponentProps<{}>;
 
 interface State {
   isRequesting: boolean;

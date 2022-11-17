@@ -9,7 +9,7 @@ import messages from '../messages';
 import { ProcessingFormData } from '../domain';
 import ProcessingEditForm, { FORM_ID } from './ProcessingEditForm';
 import LegalBasisSelector from './LegalBasisSelector';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
@@ -23,7 +23,7 @@ export interface EditProcessingRouteMatchParams {
   processingId: string;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<EditProcessingRouteMatchParams, {}, { from?: string }>;
 

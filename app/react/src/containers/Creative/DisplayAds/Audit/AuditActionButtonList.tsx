@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { Modal, Button } from 'antd';
 import { CreativeAuditAction } from '../../../../models/creative/CreativeResource';
-import { FormattedMessage, defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  injectIntl,
+  WrappedComponentProps,
+  MessageDescriptor,
+} from 'react-intl';
 
 export interface AuditActionButtonListProps {
   auditActions: CreativeAuditAction[];
@@ -9,7 +15,7 @@ export interface AuditActionButtonListProps {
 }
 
 class AuditActionButtonList extends React.Component<
-  AuditActionButtonListProps & InjectedIntlProps
+  AuditActionButtonListProps & WrappedComponentProps
 > {
   confirmMakeAuditAction = (auditAction: CreativeAuditAction) => {
     const { confirmAuditAction, intl } = this.props;
@@ -46,7 +52,7 @@ class AuditActionButtonList extends React.Component<
 export default injectIntl(AuditActionButtonList);
 
 export const auditActionMessageMap: {
-  [key in CreativeAuditAction]: FormattedMessage.MessageDescriptor;
+  [key in CreativeAuditAction]: MessageDescriptor;
 } = defineMessages({
   START_AUDIT: {
     id: 'creatives.audit.action.start',
@@ -67,7 +73,7 @@ export const auditActionMessageMap: {
 });
 
 export const confirmAuditActionTitleMap: {
-  [key in CreativeAuditAction]: FormattedMessage.MessageDescriptor;
+  [key in CreativeAuditAction]: MessageDescriptor;
 } = defineMessages({
   START_AUDIT: {
     id: 'creatives.audit.action.start.confirm.title',
@@ -88,7 +94,7 @@ export const confirmAuditActionTitleMap: {
 });
 
 export const confirmAuditActionContentMap: {
-  [key in CreativeAuditAction]: FormattedMessage.MessageDescriptor;
+  [key in CreativeAuditAction]: MessageDescriptor;
 } = defineMessages({
   START_AUDIT: {
     id: 'creatives.audit.action.start.confirm.content',
@@ -111,7 +117,7 @@ export const confirmAuditActionContentMap: {
 });
 
 export const confirmAuditActionOkTestMap: {
-  [key in CreativeAuditAction]: FormattedMessage.MessageDescriptor;
+  [key in CreativeAuditAction]: MessageDescriptor;
 } = defineMessages({
   START_AUDIT: {
     id: 'creatives.audit.action.start.confirm.oktext',

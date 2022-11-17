@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
 import { DisplayCreativeCreator } from './index';
 import messages from './messages';
@@ -23,7 +23,7 @@ interface State {
 
 type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams, {}, { from?: string }> &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class EditDisplayCreativePage extends React.Component<Props, State> {
   @lazyInject(TYPES.ICreativeService)

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps, Field, GenericField } from 'redux-form';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Row, Col } from 'antd';
 
 import messages from './messages';
@@ -14,7 +14,7 @@ interface FormLinkedSelectInputModel {
   rightValue: string;
 }
 
-type JoinedProps = InjectedIntlProps &
+type JoinedProps = WrappedComponentProps &
   FormLinkedSelectInputProps &
   WrappedFieldArrayProps<FormLinkedSelectInputModel>;
 

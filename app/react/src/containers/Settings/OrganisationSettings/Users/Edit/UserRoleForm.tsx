@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { Button, Form, Input, AutoComplete, Radio, Space, message } from 'antd';
 import { messages } from '../List/messages';
 import { UserCreationWithRoleResource } from '../../../../../models/directory/UserResource';
@@ -63,7 +63,7 @@ type Props = UserRoleFormProps &
   MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; userId: string }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class UserRoleForm extends React.Component<Props, State> {
   @lazyInject(TYPES.IOrganisationService)

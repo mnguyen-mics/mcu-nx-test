@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { getWorkspace } from '../../../redux/Session/selectors';
 import {
   parseSearch,
@@ -39,7 +39,7 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & MapStateToProps;
+type Props = RouteComponentProps<RouterProps> & WrappedComponentProps & MapStateToProps;
 
 class ImportContent extends React.Component<Props, State> {
   constructor(props: Props) {

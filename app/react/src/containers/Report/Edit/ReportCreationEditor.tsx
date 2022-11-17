@@ -14,7 +14,7 @@ import {
 } from 'redux-form';
 import { compose } from 'recompose';
 import { Layout, Row, Button, Col } from 'antd';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -66,7 +66,7 @@ interface State {
 }
 
 type JoinedProps = ReportCreationEditorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFormProps &
   RouteComponentProps<any> &
   ValidatorProps &

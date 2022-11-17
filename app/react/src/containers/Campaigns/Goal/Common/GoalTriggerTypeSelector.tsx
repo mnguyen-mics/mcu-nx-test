@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { FormTitle } from '../../../../components/Form';
 import { MenuList, MenuPresentational } from '@mediarithmics-private/mcs-components-library';
 import { QueryLanguage, DatamartResource } from '../../../../models/datamart/DatamartResource';
@@ -44,7 +44,7 @@ interface GoalTriggerTypeSelectorProps {
   datamart: DatamartResource;
 }
 
-type Props = GoalTriggerTypeSelectorProps & InjectedIntlProps;
+type Props = GoalTriggerTypeSelectorProps & WrappedComponentProps;
 
 class GoalTriggerTypeSelector extends React.Component<Props> {
   render() {

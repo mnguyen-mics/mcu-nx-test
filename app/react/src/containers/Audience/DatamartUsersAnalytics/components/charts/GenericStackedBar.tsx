@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 
 export interface GenericStackedBarProps {
@@ -12,7 +12,7 @@ export interface MapData {
   [key: string]: string | number | number[];
 }
 
-type Props = GenericStackedBarProps & InjectedIntlProps;
+type Props = GenericStackedBarProps & WrappedComponentProps;
 
 class GenericStackedBar extends React.Component<Props> {
   render() {

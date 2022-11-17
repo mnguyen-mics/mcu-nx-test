@@ -1,7 +1,7 @@
 import React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { DisplayStackedAreaChart, MediaPerformanceTable, GoalStackedAreaChart } from '../Charts';
 import messages from '../messages';
@@ -21,7 +21,7 @@ export interface DisplayCampaignDashboardProps {
 
 type Props = DisplayCampaignDashboardProps &
   RouteComponentProps<{ organisationId: string; campaignId: string }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class DisplayCampaignDashboard extends React.Component<Props> {
   render() {

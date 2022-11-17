@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import SegmentsTag from './SegmentsTag';
 import messages from '../messages';
@@ -22,7 +22,7 @@ interface State {
 
 type Props = SegmentsCardProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<TimelinePageParams>;
 
 class SegmentsCard extends React.Component<Props, State> {

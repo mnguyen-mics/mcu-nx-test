@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout, Button, Modal, Spin, Upload, message, Input } from 'antd';
 import MlAlgorithmModelResource from '../../../../../models/mlAlgorithmModel/MlAlgorithmModelResource';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
 import { TYPES } from '../../../../../constants/types';
@@ -58,7 +58,7 @@ interface RouterProps {
 
 type JoinedProps = RouteComponentProps<RouterProps> &
   ValidatorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModelsListState> {

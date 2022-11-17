@@ -1,6 +1,6 @@
 import { Button, Dropdown, Menu } from 'antd';
 import * as React from 'react';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { SaveAsExportModal, SaveAsUserQuerySegmentModal } from '.';
 import injectNotifications, {
@@ -37,7 +37,7 @@ interface State {
 }
 
 type Props = SaveQueryAsActionBarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedFeaturesProps;
 

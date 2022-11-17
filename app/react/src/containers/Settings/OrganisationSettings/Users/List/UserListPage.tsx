@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { Button, Layout, Select, Drawer, Modal, Switch, Input, Tooltip } from 'antd';
 import { messages } from './messages';
 import injectNotifications, {
@@ -45,7 +45,7 @@ export interface RouterProps {
 }
 
 type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedWorkspaceProps;
 

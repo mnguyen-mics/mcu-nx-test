@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import OfferTypeSelector from './OfferTypeSelector';
 import CreateOfferForm from './CreateOfferForm';
@@ -27,7 +27,7 @@ interface State {
 
 type Props = RouteComponentProps<{ organisationId: string; offerId?: string }> &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class EditOfferPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IServiceOfferPageService)

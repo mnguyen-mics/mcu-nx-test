@@ -4,7 +4,7 @@ import { Form } from '@ant-design/compatible';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { ConfigProps, InjectedFormProps, reduxForm } from 'redux-form';
 import { CleaningRuleFormData } from './domain';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { CleaningRuleType } from '../../../../../models/cleaningRules/CleaningRules';
@@ -37,7 +37,7 @@ export interface CleaningRuleEditFormProps extends Omit<ConfigProps<CleaningRule
 
 type Props = InjectedFormProps<CleaningRuleFormData, CleaningRuleEditFormProps> &
   CleaningRuleEditFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class CleaningRuleEditForm extends React.Component<Props> {

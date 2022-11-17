@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -19,7 +19,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import CreateFeedPresetSelectionPage from './CreateFeedPresetSelectionPage';
 import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
 
-type JoinedProps = InjectedIntlProps &
+type JoinedProps = WrappedComponentProps &
   RouteComponentProps<FeedRouteParams> &
   InjectedNotificationProps;
 

@@ -1,4 +1,4 @@
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import {
   HistoryKeys,
   formatToFormattingFunction,
@@ -7,7 +7,7 @@ import {
 import { GenericCreativeResource, CreativeSubtype } from '../../models/creative/CreativeResource';
 
 const creativeSubtypeMessages: {
-  [key in CreativeSubtype]: FormattedMessage.MessageDescriptor;
+  [key in CreativeSubtype]: MessageDescriptor;
 } = defineMessages({
   BANNER: {
     id: 'creative.fields.subtype.banner',
@@ -28,7 +28,7 @@ const creativeSubtypeMessages: {
 });
 
 const creativePropertiesMessageMap: {
-  [propertyName in keyof GenericCreativeResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof GenericCreativeResource | HistoryKeys]: MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'creative.fields.id',
@@ -116,7 +116,7 @@ const creativePropertiesMessageMap: {
 const creativePropertiesFormatMap: {
   [propertyName in keyof GenericCreativeResource | HistoryKeys]: {
     format: ValueFormat;
-    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+    messageMap?: { [key: string]: MessageDescriptor };
   };
 } = {
   organisation_id: { format: 'STRING' },
@@ -152,7 +152,7 @@ function formatCreativeProperty(
   property: keyof GenericCreativeResource | HistoryKeys,
   value?: string,
 ): {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 } {
   return {

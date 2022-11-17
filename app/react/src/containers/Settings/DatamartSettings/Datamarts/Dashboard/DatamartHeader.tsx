@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
@@ -10,7 +10,7 @@ export interface DatamartHeaderProps {
   isLoading?: boolean;
 }
 
-type Props = DatamartHeaderProps & InjectedIntlProps;
+type Props = DatamartHeaderProps & WrappedComponentProps;
 
 class DatamartHeader extends React.Component<Props> {
   render() {

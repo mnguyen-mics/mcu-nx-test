@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import queryString from 'query-string';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -43,7 +43,7 @@ interface QueryToolPageState {
 
 type Props = RouteComponentProps<QueryToolPageRouteParams> &
   MapStateToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 const messages = defineMessages({

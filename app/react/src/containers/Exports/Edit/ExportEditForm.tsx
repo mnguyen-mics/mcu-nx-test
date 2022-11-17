@@ -3,7 +3,7 @@ import { Layout, Alert } from 'antd';
 import { compose } from 'recompose';
 import { Form, reduxForm, InjectedFormProps, ConfigProps, Field, GenericField } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
-import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
+import { WrappedComponentProps, defineMessages, injectIntl } from 'react-intl';
 
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -64,7 +64,7 @@ const FormOTQL: FieldCtor<OTQLInputEditorProps> =
 
 type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   ExportEditFormProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class ExportEditForm extends React.Component<Props> {
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {

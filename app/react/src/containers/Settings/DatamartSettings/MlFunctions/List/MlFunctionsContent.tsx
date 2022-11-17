@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { Modal, Button, Layout } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import {
@@ -66,7 +66,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> & WrappedComponentProps & InjectedNotificationProps;
 
 class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
   @lazyInject(TYPES.IMlFunctionService)

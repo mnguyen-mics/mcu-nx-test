@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from '../../messages';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
@@ -22,7 +22,7 @@ interface MapStateToProps {
   initialFormValues: Partial<DisplayCampaignFormData>;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   MapStateToProps &
   NormalizerProps &

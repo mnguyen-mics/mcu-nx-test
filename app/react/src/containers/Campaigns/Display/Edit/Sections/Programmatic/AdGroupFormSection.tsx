@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -16,7 +16,7 @@ import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectD
 
 export interface AdGroupFormSectionProps extends ReduxFormChangeProps {}
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   WrappedFieldArrayProps<AdGroupFieldModel> &
   AdGroupFormSectionProps &
   InjectedDrawerProps &

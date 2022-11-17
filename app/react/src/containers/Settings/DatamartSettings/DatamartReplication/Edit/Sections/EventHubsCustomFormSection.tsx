@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from '../../List/messages';
 import { FormInput, FormSection, FormInputField } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
@@ -9,7 +9,7 @@ import { FormDataFileField, FormDataFile } from '@mediarithmics-private/advanced
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DatamartReplicationRouteMatchParam } from '../domain';
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   NormalizerProps &
   RouteComponentProps<DatamartReplicationRouteMatchParam>;

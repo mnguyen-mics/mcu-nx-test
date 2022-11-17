@@ -6,7 +6,7 @@ import {
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button, Dropdown, message, Menu, Modal } from 'antd';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from '../messages';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -37,7 +37,7 @@ export interface AdServingActionBarProps {
 
 type Props = AdServingActionBarProps &
   RouteComponentProps<{ organisationId: string; campaignId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps;
 
 interface AdServingActionBarState {

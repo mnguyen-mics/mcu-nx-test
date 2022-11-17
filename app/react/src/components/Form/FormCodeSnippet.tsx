@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 // TS Interface
 import { message } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
@@ -38,7 +38,7 @@ export interface FormCodeSnippetProps extends FormFieldWrapperProps {
   copyToClipboard?: boolean;
 }
 
-type Props = FormCodeSnippetProps & InjectedIntlProps;
+type Props = FormCodeSnippetProps & WrappedComponentProps;
 
 const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';

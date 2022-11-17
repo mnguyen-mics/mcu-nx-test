@@ -2,7 +2,7 @@ import { PluginCardModalTab, PluginLayout } from '@mediarithmics-private/advance
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Dropdown, Menu, Modal } from 'antd';
 import * as React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
@@ -55,7 +55,7 @@ export interface FeedCardMenuProps {
 type Props = FeedCardMenuProps &
   InjectedFeaturesProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{}>;
 
 interface State {

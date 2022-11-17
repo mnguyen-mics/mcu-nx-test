@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Input, Select, Button, Modal } from 'antd';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
@@ -26,7 +26,7 @@ interface MonitoringActionBarProps {
 }
 
 type Props = MonitoringActionBarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {

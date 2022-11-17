@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormSection, FormInputField } from '../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
@@ -11,7 +11,7 @@ interface State {
   displayAdvancedSection: boolean;
 }
 
-type Props = InjectedIntlProps & ValidatorProps;
+type Props = WrappedComponentProps & ValidatorProps;
 
 class GeneralFormSection extends React.Component<Props, State> {
   constructor(props: Props) {

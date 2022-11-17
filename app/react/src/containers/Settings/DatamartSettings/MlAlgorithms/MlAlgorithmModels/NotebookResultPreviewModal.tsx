@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Modal, Button } from 'antd';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from './messages';
 import { IframeSupport } from '@mediarithmics-private/advanced-components';
 
@@ -14,7 +14,7 @@ interface NotebookResultPreviewModalState {
   opened: boolean;
 }
 
-type JoinedProps = NotebookResultPreviewModalProps & InjectedIntlProps;
+type JoinedProps = NotebookResultPreviewModalProps & WrappedComponentProps;
 
 class NotebookResultPreviewModal extends React.Component<
   JoinedProps,

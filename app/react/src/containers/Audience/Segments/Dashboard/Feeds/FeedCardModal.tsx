@@ -7,7 +7,7 @@ import {
 } from '@mediarithmics-private/advanced-components';
 import { PropertyResourceShape } from '@mediarithmics-private/advanced-components/lib/models/plugin';
 import * as React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { AudienceFeedTyped } from '../../Edit/domain';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -58,7 +58,10 @@ export interface FeedCardModalProps {
   onFeedUpdate: (newFeed: AudienceFeedTyped) => void;
 }
 
-type Props = FeedCardModalProps & InjectedIntlProps & InjectedNotificationProps & ValidatorProps;
+type Props = FeedCardModalProps &
+  WrappedComponentProps &
+  InjectedNotificationProps &
+  ValidatorProps;
 
 interface State {
   isLoading: boolean;

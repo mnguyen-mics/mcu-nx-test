@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Modal } from 'antd';
 import { connect } from 'react-redux';
 import { getFormInitialValues } from 'redux-form';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from '../messages';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { FormSection } from '../../../../../components/Form/index';
@@ -34,7 +34,7 @@ interface PropertiesFormSectionProps {
 
 type Props = PropertiesFormSectionProps &
   MapStateProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 
 class PropertiesFormSection extends React.Component<Props> {

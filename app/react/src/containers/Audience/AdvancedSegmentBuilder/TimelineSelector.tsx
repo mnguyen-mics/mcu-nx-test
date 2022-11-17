@@ -2,7 +2,7 @@ import * as React from 'react';
 import { OTQLDataResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { Spin } from 'antd';
 import { Button } from '@mediarithmics-private/mcs-components-library';
-import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -37,7 +37,7 @@ const messages = defineMessages({
   },
 });
 
-type Props = TimelineSelectorProps & InjectedIntlProps;
+type Props = TimelineSelectorProps & WrappedComponentProps;
 
 class TimelineSelector extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)

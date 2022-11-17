@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -11,7 +11,7 @@ interface DimensionNameDisplayProps {
   showId?: boolean;
 }
 
-type Props = DimensionNameDisplayProps & InjectedNotificationProps & InjectedIntlProps;
+type Props = DimensionNameDisplayProps & InjectedNotificationProps & WrappedComponentProps;
 
 interface NamedResource {
   id: string;

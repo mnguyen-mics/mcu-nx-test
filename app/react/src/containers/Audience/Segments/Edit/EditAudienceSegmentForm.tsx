@@ -10,7 +10,7 @@ import {
   GenericFieldArray,
   getFormValues,
 } from 'redux-form';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { Layout, Alert } from 'antd';
 import { compose } from 'recompose';
 import FormLayoutActionbar, {
@@ -83,7 +83,7 @@ export interface AudienceSegmentFormProps
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
   AudienceSegmentFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFeaturesProps &
   ValidatorProps &
   MapStateToProps &

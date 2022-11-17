@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import {
@@ -16,7 +16,7 @@ import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { EditProcessingRouteMatchParams } from '../ProcessingEditPage';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   RouteComponentProps<EditProcessingRouteMatchParams>;
 

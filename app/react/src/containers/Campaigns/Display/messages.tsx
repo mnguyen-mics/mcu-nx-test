@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import { AdGroupResource, DisplayCampaignResource } from '../../../models/campaign/display';
 import { HistoryKeys, formatToFormattingFunction, ValueFormat } from '../../ResourceHistory/utils';
 import {
@@ -151,7 +151,7 @@ export const messages = defineMessages({
 type ExtraKeys = 'duration';
 
 const visibilityMessages: {
-  [key in AdSlotVisibilityFilter]: FormattedMessage.MessageDescriptor;
+  [key in AdSlotVisibilityFilter]: MessageDescriptor;
 } = defineMessages({
   ABOVE_THE_FOLD: {
     id: 'adgroup.fields.visibility.aboveTheFold',
@@ -168,7 +168,7 @@ const visibilityMessages: {
 });
 
 const budgetPeriodMessages: {
-  [key in BudgetPeriod]: FormattedMessage.MessageDescriptor;
+  [key in BudgetPeriod]: MessageDescriptor;
 } = defineMessages({
   DAY: {
     id: 'adgroup.fields.maxBudgetPeriod.day',
@@ -185,7 +185,7 @@ const budgetPeriodMessages: {
 });
 
 const adGroupStatusMessages: {
-  [key in AdGroupStatus]: FormattedMessage.MessageDescriptor;
+  [key in AdGroupStatus]: MessageDescriptor;
 } = defineMessages({
   ACTIVE: {
     id: 'adgroup.fields.status.active',
@@ -202,7 +202,7 @@ const adGroupStatusMessages: {
 });
 
 const targetedOperatingSystemMessages: {
-  [key in TargetedOperatingSystem]: FormattedMessage.MessageDescriptor;
+  [key in TargetedOperatingSystem]: MessageDescriptor;
 } = defineMessages({
   ALL: {
     id: 'adgroup.fields.targetedOperatingSystems.all',
@@ -223,7 +223,7 @@ const targetedOperatingSystemMessages: {
 });
 
 const targetedMediaMessages: {
-  [key in TargetedMedia]: FormattedMessage.MessageDescriptor;
+  [key in TargetedMedia]: MessageDescriptor;
 } = defineMessages({
   WEB: {
     id: 'adgroup.fields.targetedMedias.web',
@@ -236,7 +236,7 @@ const targetedMediaMessages: {
 });
 
 const targetedDeviceMessages: {
-  [key in TargetedDevice]: FormattedMessage.MessageDescriptor;
+  [key in TargetedDevice]: MessageDescriptor;
 } = defineMessages({
   ALL: {
     id: 'adgroup.fields.targetedDevices.all',
@@ -261,7 +261,7 @@ const targetedDeviceMessages: {
 });
 
 const targetedBrowserFamilyMessages: {
-  [key in TargetedBrowserFamily]: FormattedMessage.MessageDescriptor;
+  [key in TargetedBrowserFamily]: MessageDescriptor;
 } = defineMessages({
   ALL: {
     id: 'adgroup.fields.targetedBrowserFamilies.all',
@@ -294,7 +294,7 @@ const targetedBrowserFamilyMessages: {
 });
 
 const targetedConnectionTypeMessages: {
-  [key in TargetedConnectionType]: FormattedMessage.MessageDescriptor;
+  [key in TargetedConnectionType]: MessageDescriptor;
 } = defineMessages({
   ALL: {
     id: 'adgroup.fields.targetedConnectionTypes.all',
@@ -323,10 +323,7 @@ const targetedConnectionTypeMessages: {
 });
 
 const adGroupPropertiesMessageMap: {
-  [propertyName in
-    | keyof AdGroupResource
-    | ExtraKeys
-    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof AdGroupResource | ExtraKeys | HistoryKeys]: MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'adgroup.fields.id',
@@ -459,7 +456,7 @@ const adGroupPropertiesMessageMap: {
 const adGroupPropertiesFormatMap: {
   [propertyName in keyof AdGroupResource | ExtraKeys | HistoryKeys]: {
     format: ValueFormat;
-    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+    messageMap?: { [key: string]: MessageDescriptor };
   };
 } = {
   id: { format: 'STRING' },
@@ -524,7 +521,7 @@ export const formatAdGroupProperty = (
   property: keyof AdGroupResource | ExtraKeys | HistoryKeys,
   value?: string,
 ): {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 } => {
   return {
@@ -541,7 +538,7 @@ export const formatAdGroupProperty = (
 };
 
 const displayCampaignSubtypeMessages: {
-  [key in DisplayCampaignSubType]: FormattedMessage.MessageDescriptor;
+  [key in DisplayCampaignSubType]: MessageDescriptor;
 } = defineMessages({
   PROGRAMMATIC: {
     id: 'campaign.display.fields.subtype.programmatic',
@@ -558,7 +555,7 @@ const displayCampaignSubtypeMessages: {
 });
 
 const campaignStatusMessages: {
-  [key in CampaignStatus]: FormattedMessage.MessageDescriptor;
+  [key in CampaignStatus]: MessageDescriptor;
 } = defineMessages({
   ACTIVE: {
     id: 'campaign.display.fields.status.active',
@@ -579,7 +576,7 @@ const campaignStatusMessages: {
 });
 
 const campaignPropertiesMessageMap: {
-  [propertyName in keyof DisplayCampaignResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof DisplayCampaignResource | HistoryKeys]: MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'campaign.display.fields.id',
@@ -699,7 +696,7 @@ const campaignPropertiesMessageMap: {
 const campaignPropertiesFormatMap: {
   [propertyName in keyof DisplayCampaignResource | HistoryKeys]: {
     format: ValueFormat;
-    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+    messageMap?: { [key: string]: MessageDescriptor };
   };
 } = {
   id: { format: 'STRING' },
@@ -749,7 +746,7 @@ export const formatDisplayCampaignProperty = (
   property: keyof DisplayCampaignResource | HistoryKeys,
   value?: string,
 ): {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 } => {
   return {

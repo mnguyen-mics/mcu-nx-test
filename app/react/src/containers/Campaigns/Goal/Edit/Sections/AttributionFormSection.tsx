@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 
 import { FormSection, FormInputField } from '../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
@@ -9,7 +9,7 @@ import FormInput from '../../../../../components/Form/FormInput';
 
 import messages from '../messages';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 class AttributionFormSection extends React.Component<Props> {
   render() {

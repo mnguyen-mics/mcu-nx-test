@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { Layout } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import {
@@ -45,7 +45,7 @@ interface RouterProps {
 }
 
 class DatamartsListPage extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps,
+  RouteComponentProps<RouterProps> & WrappedComponentProps & InjectedNotificationProps,
   DatamartsListPageState
 > {
   state = initialState;

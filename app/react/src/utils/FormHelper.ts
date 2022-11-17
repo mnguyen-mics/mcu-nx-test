@@ -1,5 +1,5 @@
 import cuid from 'cuid';
-import { FormattedMessage } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 
 export interface FieldArrayModel<T = any> {
   key: string;
@@ -18,7 +18,7 @@ export interface ReduxFormChangeProps {
 
 export interface McsFormSection {
   id: string;
-  title: FormattedMessage.MessageDescriptor | string;
+  title: MessageDescriptor | string;
   component: React.ReactNode;
 }
 

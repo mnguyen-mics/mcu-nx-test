@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { AutoComplete, Button, Col, Form, Input, message, Row } from 'antd';
 import { FormSection } from '../../../../../components/Form';
 import { messages } from '../List/messages';
@@ -41,7 +41,7 @@ type Props = UserFormProps &
   MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; userId: string }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class UserForm extends React.Component<Props, State> {
   constructor(props: Props) {

@@ -6,7 +6,7 @@ import {
   injectWorkspace,
   IdentityProviderResource,
 } from '@mediarithmics-private/advanced-components';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -36,7 +36,7 @@ export interface IdentityProviderFormProps {
 
 type Props = IdentityProviderFormProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedWorkspaceProps;
 
 interface State {

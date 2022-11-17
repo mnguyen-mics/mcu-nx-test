@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, MessageDescriptor, defineMessages } from 'react-intl';
 import { Row, Col } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormItemProps } from 'antd/lib/form';
@@ -16,14 +16,14 @@ export type EventPropertyFormSectionProps = {
   booleanOperator: QueryBooleanOperator;
   onBooleanOperatorChange?: (value: QueryBooleanOperator) => void;
   formChange: (fieldName: string, fieldValue: any) => void;
-  title: FormattedMessage.MessageDescriptor;
-  subtitle: FormattedMessage.MessageDescriptor;
+  title: MessageDescriptor;
+  subtitle: MessageDescriptor;
   disabled?: boolean;
   isEdge?: boolean;
   filterOutFields: string[];
 } & EventPropertyFormProps;
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   EventPropertyFormSectionProps &
   WrappedFieldArrayProps<EventPropertyFormData>;
 

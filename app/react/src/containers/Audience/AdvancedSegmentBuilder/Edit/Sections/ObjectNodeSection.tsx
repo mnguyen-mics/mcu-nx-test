@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import lodash from 'lodash';
 import {
   FormInput,
@@ -38,7 +38,7 @@ interface MapStateToProps {
   formValues: ObjectNodeFormData;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   NormalizerProps &
   ObjectNodeSectionProps &

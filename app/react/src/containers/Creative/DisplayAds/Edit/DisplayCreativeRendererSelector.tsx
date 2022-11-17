@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { Layout, Row } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { FormTitle } from '../../../../components/Form';
@@ -42,7 +42,7 @@ interface State {
 }
 
 type Props = DisplayCreativeRendererSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCreativeRendererSelector extends React.Component<Props, State> {

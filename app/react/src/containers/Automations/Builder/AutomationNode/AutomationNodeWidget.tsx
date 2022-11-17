@@ -4,7 +4,7 @@ import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import AutomationNodeModel from './AutomationNodeModel';
 import { WindowBodyPortal } from '../../../../components';
 import { ROOT_NODE_POSITION } from '../../../Audience/AdvancedSegmentBuilder/domain';
-import { injectIntl, FormattedMessage, defineMessages, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, defineMessages, WrappedComponentProps } from 'react-intl';
 import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
@@ -90,7 +90,7 @@ const messages = defineMessages({
 
 type Props = AutomationNodeProps &
   InjectedDrawerProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouterProps &
   RouteComponentProps<{ organisationId: string }>;
 

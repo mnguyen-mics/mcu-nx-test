@@ -20,7 +20,7 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import McsMoment from '../../../../../utils/McsMoment';
 import {
   injectThemeColors,
@@ -59,7 +59,7 @@ interface State {
 
 type Props = AdCardProps &
   RouteComponentProps<{ organisationId: string; campaignId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedThemeColorsProps;
 
 class AdCard extends React.Component<Props, State> {

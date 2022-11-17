@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { MessageDescriptor, injectIntl, WrappedComponentProps } from 'react-intl';
 
 import { DisplayCreativeFormData, DISPLAY_CREATIVE_FORM, isExistingCreative } from './domain';
 import messages from './messages';
@@ -20,14 +20,14 @@ import DisplayCreativeFormLayout from './DisplayCreativeFormLayout';
 export interface DisplayCreativeFormProps
   extends Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
   close: () => void;
-  actionBarButtonText: FormattedMessage.MessageDescriptor;
+  actionBarButtonText: MessageDescriptor;
   breadCrumbPaths: React.ReactNode[];
   goToCreativeTypeSelection?: () => void;
 }
 
 type Props = DisplayCreativeFormProps &
   InjectedFormProps<DisplayCreativeFormData, DisplayCreativeFormProps> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class DisplayCreativeForm extends React.Component<Props> {
   constructor(props: Props) {

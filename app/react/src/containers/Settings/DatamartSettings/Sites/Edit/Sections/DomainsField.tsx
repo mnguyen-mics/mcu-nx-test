@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { compose } from 'recompose';
 import cuid from 'cuid';
@@ -15,7 +15,7 @@ import { ValidatorProps } from '../../../../../../components/Form/withValidators
 export interface DomainFieldProps extends ReduxFormChangeProps {}
 
 type Props = WrappedFieldArrayProps<AliasesFieldModel> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   DomainFieldProps;
 

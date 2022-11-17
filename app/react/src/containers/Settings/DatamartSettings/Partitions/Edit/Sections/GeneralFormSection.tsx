@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import queryString from 'query-string';
 
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
@@ -64,7 +64,7 @@ interface GeneralFormSectionProps {
 }
 
 type Props = GeneralFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   NormalizerProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;

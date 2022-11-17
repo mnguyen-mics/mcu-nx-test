@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 
 import { FormSection, FormInputField } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
@@ -13,7 +13,7 @@ interface BlastFormSectionProps {
   disabled?: boolean;
 }
 
-type Props = InjectedIntlProps & ValidatorProps & BlastFormSectionProps;
+type Props = WrappedComponentProps & ValidatorProps & BlastFormSectionProps;
 
 class BlastFormSection extends React.Component<Props> {
   static defaultProps = {

@@ -5,7 +5,7 @@ import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Form } from '@ant-design/compatible';
 import { Button, Layout } from 'antd';
-import { injectIntl, FormattedMessage, defineMessages, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, defineMessages, WrappedComponentProps } from 'react-intl';
 import * as SessionActions from '../../../../redux/Session/actions';
 
 import { FormInput } from '../../../../components/Form';
@@ -47,7 +47,7 @@ interface UserProfileProps {
 
 type Props = ProfileSettingsEditPageProps &
   InjectedFormProps<UserProfileProps> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps;
 

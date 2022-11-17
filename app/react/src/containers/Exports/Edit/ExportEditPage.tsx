@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
+import { WrappedComponentProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
 import { INITIAL_EXPORTS_FORM_DATA, ExportFormData } from './domain';
 import { IExportService } from '../../../services/Library/ExportService';
@@ -56,7 +56,7 @@ interface ExportEditPageState {
 
 type Props = InjectedDrawerProps &
   RouteComponentProps<{ organisationId: string; exportId: string }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class ExportEditPage extends React.Component<Props, ExportEditPageState> {
   @lazyInject(TYPES.IQueryService)

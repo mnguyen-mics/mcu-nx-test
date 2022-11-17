@@ -1,6 +1,6 @@
 import { Breadcrumb, Layout } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, IntlShape } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart/index';
@@ -80,7 +80,7 @@ interface HomeState {
 }
 
 type JoinedProps = InjectedWorkspaceProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
   WithDatamartSelectorProps &
@@ -147,7 +147,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   getDatamartAnaylicsDashboardConfig = (
     organisationId: string,
     datamartId: string,
-    intl: InjectedIntl,
+    intl: IntlShape,
   ): DatamartUsersAnalyticsWrapperProps[] => {
     return [
       {

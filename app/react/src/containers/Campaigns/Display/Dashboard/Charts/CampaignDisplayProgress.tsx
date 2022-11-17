@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
@@ -17,7 +17,7 @@ interface RouterProps {
   campaignId: string;
 }
 
-type CampaignDisplayProgressProps = InjectedIntlProps & RouteComponentProps<RouterProps>;
+type CampaignDisplayProgressProps = WrappedComponentProps & RouteComponentProps<RouterProps>;
 
 interface CampaignDisplayProgressState {
   isLoading: boolean;

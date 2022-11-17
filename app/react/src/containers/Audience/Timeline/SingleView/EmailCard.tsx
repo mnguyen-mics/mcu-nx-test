@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row, Tooltip, Modal, Col, Button } from 'antd';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import moment from 'moment';
 import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
@@ -20,7 +20,7 @@ interface State {
   showMore: boolean;
 }
 
-type Props = EmailCardProps & InjectedIntlProps;
+type Props = EmailCardProps & WrappedComponentProps;
 
 class EmailCard extends React.Component<Props, State> {
   constructor(props: Props) {

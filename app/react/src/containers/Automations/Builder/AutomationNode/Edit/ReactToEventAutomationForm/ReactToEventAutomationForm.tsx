@@ -12,7 +12,7 @@ import {
   Field,
   InjectedFormProps,
 } from 'redux-form';
-import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages, FormattedMessage } from 'react-intl';
 import {
   withValidators,
   FormSection,
@@ -110,7 +110,7 @@ type State = {
 
 type Props = ReactToEventAutomationFormProps &
   InjectedFormProps<ReactToEventAutomationFormData, ReactToEventAutomationFormProps> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   DispatchProp<any> &
   MapStateToProps &

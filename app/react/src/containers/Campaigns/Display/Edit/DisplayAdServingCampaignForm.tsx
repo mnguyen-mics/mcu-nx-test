@@ -11,7 +11,7 @@ import {
 } from 'redux-form';
 import { Omit } from '../../../../utils/Types';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { FormLayoutActionbar, ScrollspySider } from '../../../../components/Layout';
@@ -34,7 +34,7 @@ export interface DisplayAdServingCampaignFormProps
 
 type Props = InjectedFormProps<DisplayCampaignFormData, DisplayAdServingCampaignFormProps> &
   DisplayAdServingCampaignFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export const FORM_ID = 'campaignForm';

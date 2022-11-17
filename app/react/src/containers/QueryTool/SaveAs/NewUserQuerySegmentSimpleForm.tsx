@@ -20,7 +20,7 @@ import {
   FormBooleanField,
 } from '../../../components/Form';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../components/Form/withNormalizer';
 import ProcessingActivitiesFormSection, {
@@ -64,7 +64,7 @@ export interface FormProps
 
 type Props = FormProps &
   InjectedFeaturesProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   NormalizerProps;
 

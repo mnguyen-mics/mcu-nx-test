@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import FunnelQueryBuilder from './FunnelQueryBuilder';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/LocationSearchHelper';
@@ -34,7 +34,7 @@ interface State {
   isComplementaryFunnelOpen: boolean;
 }
 
-type JoinedProp = RouteComponentProps & FunnelWrapperProps & InjectedIntlProps;
+type JoinedProp = RouteComponentProps & FunnelWrapperProps & WrappedComponentProps;
 
 const deepCopy = (value: any) => {
   return JSON.parse(JSON.stringify(value));

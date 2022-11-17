@@ -18,7 +18,7 @@ import {
   McsDateRangePicker,
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import AutomationScenarioTest, { AutomationScenarioTestProps } from './Test/AutomationScenarioTest';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
@@ -52,7 +52,7 @@ interface State {
 
 type Props = InjectedNotificationProps &
   InjectedDrawerProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<AutomationDashboardrams>;
 
 const messages = defineMessages({

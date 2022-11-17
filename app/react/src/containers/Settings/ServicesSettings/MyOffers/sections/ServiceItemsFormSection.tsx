@@ -1,7 +1,7 @@
 import * as React from 'react';
 import cuid from 'cuid';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { RecordElement, RelatedRecords } from '../../../../../components/RelatedRecord';
 import { FormSection } from '../../../../../components/Form';
@@ -18,7 +18,7 @@ import { injectDrawer } from '../../../../../components/Drawer';
 
 export interface ServiceItemsFormSectionProps extends ReduxFormChangeProps {}
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   WrappedFieldArrayProps<ServiceConditionsModel> &
   ServiceItemsFormSectionProps &
   InjectedDrawerProps;

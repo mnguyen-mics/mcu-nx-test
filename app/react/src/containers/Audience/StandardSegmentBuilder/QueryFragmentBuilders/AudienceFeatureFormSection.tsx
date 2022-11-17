@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { StandardSegmentBuilderParametricPredicateNode } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
@@ -21,7 +21,7 @@ export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
 
 type Props = WrappedFieldArrayProps<StandardSegmentBuilderParametricPredicateNode> &
   AudienceFeatureFormSectionProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class AudienceFeatureFormSection extends React.Component<Props> {
   render() {

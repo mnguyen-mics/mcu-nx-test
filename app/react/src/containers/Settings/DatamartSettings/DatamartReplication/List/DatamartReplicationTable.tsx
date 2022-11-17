@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import messages from './messages';
@@ -32,7 +32,7 @@ export interface DatamartReplicationTableProps {
 }
 
 type Props = DatamartReplicationTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string; datamartId: string }>;
 
 class DatamartReplicationTable extends React.Component<Props> {

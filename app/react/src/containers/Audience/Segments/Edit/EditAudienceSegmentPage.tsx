@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message } from 'antd';
 import moment from 'moment';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { EditAudienceSegmentParam, AudienceSegmentFormData, DefaultLiftimeUnit } from './domain';
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain';
 import { UserListSegment } from '../../../../models/audiencesegment';
@@ -65,7 +65,7 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   MapStateToProps &
   InjectedFeaturesProps &
   InjectedNotificationProps &

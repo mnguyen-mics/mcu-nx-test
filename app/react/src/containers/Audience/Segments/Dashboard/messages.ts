@@ -1,5 +1,5 @@
 import { ValueFormat } from './../../../ResourceHistory/utils';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import {
   AudienceSegmentResource,
   AudienceSegmentType,
@@ -217,7 +217,7 @@ export default defineMessages({
 type ExtraKeys = 'last_modified_ts';
 
 export const audienceSegmentTypeMessages: {
-  [key in AudienceSegmentType]: FormattedMessage.MessageDescriptor;
+  [key in AudienceSegmentType]: MessageDescriptor;
 } = defineMessages({
   USER_LIST: {
     id: 'audience.segments.type.userList',
@@ -258,7 +258,7 @@ export const audienceSegmentTypeMessages: {
 });
 
 export const userListFeedTypeMessages: {
-  [key in FeedType]: FormattedMessage.MessageDescriptor;
+  [key in FeedType]: MessageDescriptor;
 } = defineMessages({
   FILE_IMPORT: {
     id: 'audience.segments.type.userList.feedType.fileImport',
@@ -279,7 +279,7 @@ export const userListFeedTypeMessages: {
 });
 
 export const userQuerySegmentSubtypeMessages: {
-  [key in UserQuerySegmentSubtype]: FormattedMessage.MessageDescriptor;
+  [key in UserQuerySegmentSubtype]: MessageDescriptor;
 } = defineMessages({
   STANDARD: {
     id: 'audience.segments.subtype.STANDARD',
@@ -296,10 +296,7 @@ export const userQuerySegmentSubtypeMessages: {
 });
 
 const audienceSegmentPropertiesMessageMap: {
-  [propertyName in
-    | keyof AudienceSegmentResource
-    | ExtraKeys
-    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof AudienceSegmentResource | ExtraKeys | HistoryKeys]: MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'audience.segments.fields.id',
@@ -390,7 +387,7 @@ const audienceSegmentPropertiesMessageMap: {
 const audienceSegmentPropertiesFormatMap: {
   [propertyName in keyof AudienceSegmentResource | ExtraKeys | HistoryKeys]: {
     format: ValueFormat;
-    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+    messageMap?: { [key: string]: MessageDescriptor };
   };
 } = {
   id: { format: 'STRING' },
@@ -423,7 +420,7 @@ export const formatAudienceSegmentProperty = (
   property: keyof AudienceSegmentResource | HistoryKeys,
   value?: string,
 ): {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 } => {
   return {

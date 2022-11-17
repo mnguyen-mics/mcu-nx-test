@@ -1,5 +1,5 @@
 import { compose, withProps } from 'recompose';
-import { injectIntl, defineMessages, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, defineMessages, MessageDescriptor, WrappedComponentProps } from 'react-intl';
 import { Validator } from 'redux-form';
 
 export const defaultErrorMessages = defineMessages({
@@ -48,7 +48,7 @@ export const defaultErrorMessages = defineMessages({
 });
 
 type FormatMessageHandler = (
-  messageDescriptor: FormattedMessage.MessageDescriptor,
+  messageDescriptor: MessageDescriptor,
   values?: { [key: string]: string | number | boolean | Date },
 ) => string;
 
@@ -171,7 +171,7 @@ const isIntegerBetween =
 
 export default compose<{}, ValidatorProps>(
   injectIntl,
-  withProps<ValidatorProps, InjectedIntlProps>(props => {
+  withProps<ValidatorProps, WrappedComponentProps>(props => {
     const {
       intl: { formatMessage },
     } = props;

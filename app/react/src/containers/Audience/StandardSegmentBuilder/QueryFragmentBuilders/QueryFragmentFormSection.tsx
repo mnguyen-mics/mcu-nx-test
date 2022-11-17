@@ -2,7 +2,7 @@ import * as React from 'react';
 import { WrappedFieldArrayProps, FieldArray, GenericFieldArray, Field } from 'redux-form';
 import { Button, Timeline } from 'antd';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps, MessageDescriptor } from 'react-intl';
 import { messages } from '../constants';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import AudienceFeatureFormSection, {
@@ -18,8 +18,8 @@ import {
 } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface TimelineConfiguration {
-  titlePart1: ReactIntl.FormattedMessage.MessageDescriptor;
-  titlePart2: ReactIntl.FormattedMessage.MessageDescriptor;
+  titlePart1: MessageDescriptor;
+  titlePart2: MessageDescriptor;
   initialDotColor: string;
   actionDotColor: string;
 }
@@ -44,7 +44,7 @@ type Props = WrappedFieldArrayProps<StandardSegmentBuilderGroupNode> &
   InjectedDrawerProps &
   QueryFragmentFormSectionProps &
   InjectedFeaturesProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class QueryFragmentFormSection extends React.Component<Props> {
   constructor(props: Props) {

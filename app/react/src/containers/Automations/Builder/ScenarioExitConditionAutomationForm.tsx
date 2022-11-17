@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { Layout, message } from 'antd';
 import { Form } from '@ant-design/compatible';
 import { change, reduxForm, getFormValues } from 'redux-form';
-import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, withValidators } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import { WizardValidObjectTypeField, getValidObjectType, getEventsNames } from './domain';
@@ -53,7 +53,7 @@ type State = {
 };
 
 type Props = ScenarioExitConditionAutomationFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   DispatchProp<any> &
   MapStateToProps &

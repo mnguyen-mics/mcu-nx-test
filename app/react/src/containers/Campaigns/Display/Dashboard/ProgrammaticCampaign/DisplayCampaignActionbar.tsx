@@ -2,7 +2,7 @@ import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message } from 'antd';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../messages';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
@@ -57,7 +57,7 @@ interface DisplayCampaignActionBarState {
 
 type JoinedProps = DisplayCampaignActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps;
 
 // type ReportViewReponse = CancelablePromise<ReportView>;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { getFormValues } from 'redux-form';
 import messages from '../messages';
@@ -33,7 +33,7 @@ interface State {
 }
 
 type Props = UserIdentifierInsertionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   NormalizerProps &
   MapStateToProps;

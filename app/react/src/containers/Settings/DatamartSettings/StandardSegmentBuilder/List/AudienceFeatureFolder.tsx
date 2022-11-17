@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Row, Col, Dropdown, Menu, Input, Button } from 'antd';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 import { AudienceFeatureFolderResource } from '../../../../../models/audienceFeature/AudienceFeatureResource';
@@ -19,7 +19,7 @@ export interface AudienceFeatureFolderProps {
   deleteFolder: (id: string) => void;
 }
 
-type Props = AudienceFeatureFolderProps & InjectedIntlProps;
+type Props = AudienceFeatureFolderProps & WrappedComponentProps;
 
 interface State {
   editionMode: boolean;

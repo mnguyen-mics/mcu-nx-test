@@ -5,7 +5,7 @@ import {
 } from '@mediarithmics-private/advanced-components/lib/models/audienceSegment/AudienceSegmentResource';
 import { Button, Tag, Switch, Tooltip } from 'antd';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
-import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { AreaChartSlider } from '@mediarithmics-private/mcs-components-library';
 import { DataPoint } from '@mediarithmics-private/mcs-components-library/lib/components/charts/area-chart-slider/AreaChartSlider';
@@ -45,7 +45,7 @@ interface ComputedGraphPoint {
 }
 
 type Props = CohortLookalikeCalibrationSettingsProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }>;
 

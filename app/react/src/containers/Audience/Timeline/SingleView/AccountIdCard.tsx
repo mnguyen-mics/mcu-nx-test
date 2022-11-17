@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dictionary } from 'lodash';
 import { Tag, Tooltip, Row } from 'antd';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
@@ -18,7 +18,7 @@ interface State {
   showMore: boolean;
 }
 
-type Props = AccountIdCardProps & InjectedIntlProps;
+type Props = AccountIdCardProps & WrappedComponentProps;
 
 class AccountIdCard extends React.Component<Props, State> {
   constructor(props: Props) {

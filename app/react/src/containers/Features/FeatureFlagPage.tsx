@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 
-type Props = RouteComponentProps<{ organisationId: string; token?: string }> & InjectedIntlProps;
+type Props = RouteComponentProps<{ organisationId: string; token?: string }> &
+  WrappedComponentProps;
 
 interface State {}
 

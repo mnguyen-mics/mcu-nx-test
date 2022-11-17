@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Row, Button, Modal, Input, Alert, Layout } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import * as labelsActions from '../../../../redux/Labels/actions';
 import { Label } from '../../../Labels/Labels';
 import settingsMessages from '../../messages';
@@ -42,7 +42,7 @@ interface LabelsListState {
 }
 
 type Props = LabelsListProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 

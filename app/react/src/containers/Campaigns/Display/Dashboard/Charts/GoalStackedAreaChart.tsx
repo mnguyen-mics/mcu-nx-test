@@ -2,7 +2,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Row, Col, Menu, Button } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import { GoalSelectionResource, AttributionSelectionResource } from '../../../../../models/goal';
@@ -73,7 +73,7 @@ interface GoalStackedAreaChartState {
 type JoinedProps = GoalStackedAreaChartProps &
   RouteComponentProps<RouterMatchParams> &
   InjectedThemeColorsProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaChartState> {
   constructor(props: JoinedProps) {

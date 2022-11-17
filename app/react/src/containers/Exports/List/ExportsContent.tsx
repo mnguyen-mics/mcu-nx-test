@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { Modal, Row } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { GetExportOptions, IExportService } from '../../../services/Library/ExportService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import {
@@ -59,7 +59,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & MapStateToProps;
+type Props = RouteComponentProps<RouterProps> & WrappedComponentProps & MapStateToProps;
 
 class ExportContent extends React.Component<Props, ExportContentState> {
   state = initialState;

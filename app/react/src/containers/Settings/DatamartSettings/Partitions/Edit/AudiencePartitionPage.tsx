@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { message } from 'antd';
 
 import AudiencePartitionForm from './AudiencePartitionForm';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { Loading } from '../../../../../components/index';
 import { AudiencePartitionFormData, INITIAL_AUDIENCE_PARTITION_FORM_DATA } from './domain';
@@ -47,7 +47,7 @@ interface AudiencePartitionPageState {
 }
 
 type JoinedProps = InjectedWorkspaceProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }, {}, { from?: string }>;
 

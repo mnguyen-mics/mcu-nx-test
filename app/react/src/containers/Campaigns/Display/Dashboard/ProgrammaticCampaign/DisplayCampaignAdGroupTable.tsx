@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Switch } from 'antd';
 import { compose } from 'recompose';
@@ -46,7 +46,7 @@ interface DisplayCampaignAdGroupTableState {
 }
 
 type JoinedProps = DisplayCampaignAdGroupTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string; campaignId: string }>;
 
 class DisplayCampaignAdGroupTable extends React.Component<

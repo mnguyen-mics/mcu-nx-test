@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, message, Dropdown, Menu } from 'antd';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -54,7 +54,7 @@ export interface AudienceSegmentActionbarProps {
 
 type Props = AudienceSegmentActionbarProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedDrawerProps &
   InjectedFeaturesProps &

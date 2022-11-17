@@ -2,7 +2,7 @@ import * as React from 'react';
 import { WrappedFieldArrayProps, Validator } from 'redux-form';
 import { Button, Row, Col } from 'antd';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, MessageDescriptor } from 'react-intl';
 
 import { CampaignsInfosFieldModel } from '../domain';
 import {
@@ -23,7 +23,7 @@ const editableCampaignProperties: Array<keyof DisplayCampaignResource> = [
 ];
 
 type JoinedProps = WrappedFieldArrayProps<CampaignsInfosFieldModel> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps;
 
 class CampaignsInfos extends React.Component<JoinedProps> {
@@ -64,7 +64,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
     const decrease = 'decrease';
     const actionOptions: Array<{
       title: string;
-      value: string; // { [key: string]: FormattedMessage.MessageDescriptor }
+      value: string; // { [key: string]: MessageDescriptor }
     }> = [
       {
         title: intl.formatMessage(campaignsActionsMessageMap[equals]),
@@ -177,7 +177,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
 export default compose(injectIntl, withValidators)(CampaignsInfos);
 
 const campaignPropertiesMessageMap: {
-  [propertyName in keyof Partial<DisplayCampaignResource>]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof Partial<DisplayCampaignResource>]: MessageDescriptor;
 } = defineMessages({
   total_impression_capping: {
     id: 'display.campaigns.multiEdit.option.totalImpressionCapping',
@@ -198,7 +198,7 @@ const campaignPropertiesMessageMap: {
 });
 
 const campaignsActionsMessageMap: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor;
+  [propertyName: string]: MessageDescriptor;
 } = defineMessages({
   equals: {
     id: 'display.campaigns.multiEdit.option.equals',

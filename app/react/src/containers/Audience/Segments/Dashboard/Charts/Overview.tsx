@@ -2,7 +2,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages, MessageDescriptor } from 'react-intl';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import messages from '../messages';
@@ -36,7 +36,7 @@ interface OverviewProps {
 
 type Props = OverviewProps &
   InjectedThemeColorsProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{
     organisationId: string;
   }>;
@@ -185,7 +185,7 @@ class Overview extends React.Component<Props> {
 export default compose<Props, OverviewProps>(withRouter, injectIntl, injectThemeColors)(Overview);
 
 const messagesMap: {
-  [metric: string]: FormattedMessage.MessageDescriptor;
+  [metric: string]: MessageDescriptor;
 } = defineMessages({
   user_points: {
     id: 'segment.user_points',

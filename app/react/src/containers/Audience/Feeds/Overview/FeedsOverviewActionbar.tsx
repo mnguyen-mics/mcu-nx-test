@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, Link } from 'react-router-dom';
 import { InjectedDatamartProps, injectDatamart } from '../../../Datamart';
 import injectNotifications, {
@@ -10,7 +10,7 @@ import { Button } from 'antd';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDatamartProps &
   InjectedNotificationProps;
 

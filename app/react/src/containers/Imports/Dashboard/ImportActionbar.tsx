@@ -2,7 +2,7 @@ import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message, Upload, Spin } from 'antd';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Import } from '../../../models/imports/imports';
 import modalMessages from '../../../common/messages/modalMessages';
@@ -39,7 +39,7 @@ type JoinedProps = ImportActionbarProps &
     datamartId: string;
     importId: string;
   }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class ImportsActionbar extends React.Component<JoinedProps, State> {

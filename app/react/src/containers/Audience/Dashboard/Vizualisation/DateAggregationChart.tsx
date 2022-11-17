@@ -16,7 +16,7 @@ import {
 } from '@mediarithmics-private/advanced-components';
 import moment from 'moment';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -54,7 +54,7 @@ interface State {
   loading: boolean;
 }
 
-type Props = DateAggregationChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = DateAggregationChartProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 class DateAggregationChart extends React.Component<Props, State> {
   identifier = cuid();

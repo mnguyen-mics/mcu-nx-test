@@ -1,6 +1,6 @@
 // import locale from 'antd/lib/time-picker/locale/pt_PT';
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout, Alert } from 'antd';
 import { compose } from 'recompose';
@@ -70,7 +70,7 @@ interface DisplayCampaignProps {
 type JoinedProps = DisplayCampaignProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedDrawerProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class DisplayCampaign extends React.Component<JoinedProps> {
   render() {

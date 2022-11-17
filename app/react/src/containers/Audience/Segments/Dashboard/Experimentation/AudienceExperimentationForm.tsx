@@ -12,7 +12,13 @@ import {
   FormRadioGroupField,
   FormFieldWrapper,
 } from '../../../../../components/Form';
-import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
+import {
+  injectIntl,
+  WrappedComponentProps,
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -32,7 +38,7 @@ import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDraw
 import PartitionSelector from '../../../../Settings/DatamartSettings/Partitions/Common/PartitionSelector';
 
 export const messagesMap: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   partitionSelectorTitle: {
     id: 'audience.segments.partitionSelector.AddButton',
@@ -138,7 +144,7 @@ interface State {
 
 type Props = AudienceExperimentationFormProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps &
   InjectedDrawerProps &
   ReduxFormChangeProps &

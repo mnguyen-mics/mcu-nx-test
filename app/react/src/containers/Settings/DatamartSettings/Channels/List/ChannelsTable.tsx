@@ -5,7 +5,7 @@ import {
 } from '../../../../../models/settings/settings';
 import { ChannelFilter } from './domain';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { TablePaginationConfig } from 'antd/lib/table';
@@ -44,7 +44,7 @@ interface MapStateToProps {
 }
 
 type Props = ChannelsTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 

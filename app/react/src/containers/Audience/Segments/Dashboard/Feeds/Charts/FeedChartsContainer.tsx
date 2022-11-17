@@ -2,13 +2,13 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { AudienceFeedTyped } from '../../../Edit/domain';
 import FeedCumulativeChart from './FeedCumulativeChart';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 
 interface FeedChartsContainerProps {
   feed: AudienceFeedTyped;
 }
 
-type Props = FeedChartsContainerProps & InjectedIntlProps;
+type Props = FeedChartsContainerProps & WrappedComponentProps;
 
 class FeedChartsContainer extends React.Component<Props> {
   render() {

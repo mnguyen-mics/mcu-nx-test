@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import _ from 'lodash';
@@ -103,7 +103,7 @@ interface Router {
   goalId: string;
 }
 
-type JoinedProps = GoalAttributionProps & RouteComponentProps<Router> & InjectedIntlProps;
+type JoinedProps = GoalAttributionProps & RouteComponentProps<Router> & WrappedComponentProps;
 
 class GoalAttribution extends React.Component<JoinedProps, GoalAttributionState> {
   constructor(props: JoinedProps) {

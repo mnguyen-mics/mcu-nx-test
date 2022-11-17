@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../messages';
 import {
@@ -32,7 +32,7 @@ interface State {
   options: DefaultOptionProps[];
 }
 
-type Props = ScopeFormSectionProps & InjectedIntlProps & MapStateToProps;
+type Props = ScopeFormSectionProps & WrappedComponentProps & MapStateToProps;
 
 class ScopeFormSection extends React.Component<Props, State> {
   constructor(props: Props) {

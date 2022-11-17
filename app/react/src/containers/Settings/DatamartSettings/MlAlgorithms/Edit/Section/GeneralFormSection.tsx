@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { getFormValues, FieldArray, GenericFieldArray, Field } from 'redux-form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
@@ -25,7 +25,7 @@ interface MapStateToProps {
   formValues: MlAlgorithmFormData;
 }
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps & MapStateToProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps & MapStateToProps;
 
 const PropertyFieldArray = FieldArray as new () => GenericFieldArray<
   Field,

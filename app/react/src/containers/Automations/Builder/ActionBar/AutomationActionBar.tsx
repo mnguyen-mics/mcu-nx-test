@@ -6,7 +6,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { messages, AutomationBuilderPageRouteParams } from '../AutomationBuilderPage';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import AutomationSimpleForm, { FORM_ID, AutomationSimpleFormData } from './AutomationSimpleForm';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -33,7 +33,7 @@ interface MapStateToProps {
 }
 
 type Props = AutomationActionBarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   MapDispatchToProps &
   MapStateToProps &

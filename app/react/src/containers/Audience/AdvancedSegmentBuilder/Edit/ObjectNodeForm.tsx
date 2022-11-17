@@ -17,7 +17,7 @@ import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { McsFormSection } from '../../../../utils/FormHelper';
 import messages from './messages';
@@ -52,7 +52,7 @@ const FieldNodeListFieldArray = FieldArray as new () => GenericFieldArray<
 
 type Props = InjectedFormProps<ObjectNodeFormData, ObjectNodeFormProps> &
   ObjectNodeFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }> &
   MapStateToProps;
 

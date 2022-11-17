@@ -1,13 +1,13 @@
 import { AbstractMessages } from '@mediarithmics-private/mcs-components-library/lib/utils/IntlHelper';
-import { defineMessages, FormattedMessage, InjectedIntl } from 'react-intl';
+import { defineMessages, MessageDescriptor, IntlShape } from 'react-intl';
 
-interface MessageDescriptor {
-  [propertyName: string]: FormattedMessage.MessageDescriptor;
+interface CustomMessageDescriptor {
+  [propertyName: string]: MessageDescriptor;
 }
 
 export const convertMessageDescriptorToString = (
-  intlMessages: MessageDescriptor,
-  intl: InjectedIntl,
+  intlMessages: CustomMessageDescriptor,
+  intl: IntlShape,
 ): AbstractMessages => {
   const messages = Object.keys(intlMessages).map((key: string) => {
     return { [key]: intl.formatMessage(intlMessages[key]) };
@@ -16,7 +16,7 @@ export const convertMessageDescriptorToString = (
   return Object.assign({}, ...messages);
 };
 
-export const deviceCardMessages: MessageDescriptor = defineMessages({
+export const deviceCardMessages: CustomMessageDescriptor = defineMessages({
   deviceTitle: {
     id: 'id1',
     defaultMessage: 'User Device',
@@ -35,7 +35,7 @@ export const deviceCardMessages: MessageDescriptor = defineMessages({
   },
 });
 
-export const mcsDateRangePickerMessages: MessageDescriptor = defineMessages({
+export const mcsDateRangePickerMessages: CustomMessageDescriptor = defineMessages({
   TODAY: {
     id: 'components.mcsDateRangePicker.range.today',
     defaultMessage: 'Today',
@@ -70,7 +70,7 @@ export const mcsDateRangePickerMessages: MessageDescriptor = defineMessages({
   },
 });
 
-export const labelSelectorMessages: MessageDescriptor = defineMessages({
+export const labelSelectorMessages: CustomMessageDescriptor = defineMessages({
   labelNoResults: {
     id: 'components.labelsSelector.noResults',
     defaultMessage: 'No Results',
@@ -81,7 +81,7 @@ export const labelSelectorMessages: MessageDescriptor = defineMessages({
   },
 });
 
-export const infiniteListMessages: MessageDescriptor = defineMessages({
+export const infiniteListMessages: CustomMessageDescriptor = defineMessages({
   searchBarPlaceholder: {
     id: 'settings.services.infinite.scroll.searchBar.placeholder',
     defaultMessage: 'Enter your search here',
@@ -92,7 +92,7 @@ export const infiniteListMessages: MessageDescriptor = defineMessages({
   },
 });
 
-export const menuSubListMessages: MessageDescriptor = defineMessages({
+export const menuSubListMessages: CustomMessageDescriptor = defineMessages({
   empty: {
     id: 'components.formMenu.menuSubList.empty',
     defaultMessage: 'Empty',

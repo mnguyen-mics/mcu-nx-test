@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 
 import {
   parseSearch,
@@ -41,7 +41,7 @@ interface State {
   total: number;
 }
 
-type Props = InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
+type Props = WrappedComponentProps & RouteComponentProps<{ organisationId: string }>;
 
 class ServiceUsageReportListPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IServiceUsageReportService)
