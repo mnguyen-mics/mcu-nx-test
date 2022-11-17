@@ -14,20 +14,11 @@ class FeedCardTitle extends React.Component<Props> {
   render() {
     const { feed, pluginLayout } = this.props;
 
-    const thumbnail = pluginLayout?.metadata.small_icon_asset_url;
     return (
-      <div className='mcs-feed-card-titleAndIcon'>
-        {thumbnail ? (
-          <img
-            className='mcs-feedCard_icon'
-            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${thumbnail}`}
-          />
-        ) : null}
-        <div className='mcs-feedCard_title'>
-          {feed.name && <div className='mcs-feed-name'>{feed.name}</div>}
-          <div className='mcs-plugin-name'>
-            {pluginLayout?.metadata.display_name || feed.artifact_id}
-          </div>
+      <div className='mcs-feedCardTitle'>
+        {feed.name && <div className='mcs-feedCardTitle_title'>{feed.name}</div>}
+        <div className='mcs-feedCardTitle_subtitle'>
+          {pluginLayout?.metadata.display_name || feed.artifact_id}
         </div>
       </div>
     );

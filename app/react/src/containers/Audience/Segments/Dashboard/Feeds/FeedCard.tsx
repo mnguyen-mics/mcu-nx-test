@@ -85,10 +85,18 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       return <FeedCardPlaceholder />;
     }
 
+    const thumbnail = pluginLayout?.metadata.small_icon_asset_url;
+
     return (
-      <Card className='mcs-feed-card'>
+      <Card className='mcs-feedCard'>
         <div>
           <div className='mcs-feedCard_header'>
+            {thumbnail ? (
+              <img
+                className='mcs-feedCard_header_icon'
+                src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${thumbnail}`}
+              />
+            ) : null}
             <FeedCardTitle feed={feed} pluginLayout={pluginLayout} />
             <FeedCardMenu
               feedCardId={this.id}

@@ -1,99 +1,105 @@
-.mcs-feed-card {
+.mcs-feedCard {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 15px 20px;
   margin-bottom: 20px;
+
   .mcs-feedCard_header {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-
     margin-bottom: 30px;
+
+    &_icon {
+      width: 45px;
+      height: 45px;
+      margin-right: 10px;
+    }
+
     .mcs-feedCard_topMenu {
       display: flex;
-      justify-content: flex-end;
+      margin-left: auto;
+
       .mcs-icon {
         margin-right: 0;
       }
     }
 
-    .mcs-feed-card-titleAndIcon {
+    .mcs-feedCardTitle {
       display: flex;
-      flex-direction: row;
-      .mcs-feedCard_icon {
-        width: 45px;
-        height: 45px;
-        margin-right: 10px;
+      flex-direction: column;
+      justify-content: space-between;
+      font-style: normal;
+      font-stretch: normal;
+      letter-spacing: normal;
+      width: 70%;
+
+      &_title {
+        font-weight: 800;
+        font-size: 14px;
+        line-height: 22px;
+        font-family: @font-family;
+        color: @dark-text-color;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 99%;
       }
-      .mcs-feedCard_icon_placeholder {
+
+      &_title_placeholder {
+        height: 22px;
+        width: 200px;
         background-color: @loading-color;
         border-radius: 6px;
       }
-      .mcs-feedCard_title {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        font-style: normal;
-        font-stretch: normal;
-        letter-spacing: normal;
-        .mcs-feed-name {
-          font-weight: 800;
-          font-size: 14px;
-          line-height: 22px;
-          font-family: @font-family;
-          color: @dark-text-color;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 99%;
-        }
-        .mcs-feed-name_placeholder {
-          height: 22px;
-          width: 200px;
-          background-color: @loading-color;
-          border-radius: 6px;
-        }
-        .mcs-plugin-name {
-          font-size: 12px;
-          line-height: 20px;
-          font-family: @font-family;
-          color: @text-color;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .mcs-plugin-name_placeholder {
-          height: 20px;
-          width: 200px;
-          background-color: @loading-color;
-          border-radius: 6px;
-        }
+
+      &_subtitle {
+        font-size: 12px;
+        line-height: 20px;
+        font-family: @font-family;
+        color: @text-color;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      &_title_placeholder {
+        height: 20px;
+        width: 200px;
+        background-color: @loading-color;
+        border-radius: 6px;
       }
     }
   }
+
   .mcs-feedCard_content {
     display: flex;
+
     .mcs-feedCard_stateIcons {
       display: flex;
       font-size: 16px;
       margin-right: 2px;
+
       .mcs-feedCard_stateRightIcon {
         position: relative;
         left: -3px;
         background-color: white;
       }
     }
+
     .mcs-feedCard_stateIcon {
       font-size: 16px;
       margin-right: 10px;
     }
+
     .mcs-feedCard_stateIcon_error {
       color: @error-color !important;
     }
+
     .mcs-feedCard_content_description {
       display: flex;
       flex-direction: column;
+
       .mcs-feedCard_content_status {
         font-style: italic;
         margin-bottom: 5px;
@@ -102,15 +108,18 @@
         font-family: @font-family;
         color: @text-color;
       }
+
       .mcs-feedCard_content_status_placeholder {
         height: 15px;
         width: 200px;
         background-color: @loading-color;
         border-radius: 6px;
       }
+
       .mcs-feedCard_content_status_error {
         color: @error-color !important;
       }
+
       .mcs-feedCard_content_statsAndAction {
         display: flex;
         align-items: center;
