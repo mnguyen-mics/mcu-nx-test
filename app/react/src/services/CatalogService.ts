@@ -60,6 +60,11 @@ export interface GetServiceItemsOptions extends PaginatedApiParam {
   type?: string[];
 }
 
+export interface FindServiceAgreementsOptions extends PaginatedApiParam {
+  provider_id?: string;
+  service_offer_id?: string;
+}
+
 export interface ICatalogService {
   getServices: (
     organisationId: string,
@@ -180,6 +185,11 @@ export interface ICatalogService {
     signingOrganisationId: string,
     agreementType: AgreementType,
   ) => Promise<DataResponse<ServiceAgreementResource>>;
+
+  findServiceAgreements: (
+    organisationId: string,
+    options: FindServiceAgreementsOptions,
+  ) => Promise<DataListResponse<ServiceAgreementResource>>;
 
   addOfferToAgreement: (
     organisationId: string,
@@ -445,6 +455,14 @@ export class CatalogService implements ICatalogService {
     const offerIdsStr = offerIds.join(',');
     const endpoint = `organisations/${organisationId}/available_service_items?offer_id=${offerIdsStr}`;
     return ApiService.getRequest(endpoint);
+  }
+
+  findServiceAgreements(
+    organisationId: string,
+    options: FindServiceAgreementsOptions,
+  ): Promise<DataListResponse<ServiceAgreementResource>> {
+    const endpoint = `organisations/${organisationId}/agreements`;
+    return ApiService.getRequest(endpoint, options);
   }
 
   createServiceAgreement(

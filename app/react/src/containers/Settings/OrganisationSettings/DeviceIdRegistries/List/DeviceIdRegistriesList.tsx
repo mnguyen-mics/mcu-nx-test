@@ -219,7 +219,26 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
 
       return subscribedOffers
         .then(res => {
-          const thirdPartyDataRows: ThirdPartyDataRow[] = res.data.flatMap(offer => {
+          return Promise.all(
+            res.data.map(offer => {
+              const agreementOptions = {
+                service_offer_id: offer.id,
+                ...getPaginatedApiParam(1, 500),
+              };
+              return this._catalogueService
+                .findServiceAgreements(organisationId, agreementOptions)
+                .then(res => {
+                  const agreement = res.data.at(0); // we should only have one agreement (business assumption)
+                  return {
+                    agreement_id: agreement ? agreement.id : undefined,
+                    ...offer,
+                  };
+                });
+            }),
+          );
+        })
+        .then(offers => {
+          const thirdPartyDataRows: ThirdPartyDataRow[] = offers.flatMap(offer => {
             return [
               {
                 _row_type: 'OFFER_HEADER',
@@ -236,7 +255,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
               ),
             );
           });
-          const nbOfRegistries = res.data.reduce(
+          const nbOfRegistries = offers.reduce(
             (acc: number, offer: DeviceIdRegistryOfferResource) => {
               return acc + offer.device_id_registries.length;
             },
@@ -244,8 +263,8 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
           );
           this.setState({
             thirdPartyRegistriesTotal: nbOfRegistries,
-            subscribedRegistryOffers: res.data,
-            subscribedRegistryOffersTotal: res.data.length,
+            subscribedRegistryOffers: offers,
+            subscribedRegistryOffersTotal: offers.length,
           });
           return thirdPartyDataRows;
         })
@@ -346,10 +365,12 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
     return this._datamartService
       .getDatamarts(organisation_id, datamartsOptions)
       .then(res => {
-        return this._deviceIdRegistryService.updateDeviceIdRegistryDatamartSelections(
-          deviceIdRegistryId,
-          res.data.map(datamart => datamart.id),
-        );
+        return res.data.length > 0
+          ? this._deviceIdRegistryService.updateDeviceIdRegistryDatamartSelections(
+              deviceIdRegistryId,
+              res.data.map(datamart => datamart.id),
+            )
+          : Promise.resolve();
       })
       .catch(err => {
         notifyError(err);
@@ -678,7 +699,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       notifySuccess,
       notifyError,
     } = this.props;
-    const offer = this.state.availableRegistryOffers.find(offer => offer.id === id)!;
+    const offer = this.state.subscribedRegistryOffers.find(offer => offer.id === id)!;
     const offerSelections = offer.device_id_registries.flatMap(registry => {
       const r = this.state.thirdPartyRegistries.find(
         thirdPartyRow =>
@@ -719,7 +740,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
               return this._catalogueService
                 .removeOfferFromAgreement(organisation_id, offer.agreement_id!, id)
                 .then(() => {
-                  this._catalogueService.deleteServiceAgreement(
+                  return this._catalogueService.deleteServiceAgreement(
                     organisation_id,
                     offer.agreement_id!,
                   );
