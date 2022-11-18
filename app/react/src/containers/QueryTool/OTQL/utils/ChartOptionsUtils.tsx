@@ -18,6 +18,7 @@ import {
   IndexDataset,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
 import omitDeep from 'omit-deep-lodash';
+import { DateOptions } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
 
 export interface QuickOption {
   key: string;
@@ -32,33 +33,31 @@ export interface QuickOptionsSelector {
   selectedValue?: string;
 }
 
-export function getLegend(value?: string) {
-  const key = 'legend';
+export function getLegend(value?: string): CommonChartOptions {
   switch (value) {
     case 'no_legend':
       return {
-        [key]: {
+        legend: {
           enabled: false,
         },
       };
     case 'legend_bottom':
       return {
-        [key]: {
+        legend: {
           enabled: true,
           position: 'bottom',
         },
       };
     case 'legend_right':
       return {
-        [key]: {
+        legend: {
           enabled: true,
           position: 'right',
         },
       };
     default:
-      return undefined;
+      return {};
   }
-  return undefined;
 }
 
 export function getSelectLegend(options: { [key: string]: any }) {
@@ -78,7 +77,27 @@ export function getSelectLegend(options: { [key: string]: any }) {
   } else return 'no_legend';
 }
 
-export function getChartOption(chartType: ChartType, key: string, value?: string) {
+export interface LegendType {
+  enabled: boolean;
+  position?: 'bottom' | 'right';
+}
+
+// TODO: replace it with ChartOptions and rework types
+export interface CommonChartOptions {
+  legend?: LegendType;
+  format?: string;
+  innerRadius?: boolean;
+  type?: string;
+  date_options?: DateOptions;
+  drilldown?: boolean;
+  stacking?: boolean;
+}
+
+export function getChartOption(
+  chartType: ChartType,
+  key: string,
+  value?: string,
+): CommonChartOptions {
   switch (key) {
     case 'legend':
       return getLegend(value);
@@ -128,8 +147,9 @@ export function getChartOption(chartType: ChartType, key: string, value?: string
             stacking: false,
           };
       } else return {};
+    default:
+      return {};
   }
-  return undefined;
 }
 
 export function formatDate(str: string, format?: string, toUtc?: boolean) {
@@ -484,15 +504,15 @@ export const renderQuickOptions = (
   );
 };
 
-const hasPercentageTransformation = (quickOptions: any) => {
+const hasPercentageTransformation = (quickOptions: CommonChartOptions) => {
   return quickOptions.format === 'percentage';
 };
 
-const hasIndexTransformation = (quickOptions: any) => {
+const hasIndexTransformation = (quickOptions: CommonChartOptions) => {
   return quickOptions.format === 'index';
 };
 
-const hasDateFormatTransformation = (quickOptions: any) => {
+const hasDateFormatTransformation = (quickOptions: CommonChartOptions) => {
   return quickOptions.date_options && quickOptions.date_options.format !== undefined;
 };
 
@@ -500,10 +520,7 @@ const splitMultipleSeriesDataset = (aggregateDataset: AggregateDataset): Aggrega
   const seriesTitles: string[] = aggregateDataset.metadata.seriesTitles;
   return seriesTitles.map(title => {
     const otherSeriesTitles = seriesTitles.filter(value => value !== title);
-    const cloneOfInitialDataset: AggregateDataset = JSON.parse(
-      JSON.stringify(aggregateDataset),
-    ) as AggregateDataset;
-
+    const cloneOfInitialDataset: AggregateDataset = { ...aggregateDataset };
     const datasetWithRemovedOtherSeries: AggregateDataset = omitDeep(
       cloneOfInitialDataset,
       otherSeriesTitles,
@@ -521,7 +538,7 @@ const splitMultipleSeriesDataset = (aggregateDataset: AggregateDataset): Aggrega
 export const getChartDataset = (
   dataset: WrappedAbstractDataset | AbstractSource,
   isDataset: boolean,
-  chartProps: any,
+  chartProps: CommonChartOptions,
 ) => {
   const childProperty = isDataset ? 'children' : 'sources';
   let source: any = {
