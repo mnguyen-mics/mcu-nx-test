@@ -32,6 +32,7 @@ import {
   WithOptionalComplexXKey,
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import {
+  CommonChartOptions,
   getBaseChartProps,
   getChartDataset,
   getChartOption,
@@ -411,7 +412,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
     return quickOptions;
   };
 
-  private getChartOptionsMap(chartType: ChartType): any[] {
+  private getChartOptionsMap(chartType: ChartType): CommonChartOptions[] {
     const { selectedQuickOptions } = this.state;
     if (!selectedQuickOptions) {
       return [];
@@ -427,7 +428,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
   }
 
   private getChartProps = (chartType: ChartType) => {
-    const chartPropsMap = this.getChartOptionsMap(chartType);
+    const chartPropsMap: any[] = this.getChartOptionsMap(chartType);
     const baseProps: ChartOptions | undefined = getBaseChartProps(
       chartType,
       !this.noLegendByDefault(),
