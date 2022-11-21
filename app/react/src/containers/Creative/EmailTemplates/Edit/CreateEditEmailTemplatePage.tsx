@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { PluginEditForm } from '@mediarithmics-private/advanced-components';
 import { EditContentLayout } from '../../../../components/Layout';
@@ -41,7 +41,7 @@ interface CreateEmailTemplateState {
 
 type JoinedProps = InjectedNotificationProps &
   RouteComponentProps<EmailTemplateRouteParam> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class CreateEmailTemplate extends React.Component<JoinedProps, CreateEmailTemplateState> {
   @lazyInject(TYPES.ICreativeService)

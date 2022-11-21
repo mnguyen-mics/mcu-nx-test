@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Menu, Button } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 
 import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
@@ -23,7 +23,9 @@ interface MapStateToProps {
   defaultDatamart: (organisationId: string) => DatamartResource;
 }
 
-type Props = MapStateToProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
+type Props = MapStateToProps &
+  WrappedComponentProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class AudiencePartitionsActionbar extends React.Component<Props> {
   render() {

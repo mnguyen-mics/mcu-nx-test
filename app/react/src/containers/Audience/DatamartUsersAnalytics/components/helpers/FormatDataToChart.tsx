@@ -25,7 +25,7 @@ import {
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { EmptyRecords } from '../../../../../components';
 import { DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 import {
@@ -55,7 +55,7 @@ export interface FormatDataProps {
   };
 }
 
-type JoinedProp = FormatDataProps & InjectedThemeColorsProps & InjectedIntlProps;
+type JoinedProp = FormatDataProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 class FormatDataToChart extends React.Component<JoinedProp, {}> {
   getXAxisValues = (dataset: Dataset[], xKey: string) => {

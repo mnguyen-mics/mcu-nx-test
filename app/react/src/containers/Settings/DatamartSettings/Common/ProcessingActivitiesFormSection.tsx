@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { ProcessingActivityFieldModel } from './domain';
 import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
@@ -49,7 +49,7 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   WrappedFieldArrayProps<ProcessingActivityFieldModel> &
   ProcessingActivitiesFormSectionProps &
   InjectedDrawerProps &

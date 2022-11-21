@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import {
   parseSearch,
@@ -46,7 +46,7 @@ import {
 type Props = InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedFeaturesProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 type RecordType = {
   feed: AudienceFeedTyped;

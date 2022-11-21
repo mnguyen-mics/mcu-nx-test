@@ -1,9 +1,9 @@
-import { FormattedMessage } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 
 export type FormatProperty = (
   p: string,
   v?: string,
 ) => {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 };

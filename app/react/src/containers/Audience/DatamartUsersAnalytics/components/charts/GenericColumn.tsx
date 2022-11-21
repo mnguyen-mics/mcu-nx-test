@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 
 export interface GenericColumnProps {
@@ -12,7 +12,7 @@ export interface MapData {
   [key: string]: string | number | number[];
 }
 
-type Props = GenericColumnProps & InjectedIntlProps;
+type Props = GenericColumnProps & WrappedComponentProps;
 
 class GenericColumn extends React.Component<Props> {
   render() {

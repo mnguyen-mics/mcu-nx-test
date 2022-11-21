@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Layout, Alert } from 'antd';
 import { compose } from 'recompose';
@@ -52,7 +52,7 @@ interface AdGroupProps {
   ) => Promise<any>;
 }
 
-type JoinedProps = AdGroupProps & InjectedIntlProps & RouteComponentProps<CampaignRouteParams>;
+type JoinedProps = AdGroupProps & WrappedComponentProps & RouteComponentProps<CampaignRouteParams>;
 
 class AdGroup extends React.Component<JoinedProps> {
   archiveAdGroup = () => {

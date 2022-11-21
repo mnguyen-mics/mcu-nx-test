@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Switch, Modal } from 'antd';
 import { compose } from 'recompose';
@@ -38,7 +38,7 @@ interface DisplayCampaignAdTableState {
 }
 
 type JoinedProps = DisplayCampaignAdTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string; campaignId: string }> &
   InjectedDrawerProps;
 

@@ -7,7 +7,7 @@ import { ILabelService } from '../../services/LabelsService';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { LabelsSelector } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { convertMessageDescriptorToString, labelSelectorMessages } from '../../IntlMessages';
 import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector';
 
@@ -32,7 +32,7 @@ interface LabelsState {
 }
 
 type Props = LabelsProps &
-  InjectedIntlProps & {
+  WrappedComponentProps & {
     orgLabels: Label[];
   };
 

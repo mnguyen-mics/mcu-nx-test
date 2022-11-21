@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, MessageDescriptor } from 'react-intl';
 import { Row, Col } from 'antd';
 import cuid from 'cuid';
 import messages from '../messages';
@@ -25,13 +25,13 @@ export interface FieldNodeSectionProps {
   datamartId: string;
   runtimeSchemaId: string;
   formName?: string;
-  title: FormattedMessage.MessageDescriptor;
-  subtitle: FormattedMessage.MessageDescriptor;
+  title: MessageDescriptor;
+  subtitle: MessageDescriptor;
   disabled?: boolean;
   isEdge?: boolean;
 }
 
-type JoinedProps = InjectedIntlProps &
+type JoinedProps = WrappedComponentProps &
   FieldNodeSectionProps &
   WrappedFieldArrayProps<FieldNodeFormData>;
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
@@ -15,7 +15,7 @@ import {
   FormAlertInputField,
 } from '../../../../../../components/Form';
 
-type Props = InjectedIntlProps & ValidatorProps;
+type Props = WrappedComponentProps & ValidatorProps;
 
 interface State {
   displayAdvancedSection: boolean;

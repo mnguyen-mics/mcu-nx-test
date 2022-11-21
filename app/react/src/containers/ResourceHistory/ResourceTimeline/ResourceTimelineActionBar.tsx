@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormatProperty } from './domain';
 import messages from './messages';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'redux';
 
 export interface ResourceTimelineActionBarProps {
@@ -10,7 +10,7 @@ export interface ResourceTimelineActionBarProps {
   formatProperty: FormatProperty;
 }
 
-type Props = ResourceTimelineActionBarProps & InjectedIntlProps;
+type Props = ResourceTimelineActionBarProps & WrappedComponentProps;
 
 export class ResourceTimelineActionBar extends React.Component<Props> {
   render() {

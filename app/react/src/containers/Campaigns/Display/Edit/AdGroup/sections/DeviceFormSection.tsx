@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { WrappedFieldProps } from 'redux-form';
 
@@ -20,7 +20,7 @@ interface DeviceFormSectionProps extends WrappedFieldProps, ReduxFormChangeProps
   disabled: boolean;
 }
 
-type Props = DeviceFormSectionProps & InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = DeviceFormSectionProps & WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 interface State {
   displayAdvancedSection: boolean;

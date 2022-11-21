@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { connect } from 'react-redux';
 import AdvancedSegmentBuilder, { QueryResult } from './AdvancedSegmentBuilder';
 import {
@@ -54,7 +54,7 @@ interface State {
 }
 
 type Props = AdvancedSegmentBuilderContainerProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedFeaturesProps;

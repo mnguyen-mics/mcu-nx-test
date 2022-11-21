@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../../messages';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
@@ -18,7 +18,7 @@ import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
 import { formatAdGroupProperty } from '../../../../Display/messages';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 interface State {
   displayAdvancedSection: boolean;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Field, GenericField } from 'redux-form';
 import XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
@@ -14,7 +14,7 @@ export interface UserListProps {
 
 const maxFileSize = 100 * 1024 * 1024; // 100 mb
 
-type Props = UserListProps & InjectedIntlProps;
+type Props = UserListProps & WrappedComponentProps;
 
 class UserListSection extends React.Component<Props> {
   constructor(props: Props) {

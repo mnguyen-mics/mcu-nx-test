@@ -9,7 +9,7 @@ import {
   injectThemeColors,
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import {
   EmptyChart,
   LoadingChart,
@@ -31,7 +31,7 @@ interface AdditionDeletionProps {
 
 type Props = AdditionDeletionProps &
   InjectedThemeColorsProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{}>;
 
 class AdditionDeletion extends React.Component<Props> {

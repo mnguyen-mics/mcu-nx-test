@@ -5,14 +5,14 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 
 interface SegmentsTagProps {
   segmentId: string;
 }
 
-type Props = SegmentsTagProps & InjectedIntlProps;
+type Props = SegmentsTagProps & WrappedComponentProps;
 
 interface State {
   segment?: AudienceSegmentShape;

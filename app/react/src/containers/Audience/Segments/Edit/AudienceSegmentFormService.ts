@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { InjectedIntl } from 'react-intl';
+import { IntlShape } from 'react-intl';
 import { Modal } from 'antd';
 import { IOrganisationService } from './../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from './../../../../models/processing';
@@ -48,7 +48,7 @@ export interface IAudienceSegmentFormService {
   checkProcessingsAndSave: (
     audienceSegmentFormData: AudienceSegmentFormData,
     save: (audienceSegmentFormData: AudienceSegmentFormData) => void,
-    intl: InjectedIntl,
+    intl: IntlShape,
   ) => void;
   generateProcessingSelectionsTasks: (
     segmentId: string,
@@ -294,7 +294,7 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
   checkProcessingsAndSave = (
     audienceSegmentFormData: AudienceSegmentFormData,
     save: (audienceSegmentFormData: AudienceSegmentFormData) => void,
-    intl: InjectedIntl,
+    intl: IntlShape,
   ) => {
     const warn = this.shouldWarnProcessings(audienceSegmentFormData);
 

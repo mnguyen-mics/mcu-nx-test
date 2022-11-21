@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Layout, Modal } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { messages } from '../messages';
 import StandardSegmentBuilderTable from './StandardSegmentBuilderTable';
 import { injectDrawer } from '../../../../../components/Drawer';
@@ -33,7 +33,7 @@ type Props = RouteComponentProps<{
   datamartId: string;
 }> &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class StandardSegmentBuilderListPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IStandardSegmentBuilderService)

@@ -30,7 +30,7 @@ import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 import { AutomationFormDataType } from './AutomationNode/Edit/domain';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { compose } from 'recompose';
 import ExitConditionButton from './ExitConditionButton/ExitConditionButton';
@@ -89,7 +89,7 @@ interface State {
   viewNodeSelector: boolean;
 }
 
-type Props = AutomationBuilderProps & InjectedIntlProps;
+type Props = AutomationBuilderProps & WrappedComponentProps;
 
 class AutomationBuilder extends React.Component<Props, State> {
   engine = new DiagramEngine();

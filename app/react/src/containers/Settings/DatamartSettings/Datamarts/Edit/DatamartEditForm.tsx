@@ -12,7 +12,7 @@ import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { BasicProps } from 'antd/lib/layout/layout';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -43,7 +43,7 @@ export interface DatamartEditFormProps extends Omit<ConfigProps<DatamartFormData
 
 type Props = InjectedFormProps<DatamartFormData, DatamartEditFormProps> &
   DatamartEditFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export const FORM_ID = 'datamartForm';

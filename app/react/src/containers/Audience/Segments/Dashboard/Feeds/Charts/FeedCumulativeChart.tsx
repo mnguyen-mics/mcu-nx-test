@@ -8,7 +8,7 @@ import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, MessageDescriptor, injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import {
   injectThemeColors,
@@ -48,7 +48,7 @@ interface FeedCumulativeChartProps {
 
 type Props = FeedCumulativeChartProps &
   InjectedThemeColorsProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 interface State {
@@ -534,7 +534,7 @@ export default compose<Props, FeedCumulativeChartProps>(
 )(FeedCumulativeChart);
 
 const messages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   identifiersLineChartTitle: {
     id: 'feed.lineChart.identifiers.title',

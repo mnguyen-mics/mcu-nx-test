@@ -11,7 +11,7 @@ import {
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
-import { InjectedIntlProps } from 'react-intl';
+import { WrappedComponentProps } from 'react-intl';
 
 import {
   GeneralFormSection,
@@ -43,7 +43,7 @@ export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   goToTriggerTypeSelection?: () => void;
 }
 
-type Props = InjectedFormProps<GoalFormData, GoalFormProps> & GoalFormProps & InjectedIntlProps;
+type Props = InjectedFormProps<GoalFormData, GoalFormProps> & GoalFormProps & WrappedComponentProps;
 
 export const FORM_ID = 'goalForm';
 

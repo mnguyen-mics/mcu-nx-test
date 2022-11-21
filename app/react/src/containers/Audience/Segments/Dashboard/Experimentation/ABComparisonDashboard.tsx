@@ -6,7 +6,7 @@ import { EditAudienceSegmentParam } from '../../Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import FeedCardList from './../Feeds/FeedCardList';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import ABComparisonGauge from './ABComparisonGauge';
@@ -54,7 +54,7 @@ export interface ABComparisonDashboardProps {
 }
 
 type Props = ABComparisonDashboardProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedThemeColorsProps &
   InjectedFeaturesProps &

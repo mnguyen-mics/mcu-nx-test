@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Row, Layout } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { Index } from '../../../../../utils';
 import messages from './messages';
 import {
@@ -39,7 +39,7 @@ interface DatamartReplicationListContainerProps {
 type Props = DatamartReplicationListContainerProps &
   RouteComponentProps<DatamartReplicationRouteMatchParam> &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps;
 
 class DatamartReplicationListContainer extends React.Component<Props> {

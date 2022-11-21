@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { message, Modal } from 'antd';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import queryString from 'query-string';
 import injectNotifications, {
@@ -36,7 +36,7 @@ interface State {
   selectedDatamartId?: string;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<
     EditCompartmentRouteMatchParam,

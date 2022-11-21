@@ -14,7 +14,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
-import { defineMessages, InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import {
   injectThemeColors,
   InjectedThemeColorsProps,
@@ -41,7 +41,7 @@ export interface AudienceSegmentExportsCardProps {
 type Props = AudienceSegmentExportsCardProps &
   InjectedNotificationProps &
   InjectedThemeColorsProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{}>;
 
 interface AudienceSegmentExportExecutionItems {

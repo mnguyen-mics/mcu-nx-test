@@ -6,7 +6,7 @@ import {
 import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Button, Layout } from 'antd';
 import * as React from 'react';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import {
@@ -65,7 +65,7 @@ export interface FunnelSheetDescription {
   funnelData: GroupedByFunnel;
 }
 
-type JoinedProps = WithDatamartSelectorProps & InjectedIntlProps & InjectedNotificationProps;
+type JoinedProps = WithDatamartSelectorProps & WrappedComponentProps & InjectedNotificationProps;
 
 class FunnelPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.IUserActivitiesFunnelService)

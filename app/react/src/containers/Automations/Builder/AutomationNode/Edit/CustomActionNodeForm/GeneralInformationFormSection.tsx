@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import messages from './messages';
 import { CustomActionAutomationFormData } from '../domain';
@@ -15,7 +15,7 @@ interface GeneralInformationFormSectionProps {
   disabled?: boolean;
 }
 
-type Props = GeneralInformationFormSectionProps & InjectedIntlProps & ValidatorProps;
+type Props = GeneralInformationFormSectionProps & WrappedComponentProps & ValidatorProps;
 
 class GeneralInformationFormSection extends React.Component<Props> {
   render() {

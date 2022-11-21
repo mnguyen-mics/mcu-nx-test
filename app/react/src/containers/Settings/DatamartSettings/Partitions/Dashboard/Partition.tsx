@@ -1,6 +1,6 @@
 import { Layout, message, Modal } from 'antd';
 import * as React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Card, ContentHeader } from '@mediarithmics-private/mcs-components-library';
@@ -89,7 +89,7 @@ interface PartitionState {
 }
 
 type JoinedProps = InjectedWorkspaceProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
 

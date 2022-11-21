@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 
 import * as FeatureSelectors from '../../../../redux/Features/selectors';
 import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
@@ -53,7 +53,7 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; goalId: string }, {}, { from?: string }>;

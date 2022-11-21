@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import messages from '../messages';
@@ -19,7 +19,7 @@ interface ActionFormSectionProps {
   cleaningRuleType: CleaningRuleType;
 }
 
-type Props = ActionFormSectionProps & InjectedIntlProps & ValidatorProps;
+type Props = ActionFormSectionProps & WrappedComponentProps & ValidatorProps;
 
 class ActionFormSection extends React.Component<Props> {
   checkLifeDuration = (): Validator => value => {

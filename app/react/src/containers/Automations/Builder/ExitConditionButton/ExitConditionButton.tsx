@@ -1,7 +1,7 @@
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Popconfirm } from 'antd';
 import * as React from 'react';
-import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
   ScenarioExitConditionFormData,
@@ -29,7 +29,7 @@ interface ExitConditionButtonProps {
   ) => StorylineNodeModel;
 }
 
-type Props = ExitConditionButtonProps & InjectedDrawerProps & InjectedIntlProps;
+type Props = ExitConditionButtonProps & InjectedDrawerProps & WrappedComponentProps;
 
 interface State {
   viewSubmenus: boolean;

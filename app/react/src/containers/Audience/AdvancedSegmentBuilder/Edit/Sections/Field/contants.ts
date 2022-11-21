@@ -5,7 +5,7 @@ import {
   TimeComparisonOperator,
   StringComparisonOperator,
 } from '../../../../../../models/datamart/graphdb/QueryDocument';
-import { InjectedIntl } from 'react-intl';
+import { IntlShape } from 'react-intl';
 import messages from '../../messages';
 import {
   ActivitySource,
@@ -28,9 +28,7 @@ export interface ComparisonValues<T> {
 }
 
 const comparisonOperators = {
-  generateNumericComparisonOperator(
-    intl: InjectedIntl,
-  ): ComparisonValues<NumericComparisonOperator> {
+  generateNumericComparisonOperator(intl: IntlShape): ComparisonValues<NumericComparisonOperator> {
     return {
       values: [
         {
@@ -61,9 +59,7 @@ const comparisonOperators = {
       defaultValue: { type: 'NUMERIC', operator: 'EQUAL', values: [] },
     };
   },
-  generateBooleanComparisonOperator(
-    intl: InjectedIntl,
-  ): ComparisonValues<BooleanComparisonOperator> {
+  generateBooleanComparisonOperator(intl: IntlShape): ComparisonValues<BooleanComparisonOperator> {
     return {
       values: [
         {
@@ -78,7 +74,7 @@ const comparisonOperators = {
       defaultValue: { type: 'BOOLEAN', operator: 'EQUAL', values: [] },
     };
   },
-  generateEnumComparisonOperator(intl: InjectedIntl): ComparisonValues<EnumComparisonOperator> {
+  generateEnumComparisonOperator(intl: IntlShape): ComparisonValues<EnumComparisonOperator> {
     return {
       values: [
         {
@@ -93,7 +89,7 @@ const comparisonOperators = {
       defaultValue: { type: 'ENUM', operator: 'EQUAL', values: [] },
     };
   },
-  generateTimeComparisonOperator(intl: InjectedIntl): ComparisonValues<TimeComparisonOperator> {
+  generateTimeComparisonOperator(intl: IntlShape): ComparisonValues<TimeComparisonOperator> {
     return {
       values: [
         {
@@ -118,7 +114,7 @@ const comparisonOperators = {
   },
 
   generateStringComparisonOperator(
-    intl: InjectedIntl,
+    intl: IntlShape,
     indexDataType: string = 'keyword',
     isEdge: boolean = false,
   ): ComparisonValues<StringComparisonOperator> {

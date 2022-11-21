@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from '../../messages';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
@@ -16,7 +16,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { EditDisplayCampaignRouteMatchParam } from '../../domain';
 import { formatDisplayCampaignProperty } from '../../../../Display/messages';
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   NormalizerProps &
   RouteComponentProps<EditDisplayCampaignRouteMatchParam>;

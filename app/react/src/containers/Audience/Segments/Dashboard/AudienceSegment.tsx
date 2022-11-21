@@ -5,7 +5,7 @@ import { Labels } from '../../../Labels/index';
 import AudienceSegmentDashboard from './AudienceSegmentDashboard';
 import LookalikeStatusWarning from './Lookalike/LookalikeStatusWarning';
 import { compose } from 'recompose';
-import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
+import { WrappedComponentProps, defineMessages, injectIntl } from 'react-intl';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { isUserQuerySegment } from '../Edit/domain';
@@ -42,7 +42,7 @@ export interface AudienceSegmentProps {
 
 type Props = AudienceSegmentProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class AudienceSegment extends React.Component<Props> {
   constructor(props: Props) {

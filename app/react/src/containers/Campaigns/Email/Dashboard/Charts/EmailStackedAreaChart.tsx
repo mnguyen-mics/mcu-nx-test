@@ -7,7 +7,7 @@ import {
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
 import { Index } from '../../../../../utils';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { messagesMap } from '../BlastTable';
 import {
   EmptyChart,
@@ -31,7 +31,7 @@ export interface EmailStackedAreaChartProps {
   emailReport: Array<Index<any>>;
 }
 
-type Props = EmailStackedAreaChartProps & InjectedIntlProps & InjectedThemeColorsProps;
+type Props = EmailStackedAreaChartProps & WrappedComponentProps & InjectedThemeColorsProps;
 
 class EmailStackedAreaChart extends React.Component<Props> {
   renderStackedAreaCharts() {
@@ -69,23 +69,30 @@ class EmailStackedAreaChart extends React.Component<Props> {
   }
 
   render() {
-    const { emailReport, isLoading, colors, dateRangeValue, onDateRangeChange, intl } = this.props;
+    const {
+      emailReport,
+      isLoading,
+      colors,
+      dateRangeValue,
+      onDateRangeChange,
+      intl: { formatMessage },
+    } = this.props;
 
     const options = [
       {
-        domain: intl.formatHTMLMessage(messagesMap.emailSent),
+        domain: formatMessage(messagesMap.emailSent),
         color: colors['mcs-chart-2'],
       },
       {
-        domain: intl.formatHTMLMessage(messagesMap.clicks),
+        domain: formatMessage(messagesMap.clicks),
         color: colors['mcs-chart-1'],
       },
       {
-        domain: intl.formatHTMLMessage(messagesMap.impressions),
+        domain: formatMessage(messagesMap.impressions),
         color: colors['mcs-chart-3'],
       },
       {
-        domain: intl.formatHTMLMessage(messagesMap.emailHardBounced),
+        domain: formatMessage(messagesMap.emailHardBounced),
         color: colors['mcs-chart-5'],
       },
     ];
@@ -115,7 +122,7 @@ class EmailStackedAreaChart extends React.Component<Props> {
           </Col>
         </Row>
         {emailReport.length === 0 && isLoading ? (
-          <EmptyChart title={intl.formatMessage(messagesMap.noEmailStats)} icon='warning' />
+          <EmptyChart title={formatMessage(messagesMap.noEmailStats)} icon='warning' />
         ) : (
           this.renderStackedAreaCharts()
         )}

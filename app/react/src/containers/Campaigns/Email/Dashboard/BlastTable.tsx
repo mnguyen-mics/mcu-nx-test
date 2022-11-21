@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  WrappedComponentProps,
+  injectIntl,
+  MessageDescriptor,
+} from 'react-intl';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
@@ -30,7 +36,7 @@ import { PopupContainer } from '@mediarithmics-private/mcs-components-library';
 const { Dropdown } = PopupContainer;
 
 const blastStatusMessageMap: {
-  [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor;
+  [key in EmailBlastStatus]: MessageDescriptor;
 } = defineMessages({
   SCENARIO_ACTIVATED: {
     id: 'email.campaigns.dashboard.blastList.scenarioActivation',
@@ -129,7 +135,7 @@ export interface BlastTableProps {
 }
 
 type Props = BlastTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<EmailCampaignDashboardRouteMatchParam> &
   InjectedDrawerProps;
 

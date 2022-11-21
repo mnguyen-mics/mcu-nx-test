@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Field, GenericField } from 'redux-form';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ interface State {
   fetchingRouters: boolean;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 

@@ -4,7 +4,7 @@ import { UploadProps } from 'antd/lib/upload';
 import { UploadFile, UploadChangeParam } from 'antd/lib/upload/interface';
 import { FormUploadProps } from '../../../../../components/Form/FormUpload';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { compose } from 'recompose';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -38,7 +38,7 @@ const maxFileSize = 200 * 1024;
 
 type JoinedProps = FormUploadProps &
   WrappedFieldArrayProps<MultipleImageField> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   CustomMultipleImageLoaderProps;
 
 interface State {

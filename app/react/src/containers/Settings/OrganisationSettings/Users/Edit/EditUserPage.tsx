@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { message } from 'antd';
 import { Loading } from '../../../../../components/index';
@@ -62,7 +62,8 @@ interface State {
   userData: Partial<UserResource>;
 }
 
-type Props = InjectedIntlProps & RouteComponentProps<{ organisationId: string; userId: string }>;
+type Props = WrappedComponentProps &
+  RouteComponentProps<{ organisationId: string; userId: string }>;
 
 class EditUserPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IUsersService)

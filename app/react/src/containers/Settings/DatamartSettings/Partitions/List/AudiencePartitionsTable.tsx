@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { compose } from 'recompose';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { DataListResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 import { PartitionFilterParams } from './AudiencePartitionsPage';
@@ -24,7 +24,7 @@ export interface AudiencePartitionsTableProps {
   datamarts: DatamartWithMetricResource[];
 }
 
-type Props = AudiencePartitionsTableProps & InjectedIntlProps;
+type Props = AudiencePartitionsTableProps & WrappedComponentProps;
 
 class AudiencePartitionTable extends TableViewFilters<AudiencePartitionResource> {}
 

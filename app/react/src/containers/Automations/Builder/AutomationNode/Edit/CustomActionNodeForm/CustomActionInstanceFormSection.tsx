@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Spin } from 'antd';
 import { PropertyResourceShape } from '../../../../../../models/plugin';
@@ -18,7 +18,7 @@ interface CustomActionInstanceFormSectionProps {
   disabled?: boolean;
 }
 
-type Props = CustomActionInstanceFormSectionProps & InjectedIntlProps;
+type Props = CustomActionInstanceFormSectionProps & WrappedComponentProps;
 
 class CustomActionInstanceFormSection extends React.Component<Props> {
   displayPluginInstanceFormSection = (subElement: JSX.Element) => {

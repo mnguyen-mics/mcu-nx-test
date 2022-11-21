@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
@@ -28,7 +28,7 @@ interface AutomationListPageState {
   isArchiving: boolean;
 }
 
-type JoinedProps = InjectedIntlProps &
+type JoinedProps = WrappedComponentProps &
   InjectedDrawerProps &
   MapDispatchToProps &
   InjectedNotificationProps &

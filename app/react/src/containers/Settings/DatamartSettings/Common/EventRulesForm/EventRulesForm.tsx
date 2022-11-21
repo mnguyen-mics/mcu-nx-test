@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { BasicProps } from 'antd/lib/layout/layout';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -48,7 +48,7 @@ interface MapStateToProps {
 type Props = InjectedFormProps<EventRulesFormData, EventRulesFormProps> &
   EventRulesFormProps &
   MapStateToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export const FORM_ID = 'eventRulesForm';

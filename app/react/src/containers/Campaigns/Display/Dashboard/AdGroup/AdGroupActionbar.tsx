@@ -2,7 +2,7 @@ import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal } from 'antd';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
@@ -38,7 +38,7 @@ interface AdGroupActionbarProps {
 }
 
 type JoinedProps = AdGroupActionbarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{
     organisationId: string;
     campaignId: string;

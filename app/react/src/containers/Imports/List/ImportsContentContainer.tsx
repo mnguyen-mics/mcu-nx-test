@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import messages from './messages';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
@@ -65,7 +65,7 @@ export interface ImportsContentContainerProps {
 type Props = ImportsContentContainerProps &
   MapStateToProps &
   RouteComponentProps<{ organisationId: string; datamartId: string }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class ImportsContentContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IImportService)

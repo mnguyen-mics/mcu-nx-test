@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { connect, DispatchProp } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -53,7 +53,7 @@ interface MapStateToProps {
 type Props = InjectedFormProps<CustomActionAutomationFormData, CustomActionAutomationFormProps> &
   DispatchProp<any> &
   CustomActionAutomationFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }> &
   MapStateToProps &
   InjectedNotificationProps;

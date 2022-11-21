@@ -4,7 +4,7 @@ import cuid from 'cuid';
 import { split } from 'lodash';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Row, Col, Spin } from 'antd';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../../messages';
 import { EditAdGroupRouteMatchParam, AdFieldModel, isDisplayCreativeFormData } from '../domain';
@@ -53,7 +53,7 @@ interface AdsSectionState {
 type Props = AdFormSectionProps &
   RouteComponentProps<EditAdGroupRouteMatchParam> &
   WrappedFieldArrayProps<AdFieldModel> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps;
 
 class AdFormSection extends React.Component<Props, AdsSectionState> {

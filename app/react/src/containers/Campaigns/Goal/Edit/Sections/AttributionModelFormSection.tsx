@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import cuid from 'cuid';
 import { Switch, message } from 'antd';
 import { FormSection } from '../../../../../components/Form';
@@ -64,7 +64,7 @@ interface AttributionModelFormSectionState {
 interface AttributionModelFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = AttributionModelFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   InjectedDrawerProps &
   WrappedFieldArrayProps<AttributionModelListFieldModel>;

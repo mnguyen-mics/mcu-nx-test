@@ -6,7 +6,7 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { Col, Layout, Row } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { ConfigProps } from 'redux-form';
@@ -55,7 +55,7 @@ export interface StandardSegmentBuilderPreviewProps
 }
 
 type Props = StandardSegmentBuilderPreviewProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {

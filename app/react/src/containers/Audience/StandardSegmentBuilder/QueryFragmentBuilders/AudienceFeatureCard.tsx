@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Dropdown, Menu, Tooltip } from 'antd';
 import { compose } from 'recompose';
 import { messages } from '../constants';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { CalendarOutlined, DownOutlined } from '@ant-design/icons';
@@ -22,7 +22,7 @@ export interface AudienceFeatureCardProps {
   isSettingsMode?: boolean;
 }
 
-type Props = AudienceFeatureCardProps & InjectedIntlProps;
+type Props = AudienceFeatureCardProps & WrappedComponentProps;
 
 interface State {
   cardToggled: boolean;

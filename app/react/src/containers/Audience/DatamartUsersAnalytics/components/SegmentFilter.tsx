@@ -9,7 +9,7 @@ import {
   InjectedThemeColorsProps,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { AudienceSegmentType } from '../../../../models/audiencesegment';
 
 type RawValue = string | number;
@@ -53,7 +53,7 @@ interface AppliedSegmentFilter extends LabeledValue {
   color: string;
 }
 
-type JoinedProp = SegmentFilterProps & InjectedThemeColorsProps & InjectedIntlProps;
+type JoinedProp = SegmentFilterProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
   private _lastFilterColor = '#000';

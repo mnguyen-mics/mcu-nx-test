@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -86,7 +86,7 @@ interface MapStateToProps {
 }
 
 type Props = FieldNodeFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   NormalizerProps &
   MapStateToProps &

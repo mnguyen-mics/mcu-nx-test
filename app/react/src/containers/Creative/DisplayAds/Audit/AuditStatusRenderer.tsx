@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CreativeAuditStatus } from '../../../../models/creative/CreativeResource';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { FormattedMessage, defineMessages, MessageDescriptor } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
@@ -61,7 +61,7 @@ export const auditIconConfig: {
 };
 
 export const creativeAuditStatusMessages: {
-  [key in CreativeAuditStatus]: FormattedMessage.MessageDescriptor;
+  [key in CreativeAuditStatus]: MessageDescriptor;
 } = defineMessages({
   NOT_AUDITED: {
     id: 'creatives.audit.status.notAudited',

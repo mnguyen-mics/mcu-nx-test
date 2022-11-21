@@ -14,7 +14,7 @@ import {
   HistoryLinkEventResource,
   HistoryCreateLinkEventResource,
 } from '../../../models/resourceHistory/ResourceHistory';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Row } from 'antd';
@@ -29,7 +29,7 @@ interface HistoryEventCardProps {
   resourceLinkHelper?: ResourceLinkHelper;
 }
 
-type Props = HistoryEventCardProps & InjectedIntlProps & RouteComponentProps<any>;
+type Props = HistoryEventCardProps & WrappedComponentProps & RouteComponentProps<any>;
 
 interface State {
   showMore: boolean;

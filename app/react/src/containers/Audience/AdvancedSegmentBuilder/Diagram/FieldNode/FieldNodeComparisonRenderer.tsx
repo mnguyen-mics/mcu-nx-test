@@ -1,6 +1,6 @@
 import * as React from 'react';
 import FieldNodeModel from './FieldNodeModel';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { FormattedMessage, defineMessages, MessageDescriptor } from 'react-intl';
 import {
   QueryFieldComparisonShape,
   StringComparisonOperator,
@@ -31,7 +31,7 @@ interface Props {
 }
 
 const messages: {
-  [key in ComparisonOperator]: FormattedMessage.MessageDescriptor;
+  [key in ComparisonOperator]: MessageDescriptor;
 } = defineMessages({
   EQ: {
     id: 'fieldnoderenderer.fieldCondition.condition.EQ',

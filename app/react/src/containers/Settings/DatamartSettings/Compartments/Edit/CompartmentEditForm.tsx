@@ -10,7 +10,7 @@ import {
   Field,
 } from 'redux-form';
 import { Omit } from '../../../../../utils/Types';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
@@ -46,7 +46,7 @@ export interface CompartmentEditFormProps extends Omit<ConfigProps<CompartmentFo
 
 type Props = InjectedFormProps<CompartmentFormData, CompartmentEditFormProps> &
   CompartmentEditFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }>;
 

@@ -8,7 +8,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import UserListImportCard from './UserListImportCard';
-import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, IntlShape } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ReportService, { Filter } from '../../../../services/ReportService';
@@ -66,7 +66,7 @@ export interface AudienceSegmentDashboardProps {
 }
 
 type Props = AudienceSegmentDashboardProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedFeaturesProps &
   RouteComponentProps<EditAudienceSegmentParam>;
@@ -294,7 +294,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   getDatamartAnaylicsDashboardConfig = (
     organisationId: string,
     datamartId: string,
-    intl: InjectedIntl,
+    intl: IntlShape,
   ): DatamartUsersAnalyticsWrapperProps[] => {
     const config = [
       {

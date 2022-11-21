@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from '../messages';
 import {
   FormInput,
@@ -12,7 +12,7 @@ import withValidators, { ValidatorProps } from '../../../../../../components/For
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import FormAlertInput from '../../../../../../components/Form/FormAlertInput';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 interface State {
   displayAdvancedSection: boolean;

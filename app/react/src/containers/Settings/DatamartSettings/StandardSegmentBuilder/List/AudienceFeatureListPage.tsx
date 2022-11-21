@@ -5,7 +5,7 @@ import { compose } from 'recompose';
 import { ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Layout, Modal, Input, Breadcrumb } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { messages } from '../messages';
 import {
   KEYWORD_SEARCH_SETTINGS,
@@ -50,7 +50,7 @@ type Props = RouteComponentProps<{
   datamartId: string;
 }> &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class AudienceFeatureListPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceFeatureService)

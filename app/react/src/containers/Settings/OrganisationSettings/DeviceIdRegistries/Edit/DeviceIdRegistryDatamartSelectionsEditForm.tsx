@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps } from 'react-router-dom';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -49,7 +49,7 @@ interface RouterProps {
 type Props = DeviceIdRegistryDatamartSelectionsEditFormProps &
   RouteComponentProps<RouterProps> &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFormProps<any, DeviceIdRegistryDatamartSelectionsEditFormProps> &
   ValidatorProps &
   InjectedWorkspaceProps;

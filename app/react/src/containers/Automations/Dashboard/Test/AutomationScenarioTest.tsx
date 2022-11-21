@@ -1,6 +1,6 @@
 import { Button, Layout, Spin, message } from 'antd';
 import * as React from 'react';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -40,7 +40,7 @@ interface MapStateToProps {
 
 type Props = MapStateToProps &
   AutomationScenarioTestProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<AutomationScenarioTestParams>;
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -54,7 +54,7 @@ interface State {
 
 type Props = AudienceExperimentationEditPageProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ReduxFormChangeProps &
   InjectedFormProps<any, AudienceExperimentationEditPageProps> &
   InjectedNotificationProps &

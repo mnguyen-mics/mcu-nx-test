@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from '../messages';
 import { DefaultSelect, FormSelectField } from '../../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 class CatalogAutoMatch extends React.Component<Props> {
   render() {

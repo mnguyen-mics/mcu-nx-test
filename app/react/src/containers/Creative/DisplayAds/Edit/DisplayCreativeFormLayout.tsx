@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { MessageDescriptor, injectIntl, WrappedComponentProps } from 'react-intl';
 import { Layout, Modal } from 'antd';
 import { Form } from '@ant-design/compatible';
 import { DISPLAY_CREATIVE_FORM } from './domain';
@@ -14,7 +14,7 @@ import { McsFormSection } from '../../../../utils/FormHelper';
 const Content = Layout.Content as unknown as React.ComponentClass<BasicProps & { id: string }>;
 
 export interface DisplayCreativeFormLayoutProps {
-  actionBarButtonText: FormattedMessage.MessageDescriptor;
+  actionBarButtonText: MessageDescriptor;
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   leftFormSections: McsFormSection[];
@@ -22,7 +22,7 @@ export interface DisplayCreativeFormLayoutProps {
   pristine: boolean;
 }
 
-type Props = DisplayCreativeFormLayoutProps & InjectedIntlProps;
+type Props = DisplayCreativeFormLayoutProps & WrappedComponentProps;
 
 class DisplayCreativeFormLayout extends React.Component<Props> {
   constructor(props: Props) {

@@ -21,7 +21,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import FunnelExpressionInput from './FunnelExpressionInput';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { IDatamartUsersAnalyticsService } from '../../services/DatamartUsersAnalyticsService';
@@ -58,7 +58,7 @@ interface FunnelQueryBuilderProps {
 }
 
 type Props = FunnelQueryBuilderProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps;
 

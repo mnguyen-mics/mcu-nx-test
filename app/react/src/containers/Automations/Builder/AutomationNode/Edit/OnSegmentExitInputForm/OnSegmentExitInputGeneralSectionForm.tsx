@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { OnSegmentExitInputAutomationFormData } from '../domain';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
@@ -24,7 +24,7 @@ interface OnSegmentExitInputGeneralSectionFormProps {
 }
 
 type Props = OnSegmentExitInputGeneralSectionFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   ValidatorProps &
   RouteComponentProps<{ organisationId: string }> &

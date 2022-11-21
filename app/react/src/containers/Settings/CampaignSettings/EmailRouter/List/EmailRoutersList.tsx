@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { Modal, Button, Layout } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import {
@@ -41,7 +41,7 @@ interface RouterProps {
 }
 
 class EmailRoutersList extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
+  RouteComponentProps<RouterProps> & WrappedComponentProps,
   EmailRouterContentState
 > {
   state = initialState;

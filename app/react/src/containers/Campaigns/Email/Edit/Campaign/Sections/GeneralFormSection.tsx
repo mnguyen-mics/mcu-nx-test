@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import {
@@ -14,7 +14,7 @@ import withValidators, { ValidatorProps } from '../../../../../../components/For
 import messages from '../../messages';
 import { EditEmailBlastRouteMatchParam } from '../../domain';
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 

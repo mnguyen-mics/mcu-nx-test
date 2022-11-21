@@ -9,7 +9,7 @@ import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, MessageDescriptor, injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import {
   injectThemeColors,
@@ -29,7 +29,7 @@ interface FeedChartProps {
   dateRange: McsDateRangeValue;
 }
 
-type Props = FeedChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = FeedChartProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 export interface NormalizedFeedStats {
   hour: string;
@@ -325,7 +325,7 @@ class FeedChart extends React.Component<Props, State> {
 export default compose<Props, FeedChartProps>(injectThemeColors, injectIntl)(FeedChart);
 
 const messages: {
-  [metric: string]: FormattedMessage.MessageDescriptor;
+  [metric: string]: MessageDescriptor;
 } = defineMessages({
   chartIdentifierTitle: {
     id: 'feed.chartIdentifier.title',

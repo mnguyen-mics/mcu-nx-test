@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { AudienceFeedTyped } from '../../Edit/domain';
 import { compose } from 'recompose';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
@@ -93,7 +93,7 @@ export interface FeedCardContentProps {
 }
 
 type Props = FeedCardContentProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedFeaturesProps &
   InjectedNotificationProps;
 

@@ -9,7 +9,7 @@ import {
   withNormalizer,
 } from '../../../../components/Form';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../../components/Form/withNormalizer';
 import { AutomationResource } from '../../../../models/automations/automations';
@@ -26,7 +26,7 @@ export interface FormProps extends Omit<ConfigProps<AutomationSimpleFormData, Fo
   onHandleOk: () => void;
 }
 
-type Props = FormProps & InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = FormProps & WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 class AutomationSimpleForm extends React.Component<
   Props & InjectedFormProps<AutomationSimpleFormData, Props>

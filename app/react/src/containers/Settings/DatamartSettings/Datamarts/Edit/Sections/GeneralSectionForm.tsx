@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from '../messages';
 import {
   FormAlertInput,
@@ -16,7 +16,7 @@ export interface GeneralFormSectionProps {
   isCrossDatamart: boolean;
 }
 
-type Props = GeneralFormSectionProps & InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = GeneralFormSectionProps & WrappedComponentProps & ValidatorProps & NormalizerProps;
 
 interface State {
   displayAdvancedSection: boolean;

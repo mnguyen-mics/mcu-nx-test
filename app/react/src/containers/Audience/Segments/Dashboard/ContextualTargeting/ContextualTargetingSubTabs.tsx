@@ -3,7 +3,7 @@ import { Card, EmptyChart, TableViewFilters } from '@mediarithmics-private/mcs-c
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { Tabs, Tooltip } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { ContextualTargetingResource } from '../../../../../models/contextualtargeting/ContextualTargeting';
 import { ContextualKeyResource, SignatureScoredCategoryResource } from './ContextualTargetingTab';
@@ -23,7 +23,7 @@ interface State {
   activeTabKey: string;
 }
 
-type Props = ContextualTargetingSubTabsProps & InjectedIntlProps;
+type Props = ContextualTargetingSubTabsProps & WrappedComponentProps;
 
 class ContextualTargetingSubTabs extends React.Component<Props, State> {
   constructor(props: Props) {

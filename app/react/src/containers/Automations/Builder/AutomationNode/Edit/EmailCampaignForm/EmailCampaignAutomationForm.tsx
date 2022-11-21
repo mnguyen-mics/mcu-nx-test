@@ -7,7 +7,7 @@ import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../../components/Layout/FormLayoutActionbar';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { FORM_ID, EmailCampaignAutomationFormData } from '../domain';
@@ -51,7 +51,7 @@ interface MapStateToProps {
 
 type Props = InjectedFormProps<EmailCampaignAutomationFormData, EmailCampaignAutomationFormProps> &
   EmailCampaignAutomationFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }> &
   MapStateToProps;
 

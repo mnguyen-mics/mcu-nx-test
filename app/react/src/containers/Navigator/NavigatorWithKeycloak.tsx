@@ -2,9 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter, Switch, Route } from 'react-router-dom';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { addLocaleData, injectIntl, InjectedIntlProps } from 'react-intl';
-import enLocaleData from 'react-intl/locale-data/en';
-import frLocaleData from 'react-intl/locale-data/fr';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import Datalayer from './Datalayer';
 import LayoutManager from './Layout/LayoutManager';
 import routes from '../../routes/routes';
@@ -41,10 +39,8 @@ interface NavigatorState {
 }
 
 type JoinedProps = MapStateToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
-
-addLocaleData(enLocaleData || frLocaleData);
 
 class NavigatorWithKeycloak extends React.Component<JoinedProps, NavigatorState> {
   @lazyInject(TYPES.INavigatorService)
@@ -227,7 +223,7 @@ const mapDispatchToProps = {
 };
 
 export default compose<JoinedProps, {}>(
-  injectIntl,
   withRouter,
+  injectIntl,
   connect(mapStateToProps, mapDispatchToProps),
 )(NavigatorWithKeycloak);

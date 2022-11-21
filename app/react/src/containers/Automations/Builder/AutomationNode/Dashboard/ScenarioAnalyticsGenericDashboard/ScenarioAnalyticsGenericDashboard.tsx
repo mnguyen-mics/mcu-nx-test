@@ -18,7 +18,7 @@ import {
   mcsDateRangePickerMessages,
 } from '../../../../../../IntlMessages';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 
 export type AnalyticsEntityType = 'NODE' | 'EXIT_CONDITION';
 
@@ -41,7 +41,7 @@ export interface ScenarioAnalyticsGenericDashboardProps {
 type Props = ScenarioAnalyticsGenericDashboardProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 type State = {
   dateRange: McsDateRangeValue;

@@ -5,22 +5,22 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, MessageDescriptor } from 'react-intl';
 
 export interface FormDragAndDropProps {
   formItemProps?: FormItemProps;
   inputProps?: UploadProps;
   helpToolTipProps?: TooltipPropsWithTitle;
   maxFileSize: number;
-  uploadTitle: FormattedMessage.MessageDescriptor;
-  uploadMessage: FormattedMessage.MessageDescriptor;
-  uploadError: FormattedMessage.MessageDescriptor;
+  uploadTitle: MessageDescriptor;
+  uploadMessage: MessageDescriptor;
+  uploadError: MessageDescriptor;
   fileMasks: string;
 }
 
 const Dragger = Upload.Dragger;
 
-type JoinedProps = FormDragAndDropProps & WrappedFieldProps & InjectedIntlProps;
+type JoinedProps = FormDragAndDropProps & WrappedFieldProps & WrappedComponentProps;
 
 class FormDragAndDrop extends React.Component<JoinedProps> {
   render() {

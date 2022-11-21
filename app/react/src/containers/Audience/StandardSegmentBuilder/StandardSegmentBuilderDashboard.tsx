@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { messages } from './constants';
 import { compose } from 'recompose';
 import { lazyInject } from '../../../config/inversify.config';
@@ -35,7 +35,7 @@ interface StandardSegmentBuilderDashboardProps {
   isQueryRunning: boolean;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   StandardSegmentBuilderDashboardProps &
   InjectedFeaturesProps;

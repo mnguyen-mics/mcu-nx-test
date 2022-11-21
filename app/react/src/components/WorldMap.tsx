@@ -1,6 +1,6 @@
 import React from 'react';
 import Highcharts from 'highcharts/highmaps';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import cuid from 'cuid';
 import world from './Charts/world.js';
@@ -15,7 +15,7 @@ export interface MapData {
   [key: string]: string | number;
 }
 
-type Props = WorldMapProps & InjectedIntlProps;
+type Props = WorldMapProps & WrappedComponentProps;
 
 class WorldMap extends React.Component<Props> {
   cuid: string;

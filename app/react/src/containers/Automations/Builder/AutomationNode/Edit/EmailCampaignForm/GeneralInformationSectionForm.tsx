@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import {
   FormInput,
   FormSection,
@@ -77,7 +77,7 @@ interface GeneralInformationFormSectionProps {
 }
 
 type Props = GeneralInformationFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   NormalizerProps;
 

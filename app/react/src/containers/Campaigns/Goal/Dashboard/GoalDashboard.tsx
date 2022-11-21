@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
@@ -56,7 +56,7 @@ interface GoalRouteParams {
   goalId: string;
 }
 
-type JoinedProps = RouteComponentProps<GoalRouteParams> & InjectedIntlProps;
+type JoinedProps = RouteComponentProps<GoalRouteParams> & WrappedComponentProps;
 
 class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   @lazyInject(TYPES.IGoalService)

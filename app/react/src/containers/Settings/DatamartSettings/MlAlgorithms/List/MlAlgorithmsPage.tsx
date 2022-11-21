@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout, Button, message, Modal, Spin, Input } from 'antd';
 import { Form } from '@ant-design/compatible';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'redux';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -65,7 +65,9 @@ interface RouterProps {
   organisationId: string;
 }
 
-type JoinedProps = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
+type JoinedProps = RouteComponentProps<RouterProps> &
+  WrappedComponentProps &
+  InjectedNotificationProps;
 
 class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState> {
   @lazyInject(TYPES.IMlAlgorithmService)

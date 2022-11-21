@@ -5,7 +5,7 @@ import { Timeline, Col, Spin } from 'antd';
 import moment from 'moment';
 import cuid from 'cuid';
 import { compose } from 'recompose';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { Activity, isUserAgentIdentifier } from '../../../models/timeline/timeline';
 import { Identifier } from './Monitoring';
 import messages from './messages';
@@ -47,7 +47,7 @@ interface State {
 
 type Props = ActivitiesTimelineProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<TimelinePageParams>;
 
 class ActivitiesTimeline extends React.Component<Props, State> {

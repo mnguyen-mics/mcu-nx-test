@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { messages } from '../../messages';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import cuid from 'cuid';
 import { FormSection } from '../../../../../../components/Form';
@@ -21,7 +21,7 @@ import AudienceFeatureSelector, {
 export interface StandardSegmentBuilderInitialFeatureSectionProps extends ReduxFormChangeProps {}
 
 type Props = StandardSegmentBuilderInitialFeatureSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   WrappedFieldArrayProps<AudienceFeatureModel> &
   InjectedDrawerProps &
   RouteComponentProps<{

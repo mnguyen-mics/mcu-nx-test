@@ -2,7 +2,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, MessageDescriptor } from 'react-intl';
 import Scrollspy from '../Scrollspy';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
@@ -10,7 +10,7 @@ const { Sider } = Layout;
 
 export interface SideBarItem {
   sectionId: string;
-  title: FormattedMessage.MessageDescriptor | string;
+  title: MessageDescriptor | string;
   onClick?: (sectionId: string) => void;
   type?: 'validated'; // potential other values : 'error' | 'warning'
 }
@@ -20,7 +20,7 @@ export interface SidebarWrapperProps {
   scrollId?: string;
 }
 
-type Props = SidebarWrapperProps & RouteComponentProps<{}> & InjectedIntlProps;
+type Props = SidebarWrapperProps & RouteComponentProps<{}> & WrappedComponentProps;
 
 class ScrollspySider extends React.Component<Props> {
   render() {

@@ -3,7 +3,7 @@ import { Modal } from 'antd';
 import _ from 'lodash';
 import { compose } from 'recompose';
 import queryString from 'query-string';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import StandardSegmentBuilderContainer from './StandardSegmentBuilderContainer';
 import {
@@ -39,7 +39,7 @@ interface State {
   isLoading: boolean;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   InjectedWorkspaceProps &
   RouteComponentProps<{ organisationId: string }>;

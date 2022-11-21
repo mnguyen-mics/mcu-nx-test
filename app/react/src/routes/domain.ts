@@ -1,6 +1,6 @@
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import { Mention } from '@mediarithmics-private/mcs-components-library/lib/components/mention-tag/MentionTag';
-import { FormattedMessage } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 import { Omit } from '../utils/Types';
 
 export type LayoutTypes = 'main' | 'edit' | 'settings';
@@ -44,7 +44,7 @@ type MenuType = 'simple' | 'multi';
 interface NavigatorBaseMenuDefinition {
   iconType: McsIconType;
   type: MenuType;
-  translation: FormattedMessage.MessageDescriptor;
+  translation: MessageDescriptor;
   mention?: Mention;
 }
 
@@ -55,7 +55,7 @@ interface NavigatorSingleLevelMenuDefinition
 }
 
 export interface NavigatorSubMenuDefinition extends Omit<RouteDef, 'layout'> {
-  translation: FormattedMessage.MessageDescriptor;
+  translation: MessageDescriptor;
   iconType?: McsIconType;
   mention?: Mention;
   communityOnly?: boolean;

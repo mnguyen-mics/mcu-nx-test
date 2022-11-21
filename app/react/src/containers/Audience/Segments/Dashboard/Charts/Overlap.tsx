@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col, Button, Modal } from 'antd';
 import moment from 'moment';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../messages';
 import {
@@ -38,7 +38,7 @@ export interface OverlapProps {
 type Props = InjectedThemeColorsProps &
   InjectedDatamartProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   OverlapProps;
 
 class Overlap extends React.Component<Props, State> {

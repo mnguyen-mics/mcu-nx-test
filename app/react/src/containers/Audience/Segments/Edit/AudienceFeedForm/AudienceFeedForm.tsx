@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose, Omit } from 'recompose';
 import { connect } from 'react-redux';
 import { Alert } from 'antd';
-import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages, MessageDescriptor } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as actions from '../../../../../redux/Notifications/actions';
 import {
@@ -28,7 +28,7 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 
 const titleMessages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   AUDIENCE_SEGMENT_EXTERNAL_FEED: {
     id: 'audience.segment.audienceExternalFeed.list.title',
@@ -45,7 +45,7 @@ const titleMessages: {
 });
 
 const subtitleMessages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   AUDIENCE_SEGMENT_EXTERNAL_FEED: {
     id: 'audience.segment.audienceExternalFeed.list.subtitle',
@@ -65,7 +65,7 @@ const subtitleMessages: {
 });
 
 const pluginPresetTitleMessages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   AUDIENCE_SEGMENT_EXTERNAL_FEED: {
     id: 'audience.segment.audienceExternalFeed.preset.list.title',
@@ -82,7 +82,7 @@ const pluginPresetTitleMessages: {
 });
 
 const pluginPresetSubtitleMessages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   AUDIENCE_SEGMENT_EXTERNAL_FEED: {
     id: 'audience.segment.audienceExternalFeed.preset.list.subtitle',
@@ -108,7 +108,7 @@ export interface CreateAudienceFeedProps<T = any> {
 
 type JoinedProps<T = any> = CreateAudienceFeedProps<T> &
   RouteComponentProps<FeedRouteParams> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {

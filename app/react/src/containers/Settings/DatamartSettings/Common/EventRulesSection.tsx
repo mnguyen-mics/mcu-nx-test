@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 
@@ -23,7 +23,7 @@ export interface EventRulesSectionProps extends ReduxFormChangeProps {
 
 type Props = EventRulesSectionProps &
   WrappedFieldArrayProps<EventRuleFieldModel> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps;
 
 const messages = defineMessages({

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -33,7 +33,7 @@ const localMessages = defineMessages({
   },
 });
 
-type Props = SegmentNameDisplayProps & InjectedNotificationProps & InjectedIntlProps;
+type Props = SegmentNameDisplayProps & InjectedNotificationProps & WrappedComponentProps;
 
 /**
  * This component can either be passed:

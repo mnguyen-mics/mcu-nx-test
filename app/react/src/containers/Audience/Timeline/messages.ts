@@ -1,7 +1,7 @@
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 
 const messages: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor;
+  [propertyName: string]: MessageDescriptor;
 } = defineMessages({
   lookUpUser: {
     id: 'audience.monitoring.timeline.actionbar.lookup',

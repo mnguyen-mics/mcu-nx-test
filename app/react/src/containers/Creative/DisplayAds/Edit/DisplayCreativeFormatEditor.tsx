@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Input, Select } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { WrappedFieldProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import FormFieldWrapper from '../../../../components/Form/FormFieldWrapper';
@@ -19,7 +19,7 @@ export interface CreativeFormatEditorProps extends WrappedFieldProps {
 }
 
 type JoinedProps = CreativeFormatEditorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { TableSelector } from '@mediarithmics-private/mcs-components-library';
@@ -72,7 +72,7 @@ interface State {
 }
 
 type Props = VisitAnalyzerSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateProps &
   RouteComponentProps<{ organisationId: string }>;
 

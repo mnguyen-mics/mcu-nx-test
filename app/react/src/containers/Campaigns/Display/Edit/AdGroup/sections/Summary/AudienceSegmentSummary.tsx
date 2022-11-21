@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AdGroupFormData, AD_GROUP_FORM_NAME } from '../../domain';
 import { getFormValues } from 'redux-form';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import WhenDatamart from '../../../../../../Datamart/WhenDatamart';
 import { printStringArray } from './utils';
@@ -13,7 +13,7 @@ interface MapStateProps {
   segmentFields: SegmentFieldModel[];
 }
 
-type Props = MapStateProps & InjectedIntlProps;
+type Props = MapStateProps & WrappedComponentProps;
 
 class AudienceSegmentSummary extends React.Component<Props> {
   render() {

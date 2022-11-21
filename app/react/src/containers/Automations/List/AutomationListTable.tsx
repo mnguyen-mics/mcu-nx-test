@@ -3,7 +3,13 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Tooltip, Modal } from 'antd';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
+import {
+  WrappedComponentProps,
+  injectIntl,
+  FormattedMessage,
+  defineMessages,
+  MessageDescriptor,
+} from 'react-intl';
 import {
   AutomationResource,
   AutomationStatus,
@@ -39,7 +45,7 @@ import {
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const messagesMap: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   NEW: {
     id: 'automations.list.status.new',
@@ -87,7 +93,7 @@ interface State {
 }
 
 type JoinedProps = AutomationsTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 

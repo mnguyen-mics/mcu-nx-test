@@ -18,7 +18,13 @@ import {
   UsergroupAddOutlined,
 } from '@ant-design/icons';
 import { Tooltip, Modal } from 'antd';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import {
+  FormattedMessage,
+  defineMessages,
+  WrappedComponentProps,
+  injectIntl,
+  MessageDescriptor,
+} from 'react-intl';
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -182,7 +188,7 @@ const messages = defineMessages({
 });
 
 const messageMap: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   creation_ts: {
     id: 'audience.segments.list.column.creation_ts',
@@ -235,7 +241,7 @@ interface MapStateToProps {
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   MapStateToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedFeaturesProps &
   InjectedDatamartProps;

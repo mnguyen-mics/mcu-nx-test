@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { CampaignStatData, CreativeStatData, SourceStatData } from './GoalAttribution';
 import messages from './messages';
@@ -29,7 +29,7 @@ interface Record {
   id: string;
 }
 
-type JoinedProps = GoalAttributionTableProps & RouteComponentProps<Router> & InjectedIntlProps;
+type JoinedProps = GoalAttributionTableProps & RouteComponentProps<Router> & WrappedComponentProps;
 
 class GoalAttributionTable extends React.Component<JoinedProps> {
   @lazyInject(TYPES.ICreativeService)

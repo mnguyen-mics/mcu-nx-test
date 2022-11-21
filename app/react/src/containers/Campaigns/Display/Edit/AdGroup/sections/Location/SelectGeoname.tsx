@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import cuid from 'cuid';
 import * as Antd from 'antd';
 import messages from '../../../messages';
@@ -273,7 +273,7 @@ interface State {
   country: string;
 }
 
-type JoinedProps = Props & InjectedIntlProps;
+type JoinedProps = Props & WrappedComponentProps;
 
 class SelectGeoname extends React.Component<JoinedProps, State> {
   randomId = cuid();

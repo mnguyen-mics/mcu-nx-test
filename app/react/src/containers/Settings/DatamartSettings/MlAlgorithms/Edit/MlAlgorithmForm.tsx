@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ConfigProps, reduxForm, InjectedFormProps, Form } from 'redux-form';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../messages';
 import { McsFormSection } from '../../../../../utils/FormHelper';
@@ -33,7 +33,7 @@ type Props = InjectedFormProps<MlAlgorithmFormData, MlAlgorithmFormProps> &
     organisationId: string;
     mlAlgorithmId: string;
   }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class MlAlgorithmForm extends React.Component<Props> {
   buildFormSections = () => {

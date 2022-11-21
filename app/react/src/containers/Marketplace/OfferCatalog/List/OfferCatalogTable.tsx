@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import messages from './messages';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -47,7 +47,7 @@ interface OfferCatalogTableProps {
   organisationId: string;
 }
 
-type Props = InjectedIntlProps & OfferCatalogTableProps & InjectedNotificationProps;
+type Props = WrappedComponentProps & OfferCatalogTableProps & InjectedNotificationProps;
 
 const processPrice = (data: ServiceItemConditionShape) => {
   if (isProvidedServiceItemConditionResource(data)) {

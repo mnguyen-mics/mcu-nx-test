@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout } from 'antd';
@@ -55,7 +55,7 @@ const messageMap = defineMessages({
   },
 });
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
   EmailCampaignAutomatedDashboardPageProps;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {
   PluginProperty,
@@ -27,7 +27,7 @@ interface RecommenderRouteParam {
   recommenderId?: string;
 }
 
-type JoinedProps = RouteComponentProps<RecommenderRouteParam> & InjectedIntlProps;
+type JoinedProps = RouteComponentProps<RecommenderRouteParam> & WrappedComponentProps;
 
 class EditRecommenderPage extends React.Component<JoinedProps> {
   @lazyInject(TYPES.IRecommenderService)

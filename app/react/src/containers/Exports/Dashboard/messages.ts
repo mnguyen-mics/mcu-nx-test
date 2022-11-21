@@ -1,5 +1,5 @@
 import { Export } from './../../../models/exports/exports';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import { HistoryKeys, ValueFormat, formatToFormattingFunction } from '../../ResourceHistory/utils';
 
 export default defineMessages({
@@ -66,7 +66,7 @@ export default defineMessages({
 });
 
 const exportPropertiesMessageMap: {
-  [propertyName in keyof Export | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof Export | HistoryKeys]: MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'export.fields.id',
@@ -109,7 +109,7 @@ const exportPropertiesMessageMap: {
 const exportPropertiesFormatMap: {
   [propertyName in keyof Export | HistoryKeys]: {
     format: ValueFormat;
-    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+    messageMap?: { [key: string]: MessageDescriptor };
   };
 } = {
   id: { format: 'STRING' },
@@ -127,7 +127,7 @@ export const formatExportProperty = (
   property: keyof Export | HistoryKeys,
   value?: string,
 ): {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 } => {
   return {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
@@ -30,7 +30,7 @@ export interface AudienceFeatureLayoutProps {
   disabled?: boolean;
 }
 
-type Props = AudienceFeatureLayoutProps & InjectedIntlProps & ValidatorProps;
+type Props = AudienceFeatureLayoutProps & WrappedComponentProps & ValidatorProps;
 
 class AudienceFeatureLayout extends React.Component<Props, State> {
   constructor(props: Props) {

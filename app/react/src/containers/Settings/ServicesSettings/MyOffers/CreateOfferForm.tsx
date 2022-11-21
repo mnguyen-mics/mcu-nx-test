@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { OfferType } from './EditOfferPage';
 import { Layout } from 'antd';
@@ -51,7 +51,7 @@ type Props = InjectedFormProps<OfferFormData, OfferFormProps> &
   RouteComponentProps<{ organisationId: string; offerId?: string }> &
   OfferFormProps &
   ValidatorProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 export const FORM_ID = 'offerForm';
 

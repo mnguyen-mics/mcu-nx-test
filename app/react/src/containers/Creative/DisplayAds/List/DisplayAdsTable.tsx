@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
@@ -28,7 +28,7 @@ interface DisplayAdsTableProps {
 
 type JoinedProps = DisplayAdsTableProps &
   RouteComponentProps<CampaignRouteParams> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class DisplayAdsTable extends React.Component<JoinedProps> {
   constructor(props: JoinedProps) {

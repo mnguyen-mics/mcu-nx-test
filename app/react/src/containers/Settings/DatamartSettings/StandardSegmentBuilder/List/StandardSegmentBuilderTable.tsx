@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { messages } from '../messages';
 import { Filter } from '../../Common/domain';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
@@ -27,7 +27,7 @@ export interface StandardSegmentBuilderTableProps {
 
 type Props = StandardSegmentBuilderTableProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string; datamartId: string }>;
 
 class StandardSegmentBuilderTable extends React.Component<Props> {

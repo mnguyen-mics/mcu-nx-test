@@ -13,7 +13,7 @@ import {
   QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -45,7 +45,7 @@ interface State {
   totalNumber2?: number;
 }
 
-type Props = GaugePieChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = GaugePieChartProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 class GaugePieChart extends React.Component<Props, State> {
   identifier = cuid();

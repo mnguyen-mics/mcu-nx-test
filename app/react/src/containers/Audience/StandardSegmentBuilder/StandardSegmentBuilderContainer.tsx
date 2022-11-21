@@ -1,6 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Layout, Col, Row } from 'antd';
 import { connect } from 'react-redux';
@@ -73,7 +73,7 @@ type Props = InjectedFormProps<
   MapStateToProps &
   StandardSegmentBuilderContainerProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 

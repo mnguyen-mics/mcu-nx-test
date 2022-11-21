@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DeleteFromSegmentAutomationFormData, isAddToSegmentNode } from '../domain';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
@@ -27,7 +27,7 @@ interface DeleteFromSegmentGeneralSectionFormProps {
 }
 
 type Props = DeleteFromSegmentGeneralSectionFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   RouteComponentProps<{ organisationId: string }> &
   NormalizerProps;

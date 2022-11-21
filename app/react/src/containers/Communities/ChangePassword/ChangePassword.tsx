@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Col, Input, Button, Alert, Spin } from 'antd';
 import { Form } from '@ant-design/compatible';
 import FormItem from 'antd/lib/form/FormItem';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -16,7 +16,7 @@ import { TYPES } from '../../../constants/types';
 import { ICommunityService } from '../../../services/CommunityServices';
 import { IAuthService } from '@mediarithmics-private/advanced-components';
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   FormComponentProps &
   RouteComponentProps<{ communityToken: string }>;
 

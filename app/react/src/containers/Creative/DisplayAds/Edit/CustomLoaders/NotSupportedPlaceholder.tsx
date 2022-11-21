@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 
-export interface NotSupportedPlaceholderProps extends InjectedIntlProps {}
+export interface NotSupportedPlaceholderProps extends WrappedComponentProps {}
 
 const messages = defineMessages({
   placeholder: {

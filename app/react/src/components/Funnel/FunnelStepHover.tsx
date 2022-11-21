@@ -1,7 +1,7 @@
 import * as React from 'react';
 import numeral from 'numeral';
 import cuid from 'cuid';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import FunnelStepMetric from './FunnelStepMetric';
 import { Alert, Tag } from 'antd';
@@ -40,7 +40,7 @@ const messages = defineMessages({
   },
 });
 
-type Props = FunnelStepHoverProps & InjectedIntlProps;
+type Props = FunnelStepHoverProps & WrappedComponentProps;
 
 class FunnelStepHover extends React.Component<Props> {
   private _cuid = cuid;

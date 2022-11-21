@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { WrappedFieldProps } from 'redux-form';
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { RestrictedSelectProps } from './DefaultSelect';
 
 const Option = Select.Option;
@@ -17,7 +17,7 @@ export interface FormMultiTagProps extends FormFieldWrapperProps {
   numericOnly?: boolean;
 }
 
-type Props = FormMultiTagProps & WrappedFieldProps & InjectedIntlProps;
+type Props = FormMultiTagProps & WrappedFieldProps & WrappedComponentProps;
 
 const FormMultiTag: React.SFC<Props> = props => {
   const { formItemProps, helpToolTipProps, input, meta, selectProps, small } = props;

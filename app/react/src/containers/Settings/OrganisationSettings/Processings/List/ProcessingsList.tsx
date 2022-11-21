@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout, Button, Modal } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import messages from '../messages';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import settingsMessages from '../../../messages';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
@@ -32,7 +32,7 @@ interface RouterProps {
 type Props = RouteComponentProps<RouterProps> &
   InjectedNotificationProps &
   InjectedWorkspaceProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 interface ProcessingPageState {
   loading: boolean;

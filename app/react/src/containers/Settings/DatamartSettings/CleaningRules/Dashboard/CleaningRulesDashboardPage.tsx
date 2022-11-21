@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import CleaningRulesContainer from '../List/CleaningRulesContainer';
@@ -42,7 +42,7 @@ interface MapStateToProps {
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   MapStateToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 interface State {

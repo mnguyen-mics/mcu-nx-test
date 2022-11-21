@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 import {
   HistoryKeys,
   formatToFormattingFunction,
@@ -122,7 +122,7 @@ export default defineMessages({
 });
 
 const emailBlastStatusMessages: {
-  [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor;
+  [key in EmailBlastStatus]: MessageDescriptor;
 } = defineMessages({
   SCENARIO_ACTIVATED: {
     id: 'emailBlast.fields.status.scenarioActivated',
@@ -147,7 +147,7 @@ const emailBlastStatusMessages: {
 });
 
 const emailBlastPropertiesMessageMap: {
-  [propertyName in keyof EmailBlastResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof EmailBlastResource | HistoryKeys]: MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'emailBlast.fields.id',
@@ -207,7 +207,7 @@ const emailBlastPropertiesMessageMap: {
 const emailBlastPropertiesFormatMap: {
   [propertyName in keyof EmailBlastResource | HistoryKeys]: {
     format: ValueFormat;
-    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+    messageMap?: { [key: string]: MessageDescriptor };
   };
 } = {
   id: { format: 'STRING' },
@@ -236,7 +236,7 @@ export const formatEmailBlastProperty = (
   property: keyof EmailBlastResource | HistoryKeys,
   value?: string,
 ): {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 } => {
   return {
@@ -253,7 +253,7 @@ export const formatEmailBlastProperty = (
 };
 
 const emailCampaignStatusMessages: {
-  [key in CampaignStatus]: FormattedMessage.MessageDescriptor;
+  [key in CampaignStatus]: MessageDescriptor;
 } = defineMessages({
   ACTIVE: {
     id: 'campaign.email.fields.status.active',
@@ -274,7 +274,7 @@ const emailCampaignStatusMessages: {
 });
 
 const emailCampaignPropertiesMessageMap: {
-  [propertyName in keyof EmailCampaignResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof EmailCampaignResource | HistoryKeys]: MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'campaign.email.fields.id',
@@ -350,7 +350,7 @@ const emailCampaignPropertiesMessageMap: {
 const emailCampaignPropertiesFormatMap: {
   [propertyName in keyof EmailCampaignResource | HistoryKeys]: {
     format: ValueFormat;
-    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+    messageMap?: { [key: string]: MessageDescriptor };
   };
 } = {
   id: { format: 'STRING' },
@@ -383,7 +383,7 @@ export const formatCampaignProperty = (
   property: keyof EmailCampaignResource | HistoryKeys,
   value?: string,
 ): {
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   formattedValue?: React.ReactNode;
 } => {
   return {

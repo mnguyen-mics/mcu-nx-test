@@ -7,7 +7,7 @@ import {
   IdentityProviderResource,
   IOrganisationService,
 } from '@mediarithmics-private/advanced-components';
-import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -32,7 +32,7 @@ export interface IdentityProviderAssociationListProps {
 
 type Props = IdentityProviderAssociationListProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedWorkspaceProps;
 
 type Association = {

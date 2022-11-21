@@ -8,7 +8,7 @@ import {
   Field,
 } from 'redux-form';
 import { compose } from 'recompose';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { MessageDescriptor, injectIntl, WrappedComponentProps } from 'react-intl';
 
 import { DisplayCreativeFormData, DISPLAY_CREATIVE_FORM, isExistingCreative } from './domain';
 import messages from './messages';
@@ -33,7 +33,7 @@ const ImageLoaderFieldArray = FieldArray as new () => GenericFieldArray<
 
 export interface DisplayCreativeFormProps
   extends Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
-  actionBarButtonText: FormattedMessage.MessageDescriptor;
+  actionBarButtonText: MessageDescriptor;
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   goToCreativeTypeSelection?: () => void;
@@ -41,7 +41,7 @@ export interface DisplayCreativeFormProps
 
 type Props = DisplayCreativeFormProps &
   InjectedFormProps<DisplayCreativeFormData, DisplayCreativeFormProps> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class DisplayCreativeForm extends React.Component<Props> {
   constructor(props: Props) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AddToSegmentAutomationFormData } from '../domain';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
@@ -20,7 +20,7 @@ interface GeneralInformationFormSectionProps {
 }
 
 type Props = GeneralInformationFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   NormalizerProps;
 

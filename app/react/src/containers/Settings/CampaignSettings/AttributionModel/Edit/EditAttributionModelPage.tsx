@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {
   GenericPluginContent,
@@ -63,7 +63,7 @@ interface AttributionModelRouteParam {
   attributionModelId?: string;
 }
 
-type Props = RouteComponentProps<AttributionModelRouteParam> & InjectedIntlProps;
+type Props = RouteComponentProps<AttributionModelRouteParam> & WrappedComponentProps;
 
 class EditAttributionModelPage extends React.Component<Props> {
   @lazyInject(TYPES.IAttributionModelService)

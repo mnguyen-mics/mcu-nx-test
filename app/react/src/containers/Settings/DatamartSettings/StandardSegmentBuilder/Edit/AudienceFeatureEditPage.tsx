@@ -9,7 +9,7 @@ import { IAudienceFeatureService } from '../../../../../services/AudienceFeature
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { messages } from '../messages';
 import { AudienceFeatureFormData } from './domain';
 import { IRuntimeSchemaService } from '../../../../../services/RuntimeSchemaService';
@@ -23,7 +23,7 @@ import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
 import { DataResponse } from '@mediarithmics-private/advanced-components/lib/services/ApiService';
 
 type Props = InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{
     datamartId: string;
     organisationId: string;

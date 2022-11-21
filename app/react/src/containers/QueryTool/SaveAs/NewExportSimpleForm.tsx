@@ -9,7 +9,7 @@ import {
   FormAddonSelectField,
 } from '../../../components/Form';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 
 export interface NewExportSimpleFormData {
@@ -27,7 +27,7 @@ export interface FormProps extends Omit<ConfigProps<NewExportSimpleFormData, For
   csvExportDisabled?: boolean;
 }
 
-type Props = FormProps & InjectedIntlProps & ValidatorProps;
+type Props = FormProps & WrappedComponentProps & ValidatorProps;
 
 class NewExportSimleForm extends React.Component<
   Props & InjectedFormProps<NewExportSimpleFormData, Props>

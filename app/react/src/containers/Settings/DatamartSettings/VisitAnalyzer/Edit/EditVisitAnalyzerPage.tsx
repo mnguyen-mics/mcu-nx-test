@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {
   GenericPluginContent,
@@ -32,7 +32,7 @@ interface VisitAnalyzerRouteParam {
 }
 
 type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps;
 
 class EditVisitAnalyzerPage extends React.Component<JoinedProps> {

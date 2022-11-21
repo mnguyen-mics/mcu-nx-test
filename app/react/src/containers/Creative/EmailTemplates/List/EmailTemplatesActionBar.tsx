@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Modal } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
@@ -37,7 +37,7 @@ interface EmailTemplatesActionBarProps {
 }
 type JoinedProps = EmailTemplatesActionBarProps &
   RouteComponentProps<CampaignRouteParams> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class EmailTemplatesActionBar extends React.Component<JoinedProps> {
   render() {

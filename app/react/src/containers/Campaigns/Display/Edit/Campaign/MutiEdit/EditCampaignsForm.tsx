@@ -9,7 +9,7 @@ import {
   InjectedFormProps,
 } from 'redux-form';
 import { RouteComponentProps } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
 
@@ -60,7 +60,7 @@ export interface EditCampaignsFormProps {
 }
 
 type JoinedProps = EditCampaignsFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedFormProps<EditCampaignsFormData>;

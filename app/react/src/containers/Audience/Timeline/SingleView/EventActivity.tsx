@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Row, Col, Modal } from 'antd';
 import moment from 'moment';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import messages from '../messages';
@@ -19,7 +19,7 @@ interface State {
   showMore: boolean;
 }
 
-type Props = EventActivityProps & InjectedIntlProps;
+type Props = EventActivityProps & WrappedComponentProps;
 
 class EventActivity extends React.Component<Props, State> {
   constructor(props: Props) {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Button, Layout, message, Spin } from 'antd';
 import { compose } from 'recompose';
@@ -56,7 +56,7 @@ interface ExportRouteParams {
 }
 
 type JoinedProps = RouteComponentProps<ExportRouteParams> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class Exports extends React.Component<JoinedProps, ExportsState> {

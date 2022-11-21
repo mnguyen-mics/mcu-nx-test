@@ -2,7 +2,7 @@ import * as React from 'react';
 import { StorylineNodeModel } from '../../../domain';
 import { FeedNodeFormData, FORM_ID } from '../domain';
 import { ConfigProps, getFormValues, InjectedFormProps, reduxForm } from 'redux-form';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
@@ -31,7 +31,7 @@ interface MapStateToProps {
 type Props = InjectedFormProps<FeedNodeFormData, AudienceSegmentFeedAutomationFormProps> &
   AudienceSegmentFeedAutomationFormProps &
   MapStateToProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class AudienceSegmentFeedAutomationForm extends React.Component<Props> {
   buildFormSections = () => {

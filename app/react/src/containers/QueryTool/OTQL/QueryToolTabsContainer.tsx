@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Alert, Button, Layout, message, Row, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { CancelablePromise } from '../../../utils/ApiHelper';
 import {
   isQueryListModel,
@@ -115,7 +115,7 @@ interface State {
 }
 
 type Props = QueryToolTabsContainerProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps &
   InjectedFeaturesProps;

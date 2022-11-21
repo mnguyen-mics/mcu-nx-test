@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, Menu } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
   Actionbar,
@@ -55,7 +55,7 @@ const messagesMap = defineMessages({
 });
 
 type JoinedProps = DisplayAdsActionBarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<CampaignRouteParams>;
 
 class DisplayAdsActionBar extends React.Component<JoinedProps> {

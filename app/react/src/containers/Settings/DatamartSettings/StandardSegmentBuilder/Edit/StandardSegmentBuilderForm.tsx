@@ -15,7 +15,7 @@ import {
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import StandardSegmentBuilderGeneralSection from './Sections/StandardSegmentBuilderGeneralSection';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
 import StandardSegmentBuilderInitialFeatureSection, {
@@ -43,7 +43,7 @@ interface MapStateToProps {
 type Props = InjectedFormProps<StandardSegmentBuilderFormData, StandardSegmentBuilderFormProps> &
   StandardSegmentBuilderFormProps &
   MapStateToProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class StandardSegmentBuilderForm extends React.Component<Props> {
   constructor(props: Props) {

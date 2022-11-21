@@ -21,7 +21,7 @@ import {
   generateFormDataFromObjectNode,
   FrequencyConverter,
 } from '../../Edit/domain';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { frequencyModeMessageMap } from '../../messages';
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
@@ -85,7 +85,7 @@ interface DroppedItemProps {
 }
 
 type Props = ObjectNodeWidgetProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps &
   DroppedItemProps &
   InjectedThemeColorsProps;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 import { injectDrawer } from '../../../../components/Drawer/index';
@@ -30,7 +30,7 @@ export interface VisitAnalyzerSectionProps extends ReduxFormChangeProps {}
 
 type Props = VisitAnalyzerSectionProps &
   WrappedFieldArrayProps<VisitAnalyzerFieldModel> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDrawerProps;
 
 interface VisitAnalyzerData {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import CampaignDisplayProgress from './CampaignDisplayProgress';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
@@ -59,7 +59,7 @@ interface RouterProps {
 }
 
 type JoinedProps<T = any> = DisplayStackedAreaChartProps<T> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<RouterProps> &
   InjectedThemeColorsProps;
 

@@ -2,7 +2,13 @@ import * as React from 'react';
 import { AdGroupFormData, AD_GROUP_FORM_NAME } from '../../domain';
 import { getFormValues } from 'redux-form';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import {
+  injectIntl,
+  WrappedComponentProps,
+  FormattedMessage,
+  defineMessages,
+  MessageDescriptor,
+} from 'react-intl';
 import { connect } from 'react-redux';
 import { AdGroupResource } from '../../../../../../../models/campaign/display/index';
 import { BudgetPeriod } from '../../../../../../../models/campaign/constants/index';
@@ -13,7 +19,7 @@ interface MapStateProps {
   adGroup: Partial<AdGroupResource>;
 }
 
-type Props = MapStateProps & InjectedIntlProps;
+type Props = MapStateProps & WrappedComponentProps;
 
 class GeneralSettingSummary extends React.Component<Props> {
   render() {
@@ -72,7 +78,7 @@ export default compose(
 )(GeneralSettingSummary);
 
 const budgetPeriodMessageMap: {
-  [key in BudgetPeriod]: FormattedMessage.MessageDescriptor;
+  [key in BudgetPeriod]: MessageDescriptor;
 } = defineMessages({
   DAY: {
     id: 'adgroup-budget-period-day',

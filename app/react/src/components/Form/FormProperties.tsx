@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WrappedFieldArrayProps, Field, GenericField } from 'redux-form';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { Row, Col } from 'antd';
 import FormLinkedTextInput, { FormLinkedTextInputProps } from './FormLinkedTextInput';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -17,7 +17,7 @@ const messages = defineMessages({
   },
 });
 
-type JoinedProps = InjectedIntlProps &
+type JoinedProps = WrappedComponentProps &
   FormLinkedTextInputProps &
   WrappedFieldArrayProps<FormLinkedTextInputModel>;
 

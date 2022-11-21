@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Row, Button, Layout, Modal, Menu, Dropdown } from 'antd';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -70,7 +70,7 @@ interface MapStateToProps {
 
 type Props = ChannelsListPageProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps &
   InjectedNotificationProps;
 

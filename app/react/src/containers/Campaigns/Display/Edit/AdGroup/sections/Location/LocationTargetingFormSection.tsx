@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Checkbox, Modal } from 'antd';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 
 import { FormSection, FormFieldWrapper } from '../../../../../../../components/Form';
 import messages from '../../../messages';
@@ -26,7 +26,7 @@ interface State {
 }
 
 type JoinedProps = LocationTargetingFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   WrappedFieldArrayProps<LocationFieldModel>;
 
 class LocationTargetingFormSection extends React.Component<JoinedProps, State> {

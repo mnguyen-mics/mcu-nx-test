@@ -15,7 +15,7 @@ import injectNotifications, {
 import log from '../../../../utils/Logger';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { TableViewWithSelectionNotifyerMessages } from '../../../../components/TableView';
 import {
   DataColumnDefinition,
@@ -28,7 +28,7 @@ export interface UserListImportCardProps {
 }
 
 type Props = UserListImportCardProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 

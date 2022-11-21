@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import Button, { ButtonProps } from 'antd/lib/button/button';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { CreativesOptions, ICreativeService } from '../../../services/CreativeService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
@@ -59,7 +59,7 @@ export interface CreativeCardSelectorProps {
 }
 
 type Props = CreativeCardSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 const SUPPORTED_CREATIVES: CreativeType[] = ['DISPLAY_AD', 'EMAIL_TEMPLATE'];

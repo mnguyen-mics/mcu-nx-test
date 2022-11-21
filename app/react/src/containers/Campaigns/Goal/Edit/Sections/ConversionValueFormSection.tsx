@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages, FormattedMessage } from 'react-intl';
 import { Checkbox } from 'antd';
 import { FormSection, FormInputField, FormAddonSelectField } from '../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
@@ -43,7 +43,7 @@ interface ConversionValueFormSectionProps extends ReduxFormChangeProps {
 }
 
 type Props = ConversionValueFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   RouteComponentProps<{ goalId: string }>;
 

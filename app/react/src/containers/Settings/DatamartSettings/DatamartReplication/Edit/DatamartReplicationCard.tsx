@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, MessageDescriptor, defineMessages } from 'react-intl';
 import { DatamartReplicationRouteMatchParam } from './domain';
 import { Card, Button } from '@mediarithmics-private/mcs-components-library';
 import { ReplicationType } from '../../../../../models/settings/settings';
 
 const messagesMap: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   GOOGLE_PUBSUB: {
     id: 'settings.datamart.datamartReplication.create.replicationType.googlePubSub',
@@ -34,7 +34,7 @@ export interface DatamartReplicationCardProps {
 
 type Props = DatamartReplicationCardProps &
   RouteComponentProps<DatamartReplicationRouteMatchParam> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class DatamartReplicationCard extends React.Component<Props> {
   constructor(props: Props) {

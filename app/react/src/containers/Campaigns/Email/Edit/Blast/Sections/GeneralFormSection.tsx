@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
@@ -26,7 +26,7 @@ interface State {
   fetchingConsents: boolean;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { Row } from 'antd/lib/grid';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
@@ -43,7 +43,7 @@ export interface GeneralFormSectionProps {
   datamart?: DatamartResource;
 }
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps & GeneralFormSectionProps;
+type Props = WrappedComponentProps & ValidatorProps & NormalizerProps & GeneralFormSectionProps;
 
 interface State {
   technicalName?: string;

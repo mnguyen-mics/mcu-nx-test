@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import UserPointsLineChart from '../NodeCharts/UserPointsLineChart';
 import ScenarioAnalyticsGenericDashboard from '../ScenarioAnalyticsGenericDashboard/ScenarioAnalyticsGenericDashboard';
@@ -21,7 +21,7 @@ export interface ExitConditionAutomationDashboardStatsProps {
   close: () => void;
 }
 
-type Props = ExitConditionAutomationDashboardStatsProps & InjectedIntlProps;
+type Props = ExitConditionAutomationDashboardStatsProps & WrappedComponentProps;
 
 class ExitConditionAutomationDashboardStats extends React.Component<Props> {
   render() {

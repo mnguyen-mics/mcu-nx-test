@@ -1,7 +1,7 @@
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { MessageDescriptor, defineMessages } from 'react-intl';
 
 const messages: {
-  [propertyName: string]: FormattedMessage.MessageDescriptor;
+  [propertyName: string]: MessageDescriptor;
 } = defineMessages({
   defaultTitle: {
     id: 'timeline.title',

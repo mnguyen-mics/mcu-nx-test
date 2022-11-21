@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import {
   Actionbar,
@@ -26,7 +26,7 @@ export interface FeedNodeAutomationDashboardStatsProps {
   close: () => void;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
   FeedNodeAutomationDashboardStatsProps;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { compose } from 'recompose';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import {
@@ -31,7 +31,7 @@ export interface BlastCardProps {
 }
 
 type Props = BlastCardProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<EmailCampaignDashboardRouteMatchParam>;
 

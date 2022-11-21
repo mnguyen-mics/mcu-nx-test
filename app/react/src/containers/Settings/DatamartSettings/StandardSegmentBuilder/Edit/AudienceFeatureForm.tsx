@@ -6,7 +6,7 @@ import { ConfigProps, Form, InjectedFormProps, reduxForm, getFormValues } from '
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AudienceFeatureGeneralSection from './Sections/AudienceFeatureGeneralSection';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
 import AudienceFeaturePreview from './Sections/AudienceFeaturePreview';
@@ -31,7 +31,7 @@ interface MapStateToProps {
 type Props = InjectedFormProps<AudienceFeatureFormData, AudienceFeatureFormProps> &
   AudienceFeatureFormProps &
   MapStateToProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class AudienceFeatureForm extends React.Component<Props> {
   constructor(props: Props) {

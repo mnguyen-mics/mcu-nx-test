@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage, InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../services/ExportService';
@@ -62,7 +62,7 @@ const messages = defineMessages({
 });
 
 type Props = RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedDatamartProps &
   InjectedNotificationProps;
 

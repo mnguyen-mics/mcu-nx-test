@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Spin } from 'antd';
@@ -31,7 +31,7 @@ export interface SegmentFormSectionProps extends ReduxFormChangeProps {
 
 type Props = MapStateProps &
   WrappedFieldArrayProps<SegmentFieldModel> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   SegmentFormSectionProps &
   InjectedDrawerProps &
   RouteComponentProps<{ organisationId: string }>;

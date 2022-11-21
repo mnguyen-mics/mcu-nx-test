@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout, Row, Col } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
-import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl';
 import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
 import { compose } from 'recompose';
 import { EditContentLayout } from '../../../../../components/Layout';
@@ -24,7 +24,7 @@ type CreateFeedPresetSelectionPageProps = {
 
 type Props = CreateFeedPresetSelectionPageProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps;
 
 interface LayoutablePluginWithProperties extends LayoutablePlugin {

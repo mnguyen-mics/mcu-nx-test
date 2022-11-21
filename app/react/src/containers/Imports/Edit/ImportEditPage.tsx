@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
+import { WrappedComponentProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
 import { INITIAL_IMPORTS_FORM_DATA } from './domain';
 import ImportEditForm from './ImportEditForm';
@@ -59,7 +59,7 @@ type Props = InjectedDrawerProps &
     {},
     { from?: string }
   > &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class ImportEditPage extends React.Component<Props, ImportEditPageState> {
   @lazyInject(TYPES.IImportService)

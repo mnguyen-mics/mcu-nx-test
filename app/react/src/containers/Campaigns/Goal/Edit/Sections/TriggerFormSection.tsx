@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, WrappedComponentProps, defineMessages } from 'react-intl';
 import { Row, Col, Alert } from 'antd';
 import { FormSection } from '../../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
@@ -75,7 +75,7 @@ interface TriggerFormSectionProps extends ReduxFormChangeProps {
   datamart: DatamartResource;
 }
 
-type Props = TriggerFormSectionProps & InjectedIntlProps & ValidatorProps & MapStateToProps;
+type Props = TriggerFormSectionProps & WrappedComponentProps & ValidatorProps & MapStateToProps;
 
 class TriggerFormSection extends React.Component<Props> {
   constructor(props: Props) {

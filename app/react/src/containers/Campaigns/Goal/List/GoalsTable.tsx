@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal, Tooltip } from 'antd';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { GOAL_SEARCH_SETTINGS } from './constants';
 import {
@@ -77,7 +77,7 @@ interface MapStateToProps {
 }
 
 type Props = MapStateToProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }, {}, { reloadDataSource?: boolean }>;
 

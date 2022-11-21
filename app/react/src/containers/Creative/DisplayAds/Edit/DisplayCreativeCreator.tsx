@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps } from 'react-intl';
+import { WrappedComponentProps } from 'react-intl';
 import DisplayCreativeRendererSelector from './DisplayCreativeRendererSelector';
 import log from '../../../../utils/Logger';
 import { DisplayCreativeForm } from './index';
@@ -23,7 +23,7 @@ interface State {
   creativeFormData: Partial<DisplayCreativeFormData>;
 }
 
-type Props = DisplayCreativeCreatorProps & InjectedIntlProps & InjectedNotificationProps;
+type Props = DisplayCreativeCreatorProps & WrappedComponentProps & InjectedNotificationProps;
 
 class DisplayCreativeCreator extends React.Component<Props, State> {
   @lazyInject(TYPES.IDisplayCreativeFormService)

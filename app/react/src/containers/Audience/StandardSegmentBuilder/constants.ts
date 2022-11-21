@@ -1,8 +1,8 @@
 import { StandardSegmentBuilderFormData } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-import { FormattedMessage, defineMessages } from 'react-intl';
+import { MessageDescriptor, defineMessages } from 'react-intl';
 
 export const messages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   title: {
     id: 'standardSegmentBuilder.title',

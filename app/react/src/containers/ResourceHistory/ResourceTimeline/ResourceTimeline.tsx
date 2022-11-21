@@ -3,7 +3,7 @@ import { FlagOutlined } from '@ant-design/icons';
 import { Col, Spin, Timeline } from 'antd';
 import lodash from 'lodash';
 import moment from 'moment';
-import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
+import { WrappedComponentProps, FormattedMessage, injectIntl } from 'react-intl';
 
 import {
   ResourceType,
@@ -50,7 +50,7 @@ interface State {
 
 type Props = ResourceTimelineProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 class ResourceTimeline extends React.Component<Props, State> {

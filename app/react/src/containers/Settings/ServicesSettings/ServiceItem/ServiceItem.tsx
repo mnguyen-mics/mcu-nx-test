@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Input } from 'antd';
 import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
 import {
@@ -19,7 +19,7 @@ interface State {
   price: string;
 }
 
-type Props = ServiceItemProps & InjectedIntlProps;
+type Props = ServiceItemProps & WrappedComponentProps;
 
 class ServiceItem extends React.Component<Props, State> {
   constructor(props: Props) {

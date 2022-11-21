@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, MessageDescriptor, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import {
   AudienceFeedType,
@@ -21,7 +21,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 type AggregatesByStatus = { [status in Status]?: string };
@@ -41,7 +41,7 @@ interface State {
 }
 
 const messages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   noData: {
     id: 'audience.feeds.overview.nodata',

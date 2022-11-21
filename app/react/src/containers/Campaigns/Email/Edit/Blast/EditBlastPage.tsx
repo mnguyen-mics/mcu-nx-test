@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { message } from 'antd';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import EmailBlastForm from './EmailBlastForm';
 import {
   EditEmailBlastRouteMatchParam,
@@ -26,7 +26,7 @@ interface State {
   loading: boolean;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 

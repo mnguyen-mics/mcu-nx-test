@@ -1,7 +1,7 @@
 import { debounce } from 'lodash';
 import React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps } from 'react-intl';
+import { WrappedComponentProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
@@ -53,7 +53,7 @@ interface FunnelDataFetcherProps {
 }
 
 type Props = FunnelDataFetcherProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<void>;
 

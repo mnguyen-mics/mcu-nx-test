@@ -1,7 +1,7 @@
 import * as React from 'react';
 import moment from 'moment';
 import { formatMetric } from '../../utils/MetricHelper';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
 export type HistoryKeys = 'history_title' | 'history_resource_type';
 
@@ -10,7 +10,7 @@ export type ValueFormat = 'STRING' | 'INTEGER' | 'FLOAT' | 'DATE' | 'TIMESTAMP' 
 export function formatToFormattingFunction(
   value: string,
   format: ValueFormat,
-  messageMap?: { [key: string]: FormattedMessage.MessageDescriptor },
+  messageMap?: { [key: string]: MessageDescriptor },
 ) {
   switch (format) {
     case 'STRING':

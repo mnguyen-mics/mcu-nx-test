@@ -1,7 +1,7 @@
 import * as React from 'react';
 import _ from 'lodash';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { messages } from '../../messages';
 import { FormSection } from '../../../../../../components/Form';
 import { SchemaItem } from '../../../../../Audience/AdvancedSegmentBuilder/domain';
@@ -17,7 +17,7 @@ interface AudienceFeaturePreviewProps {
 }
 
 type Props = AudienceFeaturePreviewProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ datamartId: string }>;
 
 class AudienceFeaturePreview extends React.Component<Props> {

@@ -231,7 +231,7 @@ to fetch data according to the `datamartId` in the props :
 
 ```
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -246,7 +246,7 @@ interface MyComponentProps {
 }
 
 type Props = MyComponentProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps;
 
 interface State {
@@ -338,17 +338,17 @@ interface MyComponentProps {
   datamartId: string;
 }
 
-type Props = MyComponentProps & InjectedIntlProps;
+type Props = MyComponentProps & WrappedComponentProps;
 ```
 
 The `props` that are specific to the component are defined in `MyComponentProps`. Additional generic
-`props` like `InjectedIntlProps` are then added in order to create the complete `Props`.
+`props` like `WrappedComponentProps` are then added in order to create the complete `Props`.
 
 In the case of React Intl messages, see examples in the code about how to define messages and use them.
 You should use messages and not use strings as text.
 
 Reference to those generic props is also found at the end of the file, when `MyComponent` is exported
-(`injectIntl` refers to `InjectedIntlProps`) :
+(`injectIntl` refers to `WrappedComponentProps`) :
 
 ```
 export default compose<Props, MyComponentProps>(injectIntl, injectNotifications)(MyComponent);

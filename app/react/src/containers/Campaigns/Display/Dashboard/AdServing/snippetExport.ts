@@ -4,7 +4,7 @@ import {
   DisplayCampaignInfoResource,
 } from '../../../../../models/campaign/display';
 import ExportService from '../../../../../services/ExportService';
-import { MessageValue, FormattedMessage } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 
 // tslint:disable-next-line no-invalid-template-strings
 const GOOGLE_DFP_CLICK_MACRO = '%%CLICK_URL_ESC%%';
@@ -24,8 +24,8 @@ export function generateCsvData(
   macro: ExportType,
   ads: AdInfoResource[],
   formatMessage: (
-    messageDescriptor: FormattedMessage.MessageDescriptor,
-    values?: { [key: string]: MessageValue },
+    messageDescriptor: MessageDescriptor,
+    values?: Record<string, string | number | boolean | null | undefined | Date>,
   ) => string,
 ) {
   const data = ads.map(ad => {

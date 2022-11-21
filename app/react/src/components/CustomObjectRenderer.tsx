@@ -1,7 +1,7 @@
 import * as React from 'react';
 import CustomPropertyRenderer from './CustomPropertyRenderer';
 import { Tooltip, Tag } from 'antd';
-import { injectIntl, FormattedMessage, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps, defineMessages } from 'react-intl';
 import {
   TemplateDefinitions,
   ExtendedTemplates,
@@ -28,7 +28,7 @@ interface CustomObjectRendererProps {
   authorizeExpandAll: () => void;
 }
 
-type Props = CustomObjectRendererProps & InjectedIntlProps;
+type Props = CustomObjectRendererProps & WrappedComponentProps;
 
 type ViewMoreStatus = 'INIT_OR_NOT_NEEDED' | 'VIEW_MORE' | 'VIEW_LESS';
 

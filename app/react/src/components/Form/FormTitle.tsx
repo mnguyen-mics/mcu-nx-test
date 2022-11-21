@@ -1,10 +1,10 @@
 /* eslint-disable */
 import * as React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
 export interface FormTitleProps {
-  title: FormattedMessage.MessageDescriptor;
-  subtitle?: FormattedMessage.MessageDescriptor;
+  title: MessageDescriptor;
+  subtitle?: MessageDescriptor & { values?: Record<string, string | any> };
 }
 
 const FormTitle: React.SFC<FormTitleProps> = ({ title, subtitle }) => {

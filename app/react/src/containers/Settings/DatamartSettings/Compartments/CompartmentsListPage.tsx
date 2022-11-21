@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import settingsMessages from '../../messages';
 import { DownOutlined } from '@ant-design/icons';
 import { Layout, Row, Button } from 'antd';
-import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { FormattedMessage, injectIntl, WrappedComponentProps } from 'react-intl';
 import CompartmentsTable from './List/CompartmentsTable';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
 import { Filter } from '../Common/domain';
@@ -40,7 +40,7 @@ interface MapStateToProps {
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedDatamartProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   MapStateToProps;
 

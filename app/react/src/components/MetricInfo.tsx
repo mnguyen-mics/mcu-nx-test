@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { MessageDescriptor, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Tooltip } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -8,15 +8,15 @@ import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/c
 export interface MetricInfoProps {
   color: IconColor;
   iconType: McsIconType;
-  message: FormattedMessage.MessageDescriptor;
+  message: MessageDescriptor;
   metricValue: string;
-  tooltipMessage: FormattedMessage.MessageDescriptor;
+  tooltipMessage: MessageDescriptor;
   onClick?: () => void;
 }
 
 export type IconColor = 'INITIAL' | 'PAUSED' | 'ACTIVE';
 
-export type Props = MetricInfoProps & InjectedIntlProps;
+export type Props = MetricInfoProps & WrappedComponentProps;
 
 export interface State {
   isTooltipVisible: boolean;

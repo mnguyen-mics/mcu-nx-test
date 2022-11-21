@@ -1,6 +1,6 @@
 import { ConfigProps, InjectedFormProps, getFormValues, reduxForm } from 'redux-form';
 import { FORM_ID, OnSegmentExitInputAutomationFormData } from '../domain';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import * as React from 'react';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Omit, connect } from 'react-redux';
@@ -44,7 +44,7 @@ type Props = InjectedFormProps<
   OnSegmentExitInputAutomationFormProps
 > &
   OnSegmentExitInputAutomationFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps;
 
 class OnSegmentExitInputAutomationForm extends React.Component<Props> {

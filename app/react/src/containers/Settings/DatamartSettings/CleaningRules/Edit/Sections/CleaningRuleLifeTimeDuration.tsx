@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { WrappedFieldProps } from 'redux-form';
 import FormFieldWrapper, {
   FormFieldWrapperProps,
@@ -21,7 +21,7 @@ export interface CleaningRuleLifeTimeDurationProps extends FormFieldWrapperProps
   optionsAndSeparators: OptionsAndSeparatorProps[];
 }
 
-type Props = CleaningRuleLifeTimeDurationProps & WrappedFieldProps & InjectedIntlProps;
+type Props = CleaningRuleLifeTimeDurationProps & WrappedFieldProps & WrappedComponentProps;
 
 class CleaningRuleLifeTimeDuration extends React.Component<Props> {
   updateSelect = (selectedValue: string) => {

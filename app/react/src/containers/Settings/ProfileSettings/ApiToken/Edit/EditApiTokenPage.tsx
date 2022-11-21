@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { message } from 'antd';
 import { connect } from 'react-redux';
@@ -54,7 +54,7 @@ interface MapStateToProps {
   connectedUser: UserProfileResource;
 }
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   MapStateToProps &
   RouteComponentProps<{ organisationId: string; apiTokenId: string }>;
 

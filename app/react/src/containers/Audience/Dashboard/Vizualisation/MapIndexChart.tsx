@@ -14,7 +14,7 @@ import {
   QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -66,7 +66,7 @@ interface State {
 const BASE_YKEY = 'yKey';
 const COMPARED_YKEY = 'comparedYKey';
 
-type Props = MapIndexChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = MapIndexChartProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 class MapIndexChart extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)

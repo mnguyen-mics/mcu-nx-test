@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages, MessageDescriptor } from 'react-intl';
 import { compose } from 'recompose';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import MetricInfo, { IconColor } from '../../../../components/MetricInfo';
@@ -15,7 +15,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   AudienceFeedsOverviewCardProps;
 
@@ -36,7 +36,7 @@ interface State {
 }
 
 const metricStatusMessages: {
-  [key in IconColor]: FormattedMessage.MessageDescriptor;
+  [key in IconColor]: MessageDescriptor;
 } = defineMessages({
   ACTIVE: {
     id: 'audience.feeds.overview.card.status.live',
@@ -53,7 +53,7 @@ const metricStatusMessages: {
 });
 
 const tooltipStatusMessages: {
-  [key in IconColor]: FormattedMessage.MessageDescriptor;
+  [key in IconColor]: MessageDescriptor;
 } = defineMessages({
   ACTIVE: {
     id: 'audience.feeds.overview.card.metric.tooltip.live',

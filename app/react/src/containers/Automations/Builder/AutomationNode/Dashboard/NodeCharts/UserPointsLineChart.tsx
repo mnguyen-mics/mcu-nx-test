@@ -1,6 +1,6 @@
 import { Loading, AreaChart, Card } from '@mediarithmics-private/mcs-components-library';
 import * as React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
 import {
@@ -46,7 +46,7 @@ interface LineData {
 }
 
 type Props = UserPointsLineChartProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedThemeColorsProps;
 

@@ -3,7 +3,13 @@ import { compose } from 'recompose';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Tooltip, message } from 'antd';
-import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import {
+  FormattedMessage,
+  WrappedComponentProps,
+  injectIntl,
+  defineMessages,
+  MessageDescriptor,
+} from 'react-intl';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import { parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -33,7 +39,7 @@ import { LabelsSelectorMessages } from '@mediarithmics-private/mcs-components-li
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const messagesMap: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   PENDING: {
     id: 'display.campaigns.list.status.new',
@@ -69,7 +75,7 @@ interface DisplayCampaignsTableProps extends MapDispatchToProps {
 }
 
 type JoinedProps = DisplayCampaignsTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCampaignsTable extends React.Component<JoinedProps> {

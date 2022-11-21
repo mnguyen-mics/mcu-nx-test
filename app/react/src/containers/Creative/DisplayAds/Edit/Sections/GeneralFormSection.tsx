@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Field, getFormInitialValues, Validator, GenericField } from 'redux-form';
 import { connect } from 'react-redux';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
@@ -35,7 +35,7 @@ export interface GeneralFormSectionProps {
 
 type Props = ValidatorProps &
   GeneralFormSectionProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateProps &
   RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
 

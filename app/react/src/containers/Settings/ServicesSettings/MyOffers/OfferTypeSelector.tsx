@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import { WrappedComponentProps, injectIntl, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
@@ -18,7 +18,7 @@ export interface OfferTypeSelectorProps {
   breadCrumbPaths: React.ReactNode[];
 }
 
-type Props = OfferTypeSelectorProps & InjectedIntlProps & RouteComponentProps<{}>;
+type Props = OfferTypeSelectorProps & WrappedComponentProps & RouteComponentProps<{}>;
 
 class OfferTypeSelector extends React.Component<Props> {
   render() {

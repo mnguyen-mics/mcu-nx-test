@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
 import { IAudienceFeatureService } from '../../../../../../services/AudienceFeatureService';
@@ -21,7 +21,7 @@ import { AudienceFeatureFolderResource } from '../../../../../../models/audience
 
 export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;
 
-type Props = InjectedIntlProps &
+type Props = WrappedComponentProps &
   ValidatorProps &
   NormalizerProps &
   RouteComponentProps<{ datamartId: string }>;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { EditOutlined, EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
+import { injectIntl, FormattedMessage, WrappedComponentProps } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../messages';
 import modalMessages from '../../../../common/messages/modalMessages';
@@ -47,7 +47,7 @@ interface State {
 }
 
 type Props = EmailCampaignActionbarProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<EmailCampaignDashboardRouteMatchParam> &
   InjectedDrawerProps;

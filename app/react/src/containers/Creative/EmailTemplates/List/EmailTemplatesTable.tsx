@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import EmailTestModal from './EmailTestModal';
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch } from '../../../../utils/LocationSearchHelper';
@@ -35,7 +35,7 @@ interface State {
 
 type JoinedProps = EmailTemplatesTableProps &
   RouteComponentProps<CampaignRouteParams> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class EmailTemplatesTable extends React.Component<JoinedProps, State> {
   constructor(props: JoinedProps) {

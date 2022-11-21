@@ -15,7 +15,7 @@ import {
   QueryExecutionSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -66,7 +66,7 @@ interface State {
 const BASE_YKEY = 'yKey';
 const COMPARED_YKEY = 'comparedYKey';
 
-type Props = MapBarChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = MapBarChartProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 class MapBarChart extends React.Component<Props, State> {
   identifier = cuid();

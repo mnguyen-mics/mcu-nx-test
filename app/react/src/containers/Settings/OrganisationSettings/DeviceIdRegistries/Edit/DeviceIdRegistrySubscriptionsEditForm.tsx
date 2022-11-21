@@ -1,7 +1,7 @@
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 import { Col, Row } from 'antd';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { FormTitle } from '../../../../../components/Form';
 import { DeviceIdRegistryOfferResource } from '../../../../../models/deviceIdRegistry/DeviceIdRegistryResource';
@@ -20,7 +20,7 @@ interface DeviceIdRegistrySubscriptionsEditFormProps {
 }
 
 type Props = DeviceIdRegistrySubscriptionsEditFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   InjectedWorkspaceProps;
 

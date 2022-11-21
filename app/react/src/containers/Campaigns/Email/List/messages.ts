@@ -1,7 +1,7 @@
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 
 export const messages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   searchPlaceholder: {
     id: 'campaign.email.search.placeholder',

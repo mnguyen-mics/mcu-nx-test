@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { messages } from '../AudienceSegment';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { formatMetric } from '../../../../../utils/MetricHelper';
@@ -11,7 +11,7 @@ export interface ABComparisonGaugeProps {
   weight?: number;
 }
 
-type Props = ABComparisonGaugeProps & InjectedIntlProps;
+type Props = ABComparisonGaugeProps & WrappedComponentProps;
 
 class ABComparisonGauge extends React.Component<Props> {
   getGaugeRatio = (percent: number) => {

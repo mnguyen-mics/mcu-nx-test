@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -42,7 +42,7 @@ interface AdvancedSegmentBuilderPageState {
 type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
   MapStateToProps &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 const messages = defineMessages({
   advancedSegmentBuilder: {

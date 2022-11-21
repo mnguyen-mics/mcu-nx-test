@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Spin } from 'antd';
 import cuid from 'cuid';
 import { WrappedFieldArrayProps } from 'redux-form';
@@ -36,7 +36,7 @@ interface State {
 }
 
 type Props = WrappedFieldArrayProps<SegmentFieldModel> &
-  InjectedIntlProps &
+  WrappedComponentProps &
   AudienceSegmentFormSectionProps &
   RouteComponentProps<EditAdGroupRouteMatchParam> &
   InjectedDrawerProps;

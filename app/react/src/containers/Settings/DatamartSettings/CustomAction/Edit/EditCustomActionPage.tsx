@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {
   GenericPluginContent,
@@ -30,7 +30,9 @@ interface CustomActionRouteParam {
   customActionId?: string;
 }
 
-type JoinedProps = RouteComponentProps<CustomActionRouteParam> & InjectedIntlProps & ValidatorProps;
+type JoinedProps = RouteComponentProps<CustomActionRouteParam> &
+  WrappedComponentProps &
+  ValidatorProps;
 
 class EditCustomActionPage extends React.Component<JoinedProps> {
   @lazyInject(TYPES.ICustomActionService)

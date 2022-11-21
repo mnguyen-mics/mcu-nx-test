@@ -1,6 +1,6 @@
 import { ConfigProps, InjectedFormProps, getFormValues, reduxForm } from 'redux-form';
 import { FORM_ID, DeleteFromSegmentAutomationFormData } from '../domain';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { WrappedComponentProps, injectIntl, defineMessages } from 'react-intl';
 import * as React from 'react';
 import { MicsReduxState } from '@mediarithmics-private/advanced-components';
 import { Omit, connect } from 'react-redux';
@@ -45,7 +45,7 @@ type Props = InjectedFormProps<
   DeleteFromSegmentAutomationFormProps
 > &
   DeleteFromSegmentAutomationFormProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   MapStateToProps;
 
 class DeleteFromSegmentAutomationForm extends React.Component<Props> {

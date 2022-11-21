@@ -10,7 +10,13 @@ import { Button } from 'antd';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import {
+  WrappedComponentProps,
+  injectIntl,
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { messagesMap } from './AudienceExperimentationForm';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -33,7 +39,7 @@ import {
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const abComparisonMessage: {
-  [key: string]: FormattedMessage.MessageDescriptor;
+  [key: string]: MessageDescriptor;
 } = defineMessages({
   avg_number_of_transactions_per_user_point: {
     id: 'audience.segment.dashboard.ABDetailsTable.avgNumberOfTransactionsPerUserPoint',
@@ -100,7 +106,7 @@ export interface ABDetailsTableProps {
 }
 
 type Props = ABDetailsTableProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{}>;
 

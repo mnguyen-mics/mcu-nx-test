@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
   DefaultSelect,
@@ -65,7 +65,7 @@ export type EventPropertyFormComparatorProps = {
 };
 
 type Props = EventPropertyFormComparatorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   ValidatorProps &
   InjectedWorkspaceProps &
   RouteComponentProps<{ organisationId: string }>;

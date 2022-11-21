@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import messages from '../messages';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
@@ -20,7 +20,7 @@ interface ProfileCardProps {
 
 type Props = ProfileCardProps &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   RouteComponentProps<TimelinePageParams>;
 
 class ProfileCard extends React.Component<Props> {

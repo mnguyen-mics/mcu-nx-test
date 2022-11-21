@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
-import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, injectIntl, WrappedComponentProps } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { AutomationSelectedType } from './AutomationBuilderPage';
@@ -14,7 +14,7 @@ export interface AutomationTemplateSelectorProps {
   disableReactToEvent: boolean;
 }
 
-type Props = AutomationTemplateSelectorProps & InjectedIntlProps & InjectedFeaturesProps;
+type Props = AutomationTemplateSelectorProps & WrappedComponentProps & InjectedFeaturesProps;
 
 class AutomationTemplateSelector extends React.Component<Props> {
   renderSelectionAutomationType = () => {

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import messages from './messages';
 import { compose } from 'recompose';
 import { Error } from '@mediarithmics-private/mcs-components-library';
 
-type Props = InjectedIntlProps;
+type Props = WrappedComponentProps;
 
 class NoAccess extends React.Component<Props> {
   render() {

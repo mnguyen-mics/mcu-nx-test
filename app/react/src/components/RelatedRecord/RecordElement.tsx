@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Col, Row, Popconfirm } from 'antd';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 type RenderItem<T> = (record: T) => React.ReactNode;
@@ -24,7 +24,7 @@ interface RecordElementProps<T> {
   editable?: boolean;
 }
 
-class RecordElement<T> extends React.Component<RecordElementProps<T> & InjectedIntlProps> {
+class RecordElement<T> extends React.Component<RecordElementProps<T> & WrappedComponentProps> {
   editTableField = () => this.props.onEdit && this.props.onEdit(this.props.record);
 
   removeTableField = () => this.props.onRemove && this.props.onRemove(this.props.record);

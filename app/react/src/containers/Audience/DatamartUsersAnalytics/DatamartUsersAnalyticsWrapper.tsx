@@ -23,7 +23,7 @@ import {
   convertMessageDescriptorToString,
   mcsDateRangePickerMessages,
 } from '../../../IntlMessages';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { McsDateRangePickerMessages } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 import { DatamartUsersAnalyticsWrapperProps } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dashboardsModel';
 
@@ -37,7 +37,7 @@ export type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSett
 
 type JoinedProp = RouteComponentProps<{ segmentId?: string }> &
   DatamartUsersAnalyticsWrapperProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import _ from 'lodash';
 import { Input, Row, Col, Breadcrumb, AutoComplete, Spin, Button as AntButton } from 'antd';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { RouteComponentProps } from 'react-router-dom';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -76,7 +76,7 @@ interface State {
 
 type Props = MapStateToProps &
   AudienceFeatureSelectorProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 

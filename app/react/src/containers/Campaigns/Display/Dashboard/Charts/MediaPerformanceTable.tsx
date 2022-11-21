@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import { Row, Col } from 'antd';
 import messages from '../messages';
 import { formatMetric } from '../../../../../utils/MetricHelper';
@@ -43,7 +43,7 @@ interface RouterProps {
 
 type JoinedProps = RouteComponentProps<RouterProps> &
   MediaPerformanceTableProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class MediaPerformanceTable extends React.Component<JoinedProps> {
   updateLocationSearch(params: McsDateRangeValue) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, WrappedComponentProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Button } from 'antd';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -12,7 +12,7 @@ interface RouterProps {
 }
 
 class ExportsActionbar extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedDatamartProps
+  RouteComponentProps<RouterProps> & WrappedComponentProps & InjectedDatamartProps
 > {
   render() {
     const {

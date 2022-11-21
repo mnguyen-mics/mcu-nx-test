@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
+import { WrappedComponentProps, defineMessages, injectIntl } from 'react-intl';
 
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -46,7 +46,7 @@ interface EditUserFormProps extends Omit<ConfigProps<Partial<UserResource>>, 'fo
 type Props = InjectedFormProps<Partial<UserResource>, EditUserFormProps> &
   EditUserFormProps &
   RouteComponentProps<{ organisationId: string; userId: string }> &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class EditUserForm extends React.Component<Props> {
   buildFormSections = () => {

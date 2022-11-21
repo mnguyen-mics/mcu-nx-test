@@ -11,7 +11,7 @@ import { DatamartReplicationRouteMatchParam } from '../../DatamartReplication/Ed
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { WrappedComponentProps, injectIntl } from 'react-intl';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDatamartReplicationService } from '../../../../../services/DatamartReplicationService';
@@ -37,7 +37,7 @@ interface State {
 
 type Props = RouteComponentProps<DatamartReplicationRouteMatchParam> &
   InjectedNotificationProps &
-  InjectedIntlProps;
+  WrappedComponentProps;
 
 class DatamartReplicationTab extends React.Component<Props, State> {
   fetchLoop = window.setInterval(() => {

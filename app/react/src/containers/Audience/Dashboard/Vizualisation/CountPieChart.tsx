@@ -14,7 +14,7 @@ import {
   QueryExecutionSubSource,
 } from '@mediarithmics-private/advanced-components';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, WrappedComponentProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -50,7 +50,7 @@ interface State {
   loading: boolean;
 }
 
-type Props = CountPieChartProps & InjectedThemeColorsProps & InjectedIntlProps;
+type Props = CountPieChartProps & InjectedThemeColorsProps & WrappedComponentProps;
 
 class CountPieChart extends React.Component<Props, State> {
   identifier = cuid();

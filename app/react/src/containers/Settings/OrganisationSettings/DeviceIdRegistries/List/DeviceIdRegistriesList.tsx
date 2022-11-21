@@ -1,6 +1,6 @@
 import * as React from 'react';
 import messages from '../messages';
-import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, WrappedComponentProps, injectIntl, MessageDescriptor } from 'react-intl';
 import { Button, Drawer, Layout, Modal, Row, Tooltip } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -41,7 +41,7 @@ interface RouterProps {
 
 type Props = RouteComponentProps<RouterProps> &
   InjectedNotificationProps &
-  InjectedIntlProps &
+  WrappedComponentProps &
   InjectedWorkspaceProps;
 
 interface DeviceIdRegistryWithDatamartSelectionsResource extends DeviceIdRegistryResource {
@@ -978,10 +978,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       </span>
     );
 
-    const simpleTableHeader = (
-      message: FormattedMessage.MessageDescriptor,
-      button?: JSX.Element,
-    ) => (
+    const simpleTableHeader = (message: MessageDescriptor, button?: JSX.Element) => (
       <div>
         <div className='mcs-card-header mcs-card-title'>
           <span className='mcs-card-title'>
