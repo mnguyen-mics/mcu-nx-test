@@ -152,7 +152,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         return Promise.all(
           registries.map(registry =>
             this._deviceIdRegistryService
-              .getDeviceIdRegistryDatamartSelections(registry.id)
+              .getDeviceIdRegistryDatamartSelections(organisationId, registry.id)
               .then(selections => {
                 return {
                   datamart_selections: selections.data,
@@ -273,7 +273,10 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             thirdPartyDataRows.map(row => {
               if (this.thirdPartyRowIsRegistry(row)) {
                 return this._deviceIdRegistryService
-                  .getDeviceIdRegistryDatamartSelections((row as ThirdPartyRegistryRow).id)
+                  .getDeviceIdRegistryDatamartSelections(
+                    organisationId,
+                    (row as ThirdPartyRegistryRow).id,
+                  )
                   .then(selections => {
                     return {
                       ...row,
@@ -367,6 +370,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       .then(res => {
         return res.data.length > 0
           ? this._deviceIdRegistryService.updateDeviceIdRegistryDatamartSelections(
+              organisation_id,
               deviceIdRegistryId,
               res.data.map(datamart => datamart.id),
             )
@@ -566,6 +570,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       notifyError,
       notifySuccess,
       intl: { formatMessage },
+      workspace: { organisation_id },
     } = this.props;
 
     const previousSelections = this.state.currentRegistry!.datamart_selections;
@@ -586,6 +591,7 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
         return Promise.resolve();
       } else {
         return this._deviceIdRegistryService.updateDeviceIdRegistryDatamartSelections(
+          organisation_id,
           deviceIdRegistryId,
           selectedDatamartIds,
         );
