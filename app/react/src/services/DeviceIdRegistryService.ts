@@ -34,10 +34,12 @@ export interface IDeviceIdRegistryService {
   ) => Promise<DataResponse<DeviceIdRegistryDatamartSelectionResource>>;
 
   getDeviceIdRegistryDatamartSelections: (
+    organisationId: string,
     deviceIdRegistryId: string,
   ) => Promise<DataListResponse<DeviceIdRegistryDatamartSelectionResource>>;
 
   updateDeviceIdRegistryDatamartSelections: (
+    organisationId: string,
     deviceIdRegistryId: string,
     datamartIds: string[],
   ) => Promise<any>;
@@ -103,12 +105,15 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
   }
 
   getDeviceIdRegistryDatamartSelections(
+    organisationId: string,
     deviceIdRegistryId: string,
   ): Promise<DataListResponse<DeviceIdRegistryDatamartSelectionResource>> {
-    return ApiService.getRequest(`device_id_registries/${deviceIdRegistryId}/datamart_selections`);
+    const endpoint = `device_id_registries/${deviceIdRegistryId}/datamart_selections?organisation_id=${organisationId}`;
+    return ApiService.getRequest(endpoint);
   }
 
   updateDeviceIdRegistryDatamartSelections(
+    organisationId: string,
     deviceIdRegistryId: string,
     datamartIds: string[],
   ): Promise<any> {
@@ -120,7 +125,7 @@ export default class DeviceIdRegistryService implements IDeviceIdRegistryService
       }),
     };
     return ApiService.putRequest(
-      `device_id_registries/${deviceIdRegistryId}/datamart_selections`,
+      `device_id_registries/${deviceIdRegistryId}/datamart_selections?organisation_id=${organisationId}`,
       body,
     );
   }
