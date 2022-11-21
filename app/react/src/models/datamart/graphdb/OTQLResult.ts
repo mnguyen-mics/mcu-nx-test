@@ -56,25 +56,25 @@ export function isAggregateResult(rows: OTQLResultRowsShape): rows is OTQLAggreg
 export function isAggregateDataset(
   aggregations: OTQLResult | AggregateDataset | CountDataset,
 ): aggregations is AggregateDataset {
-  return !!((aggregations as AggregateDataset).dataset !== undefined);
+  return 'dataset' in aggregations;
 }
 
 export function isCountDataset(
   dataset: OTQLResult | AggregateDataset | CountDataset | OTQLAggregations,
 ): dataset is CountDataset {
-  return !!((dataset as CountDataset).value !== undefined);
+  return 'value' in dataset;
 }
 
 export function isJsonDataset(
   dataset: OTQLResult | AggregateDataset | CountDataset | JsonDataset | OTQLAggregations,
 ): dataset is JsonDataset {
-  return !!((dataset as JsonDataset).rows !== undefined);
+  return 'rows' in dataset;
 }
 
 export function isOTQLAggregations(
   aggregations: OTQLAggregations | AggregateDataset | CountDataset,
 ): aggregations is OTQLAggregations {
-  return !!((aggregations as OTQLAggregations).buckets !== undefined);
+  return 'buckets' in aggregations;
 }
 
 export function isCountResult(rows: OTQLResultRowsShape): rows is OTQLCountResult[] {

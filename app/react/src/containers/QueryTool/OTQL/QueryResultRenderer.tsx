@@ -32,7 +32,6 @@ import {
   WithOptionalComplexXKey,
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import {
-  formatDate,
   getBaseChartProps,
   getChartDataset,
   getChartOption,
@@ -48,7 +47,6 @@ import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import snakeCaseKeys from 'snakecase-keys';
 import {
-  DatasetDateFormatter,
   IChartService,
   ITagService,
   ManagedChart,
@@ -60,7 +58,10 @@ import {
   AggregateDataset,
   CountDataset,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
-import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
+import {
+  ModelType,
+  SourceType,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
 import { McsTabsItem } from './QueryToolTabsContainer';
 import {
   OTQLBuckets,
@@ -68,6 +69,7 @@ import {
 } from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 import { AbstractSource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
+import { QueryToolTabContext } from './QueryToolTabContext';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -81,6 +83,22 @@ const messages = defineMessages({
   chartSavePopupTitle: {
     id: 'queryTool.AggregationRenderer.savedChartPopup',
     defaultMessage: 'Save chart',
+  },
+  transformKeysSelect: {
+    id: 'queryTool.AggregationRenderer.transformKeysSelect',
+    defaultMessage: 'Transform keys to...',
+  },
+  channels: {
+    id: 'queryTool.AggregationRenderer.channels',
+    defaultMessage: 'Channels',
+  },
+  compartments: {
+    id: 'queryTool.AggregationRenderer.compartments',
+    defaultMessage: 'Compartments',
+  },
+  segments: {
+    id: 'queryTool.AggregationRenderer.segments',
+    defaultMessage: 'Segments',
   },
 });
 
@@ -139,9 +157,8 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
   private transactionProcessor = new TransformationProcessor();
 
-  datasetDateFormatter: DatasetDateFormatter = new DatasetDateFormatter((date, format) =>
-    formatDate(date, format),
-  );
+  static contextType = QueryToolTabContext;
+  context: React.ContextType<typeof QueryToolTabContext>;
 
   constructor(props: Props) {
     super(props);
@@ -1083,6 +1100,8 @@ class QueryResultRenderer extends React.Component<Props, State> {
       }
 
       const quickOptions = _.omitBy(selectedQuickOptions, _.isUndefined);
+      const queryToolTabContext = this.context;
+      const isSelectedChartTable = selectedChart === 'table';
 
       return (
         <div>
@@ -1092,6 +1111,30 @@ class QueryResultRenderer extends React.Component<Props, State> {
             className='mcs-otqlChart_tabs'
             onChange={this.handleChartTypeChange}
             defaultActiveKey={selectedChart}
+            tabBarExtraContent={
+              isSelectedChartTable && (
+                <Select<ModelType>
+                  className='mcs-otqlChart_items_quick_option'
+                  bordered={false}
+                  onSelect={(value: ModelType) => {
+                    queryToolTabContext.decorators.setDecoratorOptionModelType(value);
+                  }}
+                  value={queryToolTabContext.decorators.selectedDecorator}
+                  size='small'
+                  placeholder={intl.formatMessage(messages.transformKeysSelect)}
+                >
+                  <Select.Option value='CHANNELS'>
+                    {intl.formatMessage(messages.channels)}
+                  </Select.Option>
+                  <Select.Option value='COMPARTMENTS'>
+                    {intl.formatMessage(messages.compartments)}
+                  </Select.Option>
+                  <Select.Option value='SEGMENTS'>
+                    {intl.formatMessage(messages.segments)}
+                  </Select.Option>
+                </Select>
+              )
+            }
           />
           <div className={'mcs-otqlChart_items_container'}>
             {!isMetricCase &&
