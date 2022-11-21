@@ -80,7 +80,7 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     this.getContextualTargeting().then(ct => {
       if (ct && ct.status !== 'INIT')
         this.initLiftData(ct).then(_ => {
-          if (ct.status !== 'DRAFT') this.initSignatureData(ct);
+          if (ct.status !== 'DRAFT' && ct.status !== 'PUBLISHED') this.initSignatureData(ct);
         });
     });
   }
@@ -271,10 +271,10 @@ class ContextualTargetingTab extends React.Component<Props, State> {
     );
   };
 
-  onPublishContextualTargeting = () => {
+  onPublishContextualTargeting = (): Promise<void> => {
     const { segmentId } = this.props;
     const { contextualTargeting } = this.state;
-    this._contextualTargetingService
+    return this._contextualTargetingService
       .publishContextualTargeting(
         segmentId,
         contextualTargeting!.id,
