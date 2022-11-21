@@ -23,7 +23,7 @@ export const messages = defineMessages({
   },
   stepTwoTitle: {
     id: 'audience.segment.dashboard.contextualTargeting.stepTwoTitle',
-    defaultMessage: 'Select targeted ratio',
+    defaultMessage: 'Select lift',
   },
   stepThreeTitle: {
     id: 'audience.segment.dashboard.contextualTargeting.stepThreeTitle',

@@ -18,14 +18,25 @@ interface ContextualTargetingStatsCardProps {
   isLiveEditing?: boolean;
   chartDataSelected?: ChartDataResource;
   numberOfTargetedContent?: number;
-  onPublishContextualTargeting: () => void;
+  onPublishContextualTargeting: () => Promise<void>;
   onArchiveContextualTargeting: () => void;
   onEdit: () => void;
 }
 
 type Props = ContextualTargetingStatsCardProps & WrappedComponentProps;
 
-class ContextualTargetingStatsCard extends React.Component<Props> {
+interface State {
+  isPublishButtonDisabled: boolean;
+}
+
+class ContextualTargetingStatsCard extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isPublishButtonDisabled: false,
+    };
+  }
+
   getStepIndex = (status?: ContextualTargetingStatus) => {
     const { isLiveEditing } = this.props;
     switch (status) {
@@ -67,17 +78,23 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
       : 'Just now';
   };
 
+  onPublishContextualTargeting = () => {
+    const { onPublishContextualTargeting } = this.props;
+    this.setState({ isPublishButtonDisabled: true });
+    onPublishContextualTargeting().then(_ => this.setState({ isPublishButtonDisabled: false }));
+  };
+
   render() {
     const {
       contextualTargeting,
       chartDataSelected,
-      onPublishContextualTargeting,
       onArchiveContextualTargeting,
       onEdit,
       numberOfTargetedContent,
       isLiveEditing,
     } = this.props;
     const { intl } = this.props;
+    const { isPublishButtonDisabled } = this.state;
 
     const liveCard =
       contextualTargeting?.status === 'LIVE' &&
@@ -106,7 +123,8 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
     const isButtonDisable =
       contextualTargeting &&
       (contextualTargeting.status === 'PUBLISHED' ||
-        contextualTargeting.status === 'LIVE_PUBLISHED');
+        contextualTargeting.status === 'LIVE_PUBLISHED' ||
+        isPublishButtonDisabled);
 
     const settingsMenu = (
       <Menu className='mcs-menu-antd-customized'>
@@ -158,7 +176,7 @@ class ContextualTargetingStatsCard extends React.Component<Props> {
           onClick={
             contextualTargeting?.status === 'DRAFT' ||
             (contextualTargeting?.status === 'LIVE' && isLiveEditing)
-              ? onPublishContextualTargeting
+              ? this.onPublishContextualTargeting
               : onEdit
           }
           disabled={isButtonDisable}
