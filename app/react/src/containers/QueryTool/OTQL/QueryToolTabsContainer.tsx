@@ -1063,7 +1063,12 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
     let startType = 'UserPoint';
 
-    if (rawSchema && typeof queryToUse === 'string') {
+    if (
+      rawSchema &&
+      typeof queryToUse === 'string' &&
+      currentTab &&
+      currentTab.serieQueries.length < 2
+    ) {
       const foundType = rawSchema.find(ot => {
         const matchResult = queryToUse?.match(/FROM(?:\W*)(\w+)/i);
         if (!matchResult || matchResult.length === 0) return false;
