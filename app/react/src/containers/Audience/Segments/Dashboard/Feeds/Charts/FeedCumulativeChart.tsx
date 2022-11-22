@@ -19,7 +19,6 @@ import { getAllDates } from '../../../../../../utils/DateHelper';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts, { TooltipFormatterContextObject } from 'highcharts';
 import { NormalizedFeedStats } from './FeedChart';
-import { IExternalFeedSessionService } from '../../../../../../services/ExternalFeedSessionService';
 import { AudienceFeedTyped } from '../../../Edit/domain';
 import { ExternalFeedSession } from '../../../../../../models/ExternalFeedSession';
 import injectNotifications, {
@@ -30,6 +29,7 @@ import { convertMcsDateToMoment } from '../../../../../../utils/McsMoment';
 import { renderToString } from 'react-dom/server';
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { Empty } from 'antd';
+import { IExternalFeedSessionService } from '../../../../../../services/ExternalFeedSessionService';
 
 interface FeedLineDataValue {
   upserted: number;
@@ -154,7 +154,7 @@ class FeedCumulativeChart extends React.Component<Props, State> {
   };
 
   fetchStats = () => {
-    const { lastFeedSession, feedStatsUnit } = this.state;
+    const { feedStatsUnit, lastFeedSession } = this.state;
 
     this.setState({ isLoadingStats: true }, () => {
       if (lastFeedSession) {
