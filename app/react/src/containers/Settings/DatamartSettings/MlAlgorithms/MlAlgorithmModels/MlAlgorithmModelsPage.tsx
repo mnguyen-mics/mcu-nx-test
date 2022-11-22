@@ -23,6 +23,7 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import FileSaver from 'file-saver';
 
 const { Content } = Layout;
 
@@ -34,6 +35,7 @@ const initialState = {
   total: 0,
   isModalOpen: false,
   isPreviewModalOpened: false,
+  dataExportState: {},
   previewModalHtml: '',
   newModelName: '',
 };
@@ -49,6 +51,7 @@ interface MlAlgorithmModelsListState {
   resultFile?: UploadFile[];
   notebookFile?: UploadFile[];
   newModelName: string;
+  dataExportState: Record<string, number>;
 }
 
 interface RouterProps {
@@ -260,13 +263,73 @@ class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModel
     }
   };
 
+  private startDownload = (uri: string) => {
+    const { dataExportState } = this.state;
+
+    this.props.notifyInfo({
+      message:
+        'Your download request is processing. Do not refresh your page to avoid canceling it.',
+    });
+    if (!dataExportState.hasOwnProperty(uri)) {
+      this.setState(prevState => {
+        const newState = prevState;
+        newState.dataExportState[uri] = 0;
+        return newState;
+      });
+    }
+  };
+
+  private finaliseDownload = (uri: string) => {
+    const { dataExportState } = this.state;
+
+    if (dataExportState.hasOwnProperty(uri)) {
+      this.setState(prevState => {
+        const newState = prevState;
+        delete newState.dataExportState[uri];
+        return newState;
+      });
+    }
+  };
+
   download = (uri: string) => {
     try {
-      (window as any).open(
-        `${(window as any).MCS_CONSTANTS.API_URL}/v1/data_file/data?uri=${encodeURIComponent(
-          uri,
-        )}&access_token=${encodeURIComponent(getApiToken())}`,
-      );
+      this.startDownload(uri);
+      const url = `${
+        (window as any).MCS_CONSTANTS.API_URL
+      }/v1/data_file/data?uri=${encodeURIComponent(uri)}`;
+      const transferFailed = () => {
+        this.props.notifyInfo({ message: 'Your download has failed.' });
+        this.finaliseDownload(uri);
+      };
+      const transferCanceled = () => {
+        this.props.notifyInfo({ message: 'Your download as been canceled.' });
+        this.finaliseDownload(uri);
+      };
+      const oReq = new XMLHttpRequest();
+      oReq.responseType = 'blob';
+      oReq.onload = () => {
+        if (oReq.status >= 200 && oReq.status < 400) {
+          FileSaver.saveAs(oReq.response, uri.split('/').pop());
+        } else {
+          const responsePromise: Promise<any> = oReq.response.text();
+          responsePromise.then(responseAsText => {
+            const response = JSON.parse(responseAsText);
+            const notification = { message: `${response.error} (error id: ${response.error_id})` };
+            if (oReq.status < 500) {
+              this.props.notifyWarning(notification);
+            } else {
+              this.props.notifyError(notification);
+            }
+          });
+        }
+        this.finaliseDownload(uri);
+      };
+      oReq.open('get', url, true);
+      oReq.addEventListener('error', transferFailed, false);
+      oReq.addEventListener('abort', transferCanceled, false);
+
+      oReq.setRequestHeader('Authorization', getApiToken());
+      oReq.send();
     } catch (err) {
       log.error(err);
     }
@@ -442,6 +505,7 @@ class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModel
     const {
       intl: { formatMessage },
     } = this.props;
+    const { dataExportState } = this.state;
     const emptyTable: {
       iconType: McsIconType;
       message: string;
@@ -457,22 +521,34 @@ class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModel
           {
             message: formatMessage(messages.downloadBinary),
             callback: this.downloadBinary,
-            disabled: !mlAlgorithmModel.binary_uri,
+            disabled: !(
+              mlAlgorithmModel.binary_uri &&
+              dataExportState[mlAlgorithmModel.binary_uri] == undefined
+            ),
           },
           {
             message: formatMessage(messages.downloadResult),
             callback: this.downloadResult,
-            disabled: !mlAlgorithmModel.html_notebook_result_uri,
+            disabled: !(
+              mlAlgorithmModel.html_notebook_result_uri &&
+              dataExportState[mlAlgorithmModel.html_notebook_result_uri] == undefined
+            ),
           },
           {
             message: formatMessage(messages.downloadNotebook),
             callback: this.downloadNotebook,
-            disabled: !mlAlgorithmModel.notebook_uri,
+            disabled: !(
+              mlAlgorithmModel.notebook_uri &&
+              dataExportState[mlAlgorithmModel.notebook_uri] == undefined
+            ),
           },
           {
             message: formatMessage(messages.previewResult),
             callback: this.previewResult,
-            disabled: !mlAlgorithmModel.notebook_uri,
+            disabled: !(
+              mlAlgorithmModel.notebook_uri &&
+              dataExportState[mlAlgorithmModel.notebook_uri] == undefined
+            ),
           },
           {
             message:

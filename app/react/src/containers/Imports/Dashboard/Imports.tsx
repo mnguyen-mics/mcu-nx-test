@@ -37,6 +37,7 @@ import {
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableViewWithSelectionNotifyerMessages } from '../../../components/TableView';
+import FileSaver from 'file-saver';
 
 const { Content } = Layout;
 
@@ -54,6 +55,7 @@ interface ImportExecutionItems {
 interface State {
   importObject: ImportItem;
   importExecutions: ImportExecutionItems;
+  dataExportState: Record<string, number>;
 }
 
 interface ImportRouteParams {
@@ -98,6 +100,7 @@ class Imports extends React.Component<JoinedProps, State> {
         item: undefined,
         isLoading: true,
       },
+      dataExportState: {},
       importExecutions: {
         items: [],
         isLoading: true,
@@ -249,13 +252,73 @@ class Imports extends React.Component<JoinedProps, State> {
       });
   };
 
+  private startDownload = (uri: string) => {
+    const { dataExportState } = this.state;
+
+    this.props.notifyInfo({
+      message:
+        'Your download request is processing. Do not refresh your page to avoid canceling it.',
+    });
+    if (!dataExportState.hasOwnProperty(uri)) {
+      this.setState(prevState => {
+        const newState = prevState;
+        newState.dataExportState[uri] = 0;
+        return newState;
+      });
+    }
+  };
+
+  private finaliseDownload = (uri: string) => {
+    const { dataExportState } = this.state;
+
+    if (dataExportState.hasOwnProperty(uri)) {
+      this.setState(prevState => {
+        const newState = prevState;
+        delete newState.dataExportState[uri];
+        return newState;
+      });
+    }
+  };
+
   download = (uri: string) => {
     try {
-      (window as any).open(
-        `${(window as any).MCS_CONSTANTS.API_URL}/v1/data_file/data?uri=${encodeURIComponent(
-          uri,
-        )}&access_token=${encodeURIComponent(getApiToken())}`,
-      );
+      this.startDownload(uri);
+      const url = `${
+        (window as any).MCS_CONSTANTS.API_URL
+      }/v1/data_file/data?uri=${encodeURIComponent(uri)}`;
+      const transferFailed = () => {
+        this.props.notifyInfo({ message: 'Your download has failed.' });
+        this.finaliseDownload(uri);
+      };
+      const transferCanceled = () => {
+        this.props.notifyInfo({ message: 'Your download as been canceled.' });
+        this.finaliseDownload(uri);
+      };
+      const oReq = new XMLHttpRequest();
+      oReq.responseType = 'blob';
+      oReq.onload = () => {
+        if (oReq.status >= 200 && oReq.status < 400) {
+          FileSaver.saveAs(oReq.response, uri.split('/').pop());
+        } else {
+          const responsePromise: Promise<any> = oReq.response.text();
+          responsePromise.then(responseAsText => {
+            const response = JSON.parse(responseAsText);
+            const notification = { message: `${response.error} (error id: ${response.error_id})` };
+            if (oReq.status < 500) {
+              this.props.notifyWarning(notification);
+            } else {
+              this.props.notifyError(notification);
+            }
+          });
+        }
+        this.finaliseDownload(uri);
+      };
+      oReq.open('get', url, true);
+      oReq.addEventListener('error', transferFailed, false);
+      oReq.addEventListener('abort', transferCanceled, false);
+
+      oReq.setRequestHeader('Authorization', getApiToken());
+      oReq.send();
     } catch (err) {
       log.error(err);
     }
@@ -353,7 +416,7 @@ class Imports extends React.Component<JoinedProps, State> {
       },
     } = this.props;
 
-    const { importExecutions, importObject } = this.state;
+    const { importExecutions, importObject, dataExportState } = this.state;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
     const pagination = {
@@ -395,13 +458,18 @@ class Imports extends React.Component<JoinedProps, State> {
             disabled: !(
               execution.result &&
               execution.result.total_failure > 0 &&
-              execution.result.error_file_uri
+              execution.result.error_file_uri &&
+              dataExportState[execution.result.error_file_uri] == undefined
             ),
           },
           {
             message: formatMessage(messages.downloadInputFile),
             callback: this.onDownloadInputs,
-            disabled: !(execution.result && execution.result.input_file_uri),
+            disabled: !(
+              execution.result &&
+              execution.result.input_file_uri &&
+              dataExportState[execution.result.input_file_uri] == undefined
+            ),
           },
         ],
       },
