@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { defineMessages, WrappedComponentProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { AreaChartOutlined } from '@ant-design/icons';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 const messages = defineMessages({
   title: {
@@ -24,7 +24,7 @@ class CohortCalculationInProgress extends React.Component<Props> {
 
     return (
       <div className={`mcs_cohortCalculationInProgress`}>
-        <AreaChartOutlined className={`mcs_cohortCalculationInProgress-icon`} />
+        <Loading isFullScreen={false} />
         <div className={`mcs_cohortCalculationInProgress-title`}>
           {formatMessage(messages.title)}
         </div>

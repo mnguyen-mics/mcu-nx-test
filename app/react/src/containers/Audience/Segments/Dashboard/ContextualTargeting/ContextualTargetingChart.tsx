@@ -174,6 +174,7 @@ class ContextualTargetingChart extends React.Component<Props, State> {
             subtitle: 'Page views over the past 30 days',
           }}
           color={'#00a1df'}
+          fillOpacity={0.25}
           onChange={this.areaChartSliderOnChange}
           tipFormatter={this.tipFormater}
           disabled={
