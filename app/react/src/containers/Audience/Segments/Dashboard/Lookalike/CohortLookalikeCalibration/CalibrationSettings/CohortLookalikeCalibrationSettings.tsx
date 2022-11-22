@@ -19,6 +19,25 @@ import injectNotifications, {
 import { SimilarityIndexInfos } from '../CohortLookalikeCalibration';
 import _ from 'lodash';
 
+interface ChangingValue<T> {
+  previousValue: T;
+  currentValue: T;
+}
+
+function initChangingValue<T>(initialValue: T): ChangingValue<T> {
+  return {
+    previousValue: initialValue,
+    currentValue: initialValue,
+  };
+}
+
+function changeCurrentValue<T>(newCurrentValue: T, value: ChangingValue<T>): ChangingValue<T> {
+  return {
+    ...value,
+    currentValue: newCurrentValue,
+  };
+}
+
 export interface CohortCalibrationGraphPoint {
   cohortNumber: number;
   nbUserPoints: number;
@@ -34,6 +53,11 @@ interface CohortLookalikeCalibrationSettingsProps {
   similarityIndexInfos: SimilarityIndexInfos;
 }
 
+type Props = CohortLookalikeCalibrationSettingsProps &
+  WrappedComponentProps &
+  InjectedNotificationProps &
+  RouteComponentProps<{ organisationId: string; segmentId: string }>;
+
 interface ComputedGraphPoint {
   aggregatedCohortsForGraphPoint: CohortCalibrationGraphPoint[];
   nbUserPointsInCohorts: number;
@@ -44,24 +68,21 @@ interface ComputedGraphPoint {
   cumulativeNbOfCohorts: number;
 }
 
-type Props = CohortLookalikeCalibrationSettingsProps &
-  WrappedComponentProps &
-  InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string; segmentId: string }>;
-
 interface CustomDataPoint extends DataPoint {
   nbCohorts: number;
   nbUserPoints: number;
   similarityIndex: number;
 }
 
+// In edit mode, cancel is displayed to return to view mode
+// In set mode, cancel is not displayed
+type CalibrationMode = 'EDIT' | 'SET' | 'VIEW';
+
 interface CohortLookalikeCalibrationSettingsState {
   cohortLookalikeSegment: UserLookalikeByCohortsSegment;
-  includeSeedSegment: boolean;
-  previousIncludeSeedSegment: boolean;
-  selectedIndex?: number;
-  previousSelectedIndex?: number;
-  editMode: boolean;
+  includeSeedSegment: ChangingValue<boolean>;
+  selectedIndex: ChangingValue<number>;
+  calibrationMode: CalibrationMode;
   graphData?: {
     generalGraphData: ComputedGraphPoint[];
     includedSegmentGraph: CustomDataPoint[];
@@ -78,14 +99,16 @@ class CohortLookalikeCalibrationSettings extends React.Component<
 
   constructor(props: Props) {
     super(props);
-    const {
-      cohortLookalikeSegment: { include_seed_segment },
-    } = props;
+    const { cohortLookalikeSegment } = props;
+
+    const { include_seed_segment, min_overlap, similarity_index, user_points_target } =
+      cohortLookalikeSegment;
+
     this.state = {
-      cohortLookalikeSegment: props.cohortLookalikeSegment,
-      editMode: false,
-      includeSeedSegment: include_seed_segment,
-      previousIncludeSeedSegment: include_seed_segment,
+      cohortLookalikeSegment: cohortLookalikeSegment,
+      calibrationMode: !user_points_target && !min_overlap && !similarity_index ? 'SET' : 'VIEW',
+      includeSeedSegment: initChangingValue(include_seed_segment),
+      selectedIndex: initChangingValue(-1),
     };
   }
 
@@ -105,7 +128,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
             (cohortLookalikeSegment.min_overlap / similarityIndexInfos.segmentRatioInDatamart) * 10,
           ) / 10
         ).toFixed(1)) ||
-      1.0;
+      -1.0;
 
     interface GraphAccData {
       graphPoints: ComputedGraphPoint[];
@@ -223,14 +246,20 @@ class CohortLookalikeCalibrationSettings extends React.Component<
       };
     });
 
-    const newGraphData = includeSeedSegment ? includedSegmentGraph : notIncludedSegmentGraph;
+    const newGraphData = includeSeedSegment.currentValue
+      ? includedSegmentGraph
+      : notIncludedSegmentGraph;
 
     const tmpIndex = newGraphData.findIndex(graphPoint => {
       return graphPoint.similarityIndex === lookalikeSegmentMinSimilarityIndex;
     });
 
+    const defaultIndex = Math.round(newGraphData.length / 2);
+
     const newSelectedIndex =
-      selectedIndex === undefined ? (tmpIndex >= 0 ? tmpIndex : 0) : selectedIndex;
+      selectedIndex.currentValue === -1
+        ? initChangingValue(tmpIndex >= 0 ? tmpIndex : defaultIndex)
+        : selectedIndex;
 
     this.setState({
       selectedIndex: newSelectedIndex,
@@ -249,17 +278,23 @@ class CohortLookalikeCalibrationSettings extends React.Component<
       notifyError,
       intl: { formatMessage },
     } = this.props;
-    const { graphData, includeSeedSegment, selectedIndex } = this.state;
+    const {
+      graphData,
+      includeSeedSegment: { currentValue: includeSeedSegmentCurrentValue },
+      selectedIndex,
+    } = this.state;
 
-    if (graphData && selectedIndex !== undefined) {
-      const researchedGraph = includeSeedSegment
+    const { currentValue: selectedIndexCurrentValue } = selectedIndex;
+
+    if (graphData) {
+      const researchedGraph = includeSeedSegmentCurrentValue
         ? graphData.includedSegmentGraph
         : graphData.notIncludedSegmentGraph;
-      const selectedDataPoint = researchedGraph[selectedIndex];
+      const selectedDataPoint = researchedGraph[selectedIndexCurrentValue];
 
       this._audienceSegmentService
         .updateAudienceSegment(cohortLookalikeSegment.id, {
-          include_seed_segment: includeSeedSegment,
+          include_seed_segment: includeSeedSegmentCurrentValue,
           user_points_target: selectedDataPoint.nbUserPoints,
           similarity_index: selectedDataPoint.similarityIndex,
           type: cohortLookalikeSegment.type,
@@ -271,9 +306,9 @@ class CohortLookalikeCalibrationSettings extends React.Component<
           });
           this.setState({
             cohortLookalikeSegment: segmentUpdated as UserLookalikeByCohortsSegment,
-            editMode: false,
-            previousSelectedIndex: selectedIndex,
-            previousIncludeSeedSegment: includeSeedSegment,
+            calibrationMode: 'VIEW',
+            selectedIndex: initChangingValue(selectedIndexCurrentValue),
+            includeSeedSegment: initChangingValue(includeSeedSegmentCurrentValue),
           });
         })
         .catch(err => {
@@ -282,36 +317,62 @@ class CohortLookalikeCalibrationSettings extends React.Component<
     }
   };
 
+  changeToEditMode = () => {
+    this.setState({ calibrationMode: 'EDIT' });
+  };
+
   changeIncludeSegmentSeed = (checked: boolean) => {
-    this.setState({ includeSeedSegment: checked });
+    const { includeSeedSegment } = this.state;
+    this.setState({
+      includeSeedSegment: changeCurrentValue(checked, includeSeedSegment),
+    });
   };
 
   areaChartSliderOnChange = (index: number) => {
+    const { selectedIndex } = this.state;
     this.setState({
-      selectedIndex: index,
+      selectedIndex: changeCurrentValue(index, selectedIndex),
     });
   };
 
   tipFormatter = (selected: CustomDataPoint) => {
-    return (
-      <FormattedMessage
-        {...messages.similarityIndexTooltip}
-        values={{ similarityIndex: selected.similarityIndex }}
-      />
-    );
+    return selected.similarityIndex;
   };
 
   cancelEdit = () => {
-    const { previousSelectedIndex, previousIncludeSeedSegment } = this.state;
+    const {
+      selectedIndex: { previousValue: previousSelectedIndex },
+      includeSeedSegment: { previousValue: previousIncludeSeedSegment },
+    } = this.state;
 
-    this.setState(
-      {
-        selectedIndex: previousSelectedIndex,
-        includeSeedSegment: previousIncludeSeedSegment,
-        editMode: false,
-      },
-      this.createGraphData,
-    );
+    this.setState({
+      selectedIndex: initChangingValue(previousSelectedIndex),
+      includeSeedSegment: initChangingValue(previousIncludeSeedSegment),
+      calibrationMode: 'VIEW',
+    });
+  };
+
+  getSaveButtonContent = () => {
+    const { calibrationMode } = this.state;
+
+    switch (calibrationMode) {
+      case 'EDIT':
+        return (
+          <div>
+            <UnlockOutlined />
+            <FormattedMessage {...messages.saveSettings} />
+          </div>
+        );
+      case 'SET':
+        return <FormattedMessage {...messages.saveSettings} />;
+      case 'VIEW':
+        return (
+          <div>
+            <LockOutlined />
+            <FormattedMessage {...messages.editSettings} />
+          </div>
+        );
+    }
   };
 
   render() {
@@ -325,10 +386,13 @@ class CohortLookalikeCalibrationSettings extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const { includeSeedSegment, graphData, selectedIndex, editMode, cohortLookalikeSegment } =
-      this.state;
-
-    const switchEditMode = (editMode: boolean) => this.setState({ editMode });
+    const {
+      includeSeedSegment,
+      graphData,
+      selectedIndex,
+      calibrationMode,
+      cohortLookalikeSegment,
+    } = this.state;
 
     /**
      * If user_points_target is set :
@@ -337,17 +401,16 @@ class CohortLookalikeCalibrationSettings extends React.Component<
      * - Information in tags are sourced from the overlap calculation (using the 2 OTQL queries)
      */
 
-    const researchedGraph = includeSeedSegment
+    const researchedGraph = includeSeedSegment.currentValue
       ? graphData?.includedSegmentGraph
       : graphData?.notIncludedSegmentGraph;
-    const dataPointSelected =
-      selectedIndex !== undefined ? researchedGraph?.[selectedIndex] : undefined;
+    const dataPointSelected = researchedGraph?.[selectedIndex.currentValue];
 
     let userPointsTarget: number | undefined = dataPointSelected?.nbUserPoints;
 
     let similarityIndex: number | undefined = dataPointSelected?.similarityIndex;
 
-    if (cohortLookalikeSegment.user_points_target && !editMode) {
+    if (cohortLookalikeSegment.user_points_target && calibrationMode === 'VIEW') {
       userPointsTarget = cohortLookalikeSegment.user_points_target;
       similarityIndex =
         cohortLookalikeSegment.similarity_index ||
@@ -370,7 +433,14 @@ class CohortLookalikeCalibrationSettings extends React.Component<
                   {...messages.seedSegmentGeneral}
                   values={{
                     seedSegment: <b>{formatMessage(messages.seedSegment)}</b>,
-                    seedSegmentName: seedSegment.name,
+                    seedSegmentName: (
+                      <Link
+                        to={`/v2/o/${organisationId}/audience/segments/${seedSegment.id}`}
+                        target='_blank'
+                      >
+                        {seedSegment.name}
+                      </Link>
+                    ),
                     linkToSeedSegment: (
                       <Link
                         to={`/v2/o/${organisationId}/audience/segments/${seedSegment.id}`}
@@ -388,9 +458,9 @@ class CohortLookalikeCalibrationSettings extends React.Component<
               <Switch
                 checkedChildren={formatMessage(messages.include)}
                 unCheckedChildren={formatMessage(messages.exclude)}
-                checked={includeSeedSegment}
+                checked={includeSeedSegment.currentValue}
                 onChange={this.changeIncludeSegmentSeed}
-                disabled={!editMode}
+                disabled={calibrationMode === 'VIEW'}
               />
             </div>
             <div className='reach'>
@@ -398,7 +468,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
                 {...messages.reach}
                 values={{
                   userPointsMention: (
-                    <Tag className={`cohortTag ${editMode && 'green'}`}>
+                    <Tag className={`cohortTag ${calibrationMode !== 'VIEW' && 'green'}`}>
                       <b>
                         {userPointsTarget !== undefined
                           ? userPointsTarget.toLocaleString('en')
@@ -408,7 +478,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
                     </Tag>
                   ),
                   overlapMention: (
-                    <Tag className={`cohortTag ${editMode && 'green'}`}>
+                    <Tag className={`cohortTag ${calibrationMode !== 'VIEW' && 'green'}`}>
                       <b>
                         {similarityIndex !== undefined ? similarityIndex : '...'}{' '}
                         {formatMessage(messages.similarityIndex)}
@@ -433,7 +503,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
             </div>
           </div>
           <div>
-            {editMode && (
+            {calibrationMode === 'EDIT' && (
               <Button key='cancel' className='mcs-primary' type='link' onClick={this.cancelEdit}>
                 <FormattedMessage {...messages.cancelEditSettings} />
               </Button>
@@ -441,14 +511,13 @@ class CohortLookalikeCalibrationSettings extends React.Component<
             <Button
               className='mcs-primary'
               type='primary'
-              onClick={editMode ? this.saveLookalikeSettings : () => switchEditMode(true)}
+              onClick={
+                calibrationMode === 'EDIT' || calibrationMode === 'SET'
+                  ? this.saveLookalikeSettings
+                  : this.changeToEditMode
+              }
             >
-              {editMode ? <UnlockOutlined /> : <LockOutlined />}
-              {editMode ? (
-                <FormattedMessage {...messages.saveSettings} />
-              ) : (
-                <FormattedMessage {...messages.editSettings} />
-              )}
+              {this.getSaveButtonContent()}
             </Button>
           </div>
         </div>
@@ -468,10 +537,10 @@ class CohortLookalikeCalibrationSettings extends React.Component<
             subtitle: formatMessage(messages.areaChartSliderYAxisSubtitle),
           }}
           color={'#00a1df'}
-          value={selectedIndex || 0}
+          value={selectedIndex.currentValue}
           onChange={this.areaChartSliderOnChange}
           tipFormatter={this.tipFormatter}
-          disabled={!editMode}
+          disabled={calibrationMode === 'VIEW'}
         />
       </div>
     );
@@ -505,7 +574,7 @@ const messages = defineMessages({
   reach: {
     id: 'audience.segments.lookalike.type.cohort.settings.reach',
     defaultMessage:
-      'Reach for this segment is set to {userPointsMention} while guaranteeing at least {overlapMention} with seed segment.',
+      'Reach for this segment is set to {userPointsMention} while guaranteeing at least a {overlapMention} with seed segment.',
   },
   seedSegment: {
     id: 'audience.segments.lookalike.type.cohort.settings.seedSegment',
@@ -526,10 +595,6 @@ const messages = defineMessages({
   exclude: {
     id: 'audience.segments.lookalike.type.cohort.settings.seedSegment.exclude',
     defaultMessage: 'Exclude',
-  },
-  similarityIndexTooltip: {
-    id: 'audience.segments.lookalike.type.cohort.settings.slider.tooltip.similarityIndex',
-    defaultMessage: '{similarityIndex} similarity index',
   },
   cohortsSelectedTip: {
     id: 'audience.segments.lookalike.type.cohort.settings.reach.tip.cohortsSelected',
