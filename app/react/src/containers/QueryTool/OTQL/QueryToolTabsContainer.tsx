@@ -37,10 +37,7 @@ import {
 } from '@mediarithmics-private/advanced-components';
 import cuid from 'cuid';
 import { AggregateDataset } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
-import {
-  SourceType,
-  ModelType,
-} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
+import { SourceType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
 import {
   AbstractParentSource,
@@ -116,7 +113,6 @@ interface State {
   rawSchema?: ObjectLikeTypeInfoResource[];
   noLiveSchemaFound: boolean;
   chartsSearchPanelKey: string;
-  selectedDecorator?: ModelType;
 }
 
 type Props = QueryToolTabsContainerProps &
@@ -556,12 +552,6 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     });
   };
 
-  setDecoratorOptionModelType = (selectedDecorator: ModelType) => {
-    this.setState({ selectedDecorator }, () => {
-      this.runQuery();
-    });
-  };
-
   fetchQuerySeriesDataset = async (tabQuery: McsTabsItem) => {
     const {
       datamartId,
@@ -571,7 +561,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       queryExecutionSource,
       queryExecutionSubSource,
     } = this.props;
-    const { tabs, activeKey, selectedDecorator } = this.state;
+    const { tabs, activeKey } = this.state;
     // TODO: improve typings of 'sources' and chart configs in ADV library
     const getSources = () => {
       return tabQuery.serieQueries.map(serieQuery => {
@@ -634,15 +624,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
         {
           title: '',
           type: tabQuery.chartItem?.type || 'table',
-          dataset: selectedDecorator
-            ? {
-                type: 'get-decorators',
-                sources: [dataset],
-                decorators_options: {
-                  model_type: selectedDecorator,
-                },
-              }
-            : dataset,
+          dataset,
           useCache: tabQuery.useCache,
         },
         queryExecutionSource,
@@ -1071,16 +1053,11 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       renderActionBar,
       renderSaveAsButton,
       query,
+      queryExecutionSource,
+      queryExecutionSubSource,
     } = this.props;
-    const {
-      schemaLoading,
-      activeKey,
-      tabs,
-      noLiveSchemaFound,
-      rawSchema,
-      chartsSearchPanelKey,
-      selectedDecorator,
-    } = this.state;
+    const { schemaLoading, activeKey, tabs, noLiveSchemaFound, rawSchema, chartsSearchPanelKey } =
+      this.state;
 
     const currentTab = tabs.length > 0 ? tabs.find(t => t.key === activeKey) : undefined;
 
@@ -1129,14 +1106,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
           typeof queryToUse === 'string' &&
           renderActionBar(queryToUse, datamartId)}
         <Layout>
-          <QueryToolTabContext.Provider
-            value={{
-              decorators: {
-                setDecoratorOptionModelType: this.setDecoratorOptionModelType,
-                selectedDecorator,
-              },
-            }}
-          >
+          <QueryToolTabContext.Provider value={{ queryExecutionSource, queryExecutionSubSource }}>
             <Content className='mcs-content-container'>
               {schemaLoading ? (
                 <Loading isFullScreen={false} className={'mcs-otqlConsoleContainer_loader'} />

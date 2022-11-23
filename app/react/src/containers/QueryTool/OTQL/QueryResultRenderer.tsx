@@ -47,6 +47,7 @@ import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import snakeCaseKeys from 'snakecase-keys';
 import {
+  IChartDatasetService,
   IChartService,
   ITagService,
   ManagedChart,
@@ -68,8 +69,12 @@ import {
   OTQLMetric,
 } from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
 import { ChartResource } from '@mediarithmics-private/advanced-components/lib/models/chart/Chart';
-import { AbstractSource } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
+import {
+  AbstractSource,
+  GenericSource,
+} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
 import { QueryToolTabContext } from './QueryToolTabContext';
+import log from '../../../utils/Logger';
 
 const messages = defineMessages({
   copiedToClipboard: {
@@ -154,6 +159,9 @@ class QueryResultRenderer extends React.Component<Props, State> {
 
   @lazyInject(TYPES.ITagService)
   private _tagService: ITagService;
+
+  @lazyInject(TYPES.IChartDatasetService)
+  private _chartDatasetService: IChartDatasetService;
 
   private transactionProcessor = new TransformationProcessor();
 
@@ -265,8 +273,8 @@ class QueryResultRenderer extends React.Component<Props, State> {
     return 0;
   };
 
-  private async updateDataset(chartProps: any) {
-    const { datasource } = this.props;
+  private async updateDataset(chartProps: any, options?: { decorators: ModelType }) {
+    const { datasource, datamartId, organisationId, tab } = this.props;
     const { selectedChart, aggregationsPath, selectedView } = this.state;
     let data;
     let abstractDataset;
@@ -300,7 +308,39 @@ class QueryResultRenderer extends React.Component<Props, State> {
         true,
         chartProps,
       );
-      data = await this.applyTransformations(selectedChart, abstractDataset);
+      const query = tab.serieQueries[0];
+      try {
+        if (options?.decorators) {
+          data = await this._chartDatasetService.fetchDataset(
+            datamartId,
+            organisationId,
+            {
+              title: tab.title as string,
+              type: 'table',
+              dataset: {
+                type: 'get-decorators' as SourceType,
+                sources: [
+                  {
+                    query_text: query.queryModel,
+                    series_title: query.name,
+                    type: 'otql',
+                  } as GenericSource,
+                ],
+                decorators_options: {
+                  model_type: options.decorators,
+                },
+              },
+              useCache: false,
+            },
+            this.context.queryExecutionSource,
+            this.context.queryExecutionSubSource,
+          );
+        } else {
+          data = await this.applyTransformations(selectedChart, abstractDataset);
+        }
+      } catch (error) {
+        log.error(error);
+      }
     }
 
     this.setState({
@@ -1100,8 +1140,6 @@ class QueryResultRenderer extends React.Component<Props, State> {
       }
 
       const quickOptions = _.omitBy(selectedQuickOptions, _.isUndefined);
-      const queryToolTabContext = this.context;
-      const isSelectedChartTable = selectedChart === 'table';
 
       return (
         <div>
@@ -1111,30 +1149,6 @@ class QueryResultRenderer extends React.Component<Props, State> {
             className='mcs-otqlChart_tabs'
             onChange={this.handleChartTypeChange}
             defaultActiveKey={selectedChart}
-            tabBarExtraContent={
-              isSelectedChartTable && (
-                <Select<ModelType>
-                  className='mcs-otqlChart_items_quick_option'
-                  bordered={false}
-                  onSelect={(value: ModelType) => {
-                    queryToolTabContext.decorators.setDecoratorOptionModelType(value);
-                  }}
-                  value={queryToolTabContext.decorators.selectedDecorator}
-                  size='small'
-                  placeholder={intl.formatMessage(messages.transformKeysSelect)}
-                >
-                  <Select.Option value='CHANNELS'>
-                    {intl.formatMessage(messages.channels)}
-                  </Select.Option>
-                  <Select.Option value='COMPARTMENTS'>
-                    {intl.formatMessage(messages.compartments)}
-                  </Select.Option>
-                  <Select.Option value='SEGMENTS'>
-                    {intl.formatMessage(messages.segments)}
-                  </Select.Option>
-                </Select>
-              )
-            }
           />
           <div className={'mcs-otqlChart_items_container'}>
             {!isMetricCase &&
@@ -1255,7 +1269,9 @@ class QueryResultRenderer extends React.Component<Props, State> {
     this.setState({
       ...newState,
     });
-    await this.updateDataset(chartProps);
+
+    const options = title === 'decorator' ? { decorators: value as ModelType } : undefined;
+    await this.updateDataset(chartProps, options);
   }
 
   findAggregations = (

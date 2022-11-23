@@ -1,17 +1,15 @@
-import { ModelType } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
 import React from 'react';
+import {
+  QueryExecutionSource,
+  QueryExecutionSubSource,
+} from '@mediarithmics-private/advanced-components';
 
 export type QueryToolTabContextType = {
-  decorators: {
-    setDecoratorOptionModelType: (decoratorModelType: ModelType) => void;
-    selectedDecorator?: ModelType;
-  };
+  queryExecutionSource: QueryExecutionSource;
+  queryExecutionSubSource: QueryExecutionSubSource;
 };
 
 export const QueryToolTabContext = React.createContext<QueryToolTabContextType>({
-  decorators: {
-    setDecoratorOptionModelType: () => {
-      return;
-    },
-  },
+  queryExecutionSource: 'DASHBOARD',
+  queryExecutionSubSource: 'HOME_DASHBOARD',
 });
