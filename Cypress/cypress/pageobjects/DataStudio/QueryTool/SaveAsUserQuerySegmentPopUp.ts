@@ -21,6 +21,7 @@ class SaveAsUserQuerySegmentPopUp extends GenericPopUp {
     super.clickOk();
     // it redirect to the segment page
     cy.wait(5000);
+    cy.url({ timeout: 60000 }).should('contain', 'segment');
   }
 
   @logFunction()

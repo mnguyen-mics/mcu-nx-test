@@ -171,34 +171,28 @@ describe('Query tool - Query builder', () => {
     queryToolPage.schemaVisualizer.shouldContain('accounts');
     queryToolPage.executeQuery();
     queryToolPage.resultsShouldContain('5');
-    const queryId1 = queryToolPage.getQueryId();
 
     // [MICS-14520 In the query tool, "save as > technical query" works only one time properly](https://mediarithmics.atlassian.net/browse/MICS-14520)
-    // queryToolPage.getQueryId()
     queryToolPage.tab.clickAdd();
     queryToolPage.typeQuery('SELECT @count{} FROM UserAgent');
     queryToolPage.schemaVisualizer.shouldContain('user_agent_info');
     queryToolPage.executeQuery();
     queryToolPage.resultsShouldContain('0');
-    const queryId2 = queryToolPage.getQueryId();
 
     queryToolPage.tab.clickAdd();
     queryToolPage.typeQuery('SELECT @count{} FROM UserEmail');
     queryToolPage.schemaVisualizer.shouldContain('email');
     queryToolPage.executeQuery();
     queryToolPage.resultsShouldContain('0');
-    const queryId3 = queryToolPage.getQueryId();
 
     // create multiple tabs with different queries such as SELECT {id} FROM UserPoint in one, SELECT {id} FROM UserPoint WHERE emails{} in the second and SELECT {id} FROM UserPoint WHERE events{} in the third. In each tab, hit Save as... then User query segment.
     queryToolPage.tab.select(1);
     queryToolPage.schemaVisualizer.shouldContain('accounts');
     queryToolPage.typeQuery('SELECT {id} FROM UserPoint');
-    queryToolPage.clickSaveAsUserQuerySegment();
-    queryToolPage.saveAsUserQuerySegmentPopUp.clickCancel();
+    queryToolPage.executeQuery();
     queryToolPage.clickSaveAsUserQuerySegment();
     queryToolPage.saveAsUserQuerySegmentPopUp.typeName('tab1');
     queryToolPage.saveAsUserQuerySegmentPopUp.clickOk();
-    cy.url({ timeout: 60000 }).should('contain', 'segment');
     queryToolPage.goToPage();
 
     queryToolPage.tab.select(2);
@@ -207,7 +201,6 @@ describe('Query tool - Query builder', () => {
     queryToolPage.clickSaveAsExport();
     queryToolPage.exportPopUp.typeInInput('export name 1');
     queryToolPage.exportPopUp.clickOk();
-    cy.url({ timeout: 60000 }).should('contain', 'exports');
     queryToolPage.goToPage();
 
     queryToolPage.tab.select(3);
@@ -218,15 +211,7 @@ describe('Query tool - Query builder', () => {
     queryToolPage.clickSaveAsUserQuerySegment();
     queryToolPage.saveAsUserQuerySegmentPopUp.typeName('tab3');
     queryToolPage.saveAsUserQuerySegmentPopUp.clickOk();
-    cy.url({ timeout: 60000 }).should('contain', 'segment');
     queryToolPage.goToPage();
-
-    // force synchrone test
-    // cy.get('html').then(() => {
-    // expect(queryId1).to.not.equal(queryId2)
-    // expect(queryId1).to.not.equal(queryId3)
-    // expect(queryId2).to.not.equal(queryId3)
-    // });
   });
 
   it('Error handling in multi-tabs case', () => {

@@ -21,6 +21,8 @@ class ListPage extends Page {
   get nameBar() {
     // after the creation of an automation, the loading animation can stay at
     // least 30 seconds
+    cy.wait(20000);
+    cy.reload();
     return cy.get('.mcs-breadcrumb', { timeout: 60000 });
   }
 
