@@ -27,12 +27,17 @@ import McsMoment, { formatMcsDate } from '../../../../../../utils/McsMoment';
 import FeedStatsTable from './FeedStatsTable';
 import FeedStatsGraph from './FeedStatsGraph';
 import { Empty } from 'antd';
+import { InjectedFeaturesProps, injectFeatures } from '../../../../../Features';
+import { FeedStatsNotAvailable } from '../FeedStatsNotAvailable';
 
 interface FeedStatsProps {
   feed: AudienceFeedTyped;
 }
 
-type Props = FeedStatsProps & WrappedComponentProps & InjectedNotificationProps;
+type Props = FeedStatsProps &
+  WrappedComponentProps &
+  InjectedNotificationProps &
+  InjectedFeaturesProps;
 
 export type FeedStatsTimeUnit = 'HOUR' | 'DAY';
 
@@ -226,7 +231,11 @@ class FeedStats extends React.Component<Props, State> {
   };
 
   render() {
+    const { feed, hasFeature } = this.props;
     const { isLoading, stats } = this.state;
+
+    if (hasFeature(`feed-stats_disable_${feed.group_id}_${feed.artifact_id}`))
+      return <FeedStatsNotAvailable />;
 
     const onChange = (newValues: McsDateRangeValue) =>
       this.setState({
@@ -276,4 +285,8 @@ class FeedStats extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, FeedStatsProps>(injectIntl, injectNotifications)(FeedStats);
+export default compose<Props, FeedStatsProps>(
+  injectIntl,
+  injectFeatures,
+  injectNotifications,
+)(FeedStats);
