@@ -85,8 +85,8 @@ describe('Roles test', () => {
     });
   });
 
-  //https://mediarithmics.atlassian.net/browse/MICS-13789
-  it('Should not have a lower role in the children organisation than the parent organisation', () => {
+  // https://mediarithmics.atlassian.net/browse/MICS-13789
+  it.skip('Should not have a lower role in the children organisation than the parent organisation', () => {
     const rolesPage = new RolesPage();
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       const user = await createUserAndAddRole(data.accessToken);
