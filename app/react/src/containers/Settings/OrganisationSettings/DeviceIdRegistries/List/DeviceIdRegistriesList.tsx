@@ -89,6 +89,15 @@ interface DeviceIdRegistriesListState {
   isSubscriptionsDrawerVisible: boolean;
 }
 
+// Workaround till we pass to newer version of Node
+interface MyHTMLAttributes<T> extends React.HTMLAttributes<T> {
+  colSpan?: number | undefined;
+}
+declare type MyGetComponentProps<DataType> = (
+  data: DataType,
+  index?: number,
+) => MyHTMLAttributes<any>;
+
 class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesListState> {
   @lazyInject(TYPES.IDeviceIdRegistryService)
   private _deviceIdRegistryService: IDeviceIdRegistryService;
@@ -923,14 +932,17 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
       },
     ];
 
+    const myOnCell = (customSpan: number) =>
+      ((record: ThirdPartyDataRow, _: number) => ({
+        colSpan: this.thirdPartyRowIsOffer(record) ? customSpan : 1,
+      })) as MyGetComponentProps<ThirdPartyDataRow>;
+
     const thirdPartyRegistriesColumns: Array<DataColumnDefinition<ThirdPartyDataRow>> = [
       {
         title: formatMessage(messages.deviceIdRegistryId),
         key: 'id',
         isHideable: false,
-        onCell: (record: ThirdPartyDataRow, _: number) => ({
-          colSpan: this.thirdPartyRowIsOffer(record) ? 0 : 1,
-        }),
+        onCell: myOnCell(0),
       },
       {
         title: formatMessage(messages.deviceIdRegistryName),
@@ -943,17 +955,13 @@ class DeviceIdRegistriesList extends React.Component<Props, DeviceIdRegistriesLi
             this.renderRegistryName(record as ThirdPartyRegistryRow)
           );
         },
-        onCell: (record: ThirdPartyDataRow, _: number) => ({
-          colSpan: this.thirdPartyRowIsOffer(record) ? 3 : 1,
-        }),
+        onCell: myOnCell(3),
       },
       {
         title: formatMessage(messages.deviceIdRegistryType),
         key: 'type',
         isHideable: false,
-        onCell: (record: ThirdPartyDataRow, _: number) => ({
-          colSpan: this.thirdPartyRowIsOffer(record) ? 0 : 1,
-        }),
+        onCell: myOnCell(0),
       },
     ];
 
