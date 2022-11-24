@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Spin, Tag } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import {
-  OTQLResult,
   isAggregateResult,
   isAggregateDataset,
   isOTQLResult,
@@ -11,7 +10,6 @@ import {
 } from '../../../models/datamart/graphdb/OTQLResult';
 import QueryResultRenderer from './QueryResultRenderer';
 import { compose } from 'recompose';
-import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import {
   injectThemeColors,
   InjectedThemeColorsProps,
@@ -31,7 +29,6 @@ export interface QueryResultContainerProps {
 
 type Props = QueryResultContainerProps &
   InjectedThemeColorsProps &
-  InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class QueryResultContainer extends React.Component<Props> {
@@ -47,7 +44,6 @@ class QueryResultContainer extends React.Component<Props> {
       onDeleteChart,
       onSaveChart,
     } = this.props;
-
     const result = tab.queryResult;
 
     let content: React.ReactNode;
@@ -89,39 +85,14 @@ class QueryResultContainer extends React.Component<Props> {
       }
     }
 
-    return !(result && isOTQLResult(result) && isAggregateResult(result.rows)) ? (
+    return (
       <div className='mcs-otqlQuery_result'>
-        {result && (result as OTQLResult).took && (
+        {result && isOTQLResult(result) && (
           <div className='mcs-otqlQuery_result_tag_container'>
-            <React.Fragment>
+            <>
               <Tag className='mcs-otqlQuery_result_tag'>
                 <FormattedMessage
                   id='otql-result-renderer-card-subtitle-duration'
-                  defaultMessage='Took {duration}ms'
-                  values={{ duration: (result as OTQLResult).took }}
-                />
-              </Tag>
-              {(result as OTQLResult).cache_hit && (
-                <Tag color={colors['mcs-success']}>
-                  <FormattedMessage
-                    id='otql-result-renderer-card-subtitle-cache'
-                    defaultMessage='From Cache'
-                  />
-                </Tag>
-              )}
-            </React.Fragment>
-          </div>
-        )}
-        {content}
-      </div>
-    ) : (
-      <div className='mcs-otqlQuery_result'>
-        {result ? (
-          <div className='mcs-otqlQuery_result_tag_container'>
-            <React.Fragment>
-              <Tag className='mcs-otqlQuery_result_tag'>
-                <FormattedMessage
-                  id='otql-result-renderer-card-subtitle-duration2'
                   defaultMessage='Took {duration}ms'
                   values={{ duration: result.took }}
                 />
@@ -129,14 +100,14 @@ class QueryResultContainer extends React.Component<Props> {
               {result.cache_hit && (
                 <Tag color={colors['mcs-success']}>
                   <FormattedMessage
-                    id='otql-result-renderer-card-subtitle-cache2'
+                    id='otql-result-renderer-card-subtitle-cache'
                     defaultMessage='From Cache'
                   />
                 </Tag>
               )}
-            </React.Fragment>
+            </>
           </div>
-        ) : undefined}
+        )}
         {content}
       </div>
     );
@@ -145,6 +116,5 @@ class QueryResultContainer extends React.Component<Props> {
 
 export default compose<Props, QueryResultContainerProps>(
   injectThemeColors,
-  injectFeatures,
   withRouter,
 )(QueryResultContainer);

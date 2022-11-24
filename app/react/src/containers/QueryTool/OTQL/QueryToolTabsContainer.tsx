@@ -44,6 +44,7 @@ import {
   AbstractSource,
   OTQLSource,
 } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/datasource_tree';
+import { QueryToolTabContext } from './QueryToolTabContext';
 
 const messages = defineMessages({
   queryToSave: {
@@ -1052,6 +1053,8 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       renderActionBar,
       renderSaveAsButton,
       query,
+      queryExecutionSource,
+      queryExecutionSubSource,
     } = this.props;
     const { schemaLoading, activeKey, tabs, noLiveSchemaFound, rawSchema, chartsSearchPanelKey } =
       this.state;
@@ -1103,74 +1106,27 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
           typeof queryToUse === 'string' &&
           renderActionBar(queryToUse, datamartId)}
         <Layout>
-          <Content className='mcs-content-container'>
-            {schemaLoading ? (
-              <Loading isFullScreen={false} className={'mcs-otqlConsoleContainer_loader'} />
-            ) : (
-              <Tabs
-                className={'mcs-OTQLConsoleContainer_tabs'}
-                type='editable-card'
-                onChange={this.onChange}
-                activeKey={activeKey}
-                onEdit={this.onEdit}
-                tabBarExtraContent={saveExtraOptions}
-                hideAdd={editionMode}
-              >
-                {editionMode && tabs[0] ? (
-                  <TabPane
-                    className={'mcs-OTQLConsoleContainer_tabs_tab'}
-                    tab={intl.formatMessage(messages.queryToSave)}
-                    key={1}
-                    closable={false}
-                  >
-                    <div className={'mcs-OTQLConsoleContainer_tab_content'}>
-                      <QueryToolTab
-                        datamartId={this.props.datamartId}
-                        query={
-                          editionMode && query?.includes('where')
-                            ? query
-                            : this.getStringFirstQuery()
-                        }
-                        editionMode={editionMode}
-                        tab={tabs[0]}
-                        runQuery={this.runQuery}
-                        onInputChange={this.onInputChange}
-                        updateNameModel={this.updateNameModel}
-                        updateQueryModel={this.updateQueryModel}
-                        displaySerieInput={this.displaySerieInput}
-                        onSeriesChange={this.onSeriesChange}
-                        noLiveSchemaFound={noLiveSchemaFound}
-                        rawSchema={rawSchema}
-                        dismissError={this.dismissError}
-                        abortQuery={this.abortQuery}
-                        onDeleteChart={this.onDeleteChart}
-                        onQueryParamsChange={this.onQueryParamsChange}
-                      />
-
-                      {this.renderSchemaVisualizer(startType)}
-                    </div>
-                  </TabPane>
-                ) : (
-                  tabs.map((tab, i) => (
+          <QueryToolTabContext.Provider value={{ queryExecutionSource, queryExecutionSubSource }}>
+            <Content className='mcs-content-container'>
+              {schemaLoading ? (
+                <Loading isFullScreen={false} className={'mcs-otqlConsoleContainer_loader'} />
+              ) : (
+                <Tabs
+                  className={'mcs-OTQLConsoleContainer_tabs'}
+                  type='editable-card'
+                  onChange={this.onChange}
+                  activeKey={activeKey}
+                  onEdit={this.onEdit}
+                  tabBarExtraContent={saveExtraOptions}
+                  hideAdd={editionMode}
+                >
+                  {editionMode && tabs[0] ? (
                     <TabPane
                       className={'mcs-OTQLConsoleContainer_tabs_tab'}
-                      tab={
-                        i === 0 && editionMode
-                          ? intl.formatMessage(messages.queryToSave)
-                          : tab.title
-                      }
-                      key={tab.key}
-                      closable={tab.closable}
+                      tab={intl.formatMessage(messages.queryToSave)}
+                      key={1}
+                      closable={false}
                     >
-                      {createdQueryId && (
-                        <Alert
-                          className={'mcs-OTQLConsoleContainer_tabs_createdQueryMessage'}
-                          message={`Query ${createdQueryId} created.`}
-                          type='success'
-                          closable={true}
-                          showIcon={true}
-                        />
-                      )}
                       <div className={'mcs-OTQLConsoleContainer_tab_content'}>
                         <QueryToolTab
                           datamartId={this.props.datamartId}
@@ -1180,7 +1136,7 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                               : this.getStringFirstQuery()
                           }
                           editionMode={editionMode}
-                          tab={tab}
+                          tab={tabs[0]}
                           runQuery={this.runQuery}
                           onInputChange={this.onInputChange}
                           updateNameModel={this.updateNameModel}
@@ -1191,40 +1147,93 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                           rawSchema={rawSchema}
                           dismissError={this.dismissError}
                           abortQuery={this.abortQuery}
-                          onSaveChart={this.onSaveChart}
                           onDeleteChart={this.onDeleteChart}
                           onQueryParamsChange={this.onQueryParamsChange}
                         />
 
-                        {hasFeature('datastudio-query_tool-charts_loader') && (
-                          <Tabs
-                            key={0}
-                            type='line'
-                            className='mcs-OTQLConsoleContainer_right-tab'
-                            onTabClick={this.pushEventTabs}
-                          >
-                            <Tabs.TabPane tab='Schema' key='schema'>
-                              {this.renderSchemaVisualizer(startType)}
-                            </Tabs.TabPane>
-                            <Tabs.TabPane tab='Charts' key='charts' style={{ paddingLeft: '10px' }}>
-                              <ChartsSearchPanel
-                                key={chartsSearchPanelKey}
-                                organisationId={organisationId}
-                                onItemClick={this.launchQuery}
-                                chartItem={tab.chartItem}
-                              />
-                            </Tabs.TabPane>
-                          </Tabs>
-                        )}
-                        {!hasFeature('datastudio-query_tool-charts_loader') &&
-                          this.renderSchemaVisualizer(startType)}
+                        {this.renderSchemaVisualizer(startType)}
                       </div>
                     </TabPane>
-                  ))
-                )}
-              </Tabs>
-            )}
-          </Content>
+                  ) : (
+                    tabs.map((tab, i) => (
+                      <TabPane
+                        className={'mcs-OTQLConsoleContainer_tabs_tab'}
+                        tab={
+                          i === 0 && editionMode
+                            ? intl.formatMessage(messages.queryToSave)
+                            : tab.title
+                        }
+                        key={tab.key}
+                        closable={tab.closable}
+                      >
+                        {createdQueryId && (
+                          <Alert
+                            className={'mcs-OTQLConsoleContainer_tabs_createdQueryMessage'}
+                            message={`Query ${createdQueryId} created.`}
+                            type='success'
+                            closable={true}
+                            showIcon={true}
+                          />
+                        )}
+                        <div className={'mcs-OTQLConsoleContainer_tab_content'}>
+                          <QueryToolTab
+                            datamartId={this.props.datamartId}
+                            query={
+                              editionMode && query?.includes('where')
+                                ? query
+                                : this.getStringFirstQuery()
+                            }
+                            editionMode={editionMode}
+                            tab={tab}
+                            runQuery={this.runQuery}
+                            onInputChange={this.onInputChange}
+                            updateNameModel={this.updateNameModel}
+                            updateQueryModel={this.updateQueryModel}
+                            displaySerieInput={this.displaySerieInput}
+                            onSeriesChange={this.onSeriesChange}
+                            noLiveSchemaFound={noLiveSchemaFound}
+                            rawSchema={rawSchema}
+                            dismissError={this.dismissError}
+                            abortQuery={this.abortQuery}
+                            onSaveChart={this.onSaveChart}
+                            onDeleteChart={this.onDeleteChart}
+                            onQueryParamsChange={this.onQueryParamsChange}
+                          />
+
+                          {hasFeature('datastudio-query_tool-charts_loader') && (
+                            <Tabs
+                              key={0}
+                              type='line'
+                              className='mcs-OTQLConsoleContainer_right-tab'
+                              onTabClick={this.pushEventTabs}
+                            >
+                              <Tabs.TabPane tab='Schema' key='schema'>
+                                {this.renderSchemaVisualizer(startType)}
+                              </Tabs.TabPane>
+                              <Tabs.TabPane
+                                tab='Charts'
+                                key='charts'
+                                style={{ paddingLeft: '10px' }}
+                              >
+                                <ChartsSearchPanel
+                                  key={chartsSearchPanelKey}
+                                  organisationId={organisationId}
+                                  onItemClick={this.launchQuery}
+                                  chartItem={tab.chartItem}
+                                />
+                              </Tabs.TabPane>
+                            </Tabs>
+                          )}
+                          {!hasFeature('datastudio-query_tool-charts_loader') &&
+                            this.renderSchemaVisualizer(startType)}
+                        </div>
+                      </TabPane>
+                    ))
+                  )}
+                </Tabs>
+              )}
+            </Content>
+          </QueryToolTabContext.Provider>
         </Layout>
       </Layout>
     );

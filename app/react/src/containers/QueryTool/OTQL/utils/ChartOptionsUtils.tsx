@@ -330,6 +330,32 @@ export function getQuickOptionsByChartTypeAndDatasourceType(
     options: [],
   };
 
+  const decoratorOptions: QuickOptionsSelector = {
+    title: 'decorator',
+    options: [
+      {
+        key: '',
+        value: '',
+        label: 'Transform keys to...',
+      },
+      {
+        key: 'channels',
+        value: 'CHANNELS',
+        label: 'Channels',
+      },
+      {
+        key: 'compartments',
+        value: 'COMPARTMENTS',
+        label: 'Compartments',
+      },
+      {
+        key: 'segments',
+        value: 'SEGMENTS',
+        label: 'Segments',
+      },
+    ],
+  };
+
   if (isDrilldownable) {
     drilldownOptions.options = [
       { key: 'drilldown', value: 'drilldown', label: 'Drilldown' },
@@ -398,6 +424,8 @@ export function getQuickOptionsByChartTypeAndDatasourceType(
       return result.concat([formatOptions]);
     case 'area':
       return result.concat([legendOptions, formatOptions, areaOptions]);
+    case 'table':
+      return result.concat([decoratorOptions]);
   }
   return [];
 }
