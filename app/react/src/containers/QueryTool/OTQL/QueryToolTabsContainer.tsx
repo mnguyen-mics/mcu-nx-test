@@ -997,7 +997,6 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
       case 'to-list':
       case 'to-percentages':
       case 'format-dates':
-      case 'index':
         const sources = (dataset as AbstractParentSource).sources;
         if (sources) buildSerieQueryTree(sources, dataset.type.toLowerCase() as SourceType);
         break;

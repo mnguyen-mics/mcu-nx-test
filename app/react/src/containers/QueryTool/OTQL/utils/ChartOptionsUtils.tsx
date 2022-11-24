@@ -13,12 +13,6 @@ import {
 export type chartType = 'radar' | 'bar' | 'table' | 'metric' | 'pie' | 'area';
 import { WrappedAbstractDataset } from '../QueryResultRenderer';
 import { ChartType } from '@mediarithmics-private/advanced-components';
-import {
-  AggregateDataset,
-  IndexDataset,
-} from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/dataset_tree';
-import omitDeep from 'omit-deep-lodash';
-import { DateOptions } from '@mediarithmics-private/advanced-components/lib/models/dashboards/dataset/common';
 
 export interface QuickOption {
   key: string;
@@ -33,31 +27,33 @@ export interface QuickOptionsSelector {
   selectedValue?: string;
 }
 
-export function getLegend(value?: string): CommonChartOptions {
+export function getLegend(value?: string) {
+  const key = 'legend';
   switch (value) {
     case 'no_legend':
       return {
-        legend: {
+        [key]: {
           enabled: false,
         },
       };
     case 'legend_bottom':
       return {
-        legend: {
+        [key]: {
           enabled: true,
           position: 'bottom',
         },
       };
     case 'legend_right':
       return {
-        legend: {
+        [key]: {
           enabled: true,
           position: 'right',
         },
       };
     default:
-      return {};
+      return undefined;
   }
+  return undefined;
 }
 
 export function getSelectLegend(options: { [key: string]: any }) {
@@ -77,27 +73,7 @@ export function getSelectLegend(options: { [key: string]: any }) {
   } else return 'no_legend';
 }
 
-export interface LegendType {
-  enabled: boolean;
-  position?: 'bottom' | 'right';
-}
-
-// TODO: replace it with ChartOptions and rework types
-export interface CommonChartOptions {
-  legend?: LegendType;
-  format?: string;
-  innerRadius?: boolean;
-  type?: string;
-  date_options?: DateOptions;
-  drilldown?: boolean;
-  stacking?: boolean;
-}
-
-export function getChartOption(
-  chartType: ChartType,
-  key: string,
-  value?: string,
-): CommonChartOptions {
+export function getChartOption(chartType: ChartType, key: string, value?: string) {
   switch (key) {
     case 'legend':
       return getLegend(value);
@@ -147,9 +123,8 @@ export function getChartOption(
             stacking: false,
           };
       } else return {};
-    default:
-      return {};
   }
+  return undefined;
 }
 
 export function formatDate(str: string, format?: string, toUtc?: boolean) {
@@ -284,24 +259,6 @@ export function getQuickOptionsByChartTypeAndDatasourceType(
         label: 'Percentage',
         className: 'mcs-chartOptions_percentage',
       },
-    ],
-  };
-
-  const formatOptionsForBarChartsWithTwoSeries: QuickOptionsSelector = {
-    title: 'format',
-    options: [
-      {
-        key: 'count',
-        value: 'count',
-        label: 'Count',
-        className: 'mcs-chartOptions_count',
-      },
-      {
-        key: 'percentage',
-        value: 'percentage',
-        label: 'Percentage',
-        className: 'mcs-chartOptions_percentage',
-      },
       {
         key: 'index',
         value: 'index',
@@ -415,7 +372,6 @@ export function getQuickOptionsByChartTypeAndDatasourceType(
     legendOptions.selectedValue = legendValue;
   }
   if (selectedValues?.format) {
-    formatOptionsForBarChartsWithTwoSeries.selectedValue = selectedValues.format;
     formatOptions.selectedValue = selectedValues.format;
   }
   if (selectedValues?.date_format) {
@@ -433,9 +389,7 @@ export function getQuickOptionsByChartTypeAndDatasourceType(
 
   switch (chartType) {
     case 'bars':
-      const barFormatOptions =
-        numberOfSeries === 2 ? formatOptionsForBarChartsWithTwoSeries : formatOptions;
-      return result.concat([legendOptions, barFormatOptions, barOptions, drilldownOptions]);
+      return result.concat([legendOptions, formatOptions, barOptions, drilldownOptions]);
     case 'pie':
       return result.concat([legendOptions, pieOptions]);
     case 'radar':
@@ -493,7 +447,6 @@ export const renderQuickOptions = (
     numberOfSeries,
     selectedValues,
   );
-
   return (
     <div>
       {quickOptions.map(quickOptionSelector => {
@@ -504,41 +457,18 @@ export const renderQuickOptions = (
   );
 };
 
-const hasPercentageTransformation = (quickOptions: CommonChartOptions) => {
+const hasPercentageTransformation = (quickOptions: any) => {
   return quickOptions.format === 'percentage';
 };
 
-const hasIndexTransformation = (quickOptions: CommonChartOptions) => {
-  return quickOptions.format === 'index';
-};
-
-const hasDateFormatTransformation = (quickOptions: CommonChartOptions) => {
+const hasDateFormatTransformation = (quickOptions: any) => {
   return quickOptions.date_options && quickOptions.date_options.format !== undefined;
-};
-
-const splitMultipleSeriesDataset = (aggregateDataset: AggregateDataset): AggregateDataset[] => {
-  const seriesTitles: string[] = aggregateDataset.metadata.seriesTitles;
-  return seriesTitles.map(title => {
-    const otherSeriesTitles = seriesTitles.filter(value => value !== title);
-    const cloneOfInitialDataset: AggregateDataset = { ...aggregateDataset };
-    const datasetWithRemovedOtherSeries: AggregateDataset = omitDeep(
-      cloneOfInitialDataset,
-      otherSeriesTitles,
-    ) as any;
-
-    return {
-      ...datasetWithRemovedOtherSeries,
-      metadata: {
-        seriesTitles: [title],
-      },
-    };
-  });
 };
 
 export const getChartDataset = (
   dataset: WrappedAbstractDataset | AbstractSource,
   isDataset: boolean,
-  chartProps: CommonChartOptions,
+  chartProps: any,
 ) => {
   const childProperty = isDataset ? 'children' : 'sources';
   let source: any = {
@@ -551,30 +481,6 @@ export const getChartDataset = (
       type: 'to-percentages',
       [childProperty]: [source],
     };
-  }
-
-  // IndexSource
-  if (hasIndexTransformation(chartProps)) {
-    let childrenValue;
-    if (isDataset) {
-      childrenValue = splitMultipleSeriesDataset(source.dataset).map(ds => {
-        return {
-          dataset: ds,
-          type: source.type,
-        };
-      });
-    } else if (source.sources) {
-      childrenValue = source.sources;
-    }
-
-    source = {
-      type: 'index',
-      [childProperty]: childrenValue,
-      options: {
-        minimum_percentage: 0,
-        sort: 'descending',
-      },
-    } as IndexDataset;
   }
 
   if (hasDateFormatTransformation(chartProps)) {
