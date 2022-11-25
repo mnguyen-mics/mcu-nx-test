@@ -358,19 +358,23 @@ class CohortLookalikeCalibrationSettings extends React.Component<
     switch (calibrationMode) {
       case 'EDIT':
         return (
-          <div>
+          <>
             <UnlockOutlined />
-            <FormattedMessage {...messages.saveSettings} />
-          </div>
+            <span className='buttonTextWithLogo'>
+              <FormattedMessage {...messages.saveSettings} />
+            </span>
+          </>
         );
       case 'SET':
         return <FormattedMessage {...messages.saveSettings} />;
       case 'VIEW':
         return (
-          <div>
+          <>
             <LockOutlined />
-            <FormattedMessage {...messages.editSettings} />
-          </div>
+            <span className='buttonTextWithLogo'>
+              <FormattedMessage {...messages.editSettings} />
+            </span>
+          </>
         );
     }
   };
@@ -502,7 +506,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
               </Tooltip>
             </div>
           </div>
-          <div>
+          <div className='mcs-cohortLookalikeCalibrationSettings_header_button'>
             {calibrationMode === 'EDIT' && (
               <Button key='cancel' className='mcs-primary' type='link' onClick={this.cancelEdit}>
                 <FormattedMessage {...messages.cancelEditSettings} />
@@ -527,7 +531,12 @@ class CohortLookalikeCalibrationSettings extends React.Component<
           xAxis={{
             key: 'similarityIndex',
             labelFormat: '{value}',
-            title: formatMessage(messages.areaChartSliderXAxisTitle),
+            title: (
+              <div className='mcs-cohortLookalikeCalibrationSettings_graph_xAxis_title'>
+                <div>{formatMessage(messages.areaChartSliderXAxisTitleLeft)}</div>
+                <div>{formatMessage(messages.areaChartSliderXAxisTitleRight)}</div>
+              </div>
+            ),
             subtitle: formatMessage(messages.areaChartSliderXAxisSubtitle),
             reversed: true,
           }}
@@ -537,6 +546,7 @@ class CohortLookalikeCalibrationSettings extends React.Component<
             subtitle: formatMessage(messages.areaChartSliderYAxisSubtitle),
           }}
           color={'#00a1df'}
+          fillOpacity={calibrationMode === 'VIEW' ? 0.1 : 0.4}
           value={selectedIndex.currentValue}
           onChange={this.areaChartSliderOnChange}
           tipFormatter={this.tipFormatter}
@@ -608,13 +618,17 @@ const messages = defineMessages({
     id: 'audience.segments.lookalike.type.cohort.settings.save.success.message',
     defaultMessage: 'Cohort lookalike calibration saved.',
   },
-  areaChartSliderXAxisTitle: {
-    id: 'audience.segments.lookalike.type.cohort.settings.chart.xaxis.title',
-    defaultMessage: 'Similarity index',
+  areaChartSliderXAxisTitleLeft: {
+    id: 'audience.segments.lookalike.type.cohort.settings.chart.xaxis.title.left',
+    defaultMessage: 'More similar',
+  },
+  areaChartSliderXAxisTitleRight: {
+    id: 'audience.segments.lookalike.type.cohort.settings.chart.xaxis.title.right',
+    defaultMessage: 'Less similar',
   },
   areaChartSliderXAxisSubtitle: {
     id: 'audience.segments.lookalike.type.cohort.settings.chart.xaxis.subtitle',
-    defaultMessage: 'Minimum similarity index between seed segment and selected cohorts',
+    defaultMessage: 'Similarity index between seed segment and selected cohorts',
   },
   areaChartSliderYAxisTitle: {
     id: 'audience.segments.lookalike.type.cohort.settings.chart.yaxis.title',
