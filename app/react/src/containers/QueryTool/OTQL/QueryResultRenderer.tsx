@@ -18,7 +18,7 @@ import {
   isQueryListModel,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { compose } from 'recompose';
-import { McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
+import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { defineMessages, FormattedMessage, WrappedComponentProps, injectIntl } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
@@ -351,7 +351,15 @@ class QueryResultRenderer extends React.Component<Props, State> {
   getDefaultView = (
     aggregations: OTQLAggregations | CountDataset | AggregateDataset | undefined,
   ) => {
-    if (aggregations && isOTQLAggregations(aggregations) && aggregations.buckets.length > 0) {
+    if (
+      (aggregations &&
+        isOTQLAggregations(aggregations) &&
+        aggregations.buckets.length > 0 &&
+        aggregations &&
+        isOTQLAggregations(aggregations) &&
+        aggregations.buckets.length > 0) ||
+      (aggregations && isAggregateDataset(aggregations) && aggregations.dataset[0].buckets)
+    ) {
       return '0';
     } else {
       return 'metrics';
@@ -870,36 +878,6 @@ class QueryResultRenderer extends React.Component<Props, State> {
         />
       );
 
-    const goToBucket = (bucket: OTQLBucket) => {
-      if (bucket.aggregations && bucketHasData(bucket) && viewBuckets) {
-        const aggregations = bucket.aggregations;
-        this.updateAggregatePath(
-          [...aggregationsPath, { aggregationBucket: viewBuckets, bucket }],
-          this.getDefaultView(aggregations),
-        );
-      } else if (aggregateData) {
-        this.updateAggregatePath([], this.getDefaultView(undefined));
-      }
-    };
-
-    const handleOnRow = (record: OTQLBucket) => ({
-      onClick: () => goToBucket(record),
-    });
-
-    const bucketHasData = (record: OTQLBucket) => {
-      return !!(
-        record &&
-        record.aggregations &&
-        (record.aggregations.buckets.find(b => b.buckets.length > 0) ||
-          record.aggregations.metrics.length > 0)
-      );
-    };
-
-    const getRowClassName = (record: OTQLBucket) => {
-      if (bucketHasData(record)) return 'mcs-table-cursor';
-      return '';
-    };
-
     // There should be no more OTQLAggration here, only datasets
     if ((viewBuckets || aggregateData) && dataset) {
       const aggregateDataset = dataset as AggregateDataset;
@@ -995,9 +973,6 @@ class QueryResultRenderer extends React.Component<Props, State> {
                   title: '',
                   options: {
                     ...omit(this.getChartProps('table'), ['date_options']),
-                    handle_on_row: handleOnRow,
-                    bucket_has_data: bucketHasData,
-                    get_row_className: getRowClassName,
                   },
                   type: 'table',
                 }}
@@ -1215,21 +1190,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
             dataIndex: 'count',
             sorter: (a, b) => a.count - b.count,
           },
-          {
-            render: (text, record) => {
-              if (bucketHasData(record)) {
-                return (
-                  <div className='float-right'>
-                    <McsIcon type='chevron-right' />
-                  </div>
-                );
-              }
-              return null;
-            },
-          },
         ]}
-        onRow={handleOnRow}
-        rowClassName={getRowClassName}
         dataSource={viewBuckets?.buckets}
       />
     );
