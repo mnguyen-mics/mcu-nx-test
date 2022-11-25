@@ -54,7 +54,7 @@ export function isAggregateResult(rows: OTQLResultRowsShape): rows is OTQLAggreg
 }
 
 export function isAggregateDataset(
-  aggregations: OTQLResult | AggregateDataset | CountDataset,
+  aggregations: OTQLResult | AggregateDataset | CountDataset | OTQLAggregations,
 ): aggregations is AggregateDataset {
   return 'dataset' in aggregations;
 }
