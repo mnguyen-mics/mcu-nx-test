@@ -914,27 +914,39 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
                         return Promise.resolve({
                           query_text: queryRes.data.query_text,
                           name: s.series_title,
+                          operation_type: (s as any).operation_type,
                         });
                       });
                   });
                 await Promise.all(subQueryPromises)
                   .then(subResponse => {
-                    newSerieQueries.push({
-                      id: cuid(),
-                      name: `Serie ${i}`,
-                      inputVisible: false,
-                      queryModel:
-                        subResponse.length === 1
-                          ? subResponse[0].query_text
-                          : subResponse.map((source, j) => {
-                              return {
-                                id: cuid(),
-                                name: source.name || `Dimension ${j}`,
-                                inputVisible: false,
-                                query: source.query_text,
-                              };
-                            }),
-                    });
+                    if (subResponse[0].operation_type === 'join') {
+                      subResponse.forEach(resp => {
+                        newSerieQueries.push({
+                          id: cuid(),
+                          name: resp.name || '',
+                          inputVisible: false,
+                          queryModel: resp.query_text,
+                        });
+                      });
+                    } else {
+                      newSerieQueries.push({
+                        id: cuid(),
+                        name: `Serie ${i}`,
+                        inputVisible: false,
+                        queryModel:
+                          subResponse.length === 1
+                            ? subResponse[0].query_text
+                            : subResponse.map((source, j) => {
+                                return {
+                                  id: cuid(),
+                                  name: source.name || `Dimension ${j}`,
+                                  inputVisible: false,
+                                  query: source.query_text,
+                                };
+                              }),
+                      });
+                    }
                   })
                   .catch(err => {
                     notifyError(err);
