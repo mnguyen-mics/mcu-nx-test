@@ -225,6 +225,7 @@ class QueryToolPage extends Page {
       this.typeQuery(query);
     }
     this.clickBtnRun();
+    this.areaResult;
   }
 
   @logFunction()
