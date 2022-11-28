@@ -7,7 +7,10 @@ import {
   OTQLBuckets,
   OTQLMetric,
 } from '@mediarithmics-private/advanced-components/lib/models/datamart/graphdb/OTQLResult';
-import { QueryListModel, SerieQueryModel } from '../../../containers/QueryTool/OTQL/QueryToolTab';
+import {
+  AbstractListQueryModel,
+  AbstractQueryModel,
+} from '../../../containers/QueryTool/OTQL/QueryToolTab';
 
 export interface OTQLResult {
   took: number | null;
@@ -106,13 +109,7 @@ export interface GraphQLResult {
 }
 
 export function isQueryListModel(
-  queryModel: string | QueryListModel[],
-): queryModel is QueryListModel[] {
+  queryModel: AbstractQueryModel | AbstractListQueryModel[],
+): queryModel is AbstractListQueryModel[] {
   return Array.isArray(queryModel);
-}
-
-export function isSerieQueryModel(
-  model: SerieQueryModel | QueryListModel,
-): model is SerieQueryModel {
-  return (model as SerieQueryModel).queryModel !== undefined;
 }
