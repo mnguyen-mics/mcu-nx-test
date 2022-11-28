@@ -62,7 +62,7 @@ class HomePage extends Page {
 
   @logFunction()
   clickBtnNewValue() {
-    cy.get('.mcs-otqlSeries_newValue').click();
+    cy.get('.mcs-queryToolSeries_newValue').click();
   }
 
   @logFunction()
