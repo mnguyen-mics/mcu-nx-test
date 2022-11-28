@@ -32,6 +32,7 @@ import {
   WithOptionalComplexXKey,
 } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import {
+  CommonChartOptions,
   getBaseChartProps,
   getChartDataset,
   getChartOption,
@@ -305,7 +306,11 @@ class QueryResultRenderer extends React.Component<Props, State> {
         true,
         chartProps,
       );
-      data = await this.applyTransformations(selectedChart, abstractDataset);
+      try {
+        data = await this.applyTransformations(selectedChart, abstractDataset);
+      } catch (error) {
+        log.error(error);
+      }
     } else if (isAggregateDataset(datasource) || isCountDataset(datasource)) {
       abstractDataset = getChartDataset(
         {
@@ -422,7 +427,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
     return quickOptions;
   };
 
-  private getChartOptionsMap(chartType: ChartType): any[] {
+  private getChartOptionsMap(chartType: ChartType): CommonChartOptions[] {
     const { selectedQuickOptions } = this.state;
     if (!selectedQuickOptions) {
       return [];
@@ -438,7 +443,7 @@ class QueryResultRenderer extends React.Component<Props, State> {
   }
 
   private getChartProps = (chartType: ChartType) => {
-    const chartPropsMap = this.getChartOptionsMap(chartType);
+    const chartPropsMap: any[] = this.getChartOptionsMap(chartType);
     const baseProps: ChartOptions | undefined = getBaseChartProps(
       chartType,
       !this.noLegendByDefault(),
@@ -541,14 +546,17 @@ class QueryResultRenderer extends React.Component<Props, State> {
   };
 
   noLegendByDefault = () => {
+    return this.getNumberOfSeries() === 1;
+  };
+
+  getNumberOfSeries = (): number => {
     const {
       tab: { queryResult },
     } = this.props;
-    return (
-      queryResult &&
-      isAggregateDataset(queryResult) &&
-      queryResult.metadata.seriesTitles.length === 1
-    );
+
+    if (queryResult && isAggregateDataset(queryResult)) {
+      return queryResult.metadata.seriesTitles.length;
+    } else return -1;
   };
 
   handleChartTypeChange = (value: ChartType) => {
