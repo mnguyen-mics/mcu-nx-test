@@ -5,30 +5,30 @@ import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 const messages = defineMessages({
   title: {
-    id: 'audience.segments.lookalike.type.cohort.calculationInProgress.title',
+    id: 'audience.segments.lookalike.type.cohort.calibrationInProgress.title',
     defaultMessage: 'We are calculating segment and cohorts overlapping',
   },
   subtitle: {
-    id: 'audience.segments.lookalike.type.cohort.calculationInProgress.subtitle',
+    id: 'audience.segments.lookalike.type.cohort.calibrationInProgress.subtitle',
     defaultMessage: 'This should take a few seconds',
   },
 });
 
 type Props = WrappedComponentProps;
 
-class CohortCalculationInProgress extends React.Component<Props> {
+class CohortCalibrationInProgress extends React.Component<Props> {
   render() {
     const {
       intl: { formatMessage },
     } = this.props;
 
     return (
-      <div className={`mcs_cohortCalculationInProgress`}>
+      <div className={`mcs_cohortCalibrationInProgress`}>
         <Loading isFullScreen={false} />
-        <div className={`mcs_cohortCalculationInProgress-title`}>
+        <div className={`mcs_cohortCalibrationInProgress-title`}>
           {formatMessage(messages.title)}
         </div>
-        <div className={`mcs_cohortCalculationInProgress-subtitle`}>
+        <div className={`mcs_cohortCalibrationInProgress-subtitle`}>
           {formatMessage(messages.subtitle)}
         </div>
       </div>
@@ -36,4 +36,4 @@ class CohortCalculationInProgress extends React.Component<Props> {
   }
 }
 
-export default compose<Props, {}>(injectIntl)(CohortCalculationInProgress);
+export default compose<Props, {}>(injectIntl)(CohortCalibrationInProgress);

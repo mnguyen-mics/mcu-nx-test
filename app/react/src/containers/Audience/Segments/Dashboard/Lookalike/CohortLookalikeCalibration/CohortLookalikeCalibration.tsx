@@ -1,7 +1,7 @@
 import { Card } from 'antd';
 import * as React from 'react';
 import { compose } from 'recompose';
-import CohortCalculationInProgress from './Calculation/CohortCalculationInProgress';
+import CohortCalibrationInProgress from './Calibration/CohortCalibrationInProgress';
 import CohortLookalikeCalibrationSettings, {
   CohortCalibrationGraphPoint,
 } from './CalibrationSettings/CohortLookalikeCalibrationSettings';
@@ -17,7 +17,7 @@ import {
 } from '@mediarithmics-private/advanced-components/lib/models/audienceSegment/AudienceSegmentResource';
 import { IQueryService } from '../../../../../../services/QueryService';
 import { OTQLAggregationResult } from '../../../../../../models/datamart/graphdb/OTQLResult';
-import CohortCalculationFailed from './Calculation/CohortCalculationFailed';
+import CohortCalibrationFailed from './Calibration/CohortCalibrationFailed';
 
 interface CohortLookalikeCalibrationProps {
   cohortLookalikeSegment: UserLookalikeByCohortsSegment;
@@ -170,24 +170,37 @@ class CohortLookalikeCalibration extends React.Component<Props, CohortLookalikeC
 
   render() {
     const { isCalibrating, fetchedData, calibrationFailed } = this.state;
-    return (
-      <div>
+
+    if (
+      calibrationFailed ||
+      (!isCalibrating &&
+        fetchedData &&
+        (fetchedData.similarityIndexInfos.nbUserPointsInSegment === 0 ||
+          fetchedData.similarityIndexInfos.nbUserPointsInDatamart === 0))
+    ) {
+      return (
         <Card className='mcs-audienceSegmentDashboard_cohort_lookalike_calibration'>
-          {calibrationFailed ? (
-            <CohortCalculationFailed />
-          ) : isCalibrating || !fetchedData ? (
-            <CohortCalculationInProgress />
-          ) : (
-            <CohortLookalikeCalibrationSettings
-              cohortLookalikeSegment={fetchedData.cohortLookalikeSegment}
-              seedSegment={fetchedData.sourceSegment}
-              cohorts={fetchedData.cohorts}
-              similarityIndexInfos={fetchedData.similarityIndexInfos}
-            />
-          )}
+          <CohortCalibrationFailed errorType={calibrationFailed ? 'GENERIC' : 'NO_USERPOINT'} />
         </Card>
-      </div>
-    );
+      );
+    } else if (isCalibrating || !fetchedData) {
+      return (
+        <Card className='mcs-audienceSegmentDashboard_cohort_lookalike_calibration'>
+          <CohortCalibrationInProgress />
+        </Card>
+      );
+    } else {
+      return (
+        <Card className='mcs-audienceSegmentDashboard_cohort_lookalike_calibration'>
+          <CohortLookalikeCalibrationSettings
+            cohortLookalikeSegment={fetchedData.cohortLookalikeSegment}
+            seedSegment={fetchedData.sourceSegment}
+            cohorts={fetchedData.cohorts}
+            similarityIndexInfos={fetchedData.similarityIndexInfos}
+          />
+        </Card>
+      );
+    }
   }
 }
 
