@@ -1,6 +1,9 @@
 import Page from '../../Page';
 import faker from 'faker';
 import { logFunction, logGetter } from '../../log/LoggingDecorator';
+import { LoggerFactory } from '../../log/LoggerFactory';
+
+const logger = LoggerFactory.getInstance();
 
 class Charts extends Page {
   public name: string;
@@ -104,7 +107,11 @@ class Charts extends Page {
 
   @logFunction()
   shouldContain(data: string, pos: number = 0) {
-    if (this.type == 'radar' || this.type == 'area' || this.multisteps != 0) {
+    if (
+      this.type == 'radar' ||
+      this.type == 'area' ||
+      (this.multisteps != 0 && this.type != 'bar')
+    ) {
       this.content.get('svg text').should('contain', data);
     } else {
       this.content.eq(pos).trigger('mouseover');

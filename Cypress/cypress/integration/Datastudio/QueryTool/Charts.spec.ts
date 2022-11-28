@@ -105,6 +105,8 @@ describe('Query tool - Charts', () => {
     queryToolPage.executeQuery();
 
     queryToolPage.charts.clickBarIcon();
+    queryToolPage.charts.clickIndexOption();
+    queryToolPage.charts.shouldContain('Series 1: 2', 1);
 
     // save
     queryToolPage.charts.clickSave();
