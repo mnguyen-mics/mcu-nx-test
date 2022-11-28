@@ -107,7 +107,7 @@ class Tab extends Page {
 
   @logFunction()
   getNewValueButtonByTab(tabIndex: number, pos: number) {
-    return this.getTabPanel(tabIndex).find('.mcs-otqlSeries_newValue').eq(pos);
+    return this.getTabPanel(tabIndex).find('.mcs-queryToolSeries_newValue').eq(pos);
   }
 
   @logFunction()
@@ -117,7 +117,7 @@ class Tab extends Page {
 
   @logFunction()
   getRemoveStepButtonByTab(tabIndex: number, pos: number) {
-    return this.getTabPanel(tabIndex).find('.mcs-otqlSeries_removeStepBtn').eq(pos);
+    return this.getTabPanel(tabIndex).find('.mcs-queryToolSeries_removeStepBtn').eq(pos);
   }
 
   @logFunction()

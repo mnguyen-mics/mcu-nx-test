@@ -187,7 +187,7 @@ class QueryToolPage extends Page {
   typeQuery(query: string, pos: number = -1) {
     let selector = '.mcs-otqlInputEditor_otqlConsole';
     if (pos >= 0) {
-      selector = '.mcs-otqlSeries_mainStep';
+      selector = '.mcs-queryToolSeries_mainStep';
     } else {
       pos = 0;
     }
@@ -235,7 +235,7 @@ class QueryToolPage extends Page {
 
   @logFunction()
   getSeries() {
-    return this.tab.activeTabPanel.find('.mcs-otqlSeries_mainStep');
+    return this.tab.activeTabPanel.find('.mcs-queryToolSeries_mainStep');
   }
 
   @logFunction()
@@ -253,7 +253,7 @@ class QueryToolPage extends Page {
 
   @logFunction()
   getSeriesSubStep(seriesIndex: number) {
-    return this.getSeries().eq(seriesIndex).find('.mcs-otqlSeries_subStep', { timeout: 2000 });
+    return this.getSeries().eq(seriesIndex).find('.mcs-queryToolSeries_subStep', { timeout: 2000 });
   }
 
   @logFunction()
@@ -265,17 +265,19 @@ class QueryToolPage extends Page {
 
   @logFunction()
   getNewValueButtonWithinSeries(seriesIndex: number) {
-    return this.getSeries().eq(seriesIndex).find('.mcs-otqlSeries_newValue');
+    return this.getSeries().eq(seriesIndex).find('.mcs-queryToolSeries_newValue');
   }
 
   @logFunction()
   getSeriesDeleteButtons(seriesIndex: number) {
-    return this.getSeries().eq(seriesIndex).children().filter('.mcs-otqlSeries_removeStepBtn');
+    return this.getSeries().eq(seriesIndex).children().filter('.mcs-queryToolSeries_removeStepBtn');
   }
 
   @logFunction()
   getDimensionDeleteButtonsWithinSeries(seriesIndex: number) {
-    return this.getSeriesSubStep(seriesIndex).children().filter('.mcs-otqlSeries_removeStepBtn');
+    return this.getSeriesSubStep(seriesIndex)
+      .children()
+      .filter('.mcs-queryToolSeries_removeStepBtn');
   }
 
   @logFunction()
