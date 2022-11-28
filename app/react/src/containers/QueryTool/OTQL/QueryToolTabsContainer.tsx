@@ -76,6 +76,10 @@ const messages = defineMessages({
     id: 'queryTool.OtqlConsole.tab.chartShared',
     defaultMessage: 'The chart URL is copied to the clipboard',
   },
+  clearTabs: {
+    id: 'queryTool.OtqlConsole.tab.clearTabs',
+    defaultMessage: 'Clear tabs',
+  },
 });
 
 const { Content } = Layout;
@@ -1067,6 +1071,11 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
     return `${window.location.host}/#${location.pathname}?chartId=${chartId}`;
   };
 
+  clearAllSavedQueries = () => {
+    localStorage.removeItem('savedQueries');
+    this.initTabState();
+  };
+
   render() {
     const {
       match: {
@@ -1113,6 +1122,9 @@ class QueryToolTabsContainer extends React.Component<Props, State> {
 
     const saveExtraOptions = (
       <Row>
+        <Button className='mcs-otqlInputEditor_save_as_button' onClick={this.clearAllSavedQueries}>
+          {intl.formatMessage(messages.clearTabs)}
+        </Button>
         {currentTab?.chartItem && (
           <CopyToClipboard
             onCopy={this.handleShareButtonClick}
