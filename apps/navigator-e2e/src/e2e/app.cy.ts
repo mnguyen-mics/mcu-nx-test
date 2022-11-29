@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po';
 
-describe('mediarithmics-client-universe', () => {
+describe('navigator', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {
@@ -8,6 +8,6 @@ describe('mediarithmics-client-universe', () => {
     cy.login('my-email@something.com', 'myPassword');
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome mediarithmics-client-universe');
+    getGreeting().contains('Welcome navigator');
   });
 });
