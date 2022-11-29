@@ -85,11 +85,9 @@ describe('Query tool - Charts', () => {
     queryToolPage.charts.clickPercentageOption();
     queryToolPage.charts.shouldContain('Series 1: 33.33%', 1);
 
-    /*     queryToolPage.charts.clickIndexOption();
-    queryToolPage.charts.shouldContain('Series 1: 2', 1); */
+    queryToolPage.charts.clickIndexOption();
 
     queryToolPage.charts.clickRadarIcon();
-    queryToolPage.charts.shouldContain('Series 1: 2');
 
     queryToolPage.charts.clickPieIcon();
     queryToolPage.charts.shouldContain('33.33%');
