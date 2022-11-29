@@ -8,7 +8,7 @@ export function FeedStatsNotAvailable() {
       <WarningOutlined className='mcs-feedStatsNotAvailable_icon' />
       <FormattedMessage
         id='feedStatsNotAvailable.title'
-        defaultMessage={`The feed require an update to display stats.`}
+        defaultMessage={`The feed requires an update to display stats.`}
       />
     </div>
   );
