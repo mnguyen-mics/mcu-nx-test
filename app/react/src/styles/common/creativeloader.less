@@ -1,0 +1,133 @@
+.mcs-form-container .field-label {
+  line-height: 1.5 !important;
+}
+
+.mcs-formFieldWrapper_codeEdit {
+  display: block !important;
+}
+
+.mcs-custom-loader {
+  &.image-loader {
+    padding: 20px 40px;
+  }
+  &.no-loader {
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    color: @tooltip-color;
+    font-size: 1.5em;
+    font-size: bold;
+  }
+  .square-container {
+    display: flex;
+    flex-wrap: wrap;
+    .square {
+      position: relative;
+      flex-basis: calc(23%);
+      margin: 5px;
+      box-sizing: border-box;
+      border-radius: 2px;
+
+      &::before {
+        content: '';
+        display: block;
+        padding-top: 100%;
+      }
+
+      .content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+
+        &:hover {
+          overflow: hidden;
+          .overlay {
+            opacity: 1;
+          }
+          .image {
+            filter: blur(50px);
+          }
+          .text {
+            filter: blur(50px);
+          }
+        }
+
+        .ant-upload {
+          color: @tooltip-color!important;
+          font-weight: bold;
+          &.ant-upload-drag {
+            border: 2px dashed @tooltip-color;
+            background: none;
+            transition: all 0.2s;
+            &:hover {
+              background-color: rgba(0, 0, 0, 0.5);
+            }
+            .ant-upload-drag-container {
+              padding: 0 10px;
+            }
+          }
+        }
+
+        .image {
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 30px;
+          position: absolute;
+          padding: 5px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          img {
+            max-height: 100%;
+            max-width: 100%;
+          }
+        }
+
+        .text {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 20px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 20px;
+          text-align: center;
+          color: @tooltip-color;
+          font-weight: bold;
+        }
+
+        .overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          opacity: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          transition: all 0.2s;
+          color: @tooltip-color;
+          border-radius: 2px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: bold;
+          .tets {
+            position: absolute;
+            top: 10px;
+            right: 0;
+            color: @tooltip-color;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+}

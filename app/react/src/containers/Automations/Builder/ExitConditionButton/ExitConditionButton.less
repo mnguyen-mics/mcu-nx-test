@@ -1,0 +1,92 @@
+.exit-condition-container {
+  display: flex;
+  flex-direction: column;
+  .exit-condition {
+    position: relative;
+    display: flex;
+    width: 200px;
+    .node-users-counter {
+      position: absolute;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 24px;
+      padding: 5px;
+      min-width: 10%;
+      left: 100%;
+      transform: translate(-50%);
+      top: -12px;
+      border: 1px @primary-color solid;
+      background-color: white;
+      color: @primary-color;
+      font-weight: initial;
+      font-size: 1em;
+      font-family: 'LLCircularWeb-Medium', sans-serif;
+      .node-users-counter-icon {
+        padding-left: 5px;
+        margin-right: 0px;
+      }
+    }
+    .exit-condition-buttons {
+      position: relative;
+      display: flex;
+      flex: 1;
+      align-items: center;
+      overflow: hidden;
+      .edit {
+        display: flex;
+        flex: 1;
+        justify-content: center;
+        padding: 8px 0;
+        &:hover {
+          background-color: @primary-color;
+          color: white;
+          cursor: pointer;
+        }
+      }
+      .delete {
+        display: flex;
+        flex: 0;
+        padding: 8px;
+        border-left: solid;
+        border-left-width: 2px;
+        &:hover {
+          background-color: @primary-color;
+          color: white;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  .mcs-exitConditionAutomation_menu {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-bottom: 5px;
+    width: 100%;
+    .mcs-exitConditionAutomation_menuItem {
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 3px;
+      color: #e6e6e6;
+      width: 50%;
+      margin-bottom: 4px;
+      padding: 6px 12px 6px 12px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: normal;
+      font-size: 1em;
+      font-family: 'LLCircularWeb-Book', sans-serif;
+      -webkit-transition: -webkit-transform 85ms ease-in;
+      transition: -webkit-transform 85ms ease-in;
+      transition: transform 85ms ease-in;
+      transition: transform 85ms ease-in, -webkit-transform 85ms ease-in;
+      cursor: pointer;
+      &:hover {
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        -webkit-transform: translateX(5px);
+        transform: translateX(5px);
+      }
+    }
+  }
+}

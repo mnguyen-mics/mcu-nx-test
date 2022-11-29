@@ -1,0 +1,222 @@
+@import 'application.less';
+
+.mcs-table-container {
+  .ant-table-thead > tr > th {
+    color: #919191 !important;
+    background: none !important;
+  }
+
+  .ant-table-body > tr > th {
+    color: #373737 !important;
+    background: none !important;
+  }
+
+  .ant-table-column-sorter {
+    position: relative !important;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+    right: 0px !important;
+  }
+
+  display: block;
+  .mcs-content-element.container;
+  margin-top: 40px;
+  .mcs-empty-card {
+    padding: 70px 0;
+  }
+}
+
+.mcs-table-header-with-icons {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  .mcs-table-header-icons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 8px;
+    line-height: 8px;
+    & > span:first-child {
+      transform: rotate(180deg);
+    }
+    .mcs-table-header-icon {
+      color: #00a1df;
+    }
+  }
+}
+
+.mcs-audienceSegmentTable {
+  .mcs-audienceSegmentTable_type {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    font-size: 15px;
+  }
+
+  .mcs-audienceSegmentTable-typeFilter {
+    min-width: 200px;
+    height: 40px;
+    .ant-select-selection-placeholder {
+      right: 130px;
+    }
+  }
+}
+
+.mcs-table-cell-loading {
+  display: inline-block;
+  font-style: normal;
+  vertical-align: baseline;
+  text-align: center;
+  text-transform: none;
+  line-height: 1;
+  width: 100%;
+  max-width: 100px;
+  height: 8px;
+  border-radius: 10px;
+  background: linear-gradient(149deg, #dee4e8, #eceaea);
+  background-size: 400% 400%;
+  -webkit-animation: loadingAnimation 1s ease infinite;
+  -moz-animation: loadingAnimation 1s ease infinite;
+  -o-animation: loadingAnimation 1s ease infinite;
+  animation: loadingAnimation 1s ease infinite;
+}
+
+.mcs-table-cell-loading-large {
+  display: inline-block;
+  font-style: normal;
+  vertical-align: baseline;
+  text-align: center;
+  text-transform: none;
+  line-height: 1;
+  width: 70%;
+  height: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 20px;
+  background: linear-gradient(149deg, #dee4e8, #eceaea);
+  background-size: 400% 400%;
+  -webkit-animation: loadingAnimation 1s ease infinite;
+  -moz-animation: loadingAnimation 1s ease infinite;
+  -o-animation: loadingAnimation 1s ease infinite;
+  animation: loadingAnimation 1s ease infinite;
+}
+
+@-webkit-keyframes loadingAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes loadingAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-o-keyframes loadingAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes loadingAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.mcs-table-cell-thumbnail {
+  background-size: 20px 20px;
+  background-color: #fff
+      linear-gradient(45deg, #e6e6e6 25%, transparent 0, transparent 75%, #e6e6e6 0, #e6e6e6),
+    linear-gradient(45deg, #e6e6e6 25%, transparent 0, transparent 75%, #e6e6e6 0, #e6e6e6) 0 0,
+    30px 30px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  height: 50px;
+  vertical-align: middle;
+  text-align: center;
+  img {
+    max-width: 50px;
+    max-height: 50px;
+  }
+}
+
+.mcs-table-image-col {
+  width: 100px;
+}
+
+// TOTO not in use, check relevance
+.thumbnail-helper {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.mcs-table-view-empty {
+  .logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    background-color: #d8d8d8;
+    color: #fff;
+    line-height: 100px;
+    font-size: 3.5em;
+    display: table;
+    margin: 0 auto 10px;
+    .mcs-icon {
+      display: table-cell;
+      vertical-align: middle;
+    }
+  }
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  color: #9c9c9c;
+}
+
+.mcs-table-filters-item {
+  margin-left: 10px;
+}
+
+.mcs-table-card {
+  height: 100%;
+  margin-bottom: -1.4em;
+
+  li.ant-pagination-item {
+    background-color: transparent;
+  }
+  li.ant-pagination-prev {
+    background-color: transparent;
+  }
+  li.ant-pagination-next {
+    background-color: transparent;
+  }
+}
+
+.mcs-table-cursor {
+  cursor: pointer;
+}

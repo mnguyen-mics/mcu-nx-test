@@ -1,0 +1,30 @@
+button {
+  cursor: pointer;
+}
+
+.feedcard-placeholder {
+  height: 18px;
+}
+
+.button-slider {
+  width: 100%;
+}
+
+@keyframes glowing {
+  0% {
+    box-shadow: 0 0 -7px @warning-color;
+  }
+  40% {
+    box-shadow: 0 0 14px @warning-color;
+  }
+  60% {
+    box-shadow: 0 0 14px @warning-color;
+  }
+  100% {
+    box-shadow: 0 0 -7px @warning-color;
+  }
+}
+
+.button-glow {
+  animation: glowing 5000ms infinite;
+}

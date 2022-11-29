@@ -1,0 +1,514 @@
+.mcs-funnel {
+  margin-top: 55px;
+  box-sizing: content-box;
+  .ant-card-body {
+    padding: 0;
+  }
+  margin-bottom: 15px;
+}
+
+.mcs-funnelQueryBuilder_steps {
+  position: relative;
+  display: inline-block;
+  margin-top: 15px;
+  min-width: 707px;
+  padding: 17px 0px 17px 46px;
+  border-left: 1px dotted #d3dbe1;
+}
+
+.mcs-funnelQueryBuilder_step {
+  margin-bottom: 30px;
+  border-radius: 2px;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.mcs-funnel_arrow {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  transform: rotate(180deg);
+
+  &:before {
+    position: absolute;
+    content: '';
+    border: none;
+    height: 22px;
+    width: 15px;
+    bottom: 0;
+    left: 50%;
+    margin-left: -7.5px;
+  }
+
+  &:after {
+    position: absolute;
+    content: '';
+    border-color: transparent;
+    border-style: solid;
+    left: 50%;
+    bottom: 22px;
+    border-width: 15px 15px;
+    margin-left: -15px;
+  }
+}
+
+.mcs-funnel_arrow--failed {
+  &:before {
+    background-color: #fc3f48;
+  }
+
+  &:after {
+    border-bottom-color: #fc3f48;
+  }
+}
+
+.mcs-funnel_conversionInfo {
+  position: absolute;
+  bottom: -14px;
+  z-index: 3;
+  margin-left: -30px;
+  display: flex;
+}
+
+.mcs-funnel_chart:not(:first-of-type) {
+  border-left: 1px solid @border-color-split;
+}
+
+.mcs-funnel_deltaInfo {
+  margin-left: -16px;
+}
+
+.mcs-funnel_deltaInfo,
+.mcs-funnel_stepInfo {
+  font-size: 12px;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  color: @primary-color;
+}
+
+.mcs-funnelQueryBuilder_stepName_title {
+  font-size: 14px;
+  font-family: 'LLCircularWeb-Medium', sans-serif;
+  letter-spacing: normal;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.mcs-funnel_chart {
+  position: relative;
+  padding-bottom: 49px;
+}
+
+.mcs-funnel_steps {
+  display: flex;
+  overflow: hidden;
+}
+
+.mcs-funnel_empty {
+  padding-top: 1px;
+}
+
+.mcs-funnelQueryBuilder {
+  margin-top: 88px;
+  .ant-card-body {
+    padding: 15px;
+  }
+}
+
+.mcs-funnelQueryBuilder_executeQueryBtn {
+  margin-left: 15px;
+}
+
+.mcs-funnelQueryBuilder_cancelBtn {
+  margin-left: 15px;
+}
+
+.mcs-funnelQueryBuilder_exportBtn {
+  margin-left: 15px;
+}
+
+.mcs-funnelQueryBuilder_dimensionValue {
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-size: 12px;
+  min-width: 380px;
+  height: auto;
+  width: 100%;
+  background: rgba(225, 225, 225, 0.5);
+  border-radius: 3px;
+  color: rgb(0, 48, 86);
+  border: none;
+}
+
+.mcs-funnelQueryBuilder_step_dimensions {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.mcs-funnelQueryBuilder_step_dimensionFilter_operator {
+  display: flex;
+  margin-right: 18px;
+  height: 40px;
+}
+
+.mcs-funnelQueryBuilder_step_dimensionFilter_operator_text {
+  color: @primary-color;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-size: 14px;
+  margin: auto;
+}
+
+.mcs-funnelQueryBuilder_select {
+  border: none;
+  height: 40px;
+  margin-right: 15px;
+  font-family: @font-family-medium;
+  font-size: 12px;
+  font-weight: 500;
+  .ant-select-selector {
+    background: #f1f1f1 !important;
+    border-radius: 3px !important;
+    border: none !important;
+  }
+
+  .ant-select-selection-item,
+  .ant-select-selection-placeholder,
+  .ant-input::placeholder {
+    float: none;
+    color: rgb(0, 48, 86);
+    text-align: center;
+  }
+
+  &.mcs-funnelQueryBuilder_select--booleanOperators {
+    display: block;
+    margin-bottom: 10px;
+    width: 55px;
+  }
+
+  &.mcs-funnelQueryBuilder_select--dimensions {
+    width: auto;
+    min-width: 176px;
+    max-width: 352px;
+  }
+
+  &.mcs-funnelQueryBuilder_select--dimensionsFilter {
+    width: auto;
+    min-width: 130px;
+  }
+}
+
+.mcs-timelineStepBuilder_removeStepBtn,
+.mcs-funnelQueryBuilder_removeFilterBtn {
+  border: 0;
+  box-shadow: none;
+  font-size: 16px;
+  height: 16px;
+  color: rgba(0, 0, 0, 0.43);
+
+  .anticon {
+    font-size: 16px;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: rgba(0, 0, 0, 0.43);
+    background: #fff;
+  }
+}
+
+.mcs-funnelQueryBuilder_removeFilterBtn {
+  margin-left: 18px;
+}
+
+.mcs-funnelQueryBuilder_addDimensionBtn,
+.mcs-funnelQueryBuilder_addDimensionBtn:hover,
+.mcs-funnelQueryBuilder_addDimensionBtn:active,
+.mcs-funnelQueryBuilder_addDimensionBtn:focus {
+  margin-top: 20px;
+  margin-bottom: 26px;
+  padding: 0;
+  border: none;
+  color: @info-color;
+  background: none;
+  font-family: @font-family-medium;
+  font-weight: 500;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.mcs-funnelQueryBuilder_switch {
+  position: relative;
+  width: 55px;
+  margin-right: 3px;
+
+  &_btn {
+    top: 10px;
+    width: 55px;
+    background-color: @info-color;
+  }
+}
+
+.mcs-funnelQueryBuilder_notInfo_notSwitcherIcon {
+  position: absolute;
+  right: -17px;
+  font-size: 10px;
+}
+
+.mcs-funnel_splitBy {
+  position: absolute;
+  top: 120px;
+  height: 40px;
+}
+
+.mcs-funnel_splitBy_select {
+  display: block;
+  width: 146px;
+}
+
+.mcs-funnelStepHover {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+  z-index: 2;
+  padding: 20px 15px;
+}
+
+.mcs-funnelStepHover_metrics {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.mcs-funnelQueryBuilder_metric {
+  flex: 1;
+  min-width: 50px;
+
+  &:not(last-child) {
+    margin-right: 10px;
+  }
+}
+
+.mcs-funnelStepHover_desc {
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: #003056;
+
+  &--secondary {
+    margin-top: 15px;
+  }
+}
+
+.mcs-funnelStepHover_message {
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: #003056;
+  margin-right: 45px;
+  background-color: #e8f7fc;
+  border-color: @info-color;
+}
+
+.mcs-funnelStepHover_metric {
+  font-family: @font-family-medium;
+  font-weight: 500;
+  font-size: 14px;
+  color: #003056;
+}
+
+.mcs-funnel_disableStepHover {
+  position: absolute;
+  right: 23px;
+  top: 15px;
+  z-index: 5;
+  border: none;
+  font-size: 16px;
+  color: grey;
+  padding: 0;
+  cursor: hand;
+  &:hover {
+    color: grey;
+  }
+}
+
+.mcs-funnel_closeFunnel {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  z-index: 5;
+  border: none;
+  font-size: 16px;
+  color: grey;
+  background-color: #fff0;
+  padding: 0;
+  cursor: hand;
+  &:hover {
+    color: grey;
+    background-color: #fff0;
+  }
+}
+
+.mcs-funnel_stepInfo {
+  position: absolute;
+  padding: 20px 15px;
+  font-size: 12px;
+}
+
+.mcs-funnel_stepInfo_desc {
+  margin-bottom: 15px;
+}
+
+.mcs-funnel_stepInfo_metric {
+  font-family: @font-family-medium;
+  font-weight: 500;
+  font-size: 14px;
+  color: #003056;
+}
+
+.mcs-funnel_canvas {
+  margin-top: 126px;
+  image-rendering: pixelated;
+}
+
+.mcs-funnelStepHover_totalsByDimension {
+  margin-top: 20px;
+}
+
+.mcs-funnelStepHover_totalsByDimension_tags {
+  font-family: @font-family-medium;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.mcs-timelineStepBuilder_step_timelineStart {
+  .mcs-funnelQueryBuilder_timeline_icon {
+    margin-right: 10px;
+  }
+}
+
+.mcs-timelineStepBuilder_step_timelineEnd {
+  .mcs-funnelQueryBuilder_timeline_icon {
+    margin-right: 10px;
+  }
+}
+
+.mcs-funnelQueryBuilder_timeline_date {
+  display: inline-block;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-size: 12px;
+}
+
+.mcs-funnelQueryBuilder_timeline_icon {
+  display: inline-block;
+  font-size: 20px;
+  color: @info-color;
+  vertical-align: middle;
+}
+
+.mcs-funnelQueryBuilder_maximumDaysAfterStep {
+  margin-bottom: 20px;
+
+  &_input {
+    display: inline-block;
+    padding: 5px;
+    width: 40px;
+    height: 32px;
+    border-radius: 3px;
+    border: solid 1px #d3dbe1;
+    background-color: #fafafa;
+    text-align: center;
+  }
+
+  &_desc {
+    display: inline-block;
+    width: 185px;
+    height: 15px;
+    margin-left: 5px;
+    font-family: 'LLCircularWeb-Book', sans-serif;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+
+.mcs-funnelEmptyState {
+  padding: 100px 0;
+  text-align: center;
+  color: #cccccc;
+
+  &_icon {
+    margin-bottom: 10px;
+    font-size: 45px;
+  }
+
+  &_desc {
+    font-family: 'LLCircularWeb-Book', sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  &_showMeAnExample {
+    font-family: 'LLCircularWeb-Medium', sans-serif;
+    font-weight: 500;
+  }
+}
+
+.mcs-funnelTemplateSelector {
+  padding-left: 14px;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-size: 12px;
+  width: 176px;
+  text-align: center;
+
+  .ant-select-arrow {
+    font-size: 10px;
+    color: #cccccc;
+  }
+}
+
+.mcs-pathItem {
+  .mcs-pathItem_mentionTag {
+    padding: 0px 6px;
+    margin-left: 10px;
+  }
+}
+
+.mcs-funnel_conversions {
+  position: absolute;
+  float: right;
+  right: 15px;
+  top: 20px;
+  margin: 0;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-size: 12px;
+  color: @info-color;
+  background-color: #e8f7fc;
+  border-color: @info-color;
+}
+
+.mcs-funnel_title {
+  font-size: 14px;
+  font-family: 'LLCircularWeb-Book', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: -40px;
+  margin-top: 15px;
+}
+
+.mcs-funnel_container {
+  display: 'flex';
+  flex-flow: 'row';
+}
+
+.mcs-funnel_element {
+  flex-basis: 1px;
+  position: 'relative';
+}
+
+.mcs-funnel_complementaryButtonsContainer {
+  display: 'flex';
+}
+
+.mcs-funnel_complementaryButton {
+  flex-grow: 1;
+}
+
+.mcs-funnel_complementaryButton_hidden {
+  visibility: hidden;
+}

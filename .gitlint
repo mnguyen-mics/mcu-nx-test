@@ -1,0 +1,21 @@
+[general]
+ignore=B3
+
+[title-max-length]
+line-length=72
+
+[title-must-not-contain-word]
+# Comma-separated list of words that should not occur in the title. Matching is case
+# insensitive. It's fine if the keyword occurs as part of a larger word (so "WIPING"
+# will not cause a violation, but "WIP: my title" will.
+words=wip
+
+[title-match-regex]
+regex=^(:?Revert ")?[A-Z]+-[^ ]+ [^ ]+
+
+[body-max-line-length]
+# With 72, we cant paste stacktraces
+line-length=200
+
+[author-valid-email]
+regex=[^@]+@(mediarithmics.com|users.noreply.github.com)

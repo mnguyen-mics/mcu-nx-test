@@ -1,0 +1,43 @@
+.creative-format {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  .field {
+    width: 83%;
+
+    .custom {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      .input {
+        width: 47%;
+      }
+
+      .separator {
+        width: 6%;
+        text-align: center;
+      }
+    }
+  }
+
+  .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: @info-color;
+    font-size: 1.1em;
+    font-weight: bold;
+    height: 40px;
+    padding: '1%';
+    width: 16%;
+  }
+
+  .button:active {
+    border: 1px solid @info-color;
+    border-radius: 3px;
+  }
+}

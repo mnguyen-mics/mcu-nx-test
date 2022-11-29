@@ -1,0 +1,84 @@
+@import 'helpers.less';
+
+.mcs-login-container {
+  display: flex;
+
+  .login-error-message {
+    font-size: 12px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    color: #ff4d5c;
+    background-color: @layout-body-background;
+    border: none;
+    text-align: left;
+    margin: 0;
+    padding: 0 0 7px 0;
+    .ant-alert-message {
+      color: #ff4d5c;
+    }
+  }
+
+  .mcs-login-container-left {
+    flex: 1;
+    flex-direction: column;
+    .mcs-centered-container;
+
+    .image-wrapper {
+      width: 200px;
+      text-align: center;
+
+      .login-logo {
+        padding-bottom: 28px;
+        max-width: 100%;
+        max-height: 150px;
+      }
+    }
+
+    .login-frame {
+      display: flex;
+      flex-direction: column;
+      background-color: @layout-body-background;
+      width: 385px;
+      padding: 30px 20px 0px 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px 0 rgba(105, 105, 105, 0.21);
+      border: solid 1px #e8e8e8;
+
+      .login-input {
+        height: 33px;
+        font-weight: bold;
+      }
+
+      .login-password-text {
+        font-size: 12px;
+        font-weight: bold;
+        padding-top: 5px;
+      }
+      .login-form-forgot {
+        float: right;
+        font-size: 12px;
+        color: #919191;
+        text-decoration: underline;
+      }
+      .ant-switch-checked {
+        background-color: @info-color;
+      }
+      .login-form-button {
+        width: 100%;
+      }
+      .login-text-remember-me {
+        font-size: 14px;
+        color: #919191;
+        display: inline;
+        margin-left: 5px;
+      }
+    }
+  }
+  .mcs-login-container-right {
+    flex: 1;
+    background-image: radial-gradient(circle at 47% 44%, @info-color, @primary-color);
+  }
+}

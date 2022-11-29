@@ -1,0 +1,85 @@
+@import 'application.less';
+
+.ad-group-form {
+  .ad-group-ad-section {
+    .content {
+      .ad-group-card {
+        .inline {
+          display: flex;
+          flex-direction: row;
+        }
+
+        .title {
+          margin-left: 0.4em;
+
+          span {
+            font-weight: bold;
+          }
+        }
+
+        .footer {
+          .formatWrapper {
+            align-items: center;
+            height: 2.7em;
+            margin-left: 1em;
+
+            .dimensions {
+              margin-left: 1em;
+
+              font-family: CircularStd, sans-serif;
+              font-size: 12px;
+              font-weight: 500;
+              color: #919191;
+            }
+          }
+
+          .buttons {
+            align-items: center;
+            justify-content: space-between;
+
+            .button {
+              color: #cecece;
+              font-size: 1.7em;
+            }
+
+            .button-separator {
+              width: 1px;
+              height: 2em;
+              background-color: #e8e8e8;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .ad-group-summary-section {
+    .content {
+      padding-left: 1em;
+    }
+
+    .section {
+      border-bottom: solid 1px #dcdcdc;
+      padding-bottom: 0.7em;
+      padding-top: 0.7em;
+    }
+
+    .inline {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .textPadding {
+      padding-left: 1.5em;
+      padding-right: 1.5em;
+    }
+
+    .info-color {
+      color: @info-color;
+    }
+
+    .error-color {
+      color: @error-color;
+    }
+  }
+}

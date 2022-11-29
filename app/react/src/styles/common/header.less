@@ -1,0 +1,94 @@
+.mcs-navigator-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: @layout-header-height;
+  background-color: @info-color;
+  padding: 0 40px;
+
+  &-title {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-right: 20px;
+
+    .left-component {
+      display: flex;
+      align-items: center;
+
+      .ant-dropdown-trigger {
+        display: flex;
+      }
+
+      .launcher {
+        padding-right: 20px;
+      }
+    }
+
+    &-alert {
+      display: flex;
+      margin: auto;
+      margin-right: 0;
+      border-color: red;
+    }
+  }
+
+  &-actions {
+    display: flex;
+
+    &-settings {
+      display: flex;
+      align-items: center;
+      padding-right: 20px;
+    }
+
+    &-account {
+      display: flex;
+      align-items: center;
+
+      .ant-dropdown-trigger {
+        display: flex;
+      }
+    }
+  }
+
+  .menu-icon {
+    margin: 0;
+    color: white;
+    font-size: 20px !important;
+    &:hover {
+      color: @normal-color;
+    }
+  }
+
+  .organisation-name {
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+
+    i {
+      font-size: 12px;
+    }
+  }
+}
+
+.mcs-settings-main-menu {
+  box-shadow: @box-shadow-base!important;
+  .ant-menu-submenu-title {
+    .nav-text {
+      margin-right: 20px;
+    }
+  }
+  li {
+    i {
+      font-size: 16px;
+    }
+  }
+}
+
+.mcs-themed-header {
+  background-color: @info-color;
+}

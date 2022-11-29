@@ -1,0 +1,238 @@
+html,
+body {
+  min-width: 1280px;
+  height: 100%;
+}
+
+// In the 3.15.2 version of antd we can replace this by "@font-feature-settings-base: normal" in theme.less
+*,
+.ant-input {
+  font-feature-settings: normal;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+
+.mcs-react-app {
+  height: 100%;
+}
+
+.mcs-react-app > div {
+  height: 100%;
+}
+
+.mcs-fullscreen {
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+.mcs-content-container {
+  padding: 0 40px 60px;
+  height: inherit;
+  overflow-y: scroll;
+  &.flex {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+  }
+
+  &.flex-basic {
+    display: flex;
+    flex: auto;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.edit-top {
+  padding-top: 40px;
+}
+
+.mcs-edit-container {
+  padding: 60px 40px 20px 40px;
+  height: inherit;
+  overflow-y: scroll;
+}
+
+.mcs-table-edit-container {
+  .mcs-edit-container;
+  background-color: #fff !important;
+}
+
+// Use this for flexbox vertical alignment
+.mcs-aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: inherit;
+}
+
+.mcs-content-element.container {
+  padding: 20px 20px;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  background-color: #fff;
+}
+
+.ant-layout {
+  z-index: 1;
+  overflow: auto;
+  height: inherit;
+}
+
+.ant-layout-content {
+  background-color: @layout-content-background;
+}
+
+.ant-btn {
+  padding: 10px 15px;
+  height: auto;
+}
+
+.ant-btn-sm {
+  padding: 2px 7px !important;
+  height: auto;
+}
+
+.ant-input {
+  height: 40px;
+}
+
+.ant-btn-icon-only {
+  padding: 4.5px 0 !important;
+  height: 40px !important;
+}
+
+.ant-dropdown-menu-item-group-title {
+  color: @text-color-secondary;
+  padding: 10px;
+}
+
+.ant-spin-dot i:first-child {
+  background-color: @info-color !important;
+  opacity: 1 !important;
+}
+
+.ant-spin-dot i:nth-child(2) {
+  background-color: @warning-color !important;
+  opacity: 1 !important;
+}
+
+.ant-spin-dot i:nth-child(3) {
+  background-color: @success-color !important;
+  opacity: 1 !important;
+}
+
+.ant-spin-dot i:first-child {
+  background-color: @error-color !important;
+  opacity: 1 !important;
+}
+
+.mcs-dropdown-actions {
+  min-width: 100px;
+}
+
+input:disabled {
+  cursor: not-allowed !important;
+}
+
+.mcs-colors {
+  display: none;
+  .mcs-primary {
+    background-color: @primary-color;
+  }
+  .mcs-normal {
+    background-color: @normal-color;
+  }
+  .mcs-info {
+    background-color: @info-color;
+  }
+  .mcs-success {
+    background-color: @success-color;
+  }
+  .mcs-error {
+    background-color: @error-color;
+  }
+  .mcs-highlight {
+    background-color: @highlight-color;
+  }
+  .mcs-warning {
+    background-color: @warning-color;
+  }
+  .mcs-chart-1 {
+    background-color: @chart-1;
+  }
+  .mcs-chart-2 {
+    background-color: @chart-2;
+  }
+  .mcs-chart-3 {
+    background-color: @chart-3;
+  }
+  .mcs-chart-4 {
+    background-color: @chart-4;
+  }
+  .mcs-chart-5 {
+    background-color: @chart-5;
+  }
+  .mcs-chart-6 {
+    background-color: @chart-6;
+  }
+  .mcs-chart-7 {
+    background-color: @chart-7;
+  }
+}
+
+.bm-burger-button {
+  display: none;
+}
+
+.no-margin-bottom {
+  margin-bottom: 0 !important;
+}
+
+.react-grid-layout {
+  margin: 0 -10px;
+}
+
+.mcs-mainLayout-menu {
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+#mcs-main-layout {
+  .mcs-table-container,
+  .mcs-card {
+    border-radius: 6px;
+    box-shadow: none;
+  }
+
+  .mcs-actionbar {
+    box-shadow: none;
+  }
+
+  .ant-layout-content {
+    background: #f0f3f5;
+  }
+  .ant-menu-vertical .ant-menu-item::after,
+  .ant-menu-vertical-left .ant-menu-item::after,
+  .ant-menu-vertical-right .ant-menu-item::after,
+  .ant-menu-inline .ant-menu-item::after {
+    border-right: 3px solid @info-color;
+  }
+}

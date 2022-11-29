@@ -1,0 +1,206 @@
+// ------------------------------------------------
+// ------------------------------------------------
+// -------------- Modified variables --------------
+// ------------------------------------------------
+// ------------------------------------------------
+
+// Color
+@primary-color: #003056;
+@info-color: #00a1df;
+@success-color: #00ab67;
+@warning-color: #fd7c12;
+@error-color: #fc3f48;
+@highlight-color: #862f2f;
+@normal-color: #d9d9d9;
+@loading-color: #eeeeee;
+
+// Border color
+@border-color-base: #e0e1e1; // base border outline a component
+@border-color-split: #d3dbe1; // split border inside a component
+
+// Layout
+@layout-body-background: #ffffff;
+@layout-header-background: #ffffff;
+@layout-header-height: 60px;
+
+// Input
+// ---
+@input-height-base: 40px;
+@input-height-sm: 40px;
+
+// Tooltip
+// ---
+//** Tooltip background color
+@tooltip-bg: #002c4f;
+//** Tooltip arrow color
+@tooltip-arrow-color: @tooltip-bg;
+
+// reset font-variant because default is tabular-nums
+// and our LLCircularWeb-Book doesn't look good with this variant
+@font-variant-base: normal;
+
+@primary-1: color(~`colorPalette('@{primary-color}', 1) `); // replace tint(@primary-color, 90%)
+@primary-2: color(~`colorPalette('@{primary-color}', 2) `); // replace tint(@primary-color, 80%)
+@primary-3: color(~`colorPalette('@{primary-color}', 3) `);
+@primary-4: color(~`colorPalette('@{primary-color}', 4) `);
+@primary-5: color(~`colorPalette('@{primary-color}', 5) `); // replace tint(@primary-color, 20%)
+@primary-6: @primary-color; // don't use, use @primary-color
+@primary-7: color(~`colorPalette('@{primary-color}', 7) `); // replace shade(@primary-color, 5%)
+@primary-8: color(~`colorPalette('@{primary-color}', 8) `);
+@primary-9: color(~`colorPalette('@{primary-color}', 9) `);
+@primary-10: color(~`colorPalette('@{primary-color}', 10) `);
+
+@font-family: LLCircularWeb-Book, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+  sans-serif;
+@code-family: Consolas, Menlo, Courier, monospace;
+
+// ------ Base & Require ------
+
+@text-color: fade(#000, 65%);
+@text-color-secondary: fade(#000, 43%);
+@dark-text-color: fade(#000, 78%);
+@text-color-dark: fade(#fff, 91%);
+@text-color-secondary-dark: fade(#fff, 67%);
+@font-size-base: 12px;
+@font-size-lg: @font-size-base + 2px;
+@line-height-base: 1.5;
+@border-radius-base: 3px;
+@border-radius-sm: 2px;
+
+// LINK
+@link-color: @primary-color;
+@link-hover-color: @primary-5;
+@link-active-color: @primary-7;
+
+// Outline
+@outline-color: @primary-color;
+
+// Background color
+@background-color-base: #dcdcdc; // basic gray background
+
+// Shadow
+@shadow-color: rgba(0, 0, 0, 0.2);
+@box-shadow-base: @shadow-1-down;
+@shadow-1-up: 0 -1px 6px @shadow-color;
+@shadow-1-down: 0 1px 6px @shadow-color;
+@shadow-1-left: -1px 0 6px @shadow-color;
+@shadow-1-right: 1px 0 6px @shadow-color;
+@shadow-2: 0 2px 8px @shadow-color;
+
+// Buttons
+@btn-font-weight: 500;
+@btn-border-radius-base: @border-radius-base;
+@btn-border-radius-sm: @border-radius-base;
+
+@btn-primary-bg: @primary-color;
+
+@btn-default-color: @text-color;
+@btn-default-bg: #fff;
+@btn-default-border: @border-color-base;
+
+@btn-danger-bg: @red-6;
+
+@btn-disable-bg: @background-color-base;
+@btn-disable-border: @border-color-base;
+
+@btn-font-size-lg: @font-size-lg;
+
+@btn-circle-size: 28px;
+@btn-circle-size-lg: 32px;
+@btn-circle-size-sm: 22px;
+
+@btn-group-border: @primary-7;
+
+// Media queries breakpoints
+
+// Small screen / tablet
+@screen-sm: 768px;
+@screen-sm-min: @screen-sm;
+
+// Medium screen / desktop
+@screen-md: 992px;
+@screen-md-min: @screen-md;
+
+// Large screen / wide desktop
+@screen-lg: 1200px;
+@screen-lg-min: @screen-lg;
+
+// Extra Large screen / full hd
+@screen-xl: 1600px;
+@screen-xl-min: @screen-xl;
+
+// provide a maximum
+@screen-xs-max: (@screen-sm-min - 1);
+@screen-sm-max: (@screen-md-min - 1);
+@screen-md-max: (@screen-lg-min - 1);
+@screen-lg-max: (@screen-xl-min - 1);
+
+// z-index list
+@zindex-tooltip: 1060;
+
+// Form
+// ---
+@label-required-color: @highlight-color;
+@label-color: @text-color;
+
+// Input
+// ---
+@input-height-lg: 32px;
+@input-height-sm: 22px;
+@input-padding-horizontal: 7px;
+@input-padding-vertical-base: 4px;
+@input-padding-vertical-sm: 1px;
+@input-padding-vertical-lg: 6px;
+@input-placeholder-color: #ccc;
+@input-color: @text-color;
+@input-border-color: @border-color-base;
+@input-bg: #fff;
+@input-hover-border-color: @primary-color;
+@input-disabled-bg: @background-color-base;
+
+// Popover
+// ---
+//** Popover body background color
+@popover-bg: #fff;
+//** Popover arrow width
+@popover-arrow-width: 4px;
+//** Popover arrow color
+@popover-arrow-color: @popover-bg;
+//** Popover outer arrow color
+@popover-arrow-outer-color: fadeout(@border-color-base, 30%);
+
+// Menu
+// ---
+@menu-dark-bg: @layout-header-background;
+
+// Badge
+// ---
+@badge-dot-size: 8px;
+
+// Rate
+// ---
+@rate-star-color: #f5a623;
+@rate-star-bg: #e9e9e9;
+
+@hover-color: #ebeff2;
+@item-active-bg: @hover-color;
+@item-hover-bg: @hover-color;
+@table-row-hover-bg: @hover-color;
+
+// MICS theme (not antd)
+
+// Charts colors
+@chart-1: #00a1df;
+@chart-2: #fd7c12;
+@chart-3: #00ab67;
+@chart-4: #513fab;
+@chart-5: #eb5c5d;
+@chart-6: #003056;
+@chart-7: #d9d9d9;
+
+@font-family-medium: LLCircularWeb-Medium, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+  sans-serif;
+
+@secondary-color: #373737;

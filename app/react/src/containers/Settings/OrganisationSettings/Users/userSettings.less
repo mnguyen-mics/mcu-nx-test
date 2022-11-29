@@ -1,0 +1,149 @@
+.mcs-userSettings_container {
+  padding: 40px;
+  .mcs-foldableCardHierachy_container {
+    margin-top: 15px;
+  }
+  .mcs-userSettings_userSelect {
+    width: 150px;
+    margin-right: 20px;
+    .mcs-userSettings_userSelectIcon {
+      color: @text-color;
+    }
+  }
+  .mcs-userSettings_userFilter {
+    top: -9px;
+    height: 40px;
+    width: 225px;
+    input {
+      height: 35px;
+    }
+  }
+  .mcs-userSettings_addAUser {
+    float: right;
+  }
+  .mcs-userSettings_switch {
+    margin-left: 10px;
+    &.ant-switch.ant-switch-checked {
+      border-color: @info-color;
+      background-color: @info-color;
+    }
+  }
+  .mcs-foldable-card-children-container {
+    margin-left: 5px;
+    padding-top: 15px;
+    &-first {
+      margin-left: 15px;
+    }
+  }
+
+  .mcs-foldable-card {
+    margin-top: 0px;
+    position: relative;
+    z-index: auto;
+
+    .mcs-foldable-card-with-data {
+      background-color: white;
+      border-radius: 6px !important;
+    }
+
+    .mcs-foldable-card-no-data {
+      background-color: #f0f3f5;
+      border: solid 1px #d3dbe1;
+      border-radius: 6px !important;
+      .mcs-foldable-card-empty {
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+    }
+
+    .ant-collapse-header {
+      z-index: 10;
+    }
+  }
+  .mcs-foldable-card-timeline {
+    padding-bottom: 0px;
+    .mcs-foldable-card-timeline-dash-container {
+      margin-top: 85px;
+      height: 60%;
+      .mcs-foldable-card-timeline-dash {
+        margin-left: 25px;
+        width: 25px;
+        border-color: #d3dbe1;
+        border-width: 2px;
+      }
+    }
+    .ant-timeline-item-tail {
+      border-width: 2px;
+      height: 100%;
+      top: 0px;
+    }
+    &-last {
+      .ant-timeline-item-tail {
+        height: 45px;
+      }
+      .mcs-foldable-card-timeline {
+        .ant-timeline-item-tail {
+          height: 100%;
+        }
+        &-last {
+          .ant-timeline-item-tail {
+            height: 45px;
+          }
+        }
+      }
+    }
+    .ant-timeline-item-head {
+      background-color: #11ffee00;
+    }
+  }
+  .mcs-userRoleList_inherited {
+    color: @text-color-secondary;
+  }
+  .mcs-userRoleList_cardSubtitle {
+    font-size: 10px;
+  }
+  .mcs-userRoleList_homeUserCell {
+    width: 50px;
+  }
+}
+.mcs-userEdit_drawer {
+  .ant-drawer-header {
+    background-color: @info-color;
+    border-radius: 0;
+    padding-left: 40px;
+    .ant-drawer-title {
+      color: #ffffff;
+      font-size: 12px;
+    }
+    .ant-drawer-close {
+      color: #ffffff;
+    }
+  }
+  .ant-drawer-body {
+    background-color: #f0f3f5;
+    padding: 40px !important;
+  }
+  .mcs-saveButton {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    width: 80px;
+  }
+  .mcs-userForm_select {
+    width: 100%;
+  }
+  .mcs-userForm_selectWrong {
+    .ant-input {
+      border-color: red;
+    }
+  }
+  .mcs-userForm_section {
+    margin-top: 40px;
+  }
+  .section-header {
+    margin-bottom: 2em;
+  }
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+}

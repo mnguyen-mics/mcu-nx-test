@@ -1,0 +1,203 @@
+.ant-menu:not(.ant-menu-horizontal) {
+  .ant-menu-item {
+    a:hover {
+      color: @info-color;
+    }
+  }
+  .ant-menu-item-selected {
+    background-color: #e6fcff;
+    a {
+      color: @info-color;
+    }
+  }
+}
+
+.ant-menu-inline-collapsed-tooltip {
+  .ant-tooltip-inner,
+  .ant-tooltip-arrow-content {
+    background: #ffffff;
+  }
+  .mcs-sideBar-menuItem_simple {
+    color: @text-color;
+  }
+}
+
+#mcs-main-layout {
+  .mcs-sider {
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+    padding-bottom: 0;
+    .ant-layout-sider-children {
+      flex: 1;
+      overflow-y: scroll;
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .ant-layout-sider-trigger {
+      background: #ffffff;
+      position: relative;
+      color: @text-color;
+      .ant-row {
+        flex-direction: row-reverse;
+        margin: 0 20px;
+        border-top: 1px solid @border-color-base;
+      }
+    }
+
+    .ant-menu-submenu-title {
+      .mcs-icon {
+        vertical-align: middle;
+      }
+    }
+    .ant-menu-item {
+      .mcs-icon {
+        vertical-align: middle;
+      }
+    }
+
+    .ant-menu-item:active,
+    .ant-menu-submenu-title:active {
+      background: @hover-color;
+    }
+  }
+
+  .ant-layout-sider-collapsed {
+    .nav-text {
+      display: none;
+    }
+    .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+      display: none;
+    }
+  }
+
+  .ant-menu-inline {
+    .ant-menu-sub {
+      .ant-menu-item {
+        padding-left: 73px !important;
+      }
+    }
+  }
+
+  .ant-menu-sub.ant-menu-inline {
+    background: #fff;
+  }
+
+  .ant-menu-inline:not(.ant-menu-sub),
+  .ant-menu-vertical {
+    border: none;
+  }
+
+  .ant-menu {
+    .mcs-icon {
+      font-size: 20px;
+      min-width: 14px;
+      margin-right: 15px;
+      line-height: 20px;
+    }
+    &.ant-menu-inline-collapsed {
+      .mcs-icon {
+        margin-right: 0;
+      }
+      & > .ant-menu-item,
+      & > .ant-menu-submenu .ant-menu-submenu-title {
+        display: flex;
+        justify-content: center;
+      }
+    }
+  }
+
+  .ant-menu-submenu-selected {
+    .ant-menu-submenu-title {
+      border-left: none;
+      color: @text-color;
+    }
+  }
+
+  .ant-menu-vertical {
+    .ant-menu-submenu-popup {
+      .ant-menu-item-selected {
+        border-left: 5px solid @info-color;
+        background: none;
+      }
+    }
+    .ant-menu-submenu-selected {
+      .ant-menu-submenu-title {
+        color: @info-color;
+      }
+    }
+  }
+
+  .mcs-logo-placeholder {
+    display: flex;
+    min-height: 120px;
+    align-items: top;
+    .mcs-logo {
+      display: flex;
+      margin: 10px;
+      padding: 20px;
+      align-items: center;
+      align-content: center;
+      img {
+        max-height: 50px;
+        max-width: 140px;
+      }
+    }
+  }
+}
+
+.bm-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.mcs-menuMentionTag {
+  margin: 1px 0;
+  border-radius: 8px;
+  width: 30px;
+  font-size: 7px;
+  color: white;
+  line-height: 7px;
+  padding: 0px 2px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.mcs-menuMentionTag--west {
+  position: absolute;
+  top: 15px;
+  left: 21px;
+}
+
+.mcs-menuMentionTag--east {
+  position: absolute;
+  top: 15px;
+  left: 38px;
+}
+
+.mcs-verticalMenuMentionTag--east {
+  position: absolute;
+  top: 15px;
+  right: 18px;
+}
+
+.mcs-verticalMenuMentionTag--west {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+}
+
+.ant-menu-item {
+  .mcs-sideBar-menuItem_simple {
+    .nav-text {
+      margin-left: 0px;
+    }
+  }
+}

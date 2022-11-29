@@ -1,0 +1,185 @@
+.mcs-feedCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+
+  .mcs-feedCard_header {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 30px;
+
+    &_icon {
+      width: 45px;
+      height: 45px;
+      margin-right: 10px;
+    }
+
+    .mcs-feedCard_topMenu {
+      display: flex;
+      margin-left: auto;
+
+      .mcs-icon {
+        margin-right: 0;
+      }
+    }
+
+    .mcs-feedCardTitle {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-style: normal;
+      font-stretch: normal;
+      letter-spacing: normal;
+      width: 70%;
+
+      &_title {
+        font-weight: 800;
+        font-size: 14px;
+        line-height: 22px;
+        font-family: @font-family;
+        color: @dark-text-color;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 99%;
+      }
+
+      &_title_placeholder {
+        height: 22px;
+        width: 200px;
+        background-color: @loading-color;
+        border-radius: 6px;
+      }
+
+      &_subtitle {
+        font-size: 12px;
+        line-height: 20px;
+        font-family: @font-family;
+        color: @text-color;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      &_title_placeholder {
+        height: 20px;
+        width: 200px;
+        background-color: @loading-color;
+        border-radius: 6px;
+      }
+    }
+  }
+
+  .mcs-feedCard_content {
+    display: flex;
+
+    .mcs-feedCard_stateIcons {
+      display: flex;
+      font-size: 16px;
+      margin-right: 2px;
+
+      .mcs-feedCard_stateRightIcon {
+        position: relative;
+        left: -3px;
+        background-color: white;
+      }
+    }
+
+    .mcs-feedCard_stateIcon {
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
+    .mcs-feedCard_stateIcon_error {
+      color: @error-color !important;
+    }
+
+    .mcs-feedCard_content_description {
+      display: flex;
+      flex-direction: column;
+
+      .mcs-feedCard_content_status {
+        font-style: italic;
+        margin-bottom: 5px;
+        font-size: 12px;
+        line-height: 15px;
+        font-family: @font-family;
+        color: @text-color;
+      }
+
+      .mcs-feedCard_content_status_placeholder {
+        height: 15px;
+        width: 200px;
+        background-color: @loading-color;
+        border-radius: 6px;
+      }
+
+      .mcs-feedCard_content_status_error {
+        color: @error-color !important;
+      }
+
+      .mcs-feedCard_content_statsAndAction {
+        display: flex;
+        align-items: center;
+        .mcs-feedCard_content_stats {
+          display: flex;
+          align-items: center;
+          .mcs-feedCard_content_stats_arrow {
+            font-size: 16px;
+            margin-right: 5px;
+          }
+          .mcs-feedCard_content_stats_arrow_up {
+            color: @success-color;
+          }
+          .mcs-feedCard_content_stats_arrow_down {
+            margin-left: 10px;
+            color: @error-color;
+          }
+          .mcs-feedCard_content_stats_question {
+            margin-left: 10px;
+            color: @text-color;
+          }
+          margin-right: 30px;
+          font-family: @font-family;
+          color: @text-color-secondary;
+          font-size: 12px;
+          line-height: 24px;
+        }
+        .mcs-feedCard_content_stats_error {
+          font-weight: 700 !important;
+          color: @error-color !important;
+        }
+        .mcs-feedCard_content_action {
+          .mcs-button {
+            font-weight: 700;
+            color: @info-color;
+            font-size: 12px;
+            line-height: 24px;
+          }
+        }
+        .mcs-feedCard_content_action_placeholder {
+          height: 24px;
+          width: 200px;
+          background-color: @loading-color;
+          border-radius: 6px;
+        }
+        .mcs-feedCard_content_action_blankPlaceholder {
+          height: 24px;
+          width: 200px;
+        }
+        .mcs-feedCard_content_action_error {
+          .mcs-button {
+            color: @text-color !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+.mcs-feedCard_content_stats_question_button {
+  color: @info-color;
+  margin-top: 10px;
+}

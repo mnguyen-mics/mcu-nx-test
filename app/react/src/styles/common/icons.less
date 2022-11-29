@@ -1,0 +1,61 @@
+.mcs-icon {
+  display: inline-block;
+  margin-right: 10px;
+  &.compact {
+    margin-right: 0px;
+  }
+}
+
+button .mcs-icon {
+  font-size: 0.8em;
+}
+
+.mcs-icon-3x {
+  font-size: 3em;
+}
+
+.mcs-icon > i:first-child {
+  display: block;
+  line-height: 0;
+}
+
+.mcs-icon-inverted i {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.mcs-icon.related-records {
+  color: @info-color;
+  font-size: 24px;
+  margin: auto;
+}
+
+.mcs-icon.big {
+  font-size: 20px;
+}
+
+.apitoken-status-ok {
+  color: @success-color;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.apitoken-status-warning {
+  color: @warning-color;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.apitoken-status-expirated {
+  color: @error-color;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.status-error {
+  vertical-align: middle;
+  margin-left: 10px;
+}

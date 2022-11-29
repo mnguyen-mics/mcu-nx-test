@@ -1,0 +1,74 @@
+.mcs-schemaVizualizer_search_bar {
+  margin: 20px 10px 20px 10px;
+  height: 40px;
+  width: ~'calc(100% - 20px)';
+  input {
+    padding-left: 15px;
+    ::placeholder {
+      color: #cccccc;
+    }
+  }
+}
+.mcs-schemaFieldNode_search {
+  color: rgba(0, 0, 0, 0.78);
+}
+.mcs-schemaFieldNode_fragment {
+  color: rgba(0, 0, 0, 0.43);
+}
+.mcs-FieldNode_dashes {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.mcs-FieldNode_dashes--right {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+  margin-left: -8px;
+  margin-right: 5px;
+}
+.mcs-fieldNode_content {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.mcs-fieldNode_parent {
+  font-weight: 600;
+  font-family: 'LLCircularWeb-Medium', sans-serif;
+  color: rgba(0, 0, 0, 0.65);
+  margin: 0 0 1px 5px;
+}
+
+.mcs-fieldNode_truncated_tooltip {
+  * {
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+.mcs-schemaVizualize_content {
+  height: 50px;
+}
+.schema-visualizer {
+  .ant-tree-switcher-icon {
+    font-size: 15px;
+  }
+  .ant-tree-switcher-noop {
+    margin-left: -24px;
+  }
+}
+
+.mcs-fieldNode_child {
+  margin-left: 10px;
+}
+.schema-visualizer {
+  .mcs-schemaVizualizer_fieldNode_parent {
+    padding: 5px 0 0 0;
+  }
+
+  .mcs-schemaVizualizer_fieldNode_child {
+    padding: 0 0 5px 0;
+  }
+}

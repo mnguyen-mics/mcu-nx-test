@@ -1,0 +1,71 @@
+(function () {
+  'use strict';
+
+  const defaultFeatures = [
+    'audience-segments',
+    'audience-builders',
+    'audience-feeds',
+    'audience-monitoring',
+    'audience-segment_uplift',
+    'audience-segments-cohort-lookalike',
+    'campaigns-display',
+    'campaigns-email',
+    'campaigns-goals',
+    'campaignsSettings-attribution_models',
+    'campaignsSettings-email_routers',
+    'campaignsSettings-recommenders',
+    'automations',
+    'creatives-display',
+    'creatives-email',
+    'library-catalog',
+    'library-ad_layouts',
+    'library-stylesheets',
+    'library-zone',
+    'library-assets',
+    'library-exports',
+    'marketplace-offer_catalog',
+    'datastudio-query_tool',
+    'datastudio-report',
+    'datastudio-exports',
+    'datastudio-imports',
+    'organisationSettings-labels',
+    'organisationSettings-users',
+    'organisationSettings-user_roles',
+    'organisationSettings-settings',
+    'datamartSettings-visit_analyzers',
+    'automations',
+    'datamartSettings-channels',
+    'datamartSettings-datamarts',
+    'datamartSettings-service_usage_report',
+    'accountSettings-profile',
+    'accountSettings-api_tokens',
+    'servicesSettings-subscribed_offers',
+    // 'servicesSettings-my_service_catalog',
+    // 'servicesSettings-my_offers',
+    'audience-dashboards-datamart_users_analytics',
+    'datamart-user_choices',
+    'datamartSettings-audience_partitions',
+    'datamartSettings-compartments',
+    'datamartSettings-datamart_replication',
+    'datamartSettings-event_hubs_replication',
+    'audience-feature-search',
+    'datastudio-query_tool-charts_loader',
+  ];
+
+  var MCS_CONSTANTS = {
+    NAVIGATOR_URL: 'https://navigator.mediarithmics.local',
+    COMPUTING_CONSOLE_URL: 'https://computing-console.mediarithmics.local',
+    API_URL: 'https://api.mediarithmics.local',
+    ASSETS_URL: 'https://assets.mediarithmics.local',
+    FEATURES: defaultFeatures,
+    SITE_NAME: 'mediarithmics | navigator',
+    PLATFORM_ADMIN_URL: 'http://localhost:3000',
+    DEVELOPER_CONSOLE_URL:
+      'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
+    USE_GTAG: false,
+    GTAG_ID: 'G-123',
+    ADMIN_API_TOKEN: ''
+  };
+
+  window.MCS_CONSTANTS = MCS_CONSTANTS;
+})();

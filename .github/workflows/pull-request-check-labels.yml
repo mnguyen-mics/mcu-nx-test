@@ -1,0 +1,50 @@
+name: check labels on pull request
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+
+jobs:
+  check-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3
+        with:
+          script: |
+            const { data: labels } = await github.issues.listLabelsOnIssue({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            function atLeastOneLabel(labels, names) {
+              let existingLabels = labels.map(l => l.name);
+              let matchingLabels = existingLabels.filter(x => names.includes(x));
+              console.log(`We have ${existingLabels.length} labels ('${existingLabels}') and have to match at least one of '${names}': found ${matchingLabels.length}.`);
+              if (matchingLabels.length === 0) {
+                throw new Error(`You need at least one label from ${names}`);
+              }
+            }
+
+            function blockingLabel(labels, names) {
+              let existingLabels = labels.map(l => l.name);
+              let matchingLabels = existingLabels.filter(x => names.includes(x));
+              console.log(`We have ${existingLabels.length} labels ('${existingLabels}') and have ${matchingLabels.length} blocking label(s).`);
+              if (matchingLabels.length === 1) {
+                throw new Error(`Label '${matchingLabels}' forbids merging this pull request.`);
+              } else if (matchingLabels.length > 1) {
+                throw new Error(`Labels '${matchingLabels}' forbid merging this pull request.`);
+              }
+            }
+
+            const sizeLabelNames = ['S', 'M', 'L'];
+            const typeLabelNames = ['feature', 'bugfix', 'dependencies'];
+
+            atLeastOneLabel(labels, sizeLabelNames);
+            atLeastOneLabel(labels, typeLabelNames);
+
+            const blockingLabelNames = ['do not merge', 'wait for dependencies'];
+
+            blockingLabel(labels, blockingLabelNames);
+
+            console.log('Correct labels, have a nice day!');

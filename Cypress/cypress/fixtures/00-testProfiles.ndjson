@@ -1,0 +1,5 @@
+{"operation":"UPSERT","user_account_id":"user_id_0","force_replace":true,"user_profile":{"first_name":"name 0","last_name":"last name 0","address":"75 rue d'amsterdam","zipcode":"75008","country":"France"}}
+{"operation":"UPSERT","user_account_id":"user_id_1","force_replace":true,"user_profile":{"first_name":"name 1","last_name":"last name 1","address":"75 rue d'amsterdam","zipcode":"75008","country":"France"}}
+{"operation":"UPSERT","user_account_id":"user_id_2","force_replace":true,"user_profile":{"first_name":"name 2","last_name":"last name 2","address":"75 rue d'amsterdam","zipcode":"75008","country":"France"}}
+{"operation":"UPSERT","user_account_id":"user_id_3","force_replace":true,"user_profile":{"first_name":"name 3","last_name":"last name 3","address":"75 rue d'amsterdam","zipcode":"75008","country":"France"}}
+{"operation":"UPSERT","user_account_id":"user_id_4","force_replace":true,"user_profile":{"first_name":"name 4","last_name":"last name 4","address":"75 rue d'amsterdam","zipcode":"75008","country":"France"}}

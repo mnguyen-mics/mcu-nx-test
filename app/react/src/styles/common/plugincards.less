@@ -1,0 +1,207 @@
+.plugin-card {
+  &.hoverable {
+    cursor: pointer;
+    &:hover {
+      transition: 0.5s;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 4px 1px 0 rgba(0, 0, 0, 0.14),
+        0 2px 1px 1px rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  height: 100%;
+  padding: 0;
+
+  .image-placehodlder {
+    position: relative;
+    height: 123px;
+    width: 100%;
+    img {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      max-height: 58px;
+      max-width: 120px;
+    }
+
+    .delete-preset {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 8px;
+      line-height: 0px;
+      border-radius: 20px;
+
+      &:hover {
+        background-color: #d9d9d9;
+      }
+    }
+  }
+
+  .plugin-title {
+    width: 100%;
+    padding: 0 5px;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: @primary-color;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .plugin-description {
+    width: 100%;
+    margin-top: 20px;
+    padding: 0 5px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: center;
+    color: #919191;
+  }
+
+  .select-button {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding: 0 5px;
+    width: 100%;
+    position: relative;
+    text-align: center;
+    .button {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      font-size: 14px;
+      font-weight: 500;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      color: @info-color;
+    }
+  }
+}
+
+.plugin-modal-loading {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.plugin-modal {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 2px 1px -1px rgba(0, 0, 0, 0.12);
+  position: relative;
+  .mcs-actionbar-edit {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    .left-part-margin > * > .mcs-icon {
+      margin-right: 0px;
+    }
+  }
+  background-color: #f1f1f1;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+
+  .body {
+    margin-top: 30px;
+
+    width: 100%;
+    padding: 30px 0px;
+
+    height: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .header {
+      padding: 30px 40px 20px 40px;
+      display: inline-block;
+      width: 100%;
+      background-color: white;
+      .logo {
+        width: 60px;
+        height: 60px;
+        float: left;
+        img {
+          max-width: 100%;
+          max-height: 100%;
+        }
+      }
+      .information {
+        padding-left: 80px;
+        .name  {
+          font-size: 1.7em;
+          font-size: 18px;
+          font-weight: 500;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: normal;
+          letter-spacing: normal;
+          text-align: left;
+        }
+        .description {
+          margin-top: 10px;
+          font-weight: normal;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: normal;
+          letter-spacing: normal;
+          color: #919191;
+        }
+      }
+      .meta {
+        max-width: 30%;
+        float: right;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #919191;
+      }
+    }
+
+    .tabs  {
+      .ant-tabs-bar {
+        background-color: white;
+      }
+      .ant-tabs-nav > .ant-tabs-tab-active {
+        color: @heading-color;
+      }
+      .ant-tabs-nav > .ant-tabs-tab:hover {
+        color: @heading-color;
+        font-weight: 500;
+      }
+      .ant-tabs-nav-container {
+        padding: 0 40px;
+      }
+      .tab {
+        padding: 0 40px 40px;
+      }
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      border-top: 1px solid #d3dbe1;
+      line-height: 60px;
+      padding: 0 40px;
+      text-align: right;
+      background-color: white;
+    }
+  }
+}

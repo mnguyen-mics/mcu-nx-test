@@ -1,0 +1,30 @@
+@font-face {
+  font-family: 'mcsfont';
+  src: url('../../fonts/mcsfont.eot');
+  src: url('../../fonts/mcsfont.eot?#iefix') format('eot'),
+    url('../../fonts/mcsfont.woff2') format('woff2'), url('../../fonts/mcsfont.woff') format('woff'),
+    url('../../fonts/mcsfont.ttf') format('truetype'),
+    url('../../fonts/mcsfont.svg#mcsfont') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.mcs-info:before,
+.mcs-warning:before {
+  font-family: 'mcsfont', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+.mcs-info:before {
+  content: '\EA1E';
+}
+.mcs-warning:before {
+  content: '\EA39';
+}

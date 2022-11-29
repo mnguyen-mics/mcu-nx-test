@@ -1,0 +1,32 @@
+.mcs-campaigns-status-active {
+  color: @success-color;
+}
+
+.mcs-campaigns-status-pending {
+  color: @primary-color;
+}
+
+.mcs-campaigns-status-paused {
+  color: @warning-color;
+}
+
+.edit-campaigns-form,
+.edit-adgroups-form {
+  .delete-fieldarray {
+    background: transparent;
+    border: none;
+  }
+  .add-field-button {
+    p {
+      text-align: center;
+    }
+    border: dashed;
+    border-width: 1px;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    cursor: pointer;
+    &:hover {
+      background-color: #dcdcdc;
+    }
+  }
+}
