@@ -13,7 +13,7 @@ export interface INavigatorService {
 @injectable()
 export class NavigatorService implements INavigatorService {
   getVersion: () => Promise<Version> = () => {
-    const endpoint = 'version.json';
+    const endpoint = 'assets/version.json';
     const options = {
       localUrl: true,
     };
@@ -21,7 +21,7 @@ export class NavigatorService implements INavigatorService {
   };
 
   isAdBlockOn: () => Promise<void> = () => {
-    const endpoint = 'ads.html';
+    const endpoint = 'assets/ads.html';
     const options = {
       localUrl: true,
     };
